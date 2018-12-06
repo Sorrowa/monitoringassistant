@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ClearEditText">
+        <attr name="clearDrawable" format="reference" />
+    </declare-styleable>
+
+
+    <declare-styleable name="DropDownView">
+        <attr name="containerBackgroundColor" format="color" />
+        <attr name="overlayColor" format="color" />
+    </declare-styleable>
+
+
+</resources>

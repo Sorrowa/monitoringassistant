@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="14dp"
+                    android:drawableLeft="@mipmap/ic_indicator"
+                    android:drawablePadding="@dimen/dp_8"
+                    android:text="已采样"
+                    android:textColor="#333333"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/btn_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/dp_24"
+                    android:drawablePadding="@dimen/dp_12"
+                    android:drawableRight="@mipmap/ic_sampling_date"
+                    android:text="2015-10-13 ~ 2016-10-13"
+                    android:textColor="#333333"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/btn_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/dp_16"
+                    android:layout_toLeftOf="@id/btn_date"
+                    android:text="本月"
+                    android:textColor="#333333"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/btn_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/dp_16"
+                    android:layout_toLeftOf="@id/btn_month"
+                    android:text="本周"
+                    android:textColor="#333333"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/btn_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/dp_16"
+                    android:layout_toLeftOf="@id/btn_week"
+                    android:text="今日"
+                    android:textColor="#333333"
+                    android:textSize="@dimen/text_size_12" />
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_sampling"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/bar_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/dp_24"
+                    android:layout_marginLeft="@dimen/dp_24"
+                    android:layout_marginRight="@dimen/dp_24" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_8"
+            android:layout_marginRight="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="14dp"
+                android:drawableLeft="@mipmap/ic_indicator"
+                android:drawablePadding="@dimen/dp_8"
+                android:text="待采样"
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_12" />
+
+            <LinearLayout
+                android:id="@+id/btn_wait_sampling"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pie_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/dp_24" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_8"
+            android:layout_marginLeft="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="14dp"
+                android:drawableLeft="@mipmap/ic_indicator"
+                android:drawablePadding="@dimen/dp_8"
+                android:text="已收样"
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_12" />
+
+            <LinearLayout
+                android:id="@+id/btn_receive"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/line_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/dp_24"
+                    android:layout_marginLeft="@dimen/dp_24"
+                    android:layout_marginRight="@dimen/dp_24" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_8"
+            android:layout_marginLeft="@dimen/dp_8"
+            android:layout_marginRight="@dimen/dp_8"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="14dp"
+                android:drawableLeft="@mipmap/ic_indicator"
+                android:drawablePadding="@dimen/dp_8"
+                android:text="待收样"
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_12" />
+
+            <LinearLayout
+                android:id="@+id/btn_wait_receive"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pie_chart1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/dp_24" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_default_bg"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/btn_search"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:hint="请输入关键字"
+            android:paddingLeft="@dimen/dp_12"
+            android:textColor="#B3B3B3"
+            android:textColorHint="#B3B3B3"
+            android:textSize="@dimen/text_size_14" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp_12"
+            android:src="@mipmap/ic_search" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dc1" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/dp_12" />
+
+
+</LinearLayout>

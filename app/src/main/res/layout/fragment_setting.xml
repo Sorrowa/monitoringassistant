@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.allen.library.SuperTextView
+        android:layout_marginTop="@dimen/dp_12"
+        android:id="@+id/stv_clear"
+        style="@style/SupperTextStyleItem"
+        app:sLeftTextString="清空缓存" />
+
+    <com.allen.library.SuperTextView
+        android:id="@+id/stv_modify_pwd"
+        style="@style/SupperTextStyleItem"
+        app:sLeftTextString="修改密码" />
+
+    <com.allen.library.SuperTextView
+        android:id="@+id/stv_about"
+        style="@style/SupperTextStyleItem"
+        app:sLeftTextString="关于" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F2F3F8" />
+
+    <com.allen.library.SuperTextView
+        android:id="@+id/stv_logout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height_dp_52"
+        app:sCenterTextColor="#FD6C6D"
+        app:sCenterTextString="退出登录"
+        app:sCenterTvDrawableLeft="@mipmap/ic_logout"
+        app:sDividerLineColor="@color/white" />
+
+
+</LinearLayout>

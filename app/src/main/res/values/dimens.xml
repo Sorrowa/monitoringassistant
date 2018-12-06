@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 几种维度常量dp -->
+    <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_4">4dp</dimen>
+    <dimen name="dp_6">6dp</dimen>
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+
+    <!-- 几种文字大小常量 -->
+    <dimen name="text_size_9">9sp</dimen>
+    <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_13">13sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_15">15sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_17">17sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
+    <dimen name="text_size_21">21sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
+    <dimen name="text_size_23">23sp</dimen>
+    <dimen name="text_size_24">24sp</dimen>
+    <dimen name="text_size_25">25sp</dimen>
+    <dimen name="text_size_28">28sp</dimen>
+    <dimen name="text_size_32">32sp</dimen>
+    <dimen name="text_size_36">36sp</dimen>
+
+    <!-- 标题栏高度 -->
+    <dimen name="actionbar_height">45dp</dimen>
+
+    <!-- tab高度 -->
+    <dimen name="tab_host_height">52dp</dimen>
+    <dimen name="tab_icon_height">52dp</dimen>
+    <dimen name="tab_icon_width">48dp</dimen>
+
+    <!-- 分割线通用宽度 -->
+    <dimen name="division_line">0.5dp</dimen>
+
+    <dimen name="content_bottom_margin">50dp</dimen>
+
+    <!-- 栏目高度 -->
+    <dimen name="item_height_dp_42">42dp</dimen>
+    <dimen name="item_height_dp_52">52dp</dimen>
+    <dimen name="item_height_dp_62">62dp</dimen>
+    <dimen name="item_height_dp_72">72dp</dimen>
+
+
+    <!-- 输入框高度 -->
+    <dimen name="edit_text_height">42dp</dimen>
+
+    <!-- 按钮高度 -->
+    <dimen name="btn_height_dp_32">32dp</dimen>
+    <dimen name="btn_height_dp_36">36dp</dimen>
+    <dimen name="btn_height_dp_40">40dp</dimen>
+    <dimen name="btn_height_dp_52">52dp</dimen>
+
+
+</resources>

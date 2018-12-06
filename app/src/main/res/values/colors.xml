@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="bg_color_title">#0f87ff</color>
+    <color name="bg_color_tab">#1D2532</color>
+    <color name="bg_color_tab_hover">#0f87ff</color>
+
+
+    <color name="color_333333">#333333</color>
+    <color name="base_color">#00ABB7</color>
+    <color name="color_base_text">#808080</color>
+    <color name="blue">#299Af6</color>
+    <color name="color_0f87ff">#0f87ff</color>
+
+    <color name="color_f2f2f2">#f2f2f2</color>
+    <color name="background">#ffffff</color>
+    <color name="split_line">#11112233</color>
+    <color name="text1">#59B29C</color>
+    <color name="text2">#333333</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="color_27B6FF">#27B6FF</color>
+    <color name="color_bg_ffffffff">#00ffffff</color>
+    <color name="color_f7e1df">#f7e1df</color>
+    <color name="color_222222">#222222</color>
+    <color name="color_f4f4f4">#f4f4f4</color>
+    <color name="color_fe4a49">#fe4a49</color>
+
+    <color name="app_default_bg">#ECEDF1</color>
+
+    <!-- 分割线 -->
+    <color name="dc1">#dddddd</color>
+    <color name="dc2">#cccccc</color>
+    <color name="dc3">#e1e1e1</color>
+
+</resources>

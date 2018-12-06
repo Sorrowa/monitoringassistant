@@ -1,0 +1,27 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+
+    package="com.micheal.print">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <application android:allowBackup="true"
+        android:supportsRtl="true">
+        <activity android:name="com.micheal.print.BluetoothDeviceList"/>
+        <activity android:name="com.micheal.print.PortConfigurationActivity"/>
+        <activity android:name="com.micheal.print.PrintMainActivity"/>
+        <activity android:name="com.micheal.print.PrinterConnectDialog"/>
+
+        <service
+            android:name="com.gprinter.service.GpPrintService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="GpPrintService" >
+            <intent-filter>
+                <action android:name="com.gprinter.aidl.GpPrintService" />
+            </intent-filter>
+        </service>
+        <service android:name="com.gprinter.service.AllService" >
+        </service>
+    </application>
+
+</manifest>

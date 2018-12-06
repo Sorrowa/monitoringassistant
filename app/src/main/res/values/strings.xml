@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">嘉泽云监测</string>
+
+
+    <string name="back_str">返回</string>
+    <string name="close_str">| 关闭</string>
+
+</resources>

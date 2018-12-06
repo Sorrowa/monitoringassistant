@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="content_color">#343434</color>
+    <color name="tip_color">#6C6C6C</color>
+    <color name="retry_color">#C0C0C0</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+
+    <color name="dDVTransparentGray">#99000000</color>
+    <color name="dDVColorPrimary">@color/colorPrimary</color>
+
+    <color name="dialogplus_card_shadow">#D4D4D4</color>
+    <color name="dialogplus_black_overlay">#60000000</color>
+
+    <color name="status_layout_background_color">#EBEBEB</color>
+    <color name="status_layout_tip_text_color">#BFBFBF</color>
+    <color name="status_layout_click_view_text_color">#0084FF</color>
+
+    <!--TitleBarView背景色-->
+    <color name="colorTitleBackground">#FFFFFF</color>
+    <!--TitleBarView 文字颜色-->
+    <color name="colorTitleText">#393939</color>
+    <!--TitleBarView 下划线颜色-->
+    <color name="colorTitleDivider">#DCDCDC</color>
+
+</resources>

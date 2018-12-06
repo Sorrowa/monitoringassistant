@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/tab_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_knowledge_nor" />
+
+    <TextView
+        android:id="@+id/tab_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_4"
+        android:text="工作站"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/text_size_12" />
+
+</LinearLayout>

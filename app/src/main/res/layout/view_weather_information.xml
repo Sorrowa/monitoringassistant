@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="气象信息（选填）" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle"
+            android:text=""
+            android:rotation="90"/>
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <LinearLayout
+        android:id="@+id/layout_flow_information"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="天气" />
+
+            <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="气温" />
+
+            <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="气压" />
+
+            <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</merge>

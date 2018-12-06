@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#0f87ff"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/iv_left"
+                android:layout_width="35dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="14dp"
+                    android:src="@drawable/img_back" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="打印标签"
+                android:textColor="#ffffff"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btOpenDialogue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="#0f87ff"
+            android:onClick="openPortDialogueClicked"
+            android:text="连接蓝牙"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btPrintTestPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#00A398"
+            android:onClick="printTestPageClicked"
+            android:text="Print test page"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btGetStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#0f87ff"
+            android:onClick="getPrinterStatusClicked"
+            android:text="得到打印机状态"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btGetPrinterCommandType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#00A398"
+            android:onClick="getPrinterCommandTypeClicked"
+            android:text="Get command type"
+            android:visibility="gone" />
+
+        <!--    <Button
+                android:id="@+id/btPrintReceipt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:background="#00A398"
+                android:onClick="printReceiptClicked"
+                android:text="Print receipt" />-->
+
+        <!--   <Button
+               android:id="@+id/btPrintReceiptByArabic"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="10dip"
+               android:background="#00A398"
+               android:onClick="printArabicReceiptClicked"
+               android:text="Print arabic receipt"
+               android:visibility="gone" />
+   -->
+        <Button
+            android:id="@+id/btPrintLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#0f87ff"
+            android:onClick="printLabelClicked"
+            android:text="打印标签"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/etPrintCopies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:inputType="number"
+            android:text="10"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btPrintTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#00A398"
+            android:onClick="printTestClicked"
+            android:text="Continuous printing"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btCustomerDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#00A398"
+            android:onClick="customerDisplayerClicked"
+            android:text="CustomerDisplay"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:id="@+id/btCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="#00A398"
+            android:text="参与用户体验"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</ScrollView>

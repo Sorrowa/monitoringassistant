@@ -1,0 +1,151 @@
+ext {
+
+    android = [
+            compileSdkVersion: 27,
+            buildToolsVersion: "27.0.3",
+            minSdkVersion    : 16,
+            targetSdkVersion : 27,
+            versionCode      : 1,
+            versionName      : "1.0",
+
+            applicationId    : "cn.cdjzxy.monitoringassistant"
+    ]
+
+    version = [
+            androidSupportSdkVersion: "27.1.1",
+            retrofitSdkVersion      : "2.4.0",
+            dagger2SdkVersion       : "2.15",
+            glideSdkVersion         : "4.6.1",
+            butterknifeSdkVersion   : "8.8.1",
+            rxlifecycleSdkVersion   : "1.0",
+            rxlifecycle2SdkVersion  : "2.2.1",
+            espressoSdkVersion      : "3.0.2",
+            canarySdkVersion        : "1.6.1",
+            fastJsonVersion         : "1.1.67.android",
+            dartVersion             : "3.0.0"
+    ]
+
+    dependencies = [
+            //support
+            "appcompat-v7"             : "com.android.support:appcompat-v7:${version["androidSupportSdkVersion"]}",
+            "design"                   : "com.android.support:design:${version["androidSupportSdkVersion"]}",
+            "support-v4"               : "com.android.support:support-v4:${version["androidSupportSdkVersion"]}",
+            "cardview-v7"              : "com.android.support:cardview-v7:${version["androidSupportSdkVersion"]}",
+            "annotations"              : "com.android.support:support-annotations:${version["androidSupportSdkVersion"]}",
+            "recyclerview-v7"          : "com.android.support:recyclerview-v7:${version["androidSupportSdkVersion"]}",
+            "constraint-layout"        : "com.android.support.constraint:constraint-layout:1.1.2",
+
+            //network
+            "retrofit"                 : "com.squareup.retrofit2:retrofit:${version["retrofitSdkVersion"]}",
+            "retrofit-converter-gson"  : "com.squareup.retrofit2:converter-gson:${version["retrofitSdkVersion"]}",
+            "retrofit-adapter-rxjava"  : "com.squareup.retrofit2:adapter-rxjava:${version["retrofitSdkVersion"]}",
+            "retrofit-adapter-rxjava2" : "com.squareup.retrofit2:adapter-rxjava2:${version["retrofitSdkVersion"]}",
+            "okhttp3"                  : "com.squareup.okhttp3:okhttp:3.10.0",
+            "okhttp-urlconnection"     : "com.squareup.okhttp:okhttp-urlconnection:2.0.0",
+            "glide"                    : "com.github.bumptech.glide:glide:${version["glideSdkVersion"]}",
+            "glide-compiler"           : "com.github.bumptech.glide:compiler:${version["glideSdkVersion"]}",
+            "glide-loader-okhttp3"     : "com.github.bumptech.glide:okhttp3-integration:${version["glideSdkVersion"]}",
+            "picasso"                  : "com.squareup.picasso:picasso:2.5.2",
+
+            //view
+            "autolayout"               : "com.zhy:autolayout:1.4.5",
+            "butterknife"              : "com.jakewharton:butterknife:${version["butterknifeSdkVersion"]}",
+            "butterknife-compiler"     : "com.jakewharton:butterknife-compiler:${version["butterknifeSdkVersion"]}",
+            "pickerview"               : "com.contrarywind:Android-PickerView:4.1.6",
+            "photoview"                : "com.github.chrisbanes.photoview:library:1.2.3",
+            "numberprogressbar"        : "com.daimajia.numberprogressbar:library:1.2@aar",
+            "nineoldandroids"          : "com.nineoldandroids:library:2.4.0",
+            "paginate"                 : "com.github.markomilos:paginate:0.5.1",
+            "vlayout"                  : "com.alibaba.android:vlayout:1.1.0@aar",
+
+            "autosize"                 : "me.jessyan:autosize:1.1.0",
+
+            //rx2
+            "rxandroid2"               : "io.reactivex.rxjava2:rxandroid:2.0.2",
+            "rxjava2"                  : "io.reactivex.rxjava2:rxjava:2.1.12",
+            "rxlifecycle2"             : "com.trello.rxlifecycle2:rxlifecycle:${version["rxlifecycle2SdkVersion"]}",
+            "rxlifecycle2-components"  : "com.trello.rxlifecycle2:rxlifecycle-components:${version["rxlifecycle2SdkVersion"]}",
+            "rxcache2"                 : "com.github.VictorAlbertos.RxCache:runtime:1.8.3-2.x",
+            "rxpermissions2"           : "com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar",
+            "rxerrorhandler2"          : "me.jessyan:rxerrorhandler:2.1.1",
+            "rxcache-jolyglot-gson"    : "com.github.VictorAlbertos.Jolyglot:gson:0.0.3",
+
+            //tools
+            "dagger2"                  : "com.google.dagger:dagger:${version["dagger2SdkVersion"]}",
+            "dagger2-android"          : "com.google.dagger:dagger-android:${version["dagger2SdkVersion"]}",
+            "dagger2-android-support"  : "com.google.dagger:dagger-android-support:${version["dagger2SdkVersion"]}",
+            "dagger2-compiler"         : "com.google.dagger:dagger-compiler:${version["dagger2SdkVersion"]}",
+            "dagger2-android-processor": "com.google.dagger:dagger-android-processor:${version["dagger2SdkVersion"]}",
+            "androideventbus"          : "org.simple:androideventbus:1.0.5.1",
+            "otto"                     : "com.squareup:otto:1.3.8",
+            "gson"                     : "com.google.code.gson:gson:2.8.2",
+            "multidex"                 : "com.android.support:multidex:1.0.1",
+            "javax.annotation"         : "javax.annotation:jsr250-api:1.0",
+            "arouter"                  : "com.alibaba:arouter-api:1.3.1",
+            "arouter-compiler"         : "com.alibaba:arouter-compiler:1.1.4",
+            "progressmanager"          : "me.jessyan:progressmanager:1.5.0",
+            "retrofit-url-manager"     : "me.jessyan:retrofit-url-manager:1.4.0",
+            "lifecyclemodel"           : "me.jessyan:lifecyclemodel:1.0.1",
+            "guava"                    : "com.google.guava:guava:26.0-android",//谷歌Java核心库美化代码
+            "lombok"                   : "org.projectlombok:lombok:1.16.20",//代码注解工具
+            "fastjson"                 : "com.alibaba:fastjson:${version["fastJsonVersion"]}",
+
+            //dart 使用必须保证activity在同一包下才能被反射找到，同时model要遵照命名规范，对于按模块分包还是比较鸡肋
+            "dart"                     : "com.f2prateek.dart:dart:${version["dartVersion"]}",
+            "dart-compiler"            : "com.f2prateek.dart:dart-processor:${version["dartVersion"]}",
+            "dart-annotations"         : "com.f2prateek.dart:dart-annotations:${version["dartVersion"]}",
+            'dart-gradlePlugin'        : "com.f2prateek.dart:henson-plugin:${version["dartVersion"]}",
+            "henson"                   : "com.f2prateek.dart:henson:${version["dartVersion"]}",
+            "henson-compiler"          : "com.f2prateek.dart:henson-processor:${version["dartVersion"]}",
+
+            //WebView
+            "agentweb"                 : "com.just.agentweb:agentweb:4.0.2",// WebView工具库
+            "agentweb-download"        : "com.just.agentweb:download:4.0.2",//WebView工具库
+            "agentweb-filechooser"     : "com.just.agentweb:filechooser:4.0.2",//WebView工具库
+            "superWeb"                 : "com.github.Victory-Over:SuperWeb:v1.0.2",//WebView工具库
+
+            //QRCode
+            "bga-qrcode-zxing"         : "cn.bingoogolapple:bga-qrcode-zxing:1.3.4",// 二维码工具库
+            "bga-qrcode-zbar"          : "cn.bingoogolapple:bga-qrcode-zbar:1.3.4",// 条形码工具库
+
+            //test
+            "junit"                    : "junit:junit:4.12",
+            "androidJUnitRunner"       : "android.support.test.runner.AndroidJUnitRunner",
+            "runner"                   : "com.android.support.test:runner:1.0.2",
+            "espresso-core"            : "com.android.support.test.espresso:espresso-core:${version["espressoSdkVersion"]}",
+            "espresso-contrib"         : "com.android.support.test.espresso:espresso-contrib:${version["espressoSdkVersion"]}",
+            "espresso-intents"         : "com.android.support.test.espresso:espresso-intents:${version["espressoSdkVersion"]}",
+            "mockito-core"             : "org.mockito:mockito-core:1.+",
+            "timber"                   : "com.jakewharton.timber:timber:4.7.0",
+            "logger"                   : "com.orhanobut:logger:2.2.0",
+            "canary-debug"             : "com.squareup.leakcanary:leakcanary-android:${version["canarySdkVersion"]}",
+            "canary-release"           : "com.squareup.leakcanary:leakcanary-android-no-op:${version["canarySdkVersion"]}",
+            "canary-support"           : "com.squareup.leakcanary:leakcanary-support-fragment:${version["canarySdkVersion"]}",
+            "umeng-analytics"          : "com.umeng.analytics:analytics:6.0.1",
+
+            //字体
+            "calligraphy"              : "io.github.inflationx:calligraphy3:3.0.0",
+            "calligraphy-viewpump"     : "io.github.inflationx:viewpump:1.0.0",
+
+            "MPAndroidChart"           : "com.github.PhilJay:MPAndroidChart:v3.1.0-alpha",
+
+            //GreenDao
+            "greendao"                 : "org.greenrobot:greendao:3.2.2",
+            "androidDatabaseSqlcipher" : "net.zetetic:android-database-sqlcipher:3.5.7",//数据库加密库
+            "conceal"                  : "com.facebook.conceal:conceal:2.0.1@aar",//加密库
+            "hawk"                     : "com.orhanobut:hawk:2.0.1",//类似prefrence
+
+            //layout、view
+            "android-gif-drawable"     : "pl.droidsonroids.gif:android-gif-drawable:1.2.14",//gif加载库
+            "roundedimageview"         : "com.makeramen:roundedimageview:2.3.0",//圆角图片
+            "circleimageview"          : "de.hdodenhof:circleimageview:2.2.0",
+            "smartRefreshLayout"       : "com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-12",
+            "smartRefreshHeader"       : "com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-12",
+            "banner"                   : "com.youth.banner:banner:1.4.10",
+            "superTextView"            : "com.github.lygttpod:SuperTextView:2.1.8",
+            "uIWidget"                 : "com.github.AriesHoo.UIWidget:widget-core:3.2.6",
+            "filedownloader"           : "com.liulishuo.filedownloader:library:1.7.5",
+
+    ]
+
+}
