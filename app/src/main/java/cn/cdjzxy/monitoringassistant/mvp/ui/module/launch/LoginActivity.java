@@ -152,7 +152,7 @@ public class LoginActivity extends BaseActivity<AppPresenter> implements IView {
 
         initAppDataDir();
 
-        //        startRepositoeyDownload("renfang", "123456");
+                startRepositoeyDownload("renfang", "123456");
         //        startRepositoeyDownload(name, pwd);
         mPresenter.login(Message.obtain(this, new Object()), name, pwd, this);
     }

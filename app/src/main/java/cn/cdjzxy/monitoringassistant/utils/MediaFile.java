@@ -2,7 +2,8 @@ package cn.cdjzxy.monitoringassistant.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+
+import com.zhy.base.fileprovider.FileProvider7;
 
 import java.io.File;
 import java.util.HashMap;
@@ -309,7 +310,7 @@ public class MediaFile {
         File file = new File(filePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//设置标记
         intent.setAction(Intent.ACTION_VIEW);//动作，查看
-        intent.setDataAndType(Uri.fromFile(file), getMimeTypeForFile(filePath));//设置类型
+        FileProvider7.setIntentDataAndType(context, intent, getMimeTypeForFile(filePath), file, true);
         context.startActivity(intent);
     }
 

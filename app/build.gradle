@@ -101,6 +101,7 @@ dependencies {
     implementation rootProject.ext.dependencies["greendao"]
     implementation rootProject.ext.dependencies["MPAndroidChart"]
     implementation rootProject.ext.dependencies["filedownloader"]
+    implementation rootProject.ext.dependencies["fileprovider"]
     annotationProcessor(rootProject.ext.dependencies["dagger2-compiler"]) {
         exclude module: 'support-annotations'
     }
