@@ -26,16 +26,8 @@ public class TagsDao extends AbstractDao<Tags, String> {
     public static class Properties {
         public final static Property Id = new Property(0, String.class, "Id", true, "ID");
         public final static Property Name = new Property(1, String.class, "Name", false, "NAME");
-        public final static Property Value = new Property(2, String.class, "Value", false, "VALUE");
-        public final static Property ParentId = new Property(3, String.class, "ParentId", false, "PARENT_ID");
-        public final static Property Level = new Property(4, int.class, "Level", false, "LEVEL");
-        public final static Property Type = new Property(5, int.class, "Type", false, "TYPE");
-        public final static Property UpdateTime = new Property(6, String.class, "UpdateTime", false, "UPDATE_TIME");
-        public final static Property Ext1 = new Property(7, int.class, "Ext1", false, "EXT1");
-        public final static Property Ext2 = new Property(8, String.class, "Ext2", false, "EXT2");
-        public final static Property OrderIndex = new Property(9, int.class, "OrderIndex", false, "ORDER_INDEX");
-        public final static Property Display = new Property(10, boolean.class, "Display", false, "DISPLAY");
-        public final static Property Items = new Property(11, String.class, "Items", false, "ITEMS");
+        public final static Property ParentId = new Property(2, String.class, "ParentId", false, "PARENT_ID");
+        public final static Property Level = new Property(3, int.class, "level", false, "LEVEL");
     }
 
 
@@ -53,16 +45,8 @@ public class TagsDao extends AbstractDao<Tags, String> {
         db.execSQL("CREATE TABLE " + constraint + "\"TAGS\" (" + //
                 "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: Id
                 "\"NAME\" TEXT," + // 1: Name
-                "\"VALUE\" TEXT," + // 2: Value
-                "\"PARENT_ID\" TEXT," + // 3: ParentId
-                "\"LEVEL\" INTEGER NOT NULL ," + // 4: Level
-                "\"TYPE\" INTEGER NOT NULL ," + // 5: Type
-                "\"UPDATE_TIME\" TEXT," + // 6: UpdateTime
-                "\"EXT1\" INTEGER NOT NULL ," + // 7: Ext1
-                "\"EXT2\" TEXT," + // 8: Ext2
-                "\"ORDER_INDEX\" INTEGER NOT NULL ," + // 9: OrderIndex
-                "\"DISPLAY\" INTEGER NOT NULL ," + // 10: Display
-                "\"ITEMS\" TEXT);"); // 11: Items
+                "\"PARENT_ID\" TEXT," + // 2: ParentId
+                "\"LEVEL\" INTEGER NOT NULL );"); // 3: level
     }
 
     /** Drops the underlying database table. */
@@ -85,35 +69,11 @@ public class TagsDao extends AbstractDao<Tags, String> {
             stmt.bindString(2, Name);
         }
  
-        String Value = entity.getValue();
-        if (Value != null) {
-            stmt.bindString(3, Value);
-        }
- 
         String ParentId = entity.getParentId();
         if (ParentId != null) {
-            stmt.bindString(4, ParentId);
+            stmt.bindString(3, ParentId);
         }
-        stmt.bindLong(5, entity.getLevel());
-        stmt.bindLong(6, entity.getType());
- 
-        String UpdateTime = entity.getUpdateTime();
-        if (UpdateTime != null) {
-            stmt.bindString(7, UpdateTime);
-        }
-        stmt.bindLong(8, entity.getExt1());
- 
-        String Ext2 = entity.getExt2();
-        if (Ext2 != null) {
-            stmt.bindString(9, Ext2);
-        }
-        stmt.bindLong(10, entity.getOrderIndex());
-        stmt.bindLong(11, entity.getDisplay() ? 1L: 0L);
- 
-        String Items = entity.getItems();
-        if (Items != null) {
-            stmt.bindString(12, Items);
-        }
+        stmt.bindLong(4, entity.getLevel());
     }
 
     @Override
@@ -130,35 +90,11 @@ public class TagsDao extends AbstractDao<Tags, String> {
             stmt.bindString(2, Name);
         }
  
-        String Value = entity.getValue();
-        if (Value != null) {
-            stmt.bindString(3, Value);
-        }
- 
         String ParentId = entity.getParentId();
         if (ParentId != null) {
-            stmt.bindString(4, ParentId);
+            stmt.bindString(3, ParentId);
         }
-        stmt.bindLong(5, entity.getLevel());
-        stmt.bindLong(6, entity.getType());
- 
-        String UpdateTime = entity.getUpdateTime();
-        if (UpdateTime != null) {
-            stmt.bindString(7, UpdateTime);
-        }
-        stmt.bindLong(8, entity.getExt1());
- 
-        String Ext2 = entity.getExt2();
-        if (Ext2 != null) {
-            stmt.bindString(9, Ext2);
-        }
-        stmt.bindLong(10, entity.getOrderIndex());
-        stmt.bindLong(11, entity.getDisplay() ? 1L: 0L);
- 
-        String Items = entity.getItems();
-        if (Items != null) {
-            stmt.bindString(12, Items);
-        }
+        stmt.bindLong(4, entity.getLevel());
     }
 
     @Override
@@ -171,16 +107,8 @@ public class TagsDao extends AbstractDao<Tags, String> {
         Tags entity = new Tags( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // Id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // Name
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // Value
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // ParentId
-            cursor.getInt(offset + 4), // Level
-            cursor.getInt(offset + 5), // Type
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // UpdateTime
-            cursor.getInt(offset + 7), // Ext1
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // Ext2
-            cursor.getInt(offset + 9), // OrderIndex
-            cursor.getShort(offset + 10) != 0, // Display
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11) // Items
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // ParentId
+            cursor.getInt(offset + 3) // level
         );
         return entity;
     }
@@ -189,16 +117,8 @@ public class TagsDao extends AbstractDao<Tags, String> {
     public void readEntity(Cursor cursor, Tags entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setValue(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setParentId(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLevel(cursor.getInt(offset + 4));
-        entity.setType(cursor.getInt(offset + 5));
-        entity.setUpdateTime(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setExt1(cursor.getInt(offset + 7));
-        entity.setExt2(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setOrderIndex(cursor.getInt(offset + 9));
-        entity.setDisplay(cursor.getShort(offset + 10) != 0);
-        entity.setItems(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setParentId(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setLevel(cursor.getInt(offset + 3));
      }
     
     @Override

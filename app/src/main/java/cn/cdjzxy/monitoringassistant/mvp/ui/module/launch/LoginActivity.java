@@ -22,10 +22,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
 import cn.cdjzxy.monitoringassistant.services.RepositoryService;
@@ -36,7 +35,7 @@ import cn.cdjzxy.monitoringassistant.widgets.ClearEditText;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class LoginActivity extends BaseActivity<AppPresenter> implements IView {
+public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
 
     @BindView(R.id.et_name)
     ClearEditText etName;
@@ -54,9 +53,9 @@ public class LoginActivity extends BaseActivity<AppPresenter> implements IView {
 
     @Nullable
     @Override
-    public AppPresenter obtainPresenter() {
+    public ApiPresenter obtainPresenter() {
         mAppComponent = ArtUtils.obtainAppComponentFromContext(this);
-        return new AppPresenter(mAppComponent);
+        return new ApiPresenter(mAppComponent);
     }
 
     @Override
@@ -152,9 +151,11 @@ public class LoginActivity extends BaseActivity<AppPresenter> implements IView {
 
         initAppDataDir();
 
-                startRepositoeyDownload("renfang", "123456");
+
         //        startRepositoeyDownload(name, pwd);
+        //        startRepositoeyDownload("renfang", "123456");
         mPresenter.login(Message.obtain(this, new Object()), name, pwd, this);
+
     }
 
     /**
@@ -231,6 +232,5 @@ public class LoginActivity extends BaseActivity<AppPresenter> implements IView {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
-
 
 }

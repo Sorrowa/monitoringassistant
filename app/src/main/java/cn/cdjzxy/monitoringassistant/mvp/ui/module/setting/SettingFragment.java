@@ -16,13 +16,17 @@ import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
+import org.simple.eventbus.EventBus;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
+import cn.cdjzxy.monitoringassistant.utils.DialogUtil;
 
 /**
  * 设置
@@ -77,7 +81,7 @@ public class SettingFragment extends BaseFragment {
                 showClearDialog();
                 break;
             case R.id.stv_modify_pwd:
-                ArtUtils.startActivity(PwdModifyActivity.class);
+                EventBus.getDefault().post(7, EventBusTags.TAG_MODIFY_PWD);
                 break;
             case R.id.stv_about:
                 ArtUtils.startActivity(AboutActivity.class);
@@ -133,23 +137,27 @@ public class SettingFragment extends BaseFragment {
 
 
     private void showLogoutDialog() {
-        final Dialog dialog = new AlertDialog.Builder(getContext())
-                //                .setTitle("请做出选择")
-                .setMessage("确定退出登录？")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        UserInfoHelper.get().saveUserLoginStatee(false);
-                        ArtUtils.startActivity(LoginActivity.class);
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        dialog.show();
+        DialogUtil.createDialog(getContext(), "提示", "确定退出登录？");
+
+//        final Dialog dialog = new AlertDialog.Builder(getContext())
+//                //                .setTitle("请做出选择")
+//                .setMessage("确定退出登录？")
+//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        UserInfoHelper.get().saveUserLoginStatee(false);
+//                        ArtUtils.startActivity(LoginActivity.class);
+//                    }
+//                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                }).create();
+//        dialog.show();
     }
 }

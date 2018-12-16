@@ -15,8 +15,8 @@ public class DBHelper {
     private static DBHelper   sDBHelper;
 
     private DBHelper() {
-    }
 
+    }
 
     /**
      * 初始化

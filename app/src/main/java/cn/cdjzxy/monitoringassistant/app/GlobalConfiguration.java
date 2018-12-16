@@ -57,8 +57,8 @@ public class GlobalConfiguration implements ConfigModule {
                     @Override
                     public void configOkhttp(Context context, OkHttpClient.Builder okHttpBuilder) {
                         okHttpBuilder.connectTimeout(6, TimeUnit.SECONDS);
-                        ProgressManager.getInstance().with(okHttpBuilder);
-                        RetrofitUrlManager.getInstance().with(okHttpBuilder);
+//                        ProgressManager.getInstance().with(okHttpBuilder);
+//                        RetrofitUrlManager.getInstance().with(okHttpBuilder);
                     }
                 })
                 .rxCacheConfiguration(new ClientModule.RxCacheConfiguration() {//配置RxCache

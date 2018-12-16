@@ -11,24 +11,22 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 
-public class AboutActivity extends BaseTitileActivity<AppPresenter> {
+public class AboutActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.getLinearLayout(Gravity.LEFT).removeViewAt(1);
         titleBar.setTitleMainText("关于我们");
-        titleBar.setTitleMainTextColor(Color.WHITE);
     }
 
     @Nullable
     @Override
-    public AppPresenter obtainPresenter() {
-        return new AppPresenter(ArtUtils.obtainAppComponentFromContext(this));
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
     }
 
     @Override

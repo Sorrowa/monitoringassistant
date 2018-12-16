@@ -1,136 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <RelativeLayout style="@style/BasicInfoItemStyle">
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样日期" />
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样日期" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="2018-09-30"
+            android:textColor="#333333"
+            android:textSize="@dimen/text_size_13" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样人" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="降水类型"
+            android:textColor="#333333" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样点位"
+            android:textColor="#333333" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="点位编号" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样高度" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样器接雨面积（㎡）" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样方法" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="监测仪器名称、型号及编号（溯源信息）" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_flow_information" />
+
+    <include layout="@layout/view_add_photo" />
+
+</LinearLayout>
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="2018-09-30"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样人" />
-
-
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="降水类型"
-                android:textColor="#333333" />
-
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样点位"
-                android:textColor="#333333" />
-
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="点位编号" />
-
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样高度" />
-
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样器接雨面积（㎡）" />
-
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样方法" />
-
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测仪器名称、型号及编号（溯源信息）" />
-
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_flow_information" />
-
-        <include layout="@layout/view_add_photo" />
-
-    </LinearLayout>
-
-</android.support.v4.widget.NestedScrollView>

@@ -1,17 +1,16 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class MethodTagRelation {
 
-
     /**
-     * id : f7822132-7a9c-4616-b98f-002934da5f0d
-     * methodId : 2b9cdfef-b6c9-4a3f-92fd-0ec5ac48915a
-     * tagId : 17ab6f44-cec6-4e45-94b1-b81f7158119e
+     * Id : f7822132-7a9c-4616-b98f-002934da5f0d
+     * MethodId : 2b9cdfef-b6c9-4a3f-92fd-0ec5ac48915a
+     * TagId : 17ab6f44-cec6-4e45-94b1-b81f7158119e
      */
     @Id
     private String Id;
@@ -44,6 +43,5 @@ public class MethodTagRelation {
     public void setTagId(String TagId) {
         this.TagId = TagId;
     }
-
 
 }

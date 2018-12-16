@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <cn.cdjzxy.monitoringassistant.widgets.CustomTab
+            android:id="@+id/tabview"
+            android:layout_width="258dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_4" />
+
+        <View
+            android:layout_width="@dimen/division_line"
+            android:layout_height="match_parent"
+            android:background="@color/dc_c1c1c1" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_point"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_4" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

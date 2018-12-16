@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height_dp_52"
+        android:background="#F5F5F5">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:drawablePadding="@dimen/dp_16"
+            android:drawableRight="@mipmap/ic_has_next"
+            android:gravity="center_vertical"
+            android:text="样品采集"
+            android:textColor="#303030"
+            android:textSize="@dimen/text_size_14" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:gravity="center_vertical"
+            android:text="样品详情"
+            android:textColor="#676767"
+            android:textSize="@dimen/text_size_14" />
+
+
+    </LinearLayout>
+
+    <include layout="@layout/view_line" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="样品编码" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="频次" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="开始时间" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="结束时间" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="降水量（mm）" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="雨水体积（ml）" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="备注" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height_dp_52"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@mipmap/ic_add_parallel"
+                android:drawablePadding="@dimen/dp_12"
+                android:text="删除"
+                android:textColor="@color/text_color_2b99ff"
+                android:textSize="@dimen/text_size_14" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/division_line"
+                android:layout_alignParentTop="true"
+                android:background="@color/dc1" />
+
+
+            <View
+                android:layout_width="@dimen/division_line"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@color/dc1" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@mipmap/ic_add_blank"
+                android:drawablePadding="@dimen/dp_12"
+                android:text="保存"
+                android:textColor="@color/text_color_2b99ff"
+                android:textSize="@dimen/text_size_14" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/division_line"
+                android:layout_alignParentTop="true"
+                android:background="@color/dc1" />
+
+            <View
+                android:layout_width="@dimen/division_line"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@color/dc1" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

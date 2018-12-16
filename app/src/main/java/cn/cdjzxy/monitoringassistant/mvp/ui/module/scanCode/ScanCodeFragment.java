@@ -27,9 +27,9 @@ import cn.bingoogolapple.qrcode.core.QRCodeView;
 import cn.bingoogolapple.qrcode.zxing.ZXingView;
 import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.QrMoreInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
@@ -40,7 +40,7 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 /**
  * 扫码
  */
-public class ScanCodeFragment extends BaseFragment<AppPresenter> implements IView {
+public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IView {
 
     Unbinder unbinder;
     @BindView(R.id.qr)
@@ -133,9 +133,9 @@ public class ScanCodeFragment extends BaseFragment<AppPresenter> implements IVie
 
     @Nullable
     @Override
-    public AppPresenter obtainPresenter() {
+    public ApiPresenter obtainPresenter() {
         mAppComponent = ArtUtils.obtainAppComponentFromContext(getContext());
-        return new AppPresenter(mAppComponent);
+        return new ApiPresenter(mAppComponent);
     }
 
     @Override

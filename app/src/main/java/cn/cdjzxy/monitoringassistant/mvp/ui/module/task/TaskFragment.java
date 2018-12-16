@@ -1,10 +1,10 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
@@ -47,8 +47,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitationSampling.PrecipitationSamplingHandoverRecordActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewaterSampling.WastewaterSamplingHandoverRecordActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 
 /**
  * 任务
@@ -134,6 +133,7 @@ public class TaskFragment extends BaseFragment {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(false);//绘制纵轴线
         xAxis.setDrawGridLines(false); //绘制横轴线
+        xAxis.setAxisLineColor(ContextCompat.getColor(getContext(), R.color.dc_d1d1d1));
         xAxis.setGranularity(1);//设置缩放时保持横坐标值固定
 
         xAxis.setValueFormatter(new IAxisValueFormatter() {//绘制横坐标值
@@ -148,6 +148,7 @@ public class TaskFragment extends BaseFragment {
         leftAxis.setLabelCount(5, false);//设置梯度个数
         leftAxis.setAxisMinimum(0f);//设置会影响绘制
         leftAxis.setDrawGridLines(true); //绘制横轴线
+        leftAxis.setAxisLineColor(ContextCompat.getColor(getContext(), R.color.dc_d1d1d1));
 
         setSamplingViewData();
     }
@@ -167,10 +168,11 @@ public class TaskFragment extends BaseFragment {
 
         SpannableString spannableString = new SpannableString("待采样\n\n\n26");
         //设置字体大小
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_14)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_18)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_16)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         //设置字体颜色
-        spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#41a5ff")), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         pieChart.setCenterText(spannableString);
 
         setPendingSamplingViewData();
@@ -181,7 +183,7 @@ public class TaskFragment extends BaseFragment {
         pieDataSet.setValueLinePart1Length(0.2f);
         pieDataSet.setValueLinePart2Length(0.4f);
         pieDataSet.setDrawValues(true);
-        pieDataSet.setValueLineColor(Color.parseColor("#d1d1d1"));
+        pieDataSet.setValueLineColor(ContextCompat.getColor(getContext(), R.color.dc_d1d1d1));
         pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
     }
 
@@ -203,6 +205,7 @@ public class TaskFragment extends BaseFragment {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(false);//绘制纵轴线
         xAxis.setDrawGridLines(false); //绘制横轴线
+        xAxis.setAxisLineColor(ContextCompat.getColor(getContext(), R.color.dc_d1d1d1));
         xAxis.setGranularity(1);//设置缩放时保持横坐标值固定
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -214,7 +217,7 @@ public class TaskFragment extends BaseFragment {
         YAxis leftAxis = lineChart.getAxisLeft();
         leftAxis.setLabelCount(5, false);//设置梯度个数
         leftAxis.setAxisMinimum(0f);//设置会影绘制
-
+        leftAxis.setAxisLineColor(ContextCompat.getColor(getContext(), R.color.dc_d1d1d1));
 
         setReceivedViewData();
     }
@@ -233,10 +236,11 @@ public class TaskFragment extends BaseFragment {
 
         SpannableString spannableString = new SpannableString("待收样\n\n\n30");
         //设置字体大小
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_14)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_18)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_16)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         //设置字体颜色
-        spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#41a5ff")), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         pieChart1.setCenterText(spannableString);
 
         setWaitReceivedViewData();
@@ -245,7 +249,7 @@ public class TaskFragment extends BaseFragment {
         pieDataSet.setValueLinePart1OffsetPercentage(80.f);
         pieDataSet.setValueLinePart1Length(0.2f);
         pieDataSet.setValueLinePart2Length(0.4f);
-        pieDataSet.setValueLineColor(Color.parseColor("#d1d1d1"));
+        pieDataSet.setValueLineColor(ContextCompat.getColor(getContext(), R.color.dc_d1d1d1));
         pieDataSet.setDrawValues(true);
         pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
     }
@@ -260,16 +264,15 @@ public class TaskFragment extends BaseFragment {
         }
 
         BarDataSet barDataSet = new BarDataSet(barEntries, "");
-        barDataSet.setColor(Color.parseColor("#41A5FF"));
+        barDataSet.setColor(ContextCompat.getColor(getContext(), R.color.bg_color_2b99ff));
         barDataSet.setDrawValues(true);
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
         dataSets.add(barDataSet);
 
         BarData data = new BarData(dataSets);
-
         data.setBarWidth(0.35f);
-
+        data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.text_color_333333));
         barChart.setData(data);
         barChart.setFitBars(true);
     }
@@ -288,20 +291,15 @@ public class TaskFragment extends BaseFragment {
         dataSet.setIconsOffset(new MPPointF(0, 40));
         dataSet.setSelectionShift(5f);
 
-        // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
-
-
-        colors.add(Color.parseColor("#ffd269"));
-        colors.add(Color.parseColor("#41af91"));
-
-
+        colors.add(ContextCompat.getColor(getContext(), R.color.bg_color_ffd269));
+        colors.add(ContextCompat.getColor(getContext(), R.color.bg_color_41af91));
         dataSet.setColors(colors);
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(10f);
-        data.setValueTextColor(Color.parseColor("#333333"));
+        data.setValueTextSize(12f);
+        data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.text_color_333333));
         data.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -323,20 +321,17 @@ public class TaskFragment extends BaseFragment {
         }
         LineDataSet lineDataSet = new LineDataSet(entries, "");
 
-        lineDataSet.setColor(Color.parseColor("#ff9126"));
-        lineDataSet.setCircleColor(Color.parseColor("#ff9126"));
+        lineDataSet.setColor(ContextCompat.getColor(getContext(), R.color.bg_color_ff912d));
+        lineDataSet.setCircleColor(ContextCompat.getColor(getContext(), R.color.bg_color_ff912d));
         lineDataSet.setLineWidth(1f);
         lineDataSet.setCircleRadius(3f);
         lineDataSet.setDrawCircleHole(false);
-        lineDataSet.setValueTextSize(9f);
         lineDataSet.setFormLineWidth(1f);
         lineDataSet.setFormSize(15.f);
         lineDataSet.setDrawValues(false);
 
-        // create a data object with the datasets
         LineData data = new LineData(lineDataSet);
-
-        // set data
+        data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.text_color_333333));
         lineChart.setData(data);
     }
 
@@ -358,16 +353,16 @@ public class TaskFragment extends BaseFragment {
         ArrayList<Integer> colors = new ArrayList<Integer>();
 
 
-        colors.add(Color.parseColor("#c23531"));
-        colors.add(Color.parseColor("#2f4554"));
+        colors.add(ContextCompat.getColor(getContext(), R.color.bg_color_c23531));
+        colors.add(ContextCompat.getColor(getContext(), R.color.bg_color_2f4554));
 
 
         dataSet.setColors(colors);
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(10f);
-        data.setValueTextColor(Color.parseColor("#333333"));
+        data.setValueTextSize(12f);
+        data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.text_color_333333));
         data.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -396,13 +391,13 @@ public class TaskFragment extends BaseFragment {
                 ArtUtils.makeText(getContext(), "已采样");
                 break;
             case R.id.btn_wait_sampling:
-                ArtUtils.startActivity(PrecipitationSamplingHandoverRecordActivity.class);
+                ArtUtils.startActivity(TaskActivity.class);
                 break;
             case R.id.btn_receive:
                 ArtUtils.makeText(getContext(), "已收样");
                 break;
             case R.id.btn_wait_receive:
-                ArtUtils.startActivity(WastewaterSamplingHandoverRecordActivity.class);
+                ArtUtils.startActivity(WastewaterActivity.class);
                 break;
         }
     }

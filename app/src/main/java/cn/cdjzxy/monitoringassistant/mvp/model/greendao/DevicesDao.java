@@ -30,34 +30,17 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         public final static Property SystemCode = new Property(3, String.class, "SystemCode", false, "SYSTEM_CODE");
         public final static Property DevCode = new Property(4, String.class, "DevCode", false, "DEV_CODE");
         public final static Property DepartmentId = new Property(5, String.class, "DepartmentId", false, "DEPARTMENT_ID");
-        public final static Property Company = new Property(6, String.class, "Company", false, "COMPANY");
-        public final static Property PurchasingDate = new Property(7, String.class, "PurchasingDate", false, "PURCHASING_DATE");
-        public final static Property RePrice = new Property(8, int.class, "RePrice", false, "RE_PRICE");
-        public final static Property StoreLoaction = new Property(9, String.class, "StoreLoaction", false, "STORE_LOACTION");
-        public final static Property ExpireDate = new Property(10, String.class, "ExpireDate", false, "EXPIRE_DATE");
-        public final static Property Manager = new Property(11, String.class, "Manager", false, "MANAGER");
-        public final static Property State = new Property(12, int.class, "State", false, "STATE");
-        public final static Property GroupId = new Property(13, String.class, "GroupId", false, "GROUP_ID");
+        public final static Property DepartmentName = new Property(6, String.class, "DepartmentName", false, "DEPARTMENT_NAME");
+        public final static Property Company = new Property(7, String.class, "Company", false, "COMPANY");
+        public final static Property PurchasingDate = new Property(8, String.class, "PurchasingDate", false, "PURCHASING_DATE");
+        public final static Property RePrice = new Property(9, int.class, "RePrice", false, "RE_PRICE");
+        public final static Property StoreLoaction = new Property(10, String.class, "StoreLoaction", false, "STORE_LOACTION");
+        public final static Property ExpireDate = new Property(11, String.class, "ExpireDate", false, "EXPIRE_DATE");
+        public final static Property Manager = new Property(12, String.class, "Manager", false, "MANAGER");
+        public final static Property State = new Property(13, int.class, "State", false, "STATE");
         public final static Property IsForceChecked = new Property(14, boolean.class, "IsForceChecked", false, "IS_FORCE_CHECKED");
         public final static Property CertCode = new Property(15, String.class, "CertCode", false, "CERT_CODE");
-        public final static Property UpdateTime = new Property(16, String.class, "UpdateTime", false, "UPDATE_TIME");
-        public final static Property Ext1 = new Property(17, String.class, "Ext1", false, "EXT1");
-        public final static Property Ext2 = new Property(18, String.class, "Ext2", false, "EXT2");
-        public final static Property Ext3 = new Property(19, String.class, "Ext3", false, "EXT3");
-        public final static Property StateComment = new Property(20, String.class, "StateComment", false, "STATE_COMMENT");
-        public final static Property Supplier = new Property(21, String.class, "Supplier", false, "SUPPLIER");
-        public final static Property SupplierContact = new Property(22, String.class, "SupplierContact", false, "SUPPLIER_CONTACT");
-        public final static Property SupplierPhone = new Property(23, String.class, "SupplierPhone", false, "SUPPLIER_PHONE");
-        public final static Property SactoryContact = new Property(24, String.class, "SactoryContact", false, "SACTORY_CONTACT");
-        public final static Property SactoryPhone = new Property(25, String.class, "SactoryPhone", false, "SACTORY_PHONE");
-        public final static Property Sroperties = new Property(26, String.class, "Sroperties", false, "SROPERTIES");
-        public final static Property Sgencies = new Property(27, String.class, "Sgencies", false, "SGENCIES");
-        public final static Property SourceWay = new Property(28, String.class, "SourceWay", false, "SOURCE_WAY");
-        public final static Property SourceDate = new Property(29, String.class, "SourceDate", false, "SOURCE_DATE");
-        public final static Property SsLend = new Property(30, boolean.class, "SsLend", false, "SS_LEND");
-        public final static Property SepartmentName = new Property(31, String.class, "SepartmentName", false, "SEPARTMENT_NAME");
-        public final static Property HasUploadFile = new Property(32, boolean.class, "HasUploadFile", false, "HAS_UPLOAD_FILE");
-        public final static Property StatusStr = new Property(33, String.class, "StatusStr", false, "STATUS_STR");
+        public final static Property SourceWay = new Property(16, String.class, "SourceWay", false, "SOURCE_WAY");
     }
 
 
@@ -79,34 +62,17 @@ public class DevicesDao extends AbstractDao<Devices, String> {
                 "\"SYSTEM_CODE\" TEXT," + // 3: SystemCode
                 "\"DEV_CODE\" TEXT," + // 4: DevCode
                 "\"DEPARTMENT_ID\" TEXT," + // 5: DepartmentId
-                "\"COMPANY\" TEXT," + // 6: Company
-                "\"PURCHASING_DATE\" TEXT," + // 7: PurchasingDate
-                "\"RE_PRICE\" INTEGER NOT NULL ," + // 8: RePrice
-                "\"STORE_LOACTION\" TEXT," + // 9: StoreLoaction
-                "\"EXPIRE_DATE\" TEXT," + // 10: ExpireDate
-                "\"MANAGER\" TEXT," + // 11: Manager
-                "\"STATE\" INTEGER NOT NULL ," + // 12: State
-                "\"GROUP_ID\" TEXT," + // 13: GroupId
+                "\"DEPARTMENT_NAME\" TEXT," + // 6: DepartmentName
+                "\"COMPANY\" TEXT," + // 7: Company
+                "\"PURCHASING_DATE\" TEXT," + // 8: PurchasingDate
+                "\"RE_PRICE\" INTEGER NOT NULL ," + // 9: RePrice
+                "\"STORE_LOACTION\" TEXT," + // 10: StoreLoaction
+                "\"EXPIRE_DATE\" TEXT," + // 11: ExpireDate
+                "\"MANAGER\" TEXT," + // 12: Manager
+                "\"STATE\" INTEGER NOT NULL ," + // 13: State
                 "\"IS_FORCE_CHECKED\" INTEGER NOT NULL ," + // 14: IsForceChecked
                 "\"CERT_CODE\" TEXT," + // 15: CertCode
-                "\"UPDATE_TIME\" TEXT," + // 16: UpdateTime
-                "\"EXT1\" TEXT," + // 17: Ext1
-                "\"EXT2\" TEXT," + // 18: Ext2
-                "\"EXT3\" TEXT," + // 19: Ext3
-                "\"STATE_COMMENT\" TEXT," + // 20: StateComment
-                "\"SUPPLIER\" TEXT," + // 21: Supplier
-                "\"SUPPLIER_CONTACT\" TEXT," + // 22: SupplierContact
-                "\"SUPPLIER_PHONE\" TEXT," + // 23: SupplierPhone
-                "\"SACTORY_CONTACT\" TEXT," + // 24: SactoryContact
-                "\"SACTORY_PHONE\" TEXT," + // 25: SactoryPhone
-                "\"SROPERTIES\" TEXT," + // 26: Sroperties
-                "\"SGENCIES\" TEXT," + // 27: Sgencies
-                "\"SOURCE_WAY\" TEXT," + // 28: SourceWay
-                "\"SOURCE_DATE\" TEXT," + // 29: SourceDate
-                "\"SS_LEND\" INTEGER NOT NULL ," + // 30: SsLend
-                "\"SEPARTMENT_NAME\" TEXT," + // 31: SepartmentName
-                "\"HAS_UPLOAD_FILE\" INTEGER NOT NULL ," + // 32: HasUploadFile
-                "\"STATUS_STR\" TEXT);"); // 33: StatusStr
+                "\"SOURCE_WAY\" TEXT);"); // 16: SourceWay
     }
 
     /** Drops the underlying database table. */
@@ -149,37 +115,37 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             stmt.bindString(6, DepartmentId);
         }
  
+        String DepartmentName = entity.getDepartmentName();
+        if (DepartmentName != null) {
+            stmt.bindString(7, DepartmentName);
+        }
+ 
         String Company = entity.getCompany();
         if (Company != null) {
-            stmt.bindString(7, Company);
+            stmt.bindString(8, Company);
         }
  
         String PurchasingDate = entity.getPurchasingDate();
         if (PurchasingDate != null) {
-            stmt.bindString(8, PurchasingDate);
+            stmt.bindString(9, PurchasingDate);
         }
-        stmt.bindLong(9, entity.getRePrice());
+        stmt.bindLong(10, entity.getRePrice());
  
         String StoreLoaction = entity.getStoreLoaction();
         if (StoreLoaction != null) {
-            stmt.bindString(10, StoreLoaction);
+            stmt.bindString(11, StoreLoaction);
         }
  
         String ExpireDate = entity.getExpireDate();
         if (ExpireDate != null) {
-            stmt.bindString(11, ExpireDate);
+            stmt.bindString(12, ExpireDate);
         }
  
         String Manager = entity.getManager();
         if (Manager != null) {
-            stmt.bindString(12, Manager);
+            stmt.bindString(13, Manager);
         }
-        stmt.bindLong(13, entity.getState());
- 
-        String GroupId = entity.getGroupId();
-        if (GroupId != null) {
-            stmt.bindString(14, GroupId);
-        }
+        stmt.bindLong(14, entity.getState());
         stmt.bindLong(15, entity.getIsForceChecked() ? 1L: 0L);
  
         String CertCode = entity.getCertCode();
@@ -187,86 +153,9 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             stmt.bindString(16, CertCode);
         }
  
-        String UpdateTime = entity.getUpdateTime();
-        if (UpdateTime != null) {
-            stmt.bindString(17, UpdateTime);
-        }
- 
-        String Ext1 = entity.getExt1();
-        if (Ext1 != null) {
-            stmt.bindString(18, Ext1);
-        }
- 
-        String Ext2 = entity.getExt2();
-        if (Ext2 != null) {
-            stmt.bindString(19, Ext2);
-        }
- 
-        String Ext3 = entity.getExt3();
-        if (Ext3 != null) {
-            stmt.bindString(20, Ext3);
-        }
- 
-        String StateComment = entity.getStateComment();
-        if (StateComment != null) {
-            stmt.bindString(21, StateComment);
-        }
- 
-        String Supplier = entity.getSupplier();
-        if (Supplier != null) {
-            stmt.bindString(22, Supplier);
-        }
- 
-        String SupplierContact = entity.getSupplierContact();
-        if (SupplierContact != null) {
-            stmt.bindString(23, SupplierContact);
-        }
- 
-        String SupplierPhone = entity.getSupplierPhone();
-        if (SupplierPhone != null) {
-            stmt.bindString(24, SupplierPhone);
-        }
- 
-        String SactoryContact = entity.getSactoryContact();
-        if (SactoryContact != null) {
-            stmt.bindString(25, SactoryContact);
-        }
- 
-        String SactoryPhone = entity.getSactoryPhone();
-        if (SactoryPhone != null) {
-            stmt.bindString(26, SactoryPhone);
-        }
- 
-        String Sroperties = entity.getSroperties();
-        if (Sroperties != null) {
-            stmt.bindString(27, Sroperties);
-        }
- 
-        String Sgencies = entity.getSgencies();
-        if (Sgencies != null) {
-            stmt.bindString(28, Sgencies);
-        }
- 
         String SourceWay = entity.getSourceWay();
         if (SourceWay != null) {
-            stmt.bindString(29, SourceWay);
-        }
- 
-        String SourceDate = entity.getSourceDate();
-        if (SourceDate != null) {
-            stmt.bindString(30, SourceDate);
-        }
-        stmt.bindLong(31, entity.getSsLend() ? 1L: 0L);
- 
-        String SepartmentName = entity.getSepartmentName();
-        if (SepartmentName != null) {
-            stmt.bindString(32, SepartmentName);
-        }
-        stmt.bindLong(33, entity.getHasUploadFile() ? 1L: 0L);
- 
-        String StatusStr = entity.getStatusStr();
-        if (StatusStr != null) {
-            stmt.bindString(34, StatusStr);
+            stmt.bindString(17, SourceWay);
         }
     }
 
@@ -304,37 +193,37 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             stmt.bindString(6, DepartmentId);
         }
  
+        String DepartmentName = entity.getDepartmentName();
+        if (DepartmentName != null) {
+            stmt.bindString(7, DepartmentName);
+        }
+ 
         String Company = entity.getCompany();
         if (Company != null) {
-            stmt.bindString(7, Company);
+            stmt.bindString(8, Company);
         }
  
         String PurchasingDate = entity.getPurchasingDate();
         if (PurchasingDate != null) {
-            stmt.bindString(8, PurchasingDate);
+            stmt.bindString(9, PurchasingDate);
         }
-        stmt.bindLong(9, entity.getRePrice());
+        stmt.bindLong(10, entity.getRePrice());
  
         String StoreLoaction = entity.getStoreLoaction();
         if (StoreLoaction != null) {
-            stmt.bindString(10, StoreLoaction);
+            stmt.bindString(11, StoreLoaction);
         }
  
         String ExpireDate = entity.getExpireDate();
         if (ExpireDate != null) {
-            stmt.bindString(11, ExpireDate);
+            stmt.bindString(12, ExpireDate);
         }
  
         String Manager = entity.getManager();
         if (Manager != null) {
-            stmt.bindString(12, Manager);
+            stmt.bindString(13, Manager);
         }
-        stmt.bindLong(13, entity.getState());
- 
-        String GroupId = entity.getGroupId();
-        if (GroupId != null) {
-            stmt.bindString(14, GroupId);
-        }
+        stmt.bindLong(14, entity.getState());
         stmt.bindLong(15, entity.getIsForceChecked() ? 1L: 0L);
  
         String CertCode = entity.getCertCode();
@@ -342,86 +231,9 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             stmt.bindString(16, CertCode);
         }
  
-        String UpdateTime = entity.getUpdateTime();
-        if (UpdateTime != null) {
-            stmt.bindString(17, UpdateTime);
-        }
- 
-        String Ext1 = entity.getExt1();
-        if (Ext1 != null) {
-            stmt.bindString(18, Ext1);
-        }
- 
-        String Ext2 = entity.getExt2();
-        if (Ext2 != null) {
-            stmt.bindString(19, Ext2);
-        }
- 
-        String Ext3 = entity.getExt3();
-        if (Ext3 != null) {
-            stmt.bindString(20, Ext3);
-        }
- 
-        String StateComment = entity.getStateComment();
-        if (StateComment != null) {
-            stmt.bindString(21, StateComment);
-        }
- 
-        String Supplier = entity.getSupplier();
-        if (Supplier != null) {
-            stmt.bindString(22, Supplier);
-        }
- 
-        String SupplierContact = entity.getSupplierContact();
-        if (SupplierContact != null) {
-            stmt.bindString(23, SupplierContact);
-        }
- 
-        String SupplierPhone = entity.getSupplierPhone();
-        if (SupplierPhone != null) {
-            stmt.bindString(24, SupplierPhone);
-        }
- 
-        String SactoryContact = entity.getSactoryContact();
-        if (SactoryContact != null) {
-            stmt.bindString(25, SactoryContact);
-        }
- 
-        String SactoryPhone = entity.getSactoryPhone();
-        if (SactoryPhone != null) {
-            stmt.bindString(26, SactoryPhone);
-        }
- 
-        String Sroperties = entity.getSroperties();
-        if (Sroperties != null) {
-            stmt.bindString(27, Sroperties);
-        }
- 
-        String Sgencies = entity.getSgencies();
-        if (Sgencies != null) {
-            stmt.bindString(28, Sgencies);
-        }
- 
         String SourceWay = entity.getSourceWay();
         if (SourceWay != null) {
-            stmt.bindString(29, SourceWay);
-        }
- 
-        String SourceDate = entity.getSourceDate();
-        if (SourceDate != null) {
-            stmt.bindString(30, SourceDate);
-        }
-        stmt.bindLong(31, entity.getSsLend() ? 1L: 0L);
- 
-        String SepartmentName = entity.getSepartmentName();
-        if (SepartmentName != null) {
-            stmt.bindString(32, SepartmentName);
-        }
-        stmt.bindLong(33, entity.getHasUploadFile() ? 1L: 0L);
- 
-        String StatusStr = entity.getStatusStr();
-        if (StatusStr != null) {
-            stmt.bindString(34, StatusStr);
+            stmt.bindString(17, SourceWay);
         }
     }
 
@@ -439,34 +251,17 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // SystemCode
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // DevCode
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // DepartmentId
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // Company
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // PurchasingDate
-            cursor.getInt(offset + 8), // RePrice
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // StoreLoaction
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // ExpireDate
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // Manager
-            cursor.getInt(offset + 12), // State
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // GroupId
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // DepartmentName
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // Company
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // PurchasingDate
+            cursor.getInt(offset + 9), // RePrice
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // StoreLoaction
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // ExpireDate
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // Manager
+            cursor.getInt(offset + 13), // State
             cursor.getShort(offset + 14) != 0, // IsForceChecked
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // CertCode
-            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // UpdateTime
-            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // Ext1
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // Ext2
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // Ext3
-            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // StateComment
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // Supplier
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // SupplierContact
-            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // SupplierPhone
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // SactoryContact
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // SactoryPhone
-            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // Sroperties
-            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // Sgencies
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // SourceWay
-            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // SourceDate
-            cursor.getShort(offset + 30) != 0, // SsLend
-            cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31), // SepartmentName
-            cursor.getShort(offset + 32) != 0, // HasUploadFile
-            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33) // StatusStr
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16) // SourceWay
         );
         return entity;
     }
@@ -479,34 +274,17 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         entity.setSystemCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setDevCode(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setDepartmentId(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setCompany(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setPurchasingDate(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setRePrice(cursor.getInt(offset + 8));
-        entity.setStoreLoaction(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setExpireDate(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setManager(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setState(cursor.getInt(offset + 12));
-        entity.setGroupId(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setDepartmentName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setCompany(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setPurchasingDate(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setRePrice(cursor.getInt(offset + 9));
+        entity.setStoreLoaction(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setExpireDate(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setManager(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setState(cursor.getInt(offset + 13));
         entity.setIsForceChecked(cursor.getShort(offset + 14) != 0);
         entity.setCertCode(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
-        entity.setUpdateTime(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
-        entity.setExt1(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
-        entity.setExt2(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
-        entity.setExt3(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setStateComment(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
-        entity.setSupplier(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setSupplierContact(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setSupplierPhone(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
-        entity.setSactoryContact(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
-        entity.setSactoryPhone(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
-        entity.setSroperties(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
-        entity.setSgencies(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
-        entity.setSourceWay(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
-        entity.setSourceDate(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
-        entity.setSsLend(cursor.getShort(offset + 30) != 0);
-        entity.setSepartmentName(cursor.isNull(offset + 31) ? null : cursor.getString(offset + 31));
-        entity.setHasUploadFile(cursor.getShort(offset + 32) != 0);
-        entity.setStatusStr(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
+        entity.setSourceWay(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
      }
     
     @Override

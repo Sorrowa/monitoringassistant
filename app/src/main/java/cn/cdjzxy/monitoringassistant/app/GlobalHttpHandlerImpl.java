@@ -4,6 +4,11 @@ import android.content.Context;
 
 import com.wonders.health.lib.base.http.GlobalHttpHandler;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,8 +40,20 @@ public class GlobalHttpHandlerImpl implements GlobalHttpHandler {
 
     @Override
     public Request onHttpRequestBefore(Interceptor.Chain chain, Request request) {//添加统一请求Header
-        return request;
-    }
 
+        Request oldRequest = chain.request();
+
+        UserInfo userInfo = UserInfoHelper.get().getUser();
+        HttpUrl.Builder urlBuilder = oldRequest.url().newBuilder();
+        if (!CheckUtil.isNull(userInfo)) {
+            urlBuilder.addQueryParameter("token", userInfo.getToken());// 添加新的参数
+        }
+
+        Request newRequest = oldRequest.newBuilder()
+                .method(oldRequest.method(), oldRequest.body())
+                .url(urlBuilder.build())
+                .build();
+        return newRequest;
+    }
 
 }

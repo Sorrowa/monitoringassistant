@@ -7,8 +7,8 @@ import org.greenrobot.greendao.annotation.Generated;
 public class Rights {
 
     /**
-     * enumName : 委托查看
-     * enumValue : 10001
+     * EnumName : 委托查看
+     * EnumValue : 10001
      */
 
     private String EnumName;
@@ -33,7 +33,4 @@ public class Rights {
     public void setEnumValue(int EnumValue) {
         this.EnumValue = EnumValue;
     }
-
-
-
 }

@@ -3,7 +3,6 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.repository;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,19 +12,15 @@ import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
-import com.wonders.health.lib.base.mvp.IView;
-import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.app.Constant;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.RepositoryAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
@@ -35,7 +30,7 @@ import cn.cdjzxy.monitoringassistant.widgets.GridItemDecoration;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class RepositoryActivity extends BaseTitileActivity<AppPresenter> {
+public class RepositoryActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.tv_desc)
     TextView     tvDesc;
@@ -51,9 +46,7 @@ public class RepositoryActivity extends BaseTitileActivity<AppPresenter> {
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         this.titleBar = titleBar;
-        titleBar.getLinearLayout(Gravity.LEFT).removeViewAt(1);
         titleBar.setTitleMainText("知识库");
-        titleBar.setTitleMainTextColor(Color.WHITE);
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,8 +57,8 @@ public class RepositoryActivity extends BaseTitileActivity<AppPresenter> {
 
     @Nullable
     @Override
-    public AppPresenter obtainPresenter() {
-        return new AppPresenter(ArtUtils.obtainAppComponentFromContext(this));
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
     }
 
     @Override

@@ -25,14 +25,14 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.RepositoryAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.MediaFile;
 import cn.cdjzxy.monitoringassistant.widgets.ClearEditText;
 import cn.cdjzxy.monitoringassistant.widgets.GridItemDecoration;
 
-public class RepositorySearchActivity extends BaseTitileActivity<AppPresenter> {
+public class RepositorySearchActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     @BindView(R.id.et_keyword)
@@ -46,15 +46,13 @@ public class RepositorySearchActivity extends BaseTitileActivity<AppPresenter> {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.getLinearLayout(Gravity.LEFT).removeViewAt(1);
         titleBar.setTitleMainText("搜索");
-        titleBar.setTitleMainTextColor(Color.WHITE);
     }
 
     @Nullable
     @Override
-    public AppPresenter obtainPresenter() {
-        return new AppPresenter(ArtUtils.obtainAppComponentFromContext(this));
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
     }
 
     @Override

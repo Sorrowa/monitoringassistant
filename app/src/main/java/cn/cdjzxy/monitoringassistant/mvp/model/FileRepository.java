@@ -13,7 +13,7 @@ import io.reactivex.functions.Function;
 import okhttp3.ResponseBody;
 
 /**
- * 知识库相关的数据操作
+ * 知识库文件相关的数据操作
  */
 
 public class FileRepository implements IModel {

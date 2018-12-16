@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 import com.wonders.health.lib.base.mvp.IPresenter;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
 
 

@@ -49,6 +49,14 @@ public class DateUtils {
         }
     }
 
+    //获取剩余时间
+    public static int getLastDays(String startTime, String endTime) {
+        int time1 = Integer.valueOf(startTime.replaceAll("[-\\s:]", ""));
+        int time2 = Integer.valueOf(endTime.replaceAll("[-\\s:]", ""));
+        return time2 - time1;
+
+    }
+
 
     public static String getLastMouthDay() {
         SimpleDateFormat dateFormater = new SimpleDateFormat(
@@ -372,7 +380,7 @@ public class DateUtils {
      * @return 当前年月日
      */
     public static String getDate() {
-        return new SimpleDateFormat("yyyy.MM.dd").format(new Date()).toString();
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
     }
 
 }

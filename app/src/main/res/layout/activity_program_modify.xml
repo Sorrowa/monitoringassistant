@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color_ffffff"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+    <RelativeLayout
+        style="@style/BasicInfoItemStyle"
+        android:layout_marginTop="@dimen/dp_4">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="要素" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="采样点位" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="监测项目" />
+
+        <TextView style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="监测天数" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="监测频次" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="备注" />
+
+        <EditText style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+</LinearLayout>
+
+

@@ -10,22 +10,20 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 
-public class PwdModifyActivity extends BaseTitileActivity<AppPresenter> {
+public class PwdModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.getLinearLayout(Gravity.LEFT).removeViewAt(1);
         titleBar.setTitleMainText("修改密码");
-        titleBar.setTitleMainTextColor(Color.WHITE);
     }
 
     @Nullable
     @Override
-    public AppPresenter obtainPresenter() {
-        return new AppPresenter(ArtUtils.obtainAppComponentFromContext(this));
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
     }
 
     @Override

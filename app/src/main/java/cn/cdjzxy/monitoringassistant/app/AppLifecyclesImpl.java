@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.ContextCompat;
@@ -69,7 +70,7 @@ public class AppLifecyclesImpl implements AppLifecycles, TitleBarViewControl {
         AppManager.init(application);
         AppManager.getInstance().setTitleBarViewControl(this);
         Thread.setDefaultUncaughtExceptionHandler(new ExHandler(Thread.getDefaultUncaughtExceptionHandler()));
-        RetrofitUrlManager.getInstance().putDomain("repository_server", BuildConfig.REPOSITORY_URL);
+        //        RetrofitUrlManager.getInstance().putDomain("repository_server", BuildConfig.REPOSITORY_URL);
         FileDownloader.setupOnApplicationOnCreate(application);
     }
 
@@ -93,7 +94,13 @@ public class AppLifecyclesImpl implements AppLifecycles, TitleBarViewControl {
                 .setLeftText("  ")
                 .setLeftTextColor(csl)
                 .setTitleMainTextSize(16)
-                .setBgColor(ContextCompat.getColor(mContext, R.color.bg_color_title))
+                .setRightTextSize(16)
+                .setTitleMainTextColor(Color.WHITE)
+                .setRightTextColor(Color.WHITE)
+                .setLeftTextColor(Color.WHITE)
+                .setStatusBarLightMode(false)
+                .setActionPadding(24)
+                .setBgColor(ContextCompat.getColor(mContext, R.color.bg_color_2b99ff))
                 .setLeftTextDrawable(isActivity ? SelectorDrawable.createBgDrawable(mContext, R.mipmap.ic_back) : null)
                 .setDividerHeight(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? TitleBarView.dip2px(0.5f) : 0)
                 .setOnLeftTextClickListener(new View.OnClickListener() {
@@ -109,6 +116,7 @@ public class AppLifecyclesImpl implements AppLifecycles, TitleBarViewControl {
                     }
                 }));
         ((AlphaTextView) titleBar.getLinearLayout(Gravity.LEFT).getChildAt(1)).setTextColor(csl);
+        titleBar.getLinearLayout(Gravity.LEFT).removeViewAt(1);
         ViewCompat.setElevation(titleBar, mContext.getResources().getDimension(R.dimen.dp_2));
         return false;
     }

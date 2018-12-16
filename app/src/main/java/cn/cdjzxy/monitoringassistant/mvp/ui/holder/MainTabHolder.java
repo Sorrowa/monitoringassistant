@@ -9,7 +9,7 @@ import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 
 /**
  * 主页tab

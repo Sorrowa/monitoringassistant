@@ -22,6 +22,10 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
         DevicesDao.createTable(db, ifNotExists);
+        DicDao.createTable(db, ifNotExists);
+        EnterpriseDao.createTable(db, ifNotExists);
+        EnterRelatePointDao.createTable(db, ifNotExists);
+        EnvirPointDao.createTable(db, ifNotExists);
         MethodDevRelationDao.createTable(db, ifNotExists);
         MethodsDao.createTable(db, ifNotExists);
         MethodTagRelationDao.createTable(db, ifNotExists);
@@ -30,13 +34,24 @@ public class DaoMaster extends AbstractDaoMaster {
         MonItemTagRelationDao.createTable(db, ifNotExists);
         RightsDao.createTable(db, ifNotExists);
         TagsDao.createTable(db, ifNotExists);
-        PendingTasksDao.createTable(db, ifNotExists);
+        MsgDao.createTable(db, ifNotExists);
+        TaskDao.createTable(db, ifNotExists);
+        FormDao.createTable(db, ifNotExists);
+        FormFlowDao.createTable(db, ifNotExists);
+        FormSelectDao.createTable(db, ifNotExists);
+        SamplingStantdDao.createTable(db, ifNotExists);
+        SamplingUserDao.createTable(db, ifNotExists);
+        TableDao.createTable(db, ifNotExists);
         UserInfoDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         DevicesDao.dropTable(db, ifExists);
+        DicDao.dropTable(db, ifExists);
+        EnterpriseDao.dropTable(db, ifExists);
+        EnterRelatePointDao.dropTable(db, ifExists);
+        EnvirPointDao.dropTable(db, ifExists);
         MethodDevRelationDao.dropTable(db, ifExists);
         MethodsDao.dropTable(db, ifExists);
         MethodTagRelationDao.dropTable(db, ifExists);
@@ -45,7 +60,14 @@ public class DaoMaster extends AbstractDaoMaster {
         MonItemTagRelationDao.dropTable(db, ifExists);
         RightsDao.dropTable(db, ifExists);
         TagsDao.dropTable(db, ifExists);
-        PendingTasksDao.dropTable(db, ifExists);
+        MsgDao.dropTable(db, ifExists);
+        TaskDao.dropTable(db, ifExists);
+        FormDao.dropTable(db, ifExists);
+        FormFlowDao.dropTable(db, ifExists);
+        FormSelectDao.dropTable(db, ifExists);
+        SamplingStantdDao.dropTable(db, ifExists);
+        SamplingUserDao.dropTable(db, ifExists);
+        TableDao.dropTable(db, ifExists);
         UserInfoDao.dropTable(db, ifExists);
     }
 
@@ -66,6 +88,10 @@ public class DaoMaster extends AbstractDaoMaster {
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(DevicesDao.class);
+        registerDaoClass(DicDao.class);
+        registerDaoClass(EnterpriseDao.class);
+        registerDaoClass(EnterRelatePointDao.class);
+        registerDaoClass(EnvirPointDao.class);
         registerDaoClass(MethodDevRelationDao.class);
         registerDaoClass(MethodsDao.class);
         registerDaoClass(MethodTagRelationDao.class);
@@ -74,7 +100,14 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(MonItemTagRelationDao.class);
         registerDaoClass(RightsDao.class);
         registerDaoClass(TagsDao.class);
-        registerDaoClass(PendingTasksDao.class);
+        registerDaoClass(MsgDao.class);
+        registerDaoClass(TaskDao.class);
+        registerDaoClass(FormDao.class);
+        registerDaoClass(FormFlowDao.class);
+        registerDaoClass(FormSelectDao.class);
+        registerDaoClass(SamplingStantdDao.class);
+        registerDaoClass(SamplingUserDao.class);
+        registerDaoClass(TableDao.class);
         registerDaoClass(UserInfoDao.class);
     }
 

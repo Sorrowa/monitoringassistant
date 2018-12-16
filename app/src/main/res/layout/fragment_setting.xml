@@ -6,9 +6,9 @@
     android:orientation="vertical">
 
     <com.allen.library.SuperTextView
-        android:layout_marginTop="@dimen/dp_12"
         android:id="@+id/stv_clear"
         style="@style/SupperTextStyleItem"
+        android:layout_marginTop="@dimen/dp_12"
         app:sLeftTextString="清空缓存" />
 
     <com.allen.library.SuperTextView
@@ -31,7 +31,7 @@
         android:id="@+id/stv_logout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height_dp_52"
-        app:sCenterTextColor="#FD6C6D"
+        app:sCenterTextColor="@color/text_color_ff5f5f"
         app:sCenterTextString="退出登录"
         app:sCenterTvDrawableLeft="@mipmap/ic_logout"
         app:sDividerLineColor="@color/white" />

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/dp_16"
+        android:text="12月8日19时许，芜湖籍散货船“渝鸿998”在长江万州段鹞包碛水域发生侧翻，船上有5人落水失联。事发后，万州区委区政府高度重视，紧急组织海事、长航等相关部门全力搜救。目前，事故原因正在调查中。"
+        android:textColor="@color/text_color_333333"
+        android:textSize="@dimen/text_size_14" />
+
+
+</LinearLayout>

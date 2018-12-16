@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="张三，欢迎您"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_13" />
+        android:textSize="@dimen/text_size_12" />
 
     <TextView
         android:id="@+id/tv_date"
@@ -20,6 +20,6 @@
         android:layout_marginTop="@dimen/dp_2"
         android:text="2018.09.26  周三"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_13" />
+        android:textSize="@dimen/text_size_12" />
 
 </LinearLayout>

@@ -6,4 +6,9 @@ package cn.cdjzxy.monitoringassistant.app;
  */
 public interface EventBusTags {
 
+    String TAG_MODIFY_PWD               = "MODIFY_PWD";//修改密码
+    String TAG_PRECIPITATION_COLLECTION = "PRECIPITATION_COLLECTION";//降水样品收集
+    String TAG_WASTEWATER_COLLECTION    = "WATEWATER_COLLECTION";//废水样品收集
+    String TAG_WASTEWATER_BOTTLE        = "WASTEWATER_BOTTLE";//废水分瓶
+
 }

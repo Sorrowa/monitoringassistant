@@ -1,20 +1,20 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.logic;
 
+import android.text.TextUtils;
+
 import com.wonders.health.lib.base.utils.DataHelper;
 
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 
 public class UserInfoHelper {
-
-    private static final String KEY_USER_INFO = "user_info";
-
-    private static final String KEY_USER_NAME = "user_name";
 
     private static final String KEY_USER_LOGIN = "user_login";
 
     private static UserInfoHelper sUserInfoHelper;
 
+
     private UserInfoHelper() {
+
     }
 
     public static UserInfoHelper get() {
@@ -38,24 +38,27 @@ public class UserInfoHelper {
 
 
     public String getUserName() {
-        return DataHelper.getString(KEY_USER_NAME);
+        UserInfo userInfo = getUserInfo();
+        return null == userInfo ? "" : userInfo.getWorkNo();
     }
 
-    public boolean saveUserName(String userName) {
-        return DataHelper.setString(KEY_USER_NAME, userName);
-    }
 
     public UserInfo getUser() {
-        UserInfo userInfo = DataHelper.getData(KEY_USER_INFO);
+        UserInfo userInfo = getUserInfo();
         return null == userInfo ? new UserInfo() : userInfo;
     }
 
-    public boolean saveUser(UserInfo userInfo) {
-        return DataHelper.saveData(KEY_USER_INFO, userInfo);
-    }
 
     public boolean isLogin() {
-        return getUserLoginState();
+        return getUserLoginState() && !TextUtils.isEmpty(getUser().getId());
+    }
+
+
+    private UserInfo getUserInfo() {
+        if (null != DBHelper.get()) {
+            return DBHelper.get().getUserInfoDao().queryBuilder().unique();
+        }
+        return new UserInfo();
     }
 
 }

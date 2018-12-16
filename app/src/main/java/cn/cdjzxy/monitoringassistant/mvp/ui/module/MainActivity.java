@@ -1,10 +1,9 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.UserHandle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,18 +20,18 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
-import com.wonders.health.lib.base.utils.StatusBarUtil;
+
+import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.Tab;
+import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.BasicDataPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MainTabAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.management.ManagementFragment;
@@ -41,7 +40,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.pointMap.PointMapFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.progress.ProgressFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.repository.RepositoryFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.scanCode.ScanCodeFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.PwdModifyActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.PwdModifyFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
@@ -51,13 +50,14 @@ import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class MainActivity extends BaseTitileActivity<BasicDataPresenter> implements IView {
+public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.layout_container)
     FrameLayout  layoutContainer;
-    private TitleBarView titleBar;
+
+    private TitleBarView mTitleBarView;
 
     private ExitHelper.TwicePressHolder mExitHelper;
 
@@ -78,13 +78,11 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        this.titleBar = titleBar;
-        titleBar.getLinearLayout(Gravity.LEFT).removeViewAt(1);
-        titleBar.setLeftVisible(false);
-        titleBar.setTitleMainText("首页");
-        titleBar.setTitleMainTextColor(Color.WHITE);
-        titleBar.addLeftAction(titleBar.new ViewAction(getTitleLeftView()));
-        titleBar.addRightAction(titleBar.new ViewAction(getTitleRightView(), new View.OnClickListener() {
+        this.mTitleBarView = titleBar;
+        mTitleBarView.setLeftVisible(false);
+        mTitleBarView.setTitleMainText("首页");
+        mTitleBarView.addLeftAction(titleBar.new ViewAction(getTitleLeftView()));
+        mTitleBarView.addRightAction(titleBar.new ViewAction(getTitleRightView(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArtUtils.startActivity(MsgActivity.class);
@@ -95,8 +93,8 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
 
     @Nullable
     @Override
-    public BasicDataPresenter obtainPresenter() {
-        return new BasicDataPresenter(ArtUtils.obtainAppComponentFromContext(this));
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
     }
 
     @Override
@@ -106,11 +104,11 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        StatusBarUtil.darkMode(this, false);
         mFragmentManager = this.getSupportFragmentManager();
+
         initTabData();
         openFragment(0);
-        titleBar.setTitleMainText("嘉泽云监测");
+        mTitleBarView.setTitleMainText("嘉泽云监测");
 
         // 双击退出
         mExitHelper = new ExitHelper.TwicePressHolder(new ExitHelper.IExitInterface() {
@@ -128,20 +126,30 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
             }
         }, 3000);
 
-        mPresenter.getDevices(Message.obtain(this, new Object()));
-        mPresenter.getMethods(Message.obtain(this, new Object()));
-        mPresenter.getMonItems(Message.obtain(this, new Object()));
-        mPresenter.getTags(Message.obtain(this, new Object()));
-        mPresenter.GetMonItemTagRelation(Message.obtain(this, new Object()));
-        mPresenter.GetMethodTagRelation(Message.obtain(this, new Object()));
-        mPresenter.GetMonItemMethodRelation(Message.obtain(this, new Object()));
-        mPresenter.GetMethodDevRelation(Message.obtain(this, new Object()));
-        mPresenter.GetRight(Message.obtain(this, new Object()));
+//        mPresenter.getDevices(Message.obtain(this, new Object()));
+//        mPresenter.getMethods(Message.obtain(this, new Object()));
+//        mPresenter.getMonItems(Message.obtain(this, new Object()));
+//        mPresenter.getTags(Message.obtain(this, new Object()));
+//        mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));
+//        mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));
+//        mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));
+//        mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));
+//        mPresenter.getRight(Message.obtain(this, new Object()));
+//        mPresenter.getEnvirPoint(Message.obtain(this, new Object()));
+//        mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));
+//        mPresenter.getEnterprise(Message.obtain(this, new Object()));
+//        mPresenter.getDic(Message.obtain(this, new Object()), 7);
+//        mPresenter.getMsgs(Message.obtain(this, new Object()));
+//        mPresenter.getMyTasks(Message.obtain(this, new Object()));
+//        mPresenter.getFormSelect(Message.obtain(this, new Object()));
 
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            return onBack() ? false : mExitHelper.onKeyDown(keyCode, event);
+        }
         return mExitHelper.onKeyDown(keyCode, event);
     }
 
@@ -157,7 +165,7 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
 
     @Override
     public void showMessage(@NonNull String message) {
-
+        ArtUtils.makeText(this, message);
     }
 
     @Override
@@ -276,9 +284,9 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
      */
     private void updateTitle(int position) {
         if (position == 0) {
-            titleBar.setTitleMainText("嘉泽云监测");
+            mTitleBarView.setTitleMainText("嘉泽云监测");
         } else {
-            titleBar.setTitleMainText(mTabs.get(position).getTabName());
+            mTitleBarView.setTitleMainText(mTabs.get(position).getTabName());
         }
 
     }
@@ -308,6 +316,7 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
      */
     private void openFragment(int position) {
         FragmentTransaction ft = mFragmentManager.beginTransaction();
+
         Bundle mBundle = new Bundle();
         switch (position) {
 
@@ -343,11 +352,29 @@ public class MainActivity extends BaseTitileActivity<BasicDataPresenter> impleme
             case 6://设置
                 ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());
                 break;
+            case 7://修改密码
+                ft.replace(R.id.layout_container, new PwdModifyFragment(), PwdModifyFragment.class.getName());
+                break;
             default:
                 break;
         }
         ft.commit();
     }
 
+
+    @Subscriber(tag = EventBusTags.TAG_MODIFY_PWD)
+    private void updateSettingFragment(int position) {
+        openFragment(position);
+    }
+
+    private boolean onBack() {
+        Fragment fragment = null;
+        fragment = getSupportFragmentManager().findFragmentByTag(PwdModifyFragment.class.getName());
+        if (!CheckUtil.isNull(fragment)) {
+            openFragment(6);
+            return true;
+        }
+        return false;
+    }
 
 }

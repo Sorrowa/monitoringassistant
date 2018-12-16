@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_default_bg"
+    android:background="@color/bg_color_ecedf1"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/btn_search"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/white"
+        android:layout_height="@dimen/item_height_dp_52"
+        android:background="@color/bg_color_ffffff"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -22,8 +22,8 @@
             android:gravity="center_vertical"
             android:hint="请输入关键字"
             android:paddingLeft="@dimen/dp_12"
-            android:textColor="#B3B3B3"
-            android:textColorHint="#B3B3B3"
+            android:textColor="@color/text_color_cccccc"
+            android:textColorHint="@color/text_color_cccccc"
             android:textSize="@dimen/text_size_14" />
 
         <ImageView

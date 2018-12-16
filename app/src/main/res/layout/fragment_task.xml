@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_color_ecedf1"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,7 +17,7 @@
             android:layout_marginLeft="@dimen/dp_8"
             android:layout_marginTop="@dimen/dp_8"
             android:layout_weight="1"
-            android:background="@color/white"
+            android:background="@color/bg_color_ffffff"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -32,8 +33,8 @@
                     android:drawableLeft="@mipmap/ic_indicator"
                     android:drawablePadding="@dimen/dp_8"
                     android:text="已采样"
-                    android:textColor="#333333"
-                    android:textSize="@dimen/text_size_12" />
+                    android:textColor="@color/text_color_333333"
+                    android:textSize="@dimen/text_size_14" />
 
                 <TextView
                     android:id="@+id/btn_date"
@@ -45,8 +46,8 @@
                     android:drawablePadding="@dimen/dp_12"
                     android:drawableRight="@mipmap/ic_sampling_date"
                     android:text="2015-10-13 ~ 2016-10-13"
-                    android:textColor="#333333"
-                    android:textSize="@dimen/text_size_12" />
+                    android:textColor="@color/text_color_333333"
+                    android:textSize="@dimen/text_size_14" />
 
                 <TextView
                     android:id="@+id/btn_month"
@@ -56,7 +57,7 @@
                     android:layout_marginRight="@dimen/dp_16"
                     android:layout_toLeftOf="@id/btn_date"
                     android:text="本月"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_12" />
 
                 <TextView
@@ -67,7 +68,7 @@
                     android:layout_marginRight="@dimen/dp_16"
                     android:layout_toLeftOf="@id/btn_month"
                     android:text="本周"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_12" />
 
                 <TextView
@@ -78,7 +79,7 @@
                     android:layout_marginRight="@dimen/dp_16"
                     android:layout_toLeftOf="@id/btn_week"
                     android:text="今日"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_12" />
 
 
@@ -109,7 +110,7 @@
             android:layout_marginRight="@dimen/dp_8"
             android:layout_marginTop="@dimen/dp_8"
             android:layout_weight="1"
-            android:background="@color/white"
+            android:background="@color/bg_color_ffffff"
             android:orientation="vertical">
 
             <TextView
@@ -121,8 +122,8 @@
                 android:drawableLeft="@mipmap/ic_indicator"
                 android:drawablePadding="@dimen/dp_8"
                 android:text="待采样"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_12" />
+                android:textColor="@color/text_color_333333"
+                android:textSize="@dimen/text_size_14" />
 
             <LinearLayout
                 android:id="@+id/btn_wait_sampling"
@@ -155,7 +156,7 @@
             android:layout_marginLeft="@dimen/dp_8"
             android:layout_marginTop="@dimen/dp_8"
             android:layout_weight="1"
-            android:background="@color/white"
+            android:background="@color/bg_color_ffffff"
             android:orientation="vertical">
 
             <TextView
@@ -167,8 +168,8 @@
                 android:drawableLeft="@mipmap/ic_indicator"
                 android:drawablePadding="@dimen/dp_8"
                 android:text="已收样"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_12" />
+                android:textColor="@color/text_color_333333"
+                android:textSize="@dimen/text_size_14" />
 
             <LinearLayout
                 android:id="@+id/btn_receive"
@@ -196,7 +197,7 @@
             android:layout_marginRight="@dimen/dp_8"
             android:layout_marginTop="@dimen/dp_8"
             android:layout_weight="1"
-            android:background="@color/white"
+            android:background="@color/bg_color_ffffff"
             android:orientation="vertical">
 
             <TextView
@@ -208,8 +209,8 @@
                 android:drawableLeft="@mipmap/ic_indicator"
                 android:drawablePadding="@dimen/dp_8"
                 android:text="待收样"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_12" />
+                android:textColor="@color/text_color_333333"
+                android:textSize="@dimen/text_size_14" />
 
             <LinearLayout
                 android:id="@+id/btn_wait_receive"
@@ -223,14 +224,10 @@
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dp_24" />
 
-
             </LinearLayout>
-
 
         </LinearLayout>
 
-
     </LinearLayout>
-
 
 </LinearLayout>

@@ -7,9 +7,19 @@ import java.util.Map;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.QrMoreInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Enterprise;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodDevRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
@@ -18,16 +28,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.EnterRelatePoint;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Enterprise;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.EnvirPoint;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Projects;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Task;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
@@ -53,45 +60,48 @@ public interface ApiService {
      * @return
      */
     @POST(Api.LOGOUT)
-    Observable<UserInfo> logout(@Query("token") String token);
+    Observable<BaseResponse> logout();
 
+    /**
+     * 修改密码
+     *
+     * @param params
+     * @return
+     */
+    @PUT(Api.PWD_MODIFY)
+    Observable<BaseResponse> modifyPwd(@QueryMap Map<String, String> params);
 
     @GET(Api.QR_INFO)
     Observable<BaseResponse<QrMoreInfo>> getQrModelInfo(@Query("qrCode") String qrCode);
 
 
     //*******************基础数据******************
-    @GET(Api.DEVICES)
+    @GET(Api.GET_DEVICES)
     Observable<BaseResponse<List<Devices>>> getDevices();
 
-    @GET(Api.METHODS)
+    @GET(Api.GET_METHODS)
     Observable<BaseResponse<List<Methods>>> getMethods();
 
-    @GET(Api.MONITEMS)
+    @GET(Api.GET_MONITEMS)
     Observable<BaseResponse<List<MonItems>>> getMonItems();
 
     @GET(Api.GET_TAGS)
     Observable<BaseResponse<List<Tags>>> getTags();
 
     @GET(Api.GET_MONITEMTAG_RELATION)
-    Observable<BaseResponse<List<MonItemTagRelation>>> GetMonItemTagRelation();
+    Observable<BaseResponse<List<MonItemTagRelation>>> getMonItemTagRelation();
 
     @GET(Api.GET_METHODTAG_RELATION)
-    Observable<BaseResponse<List<MethodTagRelation>>> GetMethodTagRelation();
+    Observable<BaseResponse<List<MethodTagRelation>>> getMethodTagRelation();
 
     @GET(Api.GET_MONITEMMETHOD_RELATION)
-    Observable<BaseResponse<List<MonItemMethodRelation>>> GetMonItemMethodRelation();
+    Observable<BaseResponse<List<MonItemMethodRelation>>> getMonItemMethodRelation();
 
     @GET(Api.GET_METHODDEV_RELATION)
-    Observable<BaseResponse<List<MethodDevRelation>>> GetMethodDevRelation();
+    Observable<BaseResponse<List<MethodDevRelation>>> getMethodDevRelation();
 
     @GET(Api.GET_RIGHTS)
-    Observable<BaseResponse<List<Rights>>> GetRight();
-
-
-    //*******************任务******************
-    @GET(Api.GET_PROJECTS)
-    Observable<BaseResponse<List<Projects>>> getProjects();
+    Observable<BaseResponse<List<Rights>>> getRight();
 
     @GET(Api.GET_ENVIRPOINT)
     Observable<BaseResponse<List<EnvirPoint>>> getEnvirPoint();
@@ -102,40 +112,59 @@ public interface ApiService {
     @GET(Api.GET_ENTERPRISE)
     Observable<BaseResponse<List<Enterprise>>> getEnterprise();
 
+    @GET(Api.GET_DIC)
+    Observable<BaseResponse<List<Dic>>> getDic(@Query("Type") int type);
+
+
+    //*******************任务******************
+    @GET(Api.GET_MY_TASKS)
+    Observable<BaseResponse<List<Task>>> getMyTasks();
+
+    @GET(Api.GET_ALL_TASKS)
+    Observable<BaseResponse<List<Task>>> getAllTasks();
+
+    @PUT(Api.PUT_SAMPLING_FINISH)
+    Observable<BaseResponse> putSamplingFinish();
+
+    @GET(Api.GET_SAMPLE_STORAGE)
+    Observable<BaseResponse<List<Task>>> getSampleStorageProject();
+
+    //*******************流转******************
+    @GET(Api.GET_SAMPLE_STORAGE_LIST)
+    Observable<BaseResponse<List<Task>>> getSampleStorageList();
+
+    @PUT(Api.PUT_SAMPLE_STORAGE)
+    Observable<BaseResponse> putVerifySampleStorage();
+
 
     //*******************采样******************
-    @GET(Api.GET_PROJECTS)
-    Observable<BaseResponse<List<Projects>>> GetMyPendingTasks();
+    @GET(Api.GET_TABLES)
+    Observable<BaseResponse<List<Table>>> getTableList();
 
-    @GET(Api.GET_ENVIRPOINT)
-    Observable<BaseResponse<List<EnvirPoint>>> GetAllPendingTasks();
 
-    @GET(Api.GET_ENTERPOINT)
-    Observable<BaseResponse<List<EnterRelatePoint>>> GetTableList();
+    @POST(Api.CREATE_TABLE)
+    Observable<BaseResponse> createTable();
 
-    @GET(Api.GET_ENTERPRISE)
-    Observable<BaseResponse<List<Enterprise>>> GetTable();
+    @GET(Api.UPDATE_TABLE)
+    Observable<BaseResponse> updateTable();
 
-    @GET(Api.GET_PROJECTS)
-    Observable<BaseResponse<List<Projects>>> CreateTable();
+    @GET(Api.DELETE_TABLE)
+    Observable<BaseResponse> deleteTable();
 
-    @GET(Api.GET_ENVIRPOINT)
-    Observable<BaseResponse<List<EnvirPoint>>> UpdateTable();
+    @GET(Api.GET_SAMPLINGSTANTD)
+    Observable<BaseResponse<List<SamplingStantd>>> getSamplingStantd();
 
-    @GET(Api.GET_ENTERPOINT)
-    Observable<BaseResponse<List<EnterRelatePoint>>> DeleteTable();
+    @GET(Api.GET_FORMSELECT)
+    Observable<BaseResponse<List<Form>>> getFormSelect();
 
-    @GET(Api.GET_ENTERPRISE)
-    Observable<BaseResponse<List<Enterprise>>> GetSamplingStantd();
+    @GET(Api.GET_SAMPLING_USER)
+    Observable<BaseResponse<List<SamplingUser>>> getsamplingUser();
 
-    @GET(Api.GET_PROJECTS)
-    Observable<BaseResponse<List<Projects>>> GetFormSelect();
+    @PUT(Api.SUBMIT_SAMPLING)
+    Observable<BaseResponse> putSubmitSampling();
 
-    @GET(Api.GET_ENVIRPOINT)
-    Observable<BaseResponse<List<EnvirPoint>>> GetsamplingUser();
-
-    @GET(Api.GET_ENTERPOINT)
-    Observable<BaseResponse<List<EnterRelatePoint>>> PutSubmitSampling();
+    @GET(Api.GET_SAMPLING)
+    Observable<BaseResponse<List<Sampling>>> getSampling();
 
 
     //*******************文件******************
@@ -147,13 +176,13 @@ public interface ApiService {
 
 
     //*******************知识库******************
+
     /**
      * 获取hash密码
      *
      * @param params 请求参数map
      * @return
      */
-    @Headers({"Domain-Name: repository_server"})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryHashCode(@QueryMap Map<String, String> params);
 
@@ -163,7 +192,6 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
-    @Headers({"Domain-Name: repository_server"})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryGroups(@QueryMap Map<String, String> params);
 
@@ -173,7 +201,6 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
-    @Headers({"Domain-Name: repository_server"})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryFolder(@QueryMap Map<String, String> params);
 
@@ -183,7 +210,6 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
-    @Headers({"Domain-Name: repository_server"})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryFile(@QueryMap Map<String, String> params);
 
@@ -193,7 +219,25 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
-    @Headers({"Domain-Name: repository_server"})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> downloadRepositoryFile(@QueryMap Map<String, String> params);
+
+
+    //*******************消息******************
+
+    /**
+     * 获取消息
+     *
+     * @return
+     */
+    @GET(Api.GET_MSG)
+    Observable<BaseResponse<List<Msg>>> getMsgs();
+
+    /**
+     * 批量阅读消息
+     *
+     * @return
+     */
+    @PUT(Api.PUT_READ_MSG)
+    Observable<BaseResponse> putReadMsg(@QueryMap List<String> messageIds);
 }

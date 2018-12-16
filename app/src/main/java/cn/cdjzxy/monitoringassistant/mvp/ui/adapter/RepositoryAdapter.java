@@ -9,9 +9,7 @@ import java.io.File;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.RepositoryHolder;
-import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterSamplingCollectHolder;
 
 
 /**

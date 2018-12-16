@@ -10,6 +10,6 @@
         android:layout_height="1dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="@color/dc1" />
+        android:background="@color/dc_e5e5e5" />
 
 </merge>

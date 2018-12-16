@@ -19,6 +19,6 @@
         android:layout_marginTop="@dimen/dp_4"
         android:text="工作站"
         android:textColor="@color/gray"
-        android:textSize="@dimen/text_size_12" />
+        android:textSize="@dimen/text_size_14" />
 
 </LinearLayout>

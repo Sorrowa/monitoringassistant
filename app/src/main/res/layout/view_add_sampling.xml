@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="38dp"
+    android:layout_height="@dimen/item_height_dp_52"
     android:layout_gravity="bottom"
     android:background="@color/white"
     android:orientation="horizontal">
@@ -20,8 +20,8 @@
             android:drawableLeft="@mipmap/ic_add_parallel"
             android:drawablePadding="@dimen/dp_12"
             android:text="添加平行"
-            android:textColor="#2b99ff"
-            android:textSize="@dimen/text_size_13" />
+            android:textColor="@color/text_color_2b99ff"
+            android:textSize="@dimen/text_size_14" />
 
         <View
             android:layout_width="match_parent"
@@ -53,8 +53,8 @@
             android:drawableLeft="@mipmap/ic_add_blank"
             android:drawablePadding="@dimen/dp_12"
             android:text="添加空白"
-            android:textColor="#2b99ff"
-            android:textSize="@dimen/text_size_13" />
+            android:textColor="@color/text_color_2b99ff"
+            android:textSize="@dimen/text_size_14" />
 
         <View
             android:layout_width="match_parent"
@@ -85,8 +85,8 @@
             android:drawableLeft="@mipmap/ic_print_label"
             android:drawablePadding="@dimen/dp_12"
             android:text="打印标签"
-            android:textColor="#2b99ff"
-            android:textSize="@dimen/text_size_13" />
+            android:textColor="@color/text_color_2b99ff"
+            android:textSize="@dimen/text_size_14"/>
 
         <View
             android:layout_width="match_parent"

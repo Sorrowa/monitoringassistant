@@ -6,12 +6,9 @@ import android.support.annotation.Nullable;
 
 import com.wonders.health.lib.base.utils.ArtUtils;
 
-import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.app.Constant;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.AppPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.FilePresenter;
 import cn.cdjzxy.monitoringassistant.utils.FileUtils;
-import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 
 /**
  * 知识库Service

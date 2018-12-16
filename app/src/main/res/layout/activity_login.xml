@@ -18,52 +18,55 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_18"
         android:text="嘉泽云移动监测"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_size_32" />
+        android:textColor="@color/text_color_ffffff"
+        android:textSize="@dimen/text_size_34" />
 
     <cn.cdjzxy.monitoringassistant.widgets.ClearEditText
         android:id="@+id/et_name"
         android:layout_width="400dp"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginTop="60dp"
         android:drawableLeft="@mipmap/ic_login_user"
+        android:drawablePadding="10dp"
         android:drawableRight="@drawable/delete_selector"
         android:gravity="center_vertical"
         android:hint="用户名"
         android:inputType="textPersonName"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="@dimen/text_size_14"
+        android:textColor="@color/text_color_ffffff"
+        android:textColorHint="@color/text_color_ffffff"
+        android:textSize="@dimen/text_size_16"
         android:theme="@style/LoginEditText"
         tools:ignore="RtlCompat,UnknownId" />
 
     <cn.cdjzxy.monitoringassistant.widgets.ClearEditText
         android:id="@+id/et_pwd"
         android:layout_width="400dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_16"
+        android:layout_height="45dp"
+        android:layout_marginTop="@dimen/dp_18"
         android:drawableLeft="@mipmap/ic_login_pwd"
+        android:drawablePadding="10dp"
         android:drawableRight="@drawable/delete_selector"
         android:gravity="center_vertical"
         android:hint="密码"
         android:inputType="textPassword"
         android:maxLength="16"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="@dimen/text_size_14"
+        android:textColor="@color/text_color_ffffff"
+        android:textColorHint="@color/text_color_ffffff"
+        android:textSize="@dimen/text_size_16"
         android:theme="@style/LoginEditText"
         tools:ignore="RtlCompat" />
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="400dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="60dp"
         android:background="@drawable/btn_login_selector"
         android:text="登录"
-        android:textColor="#ffffff" />
+        android:textColor="@color/text_color_ffffff"
+        android:textSize="@dimen/text_size_18" />
 
 </LinearLayout>
