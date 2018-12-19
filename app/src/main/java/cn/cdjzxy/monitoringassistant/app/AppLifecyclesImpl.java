@@ -36,6 +36,7 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import io.reactivex.annotations.NonNull;
 import me.jessyan.autosize.AutoSize;
@@ -69,7 +70,7 @@ public class AppLifecyclesImpl implements AppLifecycles, TitleBarViewControl {
         AppManager.init(application);
         AppManager.getInstance().setTitleBarViewControl(this);
         Thread.setDefaultUncaughtExceptionHandler(new ExHandler(Thread.getDefaultUncaughtExceptionHandler()));
-        //        RetrofitUrlManager.getInstance().putDomain("repository_server", BuildConfig.REPOSITORY_URL);
+        RetrofitUrlManager.getInstance().putDomain(Api.TEMPORARY_SERVER_IP, BuildConfig.REPOSITORY_URL);
         FileDownloader.setupOnApplicationOnCreate(application);
     }
 

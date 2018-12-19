@@ -90,7 +90,7 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
         mQR.startSpotAndShowRect(); // 显示扫描框，并且延迟0.1秒后开始识别
 
 
-//        mPresenter.getQrInfo(Message.obtain(ScanCodeFragment.this, new Object()), "0218100027");
+        mPresenter.getQrInfo(Message.obtain(ScanCodeFragment.this, new Object()), "0218100027");
 
     }
 

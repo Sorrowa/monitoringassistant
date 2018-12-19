@@ -17,7 +17,8 @@
         <TextView
             style="@style/BasicInfoItemTextViewStyle"
             android:rotation="90"
-            android:text="" />
+            android:text=""
+            android:hint="" />
 
     </RelativeLayout>
 

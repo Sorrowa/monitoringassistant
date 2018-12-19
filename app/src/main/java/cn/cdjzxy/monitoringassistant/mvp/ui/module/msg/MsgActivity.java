@@ -52,12 +52,12 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> implements IVi
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("消息中心");
         titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.makeText(getApplicationContext(), "搜索");
-            }
-        });
+//        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ArtUtils.makeText(getApplicationContext(), "搜索");
+//            }
+//        });
     }
 
     @Nullable
@@ -87,7 +87,7 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> implements IVi
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                ArtUtils.makeText(MsgActivity.this, tab.getTabName());
+
             }
         });
 

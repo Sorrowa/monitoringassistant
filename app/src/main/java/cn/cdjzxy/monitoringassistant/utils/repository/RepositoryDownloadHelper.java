@@ -74,7 +74,7 @@ public class RepositoryDownloadHelper {
      * @return
      */
     private static String getFileDownUrl(String filekey, String hashCode) {
-        return BuildConfig.REPOSITORY_URL + "ufInterface?opr=download&filekey=" + filekey + "&hash2=" + hashCode;
+        return BuildConfig.REPOSITORY_URL + "/ufInterface?opr=download&filekey=" + filekey + "&hash2=" + hashCode;
     }
 
     /**

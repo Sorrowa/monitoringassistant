@@ -41,6 +41,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
+import static me.jessyan.retrofiturlmanager.RetrofitUrlManager.DOMAIN_NAME_HEADER;
+
 /**
  * APP Service
  */
@@ -73,6 +75,7 @@ public interface ApiService {
     @PUT(Api.PWD_MODIFY)
     Observable<BaseResponse> modifyPwd(@QueryMap Map<String, String> params);
 
+    @Headers({DOMAIN_NAME_HEADER + Api.TEMPORARY_SERVER_IP})
     @GET(Api.QR_INFO)
     Observable<BaseResponse<QrMoreInfo>> getQrModelInfo(@Query("qrCode") String qrCode);
 
@@ -190,6 +193,7 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
+    @Headers({DOMAIN_NAME_HEADER + Api.TEMPORARY_SERVER_IP})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryHashCode(@QueryMap Map<String, String> params);
 
@@ -199,6 +203,7 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
+    @Headers({DOMAIN_NAME_HEADER + Api.TEMPORARY_SERVER_IP})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryGroups(@QueryMap Map<String, String> params);
 
@@ -208,6 +213,7 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
+    @Headers({DOMAIN_NAME_HEADER + Api.TEMPORARY_SERVER_IP})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryFolder(@QueryMap Map<String, String> params);
 
@@ -217,6 +223,7 @@ public interface ApiService {
      * @param params 请求参数map
      * @return
      */
+    @Headers({DOMAIN_NAME_HEADER + Api.TEMPORARY_SERVER_IP})
     @GET(Api.REPOSITORY)
     Observable<ResponseBody> getRepositoryFile(@QueryMap Map<String, String> params);
 

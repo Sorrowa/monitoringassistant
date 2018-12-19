@@ -49,6 +49,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import timber.log.Timber;
 
@@ -155,6 +156,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         DBHelper.get().getUserInfoDao().deleteAll();
                         DBHelper.get().getUserInfoDao().insert(userInfo);
                         UserInfoHelper.get().saveUserLoginStatee(true);
+                        HawkUtil.putBoolean("isUpdated", false);
                         msg.what = Message.RESULT_OK;
                         msg.obj = response.getData();
                         msg.handleMessageToTarget();

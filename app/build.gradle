@@ -35,8 +35,8 @@ android {
         debug {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "true"
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000/\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000/\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             buildConfigField "boolean", "IS_RELEASE", "false"
             debuggable true
             minifyEnabled false
@@ -45,8 +45,8 @@ android {
         release {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "false"
-            buildConfigField "String", "SERVER_IP", "\"http://luzhou.empcloud.net/\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091/\""
+            buildConfigField "String", "SERVER_IP", "\"http://luzhou.empcloud.net\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             buildConfigField "boolean", "IS_RELEASE", "true"
             signingConfig signingConfigs.release
             minifyEnabled true

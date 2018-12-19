@@ -65,6 +65,8 @@ public interface Api {
     //*******************消息******************
     String GET_MSG      = "api/Massage/GetMessage";//获取全部消息
     String PUT_READ_MSG = "api/Massage/PutReadMessage";//批量阅读消息
+
+    String TEMPORARY_SERVER_IP = "TEMPORARY_SERVER_IP";//临时IP
 }
 
 

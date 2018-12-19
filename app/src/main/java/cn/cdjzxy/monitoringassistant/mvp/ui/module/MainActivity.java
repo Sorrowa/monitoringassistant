@@ -51,6 +51,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
+import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
@@ -142,7 +143,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @Override
     protected void onStart() {
         super.onStart();
-        if (NetworkUtil.isNetworkAvailable(this)) {
+        if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
             showDialog();
             mPresenter.getDevices(Message.obtain(this, new Object()));
             mPresenter.getMethods(Message.obtain(this, new Object()));
@@ -163,6 +164,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             mPresenter.getFormSelect(Message.obtain(this, new Object()));
             mPresenter.getSamplingStantd(Message.obtain(this, new Object()));
             mPresenter.getMyTasks(Message.obtain(this, new Object()));
+            HawkUtil.putBoolean("isUpdated", true);
         }
     }
 
