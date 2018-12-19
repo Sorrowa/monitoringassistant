@@ -383,6 +383,8 @@ public class DateUtils {
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
     }
 
+
+
     /**
      * @param interval 间隔
      * @return
