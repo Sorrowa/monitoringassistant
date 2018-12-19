@@ -8,18 +8,20 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.DeviceHolder;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 
 
 /**
  * 主页tab
  */
 
-public class DeviceAdapter extends DefaultAdapter<Tab> {
+public class DeviceAdapter extends DefaultAdapter<Devices> {
 
 
-    public DeviceAdapter(List<Tab> infos) {
+    public DeviceAdapter(List<Devices> infos) {
         super(infos);
     }
 
@@ -29,7 +31,7 @@ public class DeviceAdapter extends DefaultAdapter<Tab> {
     }
 
     @Override
-    public BaseHolder<Tab> getHolder(View v, int viewType) {
+    public BaseHolder<Devices> getHolder(View v, int viewType) {
         return new DeviceHolder(v);
     }
 }

@@ -29,7 +29,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_task_name"
+                    android:id="@+id/tv_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -39,7 +39,7 @@
                     android:textSize="@dimen/text_size_14" />
 
                 <TextView
-                    android:id="@+id/tv_task_time_range"
+                    android:id="@+id/tv_state"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -58,7 +58,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_task_type"
+                    android:id="@+id/tv_model"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -68,7 +68,7 @@
                     android:textSize="@dimen/text_size_13" />
 
                 <TextView
-                    android:id="@+id/tv_task_person"
+                    android:id="@+id/tv_numbering"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -78,7 +78,7 @@
                     android:textSize="@dimen/text_size_13" />
 
                 <TextView
-                    android:id="@+id/tv_task_start_time"
+                    android:id="@+id/tv_validity_period"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

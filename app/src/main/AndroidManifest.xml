@@ -62,6 +62,11 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".mvp.ui.module.task.TaskSearchResultActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
             android:name=".mvp.ui.module.task.TaskDetailActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
@@ -76,7 +81,7 @@
             android:name=".mvp.ui.module.task.wastewater.WastewaterActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustPan|stateVisible" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".mvp.ui.module.repository.RepositoryActivity"
@@ -140,7 +145,7 @@
 
 
         <activity
-            android:name=".mvp.ui.module.task.project.ProjectActivity"
+            android:name=".mvp.ui.module.task.point.MonItemActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
@@ -148,7 +153,6 @@
             android:name=".mvp.ui.module.task.device.DeviceActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
 
         <service android:name=".services.RepositoryService" />
 

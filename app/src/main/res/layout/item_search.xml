@@ -7,9 +7,12 @@
 
     <TextView
         android:id="@+id/tab_name"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_search_condition"
+        android:layout_marginBottom="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_12"
+        android:background="@drawable/shape_search_condition_selected"
+        android:gravity="center"
         android:paddingBottom="@dimen/dp_4"
         android:paddingLeft="@dimen/dp_12"
         android:paddingRight="@dimen/dp_12"

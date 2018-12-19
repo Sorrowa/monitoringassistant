@@ -26,8 +26,8 @@ public class EnvirPointDao extends AbstractDao<EnvirPoint, String> {
     public static class Properties {
         public final static Property Id = new Property(0, String.class, "Id", true, "ID");
         public final static Property Name = new Property(1, String.class, "Name", false, "NAME");
-        public final static Property Longtitude = new Property(2, long.class, "Longtitude", false, "LONGTITUDE");
-        public final static Property Latitude = new Property(3, long.class, "Latitude", false, "LATITUDE");
+        public final static Property Longtitude = new Property(2, double.class, "Longtitude", false, "LONGTITUDE");
+        public final static Property Latitude = new Property(3, double.class, "Latitude", false, "LATITUDE");
         public final static Property TagId = new Property(4, String.class, "TagId", false, "TAG_ID");
         public final static Property TagName = new Property(5, String.class, "TagName", false, "TAG_NAME");
         public final static Property UpdateTime = new Property(6, String.class, "UpdateTime", false, "UPDATE_TIME");
@@ -48,8 +48,8 @@ public class EnvirPointDao extends AbstractDao<EnvirPoint, String> {
         db.execSQL("CREATE TABLE " + constraint + "\"ENVIR_POINT\" (" + //
                 "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: Id
                 "\"NAME\" TEXT," + // 1: Name
-                "\"LONGTITUDE\" INTEGER NOT NULL ," + // 2: Longtitude
-                "\"LATITUDE\" INTEGER NOT NULL ," + // 3: Latitude
+                "\"LONGTITUDE\" REAL NOT NULL ," + // 2: Longtitude
+                "\"LATITUDE\" REAL NOT NULL ," + // 3: Latitude
                 "\"TAG_ID\" TEXT," + // 4: TagId
                 "\"TAG_NAME\" TEXT," + // 5: TagName
                 "\"UPDATE_TIME\" TEXT);"); // 6: UpdateTime
@@ -74,8 +74,8 @@ public class EnvirPointDao extends AbstractDao<EnvirPoint, String> {
         if (Name != null) {
             stmt.bindString(2, Name);
         }
-        stmt.bindLong(3, entity.getLongtitude());
-        stmt.bindLong(4, entity.getLatitude());
+        stmt.bindDouble(3, entity.getLongtitude());
+        stmt.bindDouble(4, entity.getLatitude());
  
         String TagId = entity.getTagId();
         if (TagId != null) {
@@ -106,8 +106,8 @@ public class EnvirPointDao extends AbstractDao<EnvirPoint, String> {
         if (Name != null) {
             stmt.bindString(2, Name);
         }
-        stmt.bindLong(3, entity.getLongtitude());
-        stmt.bindLong(4, entity.getLatitude());
+        stmt.bindDouble(3, entity.getLongtitude());
+        stmt.bindDouble(4, entity.getLatitude());
  
         String TagId = entity.getTagId();
         if (TagId != null) {
@@ -135,8 +135,8 @@ public class EnvirPointDao extends AbstractDao<EnvirPoint, String> {
         EnvirPoint entity = new EnvirPoint( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // Id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // Name
-            cursor.getLong(offset + 2), // Longtitude
-            cursor.getLong(offset + 3), // Latitude
+            cursor.getDouble(offset + 2), // Longtitude
+            cursor.getDouble(offset + 3), // Latitude
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // TagId
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // TagName
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // UpdateTime
@@ -148,8 +148,8 @@ public class EnvirPointDao extends AbstractDao<EnvirPoint, String> {
     public void readEntity(Cursor cursor, EnvirPoint entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setLongtitude(cursor.getLong(offset + 2));
-        entity.setLatitude(cursor.getLong(offset + 3));
+        entity.setLongtitude(cursor.getDouble(offset + 2));
+        entity.setLatitude(cursor.getDouble(offset + 3));
         entity.setTagId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setTagName(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setUpdateTime(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));

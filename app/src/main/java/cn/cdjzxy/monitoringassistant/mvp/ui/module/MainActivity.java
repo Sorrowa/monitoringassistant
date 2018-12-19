@@ -16,10 +16,14 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
+import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
+import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.Subscriber;
 
@@ -47,15 +51,22 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
+import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
+    public static final int TYPE_TASK = 2222;
+
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.layout_container)
     FrameLayout  layoutContainer;
+
+    private NumberProgressBar mNumberProgressBar;
+    private TextView          mTvHint;
+    private DialogPlus        mDialogPlus;
 
     private TitleBarView mTitleBarView;
 
@@ -126,23 +137,33 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             }
         }, 3000);
 
-//        mPresenter.getDevices(Message.obtain(this, new Object()));
-//        mPresenter.getMethods(Message.obtain(this, new Object()));
-//        mPresenter.getMonItems(Message.obtain(this, new Object()));
-//        mPresenter.getTags(Message.obtain(this, new Object()));
-//        mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));
-//        mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));
-//        mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));
-//        mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));
-//        mPresenter.getRight(Message.obtain(this, new Object()));
-//        mPresenter.getEnvirPoint(Message.obtain(this, new Object()));
-//        mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));
-//        mPresenter.getEnterprise(Message.obtain(this, new Object()));
-//        mPresenter.getDic(Message.obtain(this, new Object()), 7);
-//        mPresenter.getMsgs(Message.obtain(this, new Object()));
-//        mPresenter.getMyTasks(Message.obtain(this, new Object()));
-//        mPresenter.getFormSelect(Message.obtain(this, new Object()));
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (NetworkUtil.isNetworkAvailable(this)) {
+            showDialog();
+            mPresenter.getDevices(Message.obtain(this, new Object()));
+            mPresenter.getMethods(Message.obtain(this, new Object()));
+            mPresenter.getMonItems(Message.obtain(this, new Object()));
+            mPresenter.getTags(Message.obtain(this, new Object()));
+            mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));
+            mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));
+            mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));
+            mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));
+            mPresenter.getRight(Message.obtain(this, new Object()));
+            mPresenter.getEnvirPoint(Message.obtain(this, new Object()));
+            mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));
+            mPresenter.getEnterprise(Message.obtain(this, new Object()));
+            mPresenter.getDic(Message.obtain(this, new Object()), 7);
+            mPresenter.getWeather(Message.obtain(this, new Object()));
+            mPresenter.getUser(Message.obtain(this, new Object()));
+            mPresenter.getMsgs(Message.obtain(this, new Object()));
+            mPresenter.getFormSelect(Message.obtain(this, new Object()));
+            mPresenter.getSamplingStantd(Message.obtain(this, new Object()));
+            mPresenter.getMyTasks(Message.obtain(this, new Object()));
+        }
     }
 
     @Override
@@ -176,7 +197,15 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
                 break;
             case Message.RESULT_OK:
-
+                int progress = mNumberProgressBar.getProgress() + (int) message.obj;
+                mNumberProgressBar.setProgress(progress);
+                if (progress == 100) {
+                    mDialogPlus.dismiss();
+                }
+                break;
+            case TYPE_TASK:
+                mNumberProgressBar.setProgress(mNumberProgressBar.getProgress() + ApiPresenter.PROGRESS);
+                mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);
                 break;
         }
     }
@@ -375,6 +404,20 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             return true;
         }
         return false;
+    }
+
+    private void showDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_download, null);
+        mNumberProgressBar = view.findViewById(R.id.progressbar);
+        mTvHint = view.findViewById(R.id.tv_hint);
+        DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
+        dialogPlusBuilder.setContentHolder(new ViewHolder(view));
+        dialogPlusBuilder.setGravity(Gravity.CENTER);
+        dialogPlusBuilder.setCancelable(false);
+        dialogPlusBuilder.setContentWidth(700);
+        mDialogPlus = dialogPlusBuilder.create();
+        mDialogPlus.show();
+
     }
 
 }

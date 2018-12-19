@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.lidroid.xutils.db.annotation.Check;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -30,23 +32,26 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.Coll
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.SiteMonitoringFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.keyboard.KeyboardWatcher;
+import cn.cdjzxy.monitoringassistant.utils.keyboard.callback.OnKeyboardStateChangeListener;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
-
     @BindView(R.id.layout_container)
     FrameLayout layoutContainer;
     @BindView(R.id.tabview)
     CustomTab   tabview;
 
+    TitleBarView mTitleBarView;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.setTitleMainText("水和废水采样及交接记录");
-        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+        mTitleBarView = titleBar;
+        mTitleBarView.setTitleMainText("水和废水采样及交接记录");
+        mTitleBarView.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArtUtils.startActivity(FormPrintActivity.class);
@@ -83,15 +88,17 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        StatusBarUtil.darkMode(this, false);
         initTabData();
         openFragment(0);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        BasicFragment basicFragment = (BasicFragment) getSupportFragmentManager().findFragmentByTag(BasicFragment.class.getName());
+        if (!CheckUtil.isNull(basicFragment)) {
+            basicFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -130,7 +137,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                ArtUtils.makeText(WastewaterActivity.this, tab.getTabName());
+                openFragment(position);
             }
         });
     }

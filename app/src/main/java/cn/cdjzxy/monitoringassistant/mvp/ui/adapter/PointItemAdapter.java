@@ -8,6 +8,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PointItemHolder;
 
@@ -16,10 +17,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PointItemHolder;
  * 主页tab
  */
 
-public class PointItemAdapter extends DefaultAdapter<Tab> {
+public class PointItemAdapter extends DefaultAdapter<EnvirPoint> {
 
 
-    public PointItemAdapter(List<Tab> infos) {
+    public PointItemAdapter(List<EnvirPoint> infos) {
         super(infos);
     }
 
@@ -29,7 +30,7 @@ public class PointItemAdapter extends DefaultAdapter<Tab> {
     }
 
     @Override
-    public BaseHolder<Tab> getHolder(View v, int viewType) {
+    public BaseHolder<EnvirPoint> getHolder(View v, int viewType) {
         return new PointItemHolder(v);
     }
 }

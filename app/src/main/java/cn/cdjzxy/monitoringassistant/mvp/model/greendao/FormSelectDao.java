@@ -1,6 +1,5 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.greendao;
 
-import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -9,8 +8,6 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 
@@ -18,7 +15,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 /** 
  * DAO for table "FORM_SELECT".
 */
-public class FormSelectDao extends AbstractDao<FormSelect, Long> {
+public class FormSelectDao extends AbstractDao<FormSelect, Void> {
 
     public static final String TABLENAME = "FORM_SELECT";
 
@@ -27,20 +24,14 @@ public class FormSelectDao extends AbstractDao<FormSelect, Long> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, long.class, "id", true, "_id");
-        public final static Property Form_Id = new Property(1, long.class, "form_Id", false, "FORM__ID");
-        public final static Property FormId = new Property(2, String.class, "FormId", false, "FORM_ID");
-        public final static Property FormCode = new Property(3, String.class, "FormCode", false, "FORM_CODE");
-        public final static Property FormName = new Property(4, String.class, "FormName", false, "FORM_NAME");
-        public final static Property TagParentId = new Property(5, String.class, "TagParentId", false, "TAG_PARENT_ID");
-        public final static Property TagId = new Property(6, String.class, "TagId", false, "TAG_ID");
-        public final static Property Path = new Property(7, String.class, "Path", false, "PATH");
-        public final static Property Flows = new Property(8, String.class, "Flows", false, "FLOWS");
+        public final static Property FormId = new Property(0, String.class, "FormId", false, "FORM_ID");
+        public final static Property FormCode = new Property(1, String.class, "FormCode", false, "FORM_CODE");
+        public final static Property FormName = new Property(2, String.class, "FormName", false, "FORM_NAME");
+        public final static Property TagParentId = new Property(3, String.class, "TagParentId", false, "TAG_PARENT_ID");
+        public final static Property TagId = new Property(4, String.class, "TagId", false, "TAG_ID");
+        public final static Property Path = new Property(5, String.class, "Path", false, "PATH");
     }
 
-    private DaoSession daoSession;
-
-    private Query<FormSelect> form_FormSelectListQuery;
 
     public FormSelectDao(DaoConfig config) {
         super(config);
@@ -48,22 +39,18 @@ public class FormSelectDao extends AbstractDao<FormSelect, Long> {
     
     public FormSelectDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"FORM_SELECT\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ," + // 0: id
-                "\"FORM__ID\" INTEGER NOT NULL ," + // 1: form_Id
-                "\"FORM_ID\" TEXT," + // 2: FormId
-                "\"FORM_CODE\" TEXT," + // 3: FormCode
-                "\"FORM_NAME\" TEXT," + // 4: FormName
-                "\"TAG_PARENT_ID\" TEXT," + // 5: TagParentId
-                "\"TAG_ID\" TEXT," + // 6: TagId
-                "\"PATH\" TEXT," + // 7: Path
-                "\"FLOWS\" TEXT);"); // 8: Flows
+                "\"FORM_ID\" TEXT," + // 0: FormId
+                "\"FORM_CODE\" TEXT," + // 1: FormCode
+                "\"FORM_NAME\" TEXT," + // 2: FormName
+                "\"TAG_PARENT_ID\" TEXT," + // 3: TagParentId
+                "\"TAG_ID\" TEXT," + // 4: TagId
+                "\"PATH\" TEXT);"); // 5: Path
     }
 
     /** Drops the underlying database table. */
@@ -75,145 +62,116 @@ public class FormSelectDao extends AbstractDao<FormSelect, Long> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, FormSelect entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
-        stmt.bindLong(2, entity.getForm_Id());
  
         String FormId = entity.getFormId();
         if (FormId != null) {
-            stmt.bindString(3, FormId);
+            stmt.bindString(1, FormId);
         }
  
         String FormCode = entity.getFormCode();
         if (FormCode != null) {
-            stmt.bindString(4, FormCode);
+            stmt.bindString(2, FormCode);
         }
  
         String FormName = entity.getFormName();
         if (FormName != null) {
-            stmt.bindString(5, FormName);
+            stmt.bindString(3, FormName);
         }
  
         String TagParentId = entity.getTagParentId();
         if (TagParentId != null) {
-            stmt.bindString(6, TagParentId);
+            stmt.bindString(4, TagParentId);
         }
  
         String TagId = entity.getTagId();
         if (TagId != null) {
-            stmt.bindString(7, TagId);
+            stmt.bindString(5, TagId);
         }
  
         String Path = entity.getPath();
         if (Path != null) {
-            stmt.bindString(8, Path);
-        }
- 
-        String Flows = entity.getFlows();
-        if (Flows != null) {
-            stmt.bindString(9, Flows);
+            stmt.bindString(6, Path);
         }
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, FormSelect entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
-        stmt.bindLong(2, entity.getForm_Id());
  
         String FormId = entity.getFormId();
         if (FormId != null) {
-            stmt.bindString(3, FormId);
+            stmt.bindString(1, FormId);
         }
  
         String FormCode = entity.getFormCode();
         if (FormCode != null) {
-            stmt.bindString(4, FormCode);
+            stmt.bindString(2, FormCode);
         }
  
         String FormName = entity.getFormName();
         if (FormName != null) {
-            stmt.bindString(5, FormName);
+            stmt.bindString(3, FormName);
         }
  
         String TagParentId = entity.getTagParentId();
         if (TagParentId != null) {
-            stmt.bindString(6, TagParentId);
+            stmt.bindString(4, TagParentId);
         }
  
         String TagId = entity.getTagId();
         if (TagId != null) {
-            stmt.bindString(7, TagId);
+            stmt.bindString(5, TagId);
         }
  
         String Path = entity.getPath();
         if (Path != null) {
-            stmt.bindString(8, Path);
-        }
- 
-        String Flows = entity.getFlows();
-        if (Flows != null) {
-            stmt.bindString(9, Flows);
+            stmt.bindString(6, Path);
         }
     }
 
     @Override
-    protected final void attachEntity(FormSelect entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
-    }
-
-    @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+    public Void readKey(Cursor cursor, int offset) {
+        return null;
     }    
 
     @Override
     public FormSelect readEntity(Cursor cursor, int offset) {
         FormSelect entity = new FormSelect( //
-            cursor.getLong(offset + 0), // id
-            cursor.getLong(offset + 1), // form_Id
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // FormId
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // FormCode
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // FormName
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // TagParentId
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // TagId
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // Path
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // Flows
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // FormId
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // FormCode
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // FormName
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // TagParentId
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // TagId
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // Path
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, FormSelect entity, int offset) {
-        entity.setId(cursor.getLong(offset + 0));
-        entity.setForm_Id(cursor.getLong(offset + 1));
-        entity.setFormId(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setFormCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setFormName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setTagParentId(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setTagId(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setPath(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setFlows(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setFormId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setFormCode(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setFormName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setTagParentId(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setTagId(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setPath(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
     
     @Override
-    protected final Long updateKeyAfterInsert(FormSelect entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected final Void updateKeyAfterInsert(FormSelect entity, long rowId) {
+        // Unsupported or missing PK type
+        return null;
     }
     
     @Override
-    public Long getKey(FormSelect entity) {
-        if(entity != null) {
-            return entity.getId();
-        } else {
-            return null;
-        }
+    public Void getKey(FormSelect entity) {
+        return null;
     }
 
     @Override
     public boolean hasKey(FormSelect entity) {
-        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+        // TODO
+        return false;
     }
 
     @Override
@@ -221,18 +179,4 @@ public class FormSelectDao extends AbstractDao<FormSelect, Long> {
         return true;
     }
     
-    /** Internal query to resolve the "FormSelectList" to-many relationship of Form. */
-    public List<FormSelect> _queryForm_FormSelectList(long form_Id) {
-        synchronized (this) {
-            if (form_FormSelectListQuery == null) {
-                QueryBuilder<FormSelect> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Form_Id.eq(null));
-                form_FormSelectListQuery = queryBuilder.build();
-            }
-        }
-        Query<FormSelect> query = form_FormSelectListQuery.forCurrentThread();
-        query.setParameter(0, form_Id);
-        return query.list();
-    }
-
 }

@@ -1,6 +1,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.msg;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +11,8 @@ import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
+import com.wonders.health.lib.base.mvp.IView;
+import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
@@ -18,13 +22,19 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MsgAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
-public class MsgActivity extends BaseTitileActivity<ApiPresenter> {
+import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
+
+public class MsgActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
 
     @BindView(R.id.btn_read_all)
@@ -35,6 +45,8 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> {
     CustomTab    tabview;
 
     private MsgAdapter mMsgAdapter;
+
+    List<Msg> mMsgs;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -92,18 +104,15 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> {
             }
         });
 
-        List<Tab> mTabs = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            Tab tab = new Tab();
-            mTabs.add(tab);
-        }
-
-        mMsgAdapter = new MsgAdapter(mTabs);
+        mMsgs = DBHelper.get().getMsgDao().loadAll();
+        mMsgAdapter = new MsgAdapter(mMsgs);
         mMsgAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                ArtUtils.startActivity(MsgDetailActivity.class);
+                Intent intent = new Intent(MsgActivity.this, MsgDetailActivity.class);
+                intent.putExtra("title", mMsgs.get(position).getMsgTitle());
+                intent.putExtra("content", mMsgs.get(position).getMsgContent());
+                ArtUtils.startActivity(intent);
             }
         });
         recyclerViewMsg.setAdapter(mMsgAdapter);
@@ -112,7 +121,43 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> {
 
     @OnClick(R.id.btn_read_all)
     public void onClick() {
+        if (NetworkUtil.isNetworkAvailable(this)) {
+            if (!CheckUtil.isEmpty(mMsgs)) {
+                List<String> messageIds = new ArrayList<>();
+                for (Msg msg : mMsgs) {
+                    messageIds.add(msg.getId());
+                }
+                mPresenter.putReadMsg(Message.obtain(this, new Object()), messageIds);
+            }
+        } else {
+            showMessage("网络未连接，请联网后操作");
+        }
 
+    }
 
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
+
+    @Override
+    public void showMessage(@NonNull String message) {
+        ArtUtils.makeText(this, message);
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message message) {
+        checkNotNull(message);
+        switch (message.what) {
+            case Message.RESULT_OK:
+                showMessage("批量阅读消息成功");
+                break;
+
+        }
     }
 }

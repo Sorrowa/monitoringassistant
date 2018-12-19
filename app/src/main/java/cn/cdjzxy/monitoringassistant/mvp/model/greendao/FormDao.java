@@ -15,7 +15,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 /** 
  * DAO for table "FORM".
 */
-public class FormDao extends AbstractDao<Form, Long> {
+public class FormDao extends AbstractDao<Form, Void> {
 
     public static final String TABLENAME = "FORM";
 
@@ -24,12 +24,9 @@ public class FormDao extends AbstractDao<Form, Long> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, long.class, "id", true, "_id");
-        public final static Property TagId = new Property(1, String.class, "TagId", false, "TAG_ID");
-        public final static Property TagName = new Property(2, String.class, "TagName", false, "TAG_NAME");
+        public final static Property TagId = new Property(0, String.class, "TagId", false, "TAG_ID");
+        public final static Property TagName = new Property(1, String.class, "TagName", false, "TAG_NAME");
     }
-
-    private DaoSession daoSession;
 
 
     public FormDao(DaoConfig config) {
@@ -38,16 +35,14 @@ public class FormDao extends AbstractDao<Form, Long> {
     
     public FormDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"FORM\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ," + // 0: id
-                "\"TAG_ID\" TEXT," + // 1: TagId
-                "\"TAG_NAME\" TEXT);"); // 2: TagName
+                "\"TAG_ID\" TEXT," + // 0: TagId
+                "\"TAG_NAME\" TEXT);"); // 1: TagName
     }
 
     /** Drops the underlying database table. */
@@ -59,81 +54,68 @@ public class FormDao extends AbstractDao<Form, Long> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, Form entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
  
         String TagId = entity.getTagId();
         if (TagId != null) {
-            stmt.bindString(2, TagId);
+            stmt.bindString(1, TagId);
         }
  
         String TagName = entity.getTagName();
         if (TagName != null) {
-            stmt.bindString(3, TagName);
+            stmt.bindString(2, TagName);
         }
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, Form entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
  
         String TagId = entity.getTagId();
         if (TagId != null) {
-            stmt.bindString(2, TagId);
+            stmt.bindString(1, TagId);
         }
  
         String TagName = entity.getTagName();
         if (TagName != null) {
-            stmt.bindString(3, TagName);
+            stmt.bindString(2, TagName);
         }
     }
 
     @Override
-    protected final void attachEntity(Form entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
-    }
-
-    @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+    public Void readKey(Cursor cursor, int offset) {
+        return null;
     }    
 
     @Override
     public Form readEntity(Cursor cursor, int offset) {
         Form entity = new Form( //
-            cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // TagId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // TagName
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // TagId
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // TagName
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, Form entity, int offset) {
-        entity.setId(cursor.getLong(offset + 0));
-        entity.setTagId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setTagName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setTagId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setTagName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
      }
     
     @Override
-    protected final Long updateKeyAfterInsert(Form entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected final Void updateKeyAfterInsert(Form entity, long rowId) {
+        // Unsupported or missing PK type
+        return null;
     }
     
     @Override
-    public Long getKey(Form entity) {
-        if(entity != null) {
-            return entity.getId();
-        } else {
-            return null;
-        }
+    public Void getKey(Form entity) {
+        return null;
     }
 
     @Override
     public boolean hasKey(Form entity) {
-        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+        // TODO
+        return false;
     }
 
     @Override

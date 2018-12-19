@@ -4,7 +4,7 @@
     android:layout_height="@dimen/item_height_dp_52">
 
     <TextView
-        android:id="@+id/tab_name"
+        android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -17,11 +17,12 @@
 
 
     <ImageView
+        android:id="@+id/iv_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/dp_16"
+        android:padding="@dimen/dp_16"
         android:src="@mipmap/ic_seach_history_delete" />
 
     <View

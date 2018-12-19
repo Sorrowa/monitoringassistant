@@ -389,6 +389,7 @@ public class TaskFragment extends BaseFragment {
                 break;
             case R.id.btn_sampling:
                 ArtUtils.makeText(getContext(), "已采样");
+
                 break;
             case R.id.btn_wait_sampling:
                 ArtUtils.startActivity(TaskActivity.class);

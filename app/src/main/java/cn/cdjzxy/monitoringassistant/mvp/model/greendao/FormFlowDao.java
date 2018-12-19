@@ -1,6 +1,5 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.greendao;
 
-import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -9,8 +8,6 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
 
@@ -18,7 +15,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
 /** 
  * DAO for table "FORM_FLOW".
 */
-public class FormFlowDao extends AbstractDao<FormFlow, Long> {
+public class FormFlowDao extends AbstractDao<FormFlow, Void> {
 
     public static final String TABLENAME = "FORM_FLOW";
 
@@ -27,20 +24,17 @@ public class FormFlowDao extends AbstractDao<FormFlow, Long> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, long.class, "id", true, "_id");
-        public final static Property FormSelect_Id = new Property(1, long.class, "formSelect_Id", false, "FORM_SELECT__ID");
-        public final static Property FlowId = new Property(2, String.class, "FlowId", false, "FLOW_ID");
-        public final static Property FlowName = new Property(3, String.class, "FlowName", false, "FLOW_NAME");
-        public final static Property NodeNumber = new Property(4, int.class, "NodeNumber", false, "NODE_NUMBER");
-        public final static Property CurrentStatus = new Property(5, int.class, "CurrentStatus", false, "CURRENT_STATUS");
-        public final static Property IsJoinFlow = new Property(6, boolean.class, "IsJoinFlow", false, "IS_JOIN_FLOW");
-        public final static Property NodeHandleCode = new Property(7, String.class, "NodeHandleCode", false, "NODE_HANDLE_CODE");
-        public final static Property AllFlowUsers = new Property(8, String.class, "AllFlowUsers", false, "ALL_FLOW_USERS");
-        public final static Property FlowUserIds = new Property(9, String.class, "FlowUserIds", false, "FLOW_USER_IDS");
-        public final static Property FlowUserNames = new Property(10, String.class, "FlowUserNames", false, "FLOW_USER_NAMES");
+        public final static Property FlowId = new Property(0, String.class, "FlowId", false, "FLOW_ID");
+        public final static Property FlowName = new Property(1, String.class, "FlowName", false, "FLOW_NAME");
+        public final static Property NodeNumber = new Property(2, int.class, "NodeNumber", false, "NODE_NUMBER");
+        public final static Property CurrentStatus = new Property(3, int.class, "CurrentStatus", false, "CURRENT_STATUS");
+        public final static Property IsJoinFlow = new Property(4, boolean.class, "IsJoinFlow", false, "IS_JOIN_FLOW");
+        public final static Property NodeHandleCode = new Property(5, String.class, "NodeHandleCode", false, "NODE_HANDLE_CODE");
+        public final static Property AllFlowUsers = new Property(6, String.class, "AllFlowUsers", false, "ALL_FLOW_USERS");
+        public final static Property FlowUserIds = new Property(7, String.class, "FlowUserIds", false, "FLOW_USER_IDS");
+        public final static Property FlowUserNames = new Property(8, String.class, "FlowUserNames", false, "FLOW_USER_NAMES");
     }
 
-    private Query<FormFlow> formSelect_FormFlowsQuery;
 
     public FormFlowDao(DaoConfig config) {
         super(config);
@@ -54,17 +48,15 @@ public class FormFlowDao extends AbstractDao<FormFlow, Long> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"FORM_FLOW\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ," + // 0: id
-                "\"FORM_SELECT__ID\" INTEGER NOT NULL ," + // 1: formSelect_Id
-                "\"FLOW_ID\" TEXT," + // 2: FlowId
-                "\"FLOW_NAME\" TEXT," + // 3: FlowName
-                "\"NODE_NUMBER\" INTEGER NOT NULL ," + // 4: NodeNumber
-                "\"CURRENT_STATUS\" INTEGER NOT NULL ," + // 5: CurrentStatus
-                "\"IS_JOIN_FLOW\" INTEGER NOT NULL ," + // 6: IsJoinFlow
-                "\"NODE_HANDLE_CODE\" TEXT," + // 7: NodeHandleCode
-                "\"ALL_FLOW_USERS\" TEXT," + // 8: AllFlowUsers
-                "\"FLOW_USER_IDS\" TEXT," + // 9: FlowUserIds
-                "\"FLOW_USER_NAMES\" TEXT);"); // 10: FlowUserNames
+                "\"FLOW_ID\" TEXT," + // 0: FlowId
+                "\"FLOW_NAME\" TEXT," + // 1: FlowName
+                "\"NODE_NUMBER\" INTEGER NOT NULL ," + // 2: NodeNumber
+                "\"CURRENT_STATUS\" INTEGER NOT NULL ," + // 3: CurrentStatus
+                "\"IS_JOIN_FLOW\" INTEGER NOT NULL ," + // 4: IsJoinFlow
+                "\"NODE_HANDLE_CODE\" TEXT," + // 5: NodeHandleCode
+                "\"ALL_FLOW_USERS\" TEXT," + // 6: AllFlowUsers
+                "\"FLOW_USER_IDS\" TEXT," + // 7: FlowUserIds
+                "\"FLOW_USER_NAMES\" TEXT);"); // 8: FlowUserNames
     }
 
     /** Drops the underlying database table. */
@@ -76,139 +68,128 @@ public class FormFlowDao extends AbstractDao<FormFlow, Long> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, FormFlow entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
-        stmt.bindLong(2, entity.getFormSelect_Id());
  
         String FlowId = entity.getFlowId();
         if (FlowId != null) {
-            stmt.bindString(3, FlowId);
+            stmt.bindString(1, FlowId);
         }
  
         String FlowName = entity.getFlowName();
         if (FlowName != null) {
-            stmt.bindString(4, FlowName);
+            stmt.bindString(2, FlowName);
         }
-        stmt.bindLong(5, entity.getNodeNumber());
-        stmt.bindLong(6, entity.getCurrentStatus());
-        stmt.bindLong(7, entity.getIsJoinFlow() ? 1L: 0L);
+        stmt.bindLong(3, entity.getNodeNumber());
+        stmt.bindLong(4, entity.getCurrentStatus());
+        stmt.bindLong(5, entity.getIsJoinFlow() ? 1L: 0L);
  
         String NodeHandleCode = entity.getNodeHandleCode();
         if (NodeHandleCode != null) {
-            stmt.bindString(8, NodeHandleCode);
+            stmt.bindString(6, NodeHandleCode);
         }
  
         String AllFlowUsers = entity.getAllFlowUsers();
         if (AllFlowUsers != null) {
-            stmt.bindString(9, AllFlowUsers);
+            stmt.bindString(7, AllFlowUsers);
         }
  
         String FlowUserIds = entity.getFlowUserIds();
         if (FlowUserIds != null) {
-            stmt.bindString(10, FlowUserIds);
+            stmt.bindString(8, FlowUserIds);
         }
  
         String FlowUserNames = entity.getFlowUserNames();
         if (FlowUserNames != null) {
-            stmt.bindString(11, FlowUserNames);
+            stmt.bindString(9, FlowUserNames);
         }
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, FormFlow entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
-        stmt.bindLong(2, entity.getFormSelect_Id());
  
         String FlowId = entity.getFlowId();
         if (FlowId != null) {
-            stmt.bindString(3, FlowId);
+            stmt.bindString(1, FlowId);
         }
  
         String FlowName = entity.getFlowName();
         if (FlowName != null) {
-            stmt.bindString(4, FlowName);
+            stmt.bindString(2, FlowName);
         }
-        stmt.bindLong(5, entity.getNodeNumber());
-        stmt.bindLong(6, entity.getCurrentStatus());
-        stmt.bindLong(7, entity.getIsJoinFlow() ? 1L: 0L);
+        stmt.bindLong(3, entity.getNodeNumber());
+        stmt.bindLong(4, entity.getCurrentStatus());
+        stmt.bindLong(5, entity.getIsJoinFlow() ? 1L: 0L);
  
         String NodeHandleCode = entity.getNodeHandleCode();
         if (NodeHandleCode != null) {
-            stmt.bindString(8, NodeHandleCode);
+            stmt.bindString(6, NodeHandleCode);
         }
  
         String AllFlowUsers = entity.getAllFlowUsers();
         if (AllFlowUsers != null) {
-            stmt.bindString(9, AllFlowUsers);
+            stmt.bindString(7, AllFlowUsers);
         }
  
         String FlowUserIds = entity.getFlowUserIds();
         if (FlowUserIds != null) {
-            stmt.bindString(10, FlowUserIds);
+            stmt.bindString(8, FlowUserIds);
         }
  
         String FlowUserNames = entity.getFlowUserNames();
         if (FlowUserNames != null) {
-            stmt.bindString(11, FlowUserNames);
+            stmt.bindString(9, FlowUserNames);
         }
     }
 
     @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+    public Void readKey(Cursor cursor, int offset) {
+        return null;
     }    
 
     @Override
     public FormFlow readEntity(Cursor cursor, int offset) {
         FormFlow entity = new FormFlow( //
-            cursor.getLong(offset + 0), // id
-            cursor.getLong(offset + 1), // formSelect_Id
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // FlowId
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // FlowName
-            cursor.getInt(offset + 4), // NodeNumber
-            cursor.getInt(offset + 5), // CurrentStatus
-            cursor.getShort(offset + 6) != 0, // IsJoinFlow
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // NodeHandleCode
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // AllFlowUsers
-            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // FlowUserIds
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // FlowUserNames
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // FlowId
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // FlowName
+            cursor.getInt(offset + 2), // NodeNumber
+            cursor.getInt(offset + 3), // CurrentStatus
+            cursor.getShort(offset + 4) != 0, // IsJoinFlow
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // NodeHandleCode
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // AllFlowUsers
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // FlowUserIds
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // FlowUserNames
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, FormFlow entity, int offset) {
-        entity.setId(cursor.getLong(offset + 0));
-        entity.setFormSelect_Id(cursor.getLong(offset + 1));
-        entity.setFlowId(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setFlowName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setNodeNumber(cursor.getInt(offset + 4));
-        entity.setCurrentStatus(cursor.getInt(offset + 5));
-        entity.setIsJoinFlow(cursor.getShort(offset + 6) != 0);
-        entity.setNodeHandleCode(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setAllFlowUsers(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setFlowUserIds(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setFlowUserNames(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setFlowId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setFlowName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setNodeNumber(cursor.getInt(offset + 2));
+        entity.setCurrentStatus(cursor.getInt(offset + 3));
+        entity.setIsJoinFlow(cursor.getShort(offset + 4) != 0);
+        entity.setNodeHandleCode(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setAllFlowUsers(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setFlowUserIds(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setFlowUserNames(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
      }
     
     @Override
-    protected final Long updateKeyAfterInsert(FormFlow entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected final Void updateKeyAfterInsert(FormFlow entity, long rowId) {
+        // Unsupported or missing PK type
+        return null;
     }
     
     @Override
-    public Long getKey(FormFlow entity) {
-        if(entity != null) {
-            return entity.getId();
-        } else {
-            return null;
-        }
+    public Void getKey(FormFlow entity) {
+        return null;
     }
 
     @Override
     public boolean hasKey(FormFlow entity) {
-        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+        // TODO
+        return false;
     }
 
     @Override
@@ -216,18 +197,4 @@ public class FormFlowDao extends AbstractDao<FormFlow, Long> {
         return true;
     }
     
-    /** Internal query to resolve the "FormFlows" to-many relationship of FormSelect. */
-    public List<FormFlow> _queryFormSelect_FormFlows(long formSelect_Id) {
-        synchronized (this) {
-            if (formSelect_FormFlowsQuery == null) {
-                QueryBuilder<FormFlow> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.FormSelect_Id.eq(null));
-                formSelect_FormFlowsQuery = queryBuilder.build();
-            }
-        }
-        Query<FormFlow> query = formSelect_FormFlowsQuery.forCurrentThread();
-        query.setParameter(0, formSelect_Id);
-        return query.list();
-    }
-
 }

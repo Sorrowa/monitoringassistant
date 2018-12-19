@@ -30,6 +30,8 @@ public class TagsDao extends AbstractDao<Tags, String> {
         public final static Property Level = new Property(3, int.class, "level", false, "LEVEL");
     }
 
+    private DaoSession daoSession;
+
 
     public TagsDao(DaoConfig config) {
         super(config);
@@ -37,6 +39,7 @@ public class TagsDao extends AbstractDao<Tags, String> {
     
     public TagsDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -95,6 +98,12 @@ public class TagsDao extends AbstractDao<Tags, String> {
             stmt.bindString(3, ParentId);
         }
         stmt.bindLong(4, entity.getLevel());
+    }
+
+    @Override
+    protected final void attachEntity(Tags entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

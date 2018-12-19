@@ -8,8 +8,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Task;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.TaskHolder;
 
 
@@ -17,10 +16,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.TaskHolder;
  * 主页tab
  */
 
-public class TaskAdapter extends DefaultAdapter<Task> {
+public class TaskAdapter extends DefaultAdapter<Project> {
 
 
-    public TaskAdapter(List<Task> infos) {
+    public TaskAdapter(List<Project> infos) {
         super(infos);
     }
 
@@ -30,7 +29,7 @@ public class TaskAdapter extends DefaultAdapter<Task> {
     }
 
     @Override
-    public BaseHolder<Task> getHolder(View v, int viewType) {
+    public BaseHolder<Project> getHolder(View v, int viewType) {
         return new TaskHolder(v);
     }
 }

@@ -7,7 +7,9 @@ import java.util.Map;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
@@ -28,11 +30,12 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Task;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
@@ -56,7 +59,6 @@ public interface ApiService {
     /**
      * 退出登录
      *
-     * @param token
      * @return
      */
     @POST(Api.LOGOUT)
@@ -115,23 +117,29 @@ public interface ApiService {
     @GET(Api.GET_DIC)
     Observable<BaseResponse<List<Dic>>> getDic(@Query("Type") int type);
 
+    @GET(Api.GET_WEATHER)
+    Observable<BaseResponse<List<String>>> getWeather();
+
+    @GET(Api.GET_USER)
+    Observable<BaseResponse<List<User>>> getUser();
+
 
     //*******************任务******************
     @GET(Api.GET_MY_TASKS)
-    Observable<BaseResponse<List<Task>>> getMyTasks();
+    Observable<BaseResponse<List<Project>>> getMyTasks();
 
     @GET(Api.GET_ALL_TASKS)
-    Observable<BaseResponse<List<Task>>> getAllTasks();
+    Observable<BaseResponse<List<Project>>> getAllTasks();
 
     @PUT(Api.PUT_SAMPLING_FINISH)
     Observable<BaseResponse> putSamplingFinish();
 
     @GET(Api.GET_SAMPLE_STORAGE)
-    Observable<BaseResponse<List<Task>>> getSampleStorageProject();
+    Observable<BaseResponse<List<Project>>> getSampleStorageProject();
 
     //*******************流转******************
     @GET(Api.GET_SAMPLE_STORAGE_LIST)
-    Observable<BaseResponse<List<Task>>> getSampleStorageList();
+    Observable<BaseResponse<List<Project>>> getSampleStorageList();
 
     @PUT(Api.PUT_SAMPLE_STORAGE)
     Observable<BaseResponse> putVerifySampleStorage();
@@ -140,7 +148,6 @@ public interface ApiService {
     //*******************采样******************
     @GET(Api.GET_TABLES)
     Observable<BaseResponse<List<Table>>> getTableList();
-
 
     @POST(Api.CREATE_TABLE)
     Observable<BaseResponse> createTable();
@@ -164,7 +171,7 @@ public interface ApiService {
     Observable<BaseResponse> putSubmitSampling();
 
     @GET(Api.GET_SAMPLING)
-    Observable<BaseResponse<List<Sampling>>> getSampling();
+    Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") List<String> projectIds);
 
 
     //*******************文件******************
@@ -238,6 +245,7 @@ public interface ApiService {
      *
      * @return
      */
+    @Headers({"Content-Type: application/json"})
     @PUT(Api.PUT_READ_MSG)
-    Observable<BaseResponse> putReadMsg(@QueryMap List<String> messageIds);
+    Observable<BaseResponse> putReadMsg(@Body List<String> messageIds);
 }

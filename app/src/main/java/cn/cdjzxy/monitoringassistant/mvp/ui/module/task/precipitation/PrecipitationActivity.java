@@ -33,12 +33,10 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
-
     @BindView(R.id.layout_container)
     FrameLayout layoutContainer;
     @BindView(R.id.tabview)
     CustomTab   tabview;
-
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -125,7 +123,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> impl
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                ArtUtils.makeText(PrecipitationActivity.this, tab.getTabName());
+                openFragment(position);
             }
         });
     }

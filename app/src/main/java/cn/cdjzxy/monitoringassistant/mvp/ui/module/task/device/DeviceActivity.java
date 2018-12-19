@@ -19,7 +19,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.DeviceAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TabAdapter;
@@ -130,14 +132,8 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
             }
         });
 
-        List<Tab> mTabs = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            Tab tab = new Tab();
-            mTabs.add(tab);
-        }
-
-        mDeviceAdapter = new DeviceAdapter(mTabs);
+        List<Devices> devices = DBHelper.get().getDevicesDao().loadAll();
+        mDeviceAdapter = new DeviceAdapter(devices);
         mDeviceAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {

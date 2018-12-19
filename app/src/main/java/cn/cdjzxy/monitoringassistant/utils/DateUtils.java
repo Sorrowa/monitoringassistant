@@ -383,4 +383,21 @@ public class DateUtils {
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
     }
 
+    /**
+     * @param interval 间隔
+     * @return
+     */
+    public static String getDate(int interval) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dt = new Date();
+        Calendar rightNow = Calendar.getInstance();
+        rightNow.setTime(dt);
+        //        rightNow.add(Calendar.YEAR, -1);//日期减1年
+        //        rightNow.add(Calendar.MONTH, 3);//日期加3个月
+        rightNow.add(Calendar.DAY_OF_YEAR, -interval);//日期加10天
+        Date dt1 = rightNow.getTime();
+        String reStr = sdf.format(dt1);
+        return reStr;
+    }
+
 }

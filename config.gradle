@@ -146,6 +146,7 @@ ext {
             "uIWidget"                 : "com.github.AriesHoo.UIWidget:widget-core:3.2.6",
             "filedownloader"           : "com.liulishuo.filedownloader:library:1.7.5",
             "fileprovider"             : "com.zhy.base:fileprovider:1.0.0",
+            "numberprogressbar"        : "com.daimajia.numberprogressbar:library:1.4@aar",
 
     ]
 

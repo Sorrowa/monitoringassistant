@@ -6,10 +6,6 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class FormFlow {
-    @Id(autoincrement = true)
-    private long id;
-    private long formSelect_Id;
-
     private String  FlowId;
     private String  FlowName;
     private int     NodeNumber;
@@ -19,13 +15,10 @@ public class FormFlow {
     private String  AllFlowUsers;
     private String  FlowUserIds;
     private String  FlowUserNames;
-    @Generated(hash = 1495533852)
-    public FormFlow(long id, long formSelect_Id, String FlowId, String FlowName,
-            int NodeNumber, int CurrentStatus, boolean IsJoinFlow,
-            String NodeHandleCode, String AllFlowUsers, String FlowUserIds,
-            String FlowUserNames) {
-        this.id = id;
-        this.formSelect_Id = formSelect_Id;
+    @Generated(hash = 444277217)
+    public FormFlow(String FlowId, String FlowName, int NodeNumber,
+            int CurrentStatus, boolean IsJoinFlow, String NodeHandleCode,
+            String AllFlowUsers, String FlowUserIds, String FlowUserNames) {
         this.FlowId = FlowId;
         this.FlowName = FlowName;
         this.NodeNumber = NodeNumber;
@@ -38,18 +31,6 @@ public class FormFlow {
     }
     @Generated(hash = 384426255)
     public FormFlow() {
-    }
-    public long getId() {
-        return this.id;
-    }
-    public void setId(long id) {
-        this.id = id;
-    }
-    public long getFormSelect_Id() {
-        return this.formSelect_Id;
-    }
-    public void setFormSelect_Id(long formSelect_Id) {
-        this.formSelect_Id = formSelect_Id;
     }
     public String getFlowId() {
         return this.FlowId;

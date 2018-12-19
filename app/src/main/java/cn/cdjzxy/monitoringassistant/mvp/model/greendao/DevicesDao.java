@@ -33,7 +33,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         public final static Property DepartmentName = new Property(6, String.class, "DepartmentName", false, "DEPARTMENT_NAME");
         public final static Property Company = new Property(7, String.class, "Company", false, "COMPANY");
         public final static Property PurchasingDate = new Property(8, String.class, "PurchasingDate", false, "PURCHASING_DATE");
-        public final static Property RePrice = new Property(9, int.class, "RePrice", false, "RE_PRICE");
+        public final static Property RePrice = new Property(9, float.class, "RePrice", false, "RE_PRICE");
         public final static Property StoreLoaction = new Property(10, String.class, "StoreLoaction", false, "STORE_LOACTION");
         public final static Property ExpireDate = new Property(11, String.class, "ExpireDate", false, "EXPIRE_DATE");
         public final static Property Manager = new Property(12, String.class, "Manager", false, "MANAGER");
@@ -65,7 +65,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
                 "\"DEPARTMENT_NAME\" TEXT," + // 6: DepartmentName
                 "\"COMPANY\" TEXT," + // 7: Company
                 "\"PURCHASING_DATE\" TEXT," + // 8: PurchasingDate
-                "\"RE_PRICE\" INTEGER NOT NULL ," + // 9: RePrice
+                "\"RE_PRICE\" REAL NOT NULL ," + // 9: RePrice
                 "\"STORE_LOACTION\" TEXT," + // 10: StoreLoaction
                 "\"EXPIRE_DATE\" TEXT," + // 11: ExpireDate
                 "\"MANAGER\" TEXT," + // 12: Manager
@@ -129,7 +129,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         if (PurchasingDate != null) {
             stmt.bindString(9, PurchasingDate);
         }
-        stmt.bindLong(10, entity.getRePrice());
+        stmt.bindDouble(10, entity.getRePrice());
  
         String StoreLoaction = entity.getStoreLoaction();
         if (StoreLoaction != null) {
@@ -207,7 +207,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         if (PurchasingDate != null) {
             stmt.bindString(9, PurchasingDate);
         }
-        stmt.bindLong(10, entity.getRePrice());
+        stmt.bindDouble(10, entity.getRePrice());
  
         String StoreLoaction = entity.getStoreLoaction();
         if (StoreLoaction != null) {
@@ -254,7 +254,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // DepartmentName
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // Company
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // PurchasingDate
-            cursor.getInt(offset + 9), // RePrice
+            cursor.getFloat(offset + 9), // RePrice
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // StoreLoaction
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // ExpireDate
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // Manager
@@ -277,7 +277,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         entity.setDepartmentName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setCompany(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setPurchasingDate(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setRePrice(cursor.getInt(offset + 9));
+        entity.setRePrice(cursor.getFloat(offset + 9));
         entity.setStoreLoaction(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setExpireDate(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setManager(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));

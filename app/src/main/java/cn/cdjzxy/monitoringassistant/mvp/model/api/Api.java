@@ -31,6 +31,8 @@ public interface Api {
     String GET_ENTERPOINT             = "api/BaseData/GetEnterRelatePoint";//获取企业点位 GET
     String GET_ENTERPRISE             = "api/BaseData/GetEnterprise";//获取企业 GET
     String GET_DIC                    = "api/BaseData/GetDic";//获取字典  GET
+    String GET_WEATHER                = "api/BaseData/GetWeather";//获取天气  GET
+    String GET_USER                   = "api/BaseData/GetUser";//获取采样用户  GET
 
     //*******************文件******************
     String UPLOAD_FILE = "api/File/Upload";//上传文件 POST

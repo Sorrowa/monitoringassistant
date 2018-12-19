@@ -21,11 +21,17 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Task;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
@@ -44,11 +50,17 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemTagRelationDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.RightsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.WeatherDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TaskDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormFlowDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingUserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TableDao;
@@ -76,11 +88,17 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig monItemTagRelationDaoConfig;
     private final DaoConfig rightsDaoConfig;
     private final DaoConfig tagsDaoConfig;
+    private final DaoConfig userDaoConfig;
+    private final DaoConfig weatherDaoConfig;
     private final DaoConfig msgDaoConfig;
-    private final DaoConfig taskDaoConfig;
+    private final DaoConfig projectDaoConfig;
+    private final DaoConfig projectDetialDaoConfig;
     private final DaoConfig formDaoConfig;
     private final DaoConfig formFlowDaoConfig;
     private final DaoConfig formSelectDaoConfig;
+    private final DaoConfig samplingDaoConfig;
+    private final DaoConfig samplingDetailDaoConfig;
+    private final DaoConfig samplingFormStandDaoConfig;
     private final DaoConfig samplingStantdDaoConfig;
     private final DaoConfig samplingUserDaoConfig;
     private final DaoConfig tableDaoConfig;
@@ -99,11 +117,17 @@ public class DaoSession extends AbstractDaoSession {
     private final MonItemTagRelationDao monItemTagRelationDao;
     private final RightsDao rightsDao;
     private final TagsDao tagsDao;
+    private final UserDao userDao;
+    private final WeatherDao weatherDao;
     private final MsgDao msgDao;
-    private final TaskDao taskDao;
+    private final ProjectDao projectDao;
+    private final ProjectDetialDao projectDetialDao;
     private final FormDao formDao;
     private final FormFlowDao formFlowDao;
     private final FormSelectDao formSelectDao;
+    private final SamplingDao samplingDao;
+    private final SamplingDetailDao samplingDetailDao;
+    private final SamplingFormStandDao samplingFormStandDao;
     private final SamplingStantdDao samplingStantdDao;
     private final SamplingUserDao samplingUserDao;
     private final TableDao tableDao;
@@ -152,11 +176,20 @@ public class DaoSession extends AbstractDaoSession {
         tagsDaoConfig = daoConfigMap.get(TagsDao.class).clone();
         tagsDaoConfig.initIdentityScope(type);
 
+        userDaoConfig = daoConfigMap.get(UserDao.class).clone();
+        userDaoConfig.initIdentityScope(type);
+
+        weatherDaoConfig = daoConfigMap.get(WeatherDao.class).clone();
+        weatherDaoConfig.initIdentityScope(type);
+
         msgDaoConfig = daoConfigMap.get(MsgDao.class).clone();
         msgDaoConfig.initIdentityScope(type);
 
-        taskDaoConfig = daoConfigMap.get(TaskDao.class).clone();
-        taskDaoConfig.initIdentityScope(type);
+        projectDaoConfig = daoConfigMap.get(ProjectDao.class).clone();
+        projectDaoConfig.initIdentityScope(type);
+
+        projectDetialDaoConfig = daoConfigMap.get(ProjectDetialDao.class).clone();
+        projectDetialDaoConfig.initIdentityScope(type);
 
         formDaoConfig = daoConfigMap.get(FormDao.class).clone();
         formDaoConfig.initIdentityScope(type);
@@ -166,6 +199,15 @@ public class DaoSession extends AbstractDaoSession {
 
         formSelectDaoConfig = daoConfigMap.get(FormSelectDao.class).clone();
         formSelectDaoConfig.initIdentityScope(type);
+
+        samplingDaoConfig = daoConfigMap.get(SamplingDao.class).clone();
+        samplingDaoConfig.initIdentityScope(type);
+
+        samplingDetailDaoConfig = daoConfigMap.get(SamplingDetailDao.class).clone();
+        samplingDetailDaoConfig.initIdentityScope(type);
+
+        samplingFormStandDaoConfig = daoConfigMap.get(SamplingFormStandDao.class).clone();
+        samplingFormStandDaoConfig.initIdentityScope(type);
 
         samplingStantdDaoConfig = daoConfigMap.get(SamplingStantdDao.class).clone();
         samplingStantdDaoConfig.initIdentityScope(type);
@@ -192,11 +234,17 @@ public class DaoSession extends AbstractDaoSession {
         monItemTagRelationDao = new MonItemTagRelationDao(monItemTagRelationDaoConfig, this);
         rightsDao = new RightsDao(rightsDaoConfig, this);
         tagsDao = new TagsDao(tagsDaoConfig, this);
+        userDao = new UserDao(userDaoConfig, this);
+        weatherDao = new WeatherDao(weatherDaoConfig, this);
         msgDao = new MsgDao(msgDaoConfig, this);
-        taskDao = new TaskDao(taskDaoConfig, this);
+        projectDao = new ProjectDao(projectDaoConfig, this);
+        projectDetialDao = new ProjectDetialDao(projectDetialDaoConfig, this);
         formDao = new FormDao(formDaoConfig, this);
         formFlowDao = new FormFlowDao(formFlowDaoConfig, this);
         formSelectDao = new FormSelectDao(formSelectDaoConfig, this);
+        samplingDao = new SamplingDao(samplingDaoConfig, this);
+        samplingDetailDao = new SamplingDetailDao(samplingDetailDaoConfig, this);
+        samplingFormStandDao = new SamplingFormStandDao(samplingFormStandDaoConfig, this);
         samplingStantdDao = new SamplingStantdDao(samplingStantdDaoConfig, this);
         samplingUserDao = new SamplingUserDao(samplingUserDaoConfig, this);
         tableDao = new TableDao(tableDaoConfig, this);
@@ -215,11 +263,17 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(MonItemTagRelation.class, monItemTagRelationDao);
         registerDao(Rights.class, rightsDao);
         registerDao(Tags.class, tagsDao);
+        registerDao(User.class, userDao);
+        registerDao(Weather.class, weatherDao);
         registerDao(Msg.class, msgDao);
-        registerDao(Task.class, taskDao);
+        registerDao(Project.class, projectDao);
+        registerDao(ProjectDetial.class, projectDetialDao);
         registerDao(Form.class, formDao);
         registerDao(FormFlow.class, formFlowDao);
         registerDao(FormSelect.class, formSelectDao);
+        registerDao(Sampling.class, samplingDao);
+        registerDao(SamplingDetail.class, samplingDetailDao);
+        registerDao(SamplingFormStand.class, samplingFormStandDao);
         registerDao(SamplingStantd.class, samplingStantdDao);
         registerDao(SamplingUser.class, samplingUserDao);
         registerDao(Table.class, tableDao);
@@ -240,11 +294,17 @@ public class DaoSession extends AbstractDaoSession {
         monItemTagRelationDaoConfig.clearIdentityScope();
         rightsDaoConfig.clearIdentityScope();
         tagsDaoConfig.clearIdentityScope();
+        userDaoConfig.clearIdentityScope();
+        weatherDaoConfig.clearIdentityScope();
         msgDaoConfig.clearIdentityScope();
-        taskDaoConfig.clearIdentityScope();
+        projectDaoConfig.clearIdentityScope();
+        projectDetialDaoConfig.clearIdentityScope();
         formDaoConfig.clearIdentityScope();
         formFlowDaoConfig.clearIdentityScope();
         formSelectDaoConfig.clearIdentityScope();
+        samplingDaoConfig.clearIdentityScope();
+        samplingDetailDaoConfig.clearIdentityScope();
+        samplingFormStandDaoConfig.clearIdentityScope();
         samplingStantdDaoConfig.clearIdentityScope();
         samplingUserDaoConfig.clearIdentityScope();
         tableDaoConfig.clearIdentityScope();
@@ -303,12 +363,24 @@ public class DaoSession extends AbstractDaoSession {
         return tagsDao;
     }
 
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public WeatherDao getWeatherDao() {
+        return weatherDao;
+    }
+
     public MsgDao getMsgDao() {
         return msgDao;
     }
 
-    public TaskDao getTaskDao() {
-        return taskDao;
+    public ProjectDao getProjectDao() {
+        return projectDao;
+    }
+
+    public ProjectDetialDao getProjectDetialDao() {
+        return projectDetialDao;
     }
 
     public FormDao getFormDao() {
@@ -321,6 +393,18 @@ public class DaoSession extends AbstractDaoSession {
 
     public FormSelectDao getFormSelectDao() {
         return formSelectDao;
+    }
+
+    public SamplingDao getSamplingDao() {
+        return samplingDao;
+    }
+
+    public SamplingDetailDao getSamplingDetailDao() {
+        return samplingDetailDao;
+    }
+
+    public SamplingFormStandDao getSamplingFormStandDao() {
+        return samplingFormStandDao;
     }
 
     public SamplingStantdDao getSamplingStantdDao() {

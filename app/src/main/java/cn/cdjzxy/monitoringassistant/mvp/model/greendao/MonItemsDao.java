@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.greendao;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,10 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 
@@ -29,6 +34,7 @@ public class MonItemsDao extends AbstractDao<MonItems, String> {
         public final static Property Name = new Property(2, String.class, "Name", false, "NAME");
     }
 
+    private Query<MonItems> tags_MMonItemsQuery;
 
     public MonItemsDao(DaoConfig config) {
         super(config);
@@ -139,4 +145,19 @@ public class MonItemsDao extends AbstractDao<MonItems, String> {
         return true;
     }
     
+    /** Internal query to resolve the "mMonItems" to-many relationship of Tags. */
+    public List<MonItems> _queryTags_MMonItems(String TagId) {
+        synchronized (this) {
+            if (tags_MMonItemsQuery == null) {
+                QueryBuilder<MonItems> queryBuilder = queryBuilder();
+                queryBuilder.join(MonItemTagRelation.class, MonItemTagRelationDao.Properties.MonItemId)
+                    .where(MonItemTagRelationDao.Properties.TagId.eq(TagId));
+                tags_MMonItemsQuery = queryBuilder.build();
+            }
+        }
+        Query<MonItems> query = tags_MMonItemsQuery.forCurrentThread();
+        query.setParameter(0, TagId);
+        return query.list();
+    }
+
 }

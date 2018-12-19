@@ -85,8 +85,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:ellipsize="end"
                         android:gravity="left"
+                        android:maxLines="1"
                         android:text="点位：6"
+                        android:paddingRight="@dimen/dp_16"
                         android:textColor="@color/text_color_333333"
                         android:textSize="@dimen/text_size_13" />
 
@@ -97,6 +100,9 @@
                         android:layout_weight="1"
                         android:gravity="left"
                         android:text="项目：13"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:paddingRight="@dimen/dp_16"
                         android:textColor="@color/text_color_333333"
                         android:textSize="@dimen/text_size_13" />
 
@@ -126,6 +132,9 @@
                         android:layout_weight="1"
                         android:gravity="left"
                         android:text="人员：张三、李四、王五"
+                        android:paddingRight="@dimen/dp_16"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textColor="@color/text_color_333333"
                         android:textSize="@dimen/text_size_13" />
 

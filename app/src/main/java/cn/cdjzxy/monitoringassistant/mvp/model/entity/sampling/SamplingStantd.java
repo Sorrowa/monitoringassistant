@@ -1,10 +1,14 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
+import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
 import java.util.List;
+
 import org.greenrobot.greendao.annotation.Generated;
+
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
 
 @Entity
 public class SamplingStantd {
@@ -22,18 +26,19 @@ public class SamplingStantd {
      */
 
     @Id
-    private String  Id;
-    private String  Capacity;
-    private String  Contaner;
-    private String  SaveDescription;
-    private boolean IsSenceAnalysis;
-    private String  TagId;
-    private String  TagName;
-    private String  MonItems;
-    @Generated(hash = 1569228593)
+    private String       Id;
+    private String       Capacity;
+    private String       Contaner;
+    private String       SaveDescription;
+    private boolean      IsSenceAnalysis;
+    private String       TagId;
+    private String       TagName;
+    @Convert(columnType = String.class, converter = StringConverter.class)
+    private List<String> MonItems;
+    @Generated(hash = 1884107182)
     public SamplingStantd(String Id, String Capacity, String Contaner,
             String SaveDescription, boolean IsSenceAnalysis, String TagId,
-            String TagName, String MonItems) {
+            String TagName, List<String> MonItems) {
         this.Id = Id;
         this.Capacity = Capacity;
         this.Contaner = Contaner;
@@ -88,10 +93,10 @@ public class SamplingStantd {
     public void setTagName(String TagName) {
         this.TagName = TagName;
     }
-    public String getMonItems() {
+    public List<String> getMonItems() {
         return this.MonItems;
     }
-    public void setMonItems(String MonItems) {
+    public void setMonItems(List<String> MonItems) {
         this.MonItems = MonItems;
     }
 

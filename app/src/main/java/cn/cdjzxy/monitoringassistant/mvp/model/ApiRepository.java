@@ -11,10 +11,6 @@ import java.util.Map;
 import cn.cdjzxy.monitoringassistant.mvp.model.api.cache.ApiCache;
 import cn.cdjzxy.monitoringassistant.mvp.model.api.service.ApiService;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
@@ -28,14 +24,20 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Task;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 
 /**
  * App相关的数据操作
- * Created by zhang on 2018/7/27.
  */
 
 public class ApiRepository implements IModel {
@@ -425,6 +427,48 @@ public class ApiRepository implements IModel {
                 });
     }
 
+    /**
+     * 获取天气
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<String>>> getWeather() {
+        return Observable.just(mApiService.getWeather())
+                .flatMap(new Function<Observable<BaseResponse<List<String>>>, ObservableSource<BaseResponse<List<String>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<String>>> apply(Observable<BaseResponse<List<String>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<String>>, BaseResponse<List<String>>>() {
+                            @Override
+                            public BaseResponse<List<String>> apply(BaseResponse<List<String>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 获取采样人员
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<User>>> getUser() {
+        return Observable.just(mApiService.getUser())
+                .flatMap(new Function<Observable<BaseResponse<List<User>>>, ObservableSource<BaseResponse<List<User>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<User>>> apply(Observable<BaseResponse<List<User>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<User>>, BaseResponse<List<User>>>() {
+                            @Override
+                            public BaseResponse<List<User>> apply(BaseResponse<List<User>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
 
     /**
      * 获取所有消息
@@ -447,15 +491,36 @@ public class ApiRepository implements IModel {
                 });
     }
 
-
-    public Observable<BaseResponse<List<Task>>> getAllTasks() {
-        return Observable.just(mApiService.getAllTasks())
-                .flatMap(new Function<Observable<BaseResponse<List<Task>>>, ObservableSource<BaseResponse<List<Task>>>>() {
+    /**
+     * 批量阅读消息
+     *
+     * @return
+     */
+    public Observable<BaseResponse> putReadMsg(List<String> messageIds) {
+        return Observable.just(mApiService.putReadMsg(messageIds))
+                .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
                     @Override
-                    public ObservableSource<BaseResponse<List<Task>>> apply(Observable<BaseResponse<List<Task>>> baseResponseObservable) throws Exception {
-                        return baseResponseObservable.map(new Function<BaseResponse<List<Task>>, BaseResponse<List<Task>>>() {
+                    public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
                             @Override
-                            public BaseResponse<List<Task>> apply(BaseResponse<List<Task>> baseResponse) throws Exception {
+                            public BaseResponse apply(BaseResponse baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+
+    public Observable<BaseResponse<List<Project>>> getAllTasks() {
+        return Observable.just(mApiService.getAllTasks())
+                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Project>>, BaseResponse<List<Project>>>() {
+                            @Override
+                            public BaseResponse<List<Project>> apply(BaseResponse<List<Project>> baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });
@@ -470,14 +535,35 @@ public class ApiRepository implements IModel {
      *
      * @return
      */
-    public Observable<BaseResponse<List<Task>>> getMyTasks() {
+    public Observable<BaseResponse<List<Project>>> getMyTasks() {
         return Observable.just(mApiService.getMyTasks())
-                .flatMap(new Function<Observable<BaseResponse<List<Task>>>, ObservableSource<BaseResponse<List<Task>>>>() {
+                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
                     @Override
-                    public ObservableSource<BaseResponse<List<Task>>> apply(Observable<BaseResponse<List<Task>>> baseResponseObservable) throws Exception {
-                        return baseResponseObservable.map(new Function<BaseResponse<List<Task>>, BaseResponse<List<Task>>>() {
+                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Project>>, BaseResponse<List<Project>>>() {
                             @Override
-                            public BaseResponse<List<Task>> apply(BaseResponse<List<Task>> baseResponse) throws Exception {
+                            public BaseResponse<List<Project>> apply(BaseResponse<List<Project>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 获取我的任务
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<SamplingStantd>>> getSamplingStantd() {
+        return Observable.just(mApiService.getSamplingStantd())
+                .flatMap(new Function<Observable<BaseResponse<List<SamplingStantd>>>, ObservableSource<BaseResponse<List<SamplingStantd>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<SamplingStantd>>> apply(Observable<BaseResponse<List<SamplingStantd>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<SamplingStantd>>, BaseResponse<List<SamplingStantd>>>() {
+                            @Override
+                            public BaseResponse<List<SamplingStantd>> apply(BaseResponse<List<SamplingStantd>> baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });
@@ -500,6 +586,27 @@ public class ApiRepository implements IModel {
                         return baseResponseObservable.map(new Function<BaseResponse<List<Form>>, BaseResponse<List<Form>>>() {
                             @Override
                             public BaseResponse<List<Form>> apply(BaseResponse<List<Form>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 获取我的任务
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<Sampling>>> getSampling(List<String> projectIds) {
+        return Observable.just(mApiService.getSampling(projectIds))
+                .flatMap(new Function<Observable<BaseResponse<List<Sampling>>>, ObservableSource<BaseResponse<List<Sampling>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Sampling>>> apply(Observable<BaseResponse<List<Sampling>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Sampling>>, BaseResponse<List<Sampling>>>() {
+                            @Override
+                            public BaseResponse<List<Sampling>> apply(BaseResponse<List<Sampling>> baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });

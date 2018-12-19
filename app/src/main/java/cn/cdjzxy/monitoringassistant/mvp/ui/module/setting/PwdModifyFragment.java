@@ -9,8 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.wonders.health.lib.base.base.fragment.BaseFragment;
-import com.wonders.health.lib.base.mvp.IPresenter;
+import com.wonders.health.lib.base.mvp.IView;
+import com.wonders.health.lib.base.mvp.Message;
+import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
@@ -20,12 +21,18 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+
+import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 /**
  * 修改密码
  */
 
-public class PwdModifyFragment extends BaseFragment {
+public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IView {
 
     Unbinder unbinder;
     @BindView(R.id.et_old_pwd)
@@ -50,8 +57,39 @@ public class PwdModifyFragment extends BaseFragment {
 
     @Nullable
     @Override
-    public IPresenter obtainPresenter() {
-        return null;
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(getContext()));
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
+
+    @Override
+    public void showMessage(@NonNull String message) {
+        ArtUtils.makeText(getContext(), message);
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message message) {
+        checkNotNull(message);
+        switch (message.what) {
+            case 0:
+
+                break;
+            case Message.RESULT_OK:
+                EventBus.getDefault().post(6, EventBusTags.TAG_MODIFY_PWD);
+                showMessage("修改密码成功");
+                closeLoading();
+                break;
+
+        }
     }
 
     @Override
@@ -79,7 +117,36 @@ public class PwdModifyFragment extends BaseFragment {
                 EventBus.getDefault().post(6, EventBusTags.TAG_MODIFY_PWD);
                 break;
             case R.id.btn_submit:
-                EventBus.getDefault().post(6, EventBusTags.TAG_MODIFY_PWD);
+                String oldPwd = etOldPwd.getText().toString();
+                String newPwd = etNewPwd.getText().toString();
+                String surePwd = etSurePwd.getText().toString();
+                if (CheckUtil.isEmpty(oldPwd)) {
+                    showMessage("请输入旧密码");
+                    return;
+                }
+
+                if (CheckUtil.isEmpty(newPwd)) {
+                    showMessage("请输入新密码");
+                    return;
+                }
+
+                if (CheckUtil.isEmpty(surePwd)) {
+                    showMessage("请输入确认密码");
+                    return;
+                }
+                if (!newPwd.equals(surePwd)) {
+                    showMessage("两次密码输入不一致");
+                    return;
+                }
+
+                if (NetworkUtil.isNetworkAvailable(getContext())) {
+                    showLoading("密码修改中...");
+                    mPresenter.modifyPwd(Message.obtain(this, new Object()), oldPwd, newPwd);
+                } else {
+                    showMessage("网络未连接");
+                }
+
+
                 break;
         }
     }

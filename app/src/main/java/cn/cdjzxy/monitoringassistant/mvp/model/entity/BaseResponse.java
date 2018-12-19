@@ -6,7 +6,6 @@ import lombok.Data;
 
 /**
  * 服务器返回标准数据格式结果
- * Created by zhang on 2018/7/26.
  */
 @Data
 public class BaseResponse<T> implements Serializable {

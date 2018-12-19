@@ -16,11 +16,13 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.SearchHistoryHolder;
  * 主页tab
  */
 
-public class SearchHistoryAdapter extends DefaultAdapter<Tab> {
+public class SearchHistoryAdapter extends DefaultAdapter<String> {
 
+    private OnDeleteClickListener mOnDeleteClickListener;
 
-    public SearchHistoryAdapter(List<Tab> infos) {
+    public SearchHistoryAdapter(List<String> infos,OnDeleteClickListener onDeleteClickListener) {
         super(infos);
+        this.mOnDeleteClickListener = onDeleteClickListener;
     }
 
     @Override
@@ -29,7 +31,12 @@ public class SearchHistoryAdapter extends DefaultAdapter<Tab> {
     }
 
     @Override
-    public BaseHolder<Tab> getHolder(View v, int viewType) {
-        return new SearchHistoryHolder(v);
+    public BaseHolder<String> getHolder(View v, int viewType) {
+        return new SearchHistoryHolder(v, mOnDeleteClickListener);
+    }
+
+
+    public interface OnDeleteClickListener {
+        void onDelete(int position);
     }
 }

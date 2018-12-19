@@ -9,6 +9,8 @@ import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.TaskDetailHolder;
 
 
@@ -16,10 +18,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.TaskDetailHolder;
  * 主页tab
  */
 
-public class TaskDetailAdapter extends DefaultAdapter<Tab> {
+public class TaskDetailAdapter extends DefaultAdapter<Sampling> {
 
 
-    public TaskDetailAdapter(List<Tab> infos) {
+    public TaskDetailAdapter(List<Sampling> infos) {
         super(infos);
     }
 
@@ -29,7 +31,7 @@ public class TaskDetailAdapter extends DefaultAdapter<Tab> {
     }
 
     @Override
-    public BaseHolder<Tab> getHolder(View v, int viewType) {
+    public BaseHolder<Sampling> getHolder(View v, int viewType) {
         return new TaskDetailHolder(v);
     }
 }

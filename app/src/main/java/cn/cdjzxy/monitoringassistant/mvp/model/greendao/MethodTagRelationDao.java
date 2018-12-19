@@ -1,13 +1,18 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.greendao;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
 
@@ -29,6 +34,8 @@ public class MethodTagRelationDao extends AbstractDao<MethodTagRelation, String>
         public final static Property TagId = new Property(2, String.class, "TagId", false, "TAG_ID");
     }
 
+    private DaoSession daoSession;
+
 
     public MethodTagRelationDao(DaoConfig config) {
         super(config);
@@ -36,6 +43,7 @@ public class MethodTagRelationDao extends AbstractDao<MethodTagRelation, String>
     
     public MethodTagRelationDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -94,6 +102,12 @@ public class MethodTagRelationDao extends AbstractDao<MethodTagRelation, String>
     }
 
     @Override
+    protected final void attachEntity(MethodTagRelation entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
+    }
+
+    @Override
     public String readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
@@ -139,4 +153,95 @@ public class MethodTagRelationDao extends AbstractDao<MethodTagRelation, String>
         return true;
     }
     
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getMethodsDao().getAllColumns());
+            builder.append(" FROM METHOD_TAG_RELATION T");
+            builder.append(" LEFT JOIN METHODS T0 ON T.\"METHOD_ID\"=T0.\"ID\"");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected MethodTagRelation loadCurrentDeep(Cursor cursor, boolean lock) {
+        MethodTagRelation entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        Methods mMethods = loadCurrentOther(daoSession.getMethodsDao(), cursor, offset);
+        entity.setMMethods(mMethods);
+
+        return entity;    
+    }
+
+    public MethodTagRelation loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<MethodTagRelation> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<MethodTagRelation> list = new ArrayList<MethodTagRelation>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<MethodTagRelation> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<MethodTagRelation> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

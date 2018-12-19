@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,36 +21,41 @@ import java.util.List;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointSelectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> implements IView {
-
+public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.recyclerView_point)
     RecyclerView recyclerViewPoint;
     @BindView(R.id.tabview)
     CustomTab    tabview;
 
-
+    private List<EnvirPoint> mEnvirPoints = new ArrayList<>();
     private PointSelectAdapter mPointSelectAdapter;
+
+    private String tagId;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("点位选择");
         titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.makeText(getApplicationContext(), "搜索");
-            }
-        });
+        //        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                ArtUtils.makeText(getApplicationContext(), "搜索");
+        //            }
+        //        });
 
     }
 
@@ -65,43 +72,12 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> implem
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        StatusBarUtil.darkMode(this, false);
         initTabData();
-        initMsgData();
-    }
+        initPointData();
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        tagId = getIntent().getStringExtra("tagId");
 
-    }
-
-    @Override
-    public void showLoading() {
-
-    }
-
-    @Override
-    public void hideLoading() {
-
-    }
-
-    @Override
-    public void showMessage(@NonNull String message) {
-
-    }
-
-    @Override
-    public void handleMessage(@NonNull Message message) {
-        checkNotNull(message);
-        switch (message.what) {
-            case 0:
-
-                break;
-            case Message.RESULT_OK:
-
-                break;
-        }
+        getPointData(true);
     }
 
 
@@ -113,37 +89,54 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> implem
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                ArtUtils.makeText(PointSelectActivity.this, tab.getTabName());
+                getPointData(position == 0 ? true : false);
             }
         });
     }
 
     /**
-     * 初始化Tab数据
+     * 初始化数据
      */
-    private void initMsgData() {
-        ArtUtils.configRecyclerView(recyclerViewPoint, new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {//设置RecyclerView不可滑动
-                return true;
-            }
-        });
-
-        List<Tab> mTabs = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            Tab tab = new Tab();
-            mTabs.add(tab);
-        }
-
-        mPointSelectAdapter = new PointSelectAdapter(mTabs);
+    private void initPointData() {
+        ArtUtils.configRecyclerView(recyclerViewPoint, new LinearLayoutManager(this));
+        mPointSelectAdapter = new PointSelectAdapter(mEnvirPoints);
         mPointSelectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-
+                Intent intent = new Intent();
+                intent.putExtra("AddressId", mEnvirPoints.get(position).getId());
+                intent.putExtra("Address", mEnvirPoints.get(position).getName());
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         });
         recyclerViewPoint.setAdapter(mPointSelectAdapter);
+    }
+
+    private void getPointData(boolean isRelationPoint) {
+        List<EnvirPoint> envirPoints = null;
+        if (isRelationPoint) {
+            envirPoints = DBHelper
+                    .get()
+                    .getEnvirPointDao()
+                    .queryBuilder()
+                    .where(EnvirPointDao.Properties.TagId.eq(tagId))
+                    .list();
+        } else {
+            envirPoints = DBHelper
+                    .get()
+                    .getEnvirPointDao()
+                    .queryBuilder()
+                    .where(EnvirPointDao.Properties.TagId.notEq(tagId))
+                    .list();
+        }
+
+        mEnvirPoints.clear();
+        if (!CheckUtil.isEmpty(envirPoints)) {
+            mEnvirPoints.addAll(envirPoints);
+        }
+
+        mPointSelectAdapter.notifyDataSetChanged();
     }
 
 

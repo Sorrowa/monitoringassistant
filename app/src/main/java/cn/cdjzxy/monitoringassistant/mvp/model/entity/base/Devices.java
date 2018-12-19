@@ -40,7 +40,7 @@ public class Devices {
     private String  DepartmentName;
     private String  Company;
     private String  PurchasingDate;
-    private int     RePrice;
+    private float     RePrice;
     private String  StoreLoaction;
     private String  ExpireDate;
     private String  Manager;
@@ -48,10 +48,10 @@ public class Devices {
     private boolean IsForceChecked;
     private String  CertCode;
     private String  SourceWay;
-    @Generated(hash = 1894018373)
+    @Generated(hash = 765118164)
     public Devices(String Id, String Name, String Specification, String SystemCode,
             String DevCode, String DepartmentId, String DepartmentName,
-            String Company, String PurchasingDate, int RePrice,
+            String Company, String PurchasingDate, float RePrice,
             String StoreLoaction, String ExpireDate, String Manager, int State,
             boolean IsForceChecked, String CertCode, String SourceWay) {
         this.Id = Id;
@@ -129,10 +129,10 @@ public class Devices {
     public void setPurchasingDate(String PurchasingDate) {
         this.PurchasingDate = PurchasingDate;
     }
-    public int getRePrice() {
+    public float getRePrice() {
         return this.RePrice;
     }
-    public void setRePrice(int RePrice) {
+    public void setRePrice(float RePrice) {
         this.RePrice = RePrice;
     }
     public String getStoreLoaction() {
@@ -177,6 +177,6 @@ public class Devices {
     public void setSourceWay(String SourceWay) {
         this.SourceWay = SourceWay;
     }
-
+  
 
 }

@@ -8,6 +8,7 @@ import com.wonders.health.lib.base.di.component.AppComponent;
 import com.wonders.health.lib.base.mvp.BasePresenter;
 import com.wonders.health.lib.base.mvp.Message;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +30,24 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Task;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserInfoDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import timber.log.Timber;
@@ -46,6 +57,8 @@ import timber.log.Timber;
  */
 
 public class ApiPresenter extends BasePresenter<ApiRepository> {
+
+    public static final int PROGRESS = 100 / 20;
 
     public ApiPresenter(AppComponent appComponent) {
         super(appComponent.repositoryManager().createRepository(ApiRepository.class));
@@ -127,7 +140,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      * @param name
      * @param pwd
      */
-    private void loginOnline(final Message msg, String name, String pwd) {
+    private void loginOnline(final Message msg, String name, final String pwd) {
         Map<String, String> params = new HashMap<>();
         params.put("code", "0");
         params.put("loginId", name);
@@ -138,6 +151,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onSuccess(BaseResponse<UserInfo> response) {
                         UserInfo userInfo = response.getData();
+                        userInfo.setPwd(pwd);
                         DBHelper.get().getUserInfoDao().deleteAll();
                         DBHelper.get().getUserInfoDao().insert(userInfo);
                         UserInfoHelper.get().saveUserLoginStatee(true);
@@ -164,9 +178,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         UserInfo userInfo = UserInfoHelper.get().getUser();
         if (CheckUtil.isNull(userInfo)) {
             msg.getTarget().showMessage("用户信息不存在，请联网登录");
-        } else if (name.equals(userInfo.getWorkNo())) {
-            msg.getTarget().showMessage("用户错误");
-        } else if (pwd.equals(userInfo.getPwd())) {
+        } else if (!name.equals(userInfo.getWorkNo())) {
+            msg.getTarget().showMessage("用户名错误");
+        } else if (!pwd.equals(userInfo.getPwd())) {
             msg.getTarget().showMessage("密码错误");
         } else {
             UserInfoHelper.get().saveUserLoginStatee(true);
@@ -215,7 +229,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getDevicesDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -240,7 +254,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMethodsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -265,7 +279,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMonItemsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -290,7 +304,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getTagsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -315,7 +329,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMonItemTagRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -340,7 +354,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMethodTagRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -365,7 +379,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMonItemMethodRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -390,7 +404,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMethodDevRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -416,7 +430,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getRightsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -442,7 +456,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getEnvirPointDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -467,7 +481,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getEnterRelatePointDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -492,7 +506,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getEnterpriseDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -517,7 +531,61 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getDicDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                    }
+                }));
+    }
+
+    /**
+     * @param msg
+     */
+    public void getWeather(final Message msg) {
+        mModel.getWeather()
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<String>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<String>> baseResponse) {
+                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            Weather weather = new Weather();
+                            weather.setWeathers(baseResponse.getData());
+                            DBHelper.get().getWeatherDao().deleteAll();
+                            DBHelper.get().getWeatherDao().insert(weather);
+
+                        }
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = PROGRESS;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                    }
+                }));
+    }
+
+
+    /**
+     * @param msg
+     */
+    public void getUser(final Message msg) {
+        mModel.getUser()
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<User>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<User>> baseResponse) {
+                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            DBHelper.get().getUserDao().deleteAll();
+                            DBHelper.get().getUserDao().insertInTx(baseResponse.getData());
+                        }
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -543,7 +611,25 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMsgDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                    }
+                }));
+    }
+
+    public void putReadMsg(final Message msg, List<String> messageIds) {
+        mModel.putReadMsg(messageIds)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
                         msg.handleMessageToTarget();
                     }
 
@@ -561,12 +647,12 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     public void getAllTasks(final Message msg) {
         mModel.getAllTasks()
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
-                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Task>>>() {
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
                     @Override
-                    public void onSuccess(BaseResponse<List<Task>> baseResponse) {
+                    public void onSuccess(BaseResponse<List<Project>> baseResponse) {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
-                            DBHelper.get().getTaskDao().deleteAll();
-                            DBHelper.get().getTaskDao().insertInTx(baseResponse.getData());
+                            DBHelper.get().getProjectDao().deleteAll();
+                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = baseResponse.getData();
@@ -587,15 +673,57 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     public void getMyTasks(final Message msg) {
         mModel.getMyTasks()
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
-                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Task>>>() {
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
                     @Override
-                    public void onSuccess(BaseResponse<List<Task>> baseResponse) {
+                    public void onSuccess(BaseResponse<List<Project>> baseResponse) {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
-                            DBHelper.get().getTaskDao().deleteAll();
-                            DBHelper.get().getTaskDao().insertInTx(baseResponse.getData());
+                            List<Project> projects = baseResponse.getData();
+                            DBHelper.get().getProjectDetialDao().deleteAll();
+                            DBHelper.get().getProjectDao().deleteAll();
+                            for (Project project : projects) {
+                                List<ProjectDetial> projectDetials = project.getProjectDetials();
+                                if (!CheckUtil.isEmpty(projectDetials)) {
+                                    DBHelper.get().getProjectDetialDao().insertInTx(projectDetials);
+                                }
+                            }
+                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
+                        }
+
+                        List<Project> projects = baseResponse.getData();
+                        List<String> taskIds = new ArrayList<>();
+
+                        for (Project project : projects) {
+                            taskIds.add(project.getId());
+                        }
+
+                        msg.what = MainActivity.TYPE_TASK;
+                        msg.obj = taskIds;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                    }
+                }));
+    }
+
+
+    /**
+     * @param msg
+     */
+    public void getSamplingStantd(final Message msg) {
+        mModel.getSamplingStantd()
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<SamplingStantd>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<SamplingStantd>> baseResponse) {
+                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            DBHelper.get().getSamplingStantdDao().deleteAll();
+                            DBHelper.get().getSamplingStantdDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 
@@ -616,11 +744,72 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onSuccess(BaseResponse<List<Form>> baseResponse) {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            List<Form> forms = baseResponse.getData();
+                            DBHelper.get().getFormFlowDao().deleteAll();
+                            DBHelper.get().getFormSelectDao().deleteAll();
                             DBHelper.get().getFormDao().deleteAll();
+                            for (Form form : forms) {
+                                List<FormSelect> formSelects = form.getFormSelectList();
+                                if (!CheckUtil.isEmpty(formSelects)) {
+                                    for (FormSelect formSelect : formSelects) {
+                                        List<FormFlow> formFlows = formSelect.getFormFlows();
+                                        if (!CheckUtil.isEmpty(formFlows)) {
+                                            DBHelper.get().getFormFlowDao().insertInTx(formFlows);
+                                        }
+                                    }
+                                    DBHelper.get().getFormSelectDao().insertInTx(formSelects);
+                                }
+                            }
                             DBHelper.get().getFormDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getData();
+                        msg.obj = PROGRESS;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                    }
+                }));
+    }
+
+
+    /**
+     * @param msg
+     */
+    public void getSampling(final Message msg, List<String> projectIds) {
+        mModel.getSampling(projectIds)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Sampling>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Sampling>> baseResponse) {
+                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            List<Sampling> samplings = baseResponse.getData();
+                            if (!CheckUtil.isEmpty(samplings)) {
+
+                                DBHelper.get().getSamplingDao().deleteAll();
+                                DBHelper.get().getSamplingFormStandDao().deleteAll();
+                                DBHelper.get().getSamplingDetailDao().deleteAll();
+
+                                for (Sampling sampling : samplings) {
+                                    List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
+                                    if (!CheckUtil.isEmpty(samplingFormStands)) {
+                                        DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
+                                    }
+
+                                    List<SamplingDetail> samplingDetails = sampling.getSamplingDetailResults();
+
+                                    if (!CheckUtil.isEmpty(samplingDetails)) {
+                                        DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
+                                    }
+                                }
+
+                                DBHelper.get().getSamplingDao().insertInTx(samplings);
+                            }
+                        }
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = PROGRESS;
                         msg.handleMessageToTarget();
                     }
 

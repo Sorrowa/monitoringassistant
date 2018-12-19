@@ -48,7 +48,6 @@ import timber.log.Timber;
 
 /**
  * Application生命周期：用于初始化
- * Created by zhang on 2018/7/26.
  */
 
 public class AppLifecyclesImpl implements AppLifecycles, TitleBarViewControl {

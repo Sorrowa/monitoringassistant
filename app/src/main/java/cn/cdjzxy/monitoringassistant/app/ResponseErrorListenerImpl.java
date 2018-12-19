@@ -16,9 +16,6 @@ import me.jessyan.rxerrorhandler.handler.listener.ResponseErrorListener;
 import retrofit2.HttpException;
 import timber.log.Timber;
 
-/**
- * Created by zhang on 2018/7/26.
- */
 
 public class ResponseErrorListenerImpl implements ResponseErrorListener {
     @Override
