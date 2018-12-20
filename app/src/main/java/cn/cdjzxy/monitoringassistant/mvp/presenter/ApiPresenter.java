@@ -179,7 +179,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     private void loginLocal(final Message msg, String name, String pwd) {
         UserInfo userInfo = UserInfoHelper.get().getUser();
         if (CheckUtil.isNull(userInfo)) {
-            msg.getTarget().showMessage("用户信息不存在，请联网登录");
+            msg.getTarget().showMessage("用户信息不存在，请先联网登录更新数据");
         } else if (!name.equals(userInfo.getWorkNo())) {
             msg.getTarget().showMessage("用户名错误");
         } else if (!pwd.equals(userInfo.getPwd())) {

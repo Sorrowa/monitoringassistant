@@ -73,16 +73,6 @@
 -keep interface android.support.** { *; }
 -dontwarn android.support.**
 
-
-################alipay###############
-
--keep class com.alipay.android.app.IAlixPay{*;}
--keep class com.alipay.android.app.IAlixPay$Stub{*;}
--keep class com.alipay.android.app.IRemoteServiceCallback{*;}
--keep class com.alipay.android.app.IRemoteServiceCallback$Stub{*;}
--keep class com.alipay.sdk.app.PayTask{ public *;}
--keep class com.alipay.sdk.app.AuthTask{ public *;}
-
 ################retrofit###############
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
@@ -136,13 +126,6 @@
     @org.simple.eventbus.Subscriber <methods>;
 }
 -keepattributes *Annotation*
-
-################autolayout###############
--keep class com.zhy.autolayout.** { *; }
--keep interface com.zhy.autolayout.** { *; }
-
-
-
 
 ################RxJava and RxAndroid###############
 -dontwarn org.mockito.**
