@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -31,6 +32,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.utils.DialogUtil;
+import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
@@ -153,11 +155,11 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
         final Dialog dialog = new AlertDialog.Builder(getContext())
                 .setMessage("确定清除本地未提交任务数据？")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         UserInfoHelper.get().saveUserLoginStatee(false);
-                        DBHelper.get().clear();
+                        //                        DBHelper.getInstance().dropAllTables();
+                        FileUtils.clearDir(Constant.USER_DATA_DIR);
                         ArtUtils.startActivity(LoginActivity.class);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
@@ -173,15 +175,12 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
 
     private void showLogoutDialog() {
 
-        //        DialogUtil.createDialog(getContext(), "提示", "确定退出登录？");
-
         final Dialog dialog = new AlertDialog.Builder(getContext())
                 .setMessage("确定退出登录？")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showLoading("退出中...");
                         if (NetworkUtil.isNetworkAvailable(getContext())) {
                             mPresenter.logout(Message.obtain(SettingFragment.this, new Object()));
                         } else {
@@ -199,10 +198,7 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
     }
 
     private void logout() {
-        showMessage("退出登录成功");
-        closeLoading();
         UserInfoHelper.get().saveUserLoginStatee(false);
         ArtUtils.startActivity(LoginActivity.class);
-
     }
 }

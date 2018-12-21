@@ -239,7 +239,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
     private void search(String keyword) {
         saveHistory(keyword);
 
-        String startDate = "1990-01-01";
+        String startDate = "1900-01-01";
         for (int i = 0; i < mLastTimes.size(); i++) {
             if (mLastTimes.get(i).isSelected()) {
                 if (i == 0) {

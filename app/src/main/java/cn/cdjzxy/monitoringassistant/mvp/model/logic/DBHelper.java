@@ -31,10 +31,14 @@ public class DBHelper {
         sDaoSession = sDaoMaster.newSession();
     }
 
+    public static DBHelper getInstance() {
+        return sDBHelper;
+    }
+
     public static DaoSession get() {
-        if (null == sDaoSession) {
+        if (null == sDBHelper) {
             synchronized (UserInfoHelper.class) {
-                if (null == sDaoSession) {
+                if (null == sDBHelper) {
                     sDBHelper = new DBHelper();
                 }
             }

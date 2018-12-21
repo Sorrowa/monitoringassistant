@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.setting;
 
 
 import android.os.Bundle;
+import android.os.UserHandle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
@@ -63,12 +65,12 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
 
     @Override
     public void showLoading() {
-
+        showLoadingDialog("提交中...");
     }
 
     @Override
     public void hideLoading() {
-
+        closeLoadingDialog();
     }
 
     @Override
@@ -78,15 +80,15 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
 
     @Override
     public void handleMessage(@NonNull Message message) {
+        hideLoading();
         checkNotNull(message);
         switch (message.what) {
-            case 0:
+            case Message.RESULT_FAILURE:
 
                 break;
             case Message.RESULT_OK:
                 EventBus.getDefault().post(6, EventBusTags.TAG_MODIFY_PWD);
                 showMessage("修改密码成功");
-                closeLoading();
                 break;
 
         }
@@ -125,6 +127,11 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
                     return;
                 }
 
+                if (!oldPwd.equals(UserInfoHelper.get().getUser().getPwd())) {
+                    showMessage("密码输入错误，请输入正确的原始密码");
+                    return;
+                }
+
                 if (CheckUtil.isEmpty(newPwd)) {
                     showMessage("请输入新密码");
                     return;
@@ -140,13 +147,11 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
                 }
 
                 if (NetworkUtil.isNetworkAvailable(getContext())) {
-                    showLoading("密码修改中...");
+                    showLoading();
                     mPresenter.modifyPwd(Message.obtain(this, new Object()), oldPwd, newPwd);
                 } else {
                     showMessage("网络未连接");
                 }
-
-
                 break;
         }
     }

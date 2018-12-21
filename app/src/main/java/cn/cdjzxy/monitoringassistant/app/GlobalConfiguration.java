@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.google.gson.GsonBuilder;
-
 import com.wonders.health.lib.base.base.delegate.AppLifecycles;
 import com.wonders.health.lib.base.di.module.AppModule;
 import com.wonders.health.lib.base.di.module.ClientModule;
@@ -20,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import cn.cdjzxy.monitoringassistant.BuildConfig;
 import io.rx_cache2.internal.RxCache;
-import me.jessyan.progressmanager.ProgressManager;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -57,7 +55,6 @@ public class GlobalConfiguration implements ConfigModule {
                     @Override
                     public void configOkhttp(Context context, OkHttpClient.Builder okHttpBuilder) {
                         okHttpBuilder.connectTimeout(6, TimeUnit.SECONDS);
-                        ProgressManager.getInstance().with(okHttpBuilder);
                         RetrofitUrlManager.getInstance().with(okHttpBuilder);
                     }
                 })

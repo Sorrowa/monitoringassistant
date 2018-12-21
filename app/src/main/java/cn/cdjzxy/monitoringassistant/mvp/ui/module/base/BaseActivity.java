@@ -21,9 +21,14 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
+import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
@@ -158,35 +163,16 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         return true;
     }
 
-    public void showLoading(String str) {
-        if (!this.isFinishing()) {
-            View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-            TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
-            RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
-            if (CheckUtil.isEmpty(str)) {
-                tvContent.setVisibility(View.GONE);
-            } else {
-                rlDialog.setBackgroundResource(R.drawable.loading_bg);
-                tvContent.setVisibility(View.VISIBLE);
-                tvContent.setText(str);
-            }
-            if (dialog == null) {
-                dialog = new Dialog(this, R.style.loadingDialog);
-            }
-            dialog.setContentView(layout);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
+    public void showLoadingDialog() {
+        showLoadingDialog("加载中");
+    }
 
-                }
-            });
-            dialog.show();
-        }
+    public void showLoadingDialog(String str) {
+        showLoadingDialog(str, true);
     }
 
 
-    public void showLoading(String str, boolean isCanCanceled) {
+    public void showLoadingDialog(String str, boolean isCanCanceled) {
         if (!this.isFinishing()) {
             View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
             TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
@@ -215,12 +201,11 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
 
-    public void closeLoading() {
+    public void closeLoadingDialog() {
         if (null != dialog && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;
         }
     }
-
 
 }

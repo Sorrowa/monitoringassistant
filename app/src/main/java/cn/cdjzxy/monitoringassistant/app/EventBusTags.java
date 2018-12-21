@@ -11,5 +11,6 @@ public interface EventBusTags {
     String TAG_WASTEWATER_COLLECTION    = "WATEWATER_COLLECTION";//废水样品收集
     String TAG_WASTEWATER_BOTTLE        = "WASTEWATER_BOTTLE";//废水分瓶
     String TAG_PROGRAM_MODIFY           = "PROGRAM_MODIFY  ";//方案修改
+    String TAG_TOKEN_EXPIRE             = "TOKEN_EXPIRE  ";//token过期
 
 }

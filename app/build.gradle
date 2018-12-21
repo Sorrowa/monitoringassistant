@@ -91,7 +91,6 @@ dependencies {
     androidTestImplementation rootProject.ext.dependencies["espresso-core"]
     implementation rootProject.ext.dependencies["constraint-layout"]
     implementation rootProject.ext.dependencies["roundedimageview"]
-    implementation rootProject.ext.dependencies["progressmanager"]
     implementation rootProject.ext.dependencies["retrofit-url-manager"]
     implementation rootProject.ext.dependencies["lifecyclemodel"]
     implementation rootProject.ext.dependencies["superTextView"]
@@ -103,6 +102,7 @@ dependencies {
     implementation rootProject.ext.dependencies["filedownloader"]
     implementation rootProject.ext.dependencies["fileprovider"]
     implementation rootProject.ext.dependencies["numberprogressbar"]
+    implementation rootProject.ext.dependencies["matisse"]
     annotationProcessor(rootProject.ext.dependencies["dagger2-compiler"]) {
         exclude module: 'support-annotations'
     }
@@ -116,5 +116,4 @@ dependencies {
     implementation project(':lib.Gprinter')
     implementation files('libs/poi-3.9-20121203.jar')
     implementation files('libs/poi-scratchpad-3.9-20121203.jar')
-    implementation 'com.zhihu.android:matisse:0.5.2-beta4'
 }

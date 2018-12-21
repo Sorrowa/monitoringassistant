@@ -53,6 +53,18 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
         mTvStatus.setText(data.getStatusName());
         mTvName.setText(data.getFormName());
         mPoint.setText(data.getAddressName());
+
+        if (data.getStatus() == 0) {
+            mIvUpload.setImageResource(R.mipmap.ic_upload);
+            mSubmitTime.setVisibility(View.GONE);
+            mTvReviewTime.setVisibility(View.GONE);
+        } else {
+            mIvUpload.setImageResource(R.mipmap.ic_finish);
+            mSubmitTime.setVisibility(View.VISIBLE);
+            mTvReviewTime.setVisibility(View.VISIBLE);
+            mSubmitTime.setText("提交：" + data.getSendSampTime());
+            mTvReviewTime.setText("审核：" + data.getReciveTime());
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -95,6 +96,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     private DialogPlus   mDialogPlus;
     private CustomTab    mCustomTab;
     private RecyclerView mRecyclerView;
+    private ImageView    mBtnClose;
 
     private List<Tags> mFirstTags = new ArrayList<>();
     private List<Tab>  mTagNames  = new ArrayList<>();
@@ -343,6 +345,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_tag, null);
         mCustomTab = view.findViewById(R.id.tabview);
         mRecyclerView = view.findViewById(R.id.recyclerView);
+        mBtnClose = view.findViewById(R.id.iv_close);
+        mBtnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialogPlus.dismiss();
+            }
+        });
         List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
         if (!CheckUtil.isEmpty(tags)) {
             for (Tags tag : tags) {
@@ -353,6 +362,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
                     mTagNames.add(tab);
                 }
             }
+        }
+
+        for (Tab tagName : mTagNames) {
+            tagName.setSelected(false);
         }
 
         mTagNames.get(0).setSelected(true);
@@ -370,10 +383,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
-//                    createSampling(mDialogFormSelects.get(position));
+                    //                    createSampling(mDialogFormSelects.get(position));
                     ArtUtils.startActivity(PrecipitationActivity.class);
                 } else if ("水和废水样品采集与交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
-//                    createSampling(mDialogFormSelects.get(position));
+                    //                    createSampling(mDialogFormSelects.get(position));
                     ArtUtils.startActivity(WastewaterActivity.class);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
@@ -396,10 +409,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void getSampling(String tagId) {
-        List<Sampling> formSelects = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(data.getId()), SamplingDao.Properties.ParentTagId.eq(tagId)).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(data.getId()), SamplingDao.Properties.ParentTagId.eq(tagId)).list();
         mSamplings.clear();
-        if (!CheckUtil.isEmpty(formSelects)) {
-            mSamplings.addAll(formSelects);
+        if (!CheckUtil.isEmpty(samplings)) {
+            mSamplings.addAll(samplings);
         }
         mTaskDetailAdapter.notifyDataSetChanged();
     }
@@ -410,19 +423,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         bindView(data);
     }
 
-//    private void createSampling(FormSelect formSelect) {
-//        Sampling sampling = new Sampling();
-//        sampling.setId(UUID.randomUUID().toString());
-//        sampling.setSamplingNo("FS1809110101");
-//        sampling.setProjectId(data.getId());
-//        sampling.setProjectName(data.getName());
-//        sampling.setProjectNo(data.getProjectNo());
-//        sampling.setTagId(formSelect.getTagId());
-//        sampling.setFormName(formSelect.getFormName());
-//        sampling.setFormPath(formSelect.getPath());
-//        sampling.setParentTagId(formSelect.getTagParentId());
-//        sampling.setStatusName("进行中");
-//        sampling.setStatus(0);
-//        DBHelper.get().getSamplingDao().insert(sampling);
-//    }
+    //    private void createSampling(FormSelect formSelect) {
+    //        Sampling sampling = new Sampling();
+    //        sampling.setId(UUID.randomUUID().toString());
+    //        sampling.setSamplingNo("FS1809110101");
+    //        sampling.setProjectId(data.getId());
+    //        sampling.setProjectName(data.getName());
+    //        sampling.setProjectNo(data.getProjectNo());
+    //        sampling.setTagId(formSelect.getTagId());
+    //        sampling.setFormName(formSelect.getFormName());
+    //        sampling.setFormPath(formSelect.getPath());
+    //        sampling.setParentTagId(formSelect.getTagParentId());
+    //        sampling.setStatusName("进行中");
+    //        sampling.setStatus(0);
+    //        DBHelper.get().getSamplingDao().insert(sampling);
+    //    }
 }

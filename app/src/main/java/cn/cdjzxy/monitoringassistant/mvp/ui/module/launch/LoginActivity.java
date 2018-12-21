@@ -66,17 +66,16 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         requestPermission();
-        btnLogin.setBackground(SelectorDrawable.createBgDrawable(this, R.drawable.btn_login_selector));
 
         String username = UserInfoHelper.get().getUserName();
         etName.setText(CheckUtil.isEmpty(username) ? "liuyang" : username);
-        etPwd.setText("123456");
+        //        etPwd.setText("123456");
         // 双击退出
         mExitHelper = new ExitHelper.TwicePressHolder(new ExitHelper.IExitInterface() {
 
             @Override
             public void showExitTip() {
-                ArtUtils.makeText(getApplicationContext(), "再按一次退出程序");
+                showMessage("再按一次退出程序");
             }
 
             @Override
@@ -106,13 +105,13 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
 
     @Override
     public void showLoading() {
-        showLoading("登录中...");
+        showLoadingDialog("登录中...");
 
     }
 
     @Override
     public void hideLoading() {
-        closeLoading();
+        closeLoadingDialog();
     }
 
     @Override
@@ -122,13 +121,14 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
 
     @Override
     public void handleMessage(@NonNull Message message) {
+        hideLoading();
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
-                ArtUtils.makeText(this, "登录失败");
+                showMessage("登录失败");
                 break;
             case Message.RESULT_OK:
-                ArtUtils.makeText(this, "登录成功");
+                showMessage("登录成功");
                 toMian();
                 break;
         }
@@ -140,12 +140,12 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         pwd = etPwd.getText().toString();
 
         if (CheckUtil.isEmpty(name)) {
-            ArtUtils.makeText(this, "请输入用户名!");
+            showMessage("请输入用户名!");
             return;
         }
 
         if (CheckUtil.isEmpty(pwd)) {
-            ArtUtils.makeText(this, "请输入密码!");
+            showMessage("请输入密码!");
             return;
         }
 

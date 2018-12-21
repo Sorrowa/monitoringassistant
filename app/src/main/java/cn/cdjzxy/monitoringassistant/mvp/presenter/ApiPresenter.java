@@ -106,6 +106,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -129,6 +131,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -156,6 +160,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         DBHelper.get().getUserInfoDao().deleteAll();
                         DBHelper.get().getUserInfoDao().insert(userInfo);
                         UserInfoHelper.get().saveUserLoginStatee(true);
+                        UserInfoHelper.get().saveUserInfo(userInfo);
                         HawkUtil.putBoolean("isUpdated", false);
                         msg.what = Message.RESULT_OK;
                         msg.obj = response.getData();
@@ -165,6 +170,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -178,12 +185,18 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      */
     private void loginLocal(final Message msg, String name, String pwd) {
         UserInfo userInfo = UserInfoHelper.get().getUser();
-        if (CheckUtil.isNull(userInfo)) {
+        if (CheckUtil.isNull(userInfo) || CheckUtil.isEmpty(userInfo.getWorkNo())) {
             msg.getTarget().showMessage("用户信息不存在，请先联网登录更新数据");
+            msg.what = Message.RESULT_FAILURE;
+            msg.handleMessageToTarget();
         } else if (!name.equals(userInfo.getWorkNo())) {
             msg.getTarget().showMessage("用户名错误");
+            msg.what = Message.RESULT_FAILURE;
+            msg.handleMessageToTarget();
         } else if (!pwd.equals(userInfo.getPwd())) {
             msg.getTarget().showMessage("密码错误");
+            msg.what = Message.RESULT_FAILURE;
+            msg.handleMessageToTarget();
         } else {
             UserInfoHelper.get().saveUserLoginStatee(true);
             msg.what = Message.RESULT_OK;
@@ -212,6 +225,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -238,6 +253,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -263,6 +280,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -288,6 +307,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -313,6 +334,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -338,6 +361,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -363,6 +388,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -388,6 +415,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -413,6 +442,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -439,6 +470,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -465,6 +498,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -490,6 +525,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -515,6 +552,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -540,6 +579,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -568,6 +609,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -594,6 +637,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -620,6 +665,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -638,6 +685,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -664,6 +713,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -706,6 +757,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -732,6 +785,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -772,6 +827,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }
@@ -818,6 +875,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onFailure(int Type, String message) {
                         msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
                     }
                 }));
     }

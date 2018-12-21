@@ -104,6 +104,9 @@ public class RxObserver<T> implements Observer<T> {
         String msg;
         if (httpException.code() == 500) {
             msg = "服务器发生错误";
+        } else if (httpException.code() == 401) {
+            msg = "Token授权失效，请重新登录，在执行操作";
+            EventBus.getDefault().post(true, EventBusTags.TAG_TOKEN_EXPIRE);
         } else if (httpException.code() == 404) {
             msg = "请求地址不存在";
         } else if (httpException.code() == 403) {

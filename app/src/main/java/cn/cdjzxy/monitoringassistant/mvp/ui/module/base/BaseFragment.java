@@ -82,12 +82,17 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
         return true;
     }
 
-    public void showLoading(String str) {
-        showLoading(str, false);
+    public void showLoadingDialog() {
+        showLoadingDialog("加载中");
+    }
+
+    public void showLoadingDialog(String str) {
+        showLoadingDialog(str, true);
     }
 
 
-    public void showLoading(String str, boolean isCanCanceled) {
+    public void showLoadingDialog(String str, boolean isCanCanceled) {
+
         View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
         TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
         RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
@@ -115,11 +120,12 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     }
 
 
-    public void closeLoading() {
+    public void closeLoadingDialog() {
         if (null != dialog && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;
         }
     }
+
 
 }

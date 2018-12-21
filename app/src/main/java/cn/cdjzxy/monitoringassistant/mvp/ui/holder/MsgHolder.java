@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.holder;
 
 import android.text.Html;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wonders.health.lib.base.base.BaseHolder;
@@ -18,11 +19,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 public class MsgHolder extends BaseHolder<Msg> {
 
     @BindView(R.id.tv_title)
-    TextView mTvTitle;
+    TextView  mTvTitle;
     @BindView(R.id.tv_time)
-    TextView mTvTime;
+    TextView  mTvTime;
     @BindView(R.id.tv_content)
-    TextView mTvContent;
+    TextView  mTvContent;
+    @BindView(R.id.iv_status)
+    ImageView mIvStatus;
 
     public MsgHolder(View itemView) {
         super(itemView);
@@ -33,6 +36,11 @@ public class MsgHolder extends BaseHolder<Msg> {
         mTvTitle.setText(data.getMsgTitle());
         mTvTime.setText(data.getSendTime().replace("T", " "));
         mTvContent.setText(Html.fromHtml(data.getMsgContent()));
+        if (data.getMsgStatus() == 0) {
+            mIvStatus.setVisibility(View.VISIBLE);
+        } else {
+            mIvStatus.setVisibility(View.GONE);
+        }
     }
 
     @Override

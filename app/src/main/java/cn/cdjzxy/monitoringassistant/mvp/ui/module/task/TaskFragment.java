@@ -47,7 +47,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 
 /**
  * 任务
@@ -72,6 +71,8 @@ public class TaskFragment extends BaseFragment {
     PieChart  pieChart1;
     @BindView(R.id.btn_date)
     TextView  btnDate;
+
+    private String[] barChartLabels = {"环境质量", "委托监测", "应急监测", "污染源监测"};
 
     public TaskFragment() {
     }
@@ -113,7 +114,6 @@ public class TaskFragment extends BaseFragment {
         unbinder.unbind();
     }
 
-
     /**
      * 已采样
      */
@@ -139,10 +139,9 @@ public class TaskFragment extends BaseFragment {
         xAxis.setValueFormatter(new IAxisValueFormatter() {//绘制横坐标值
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return "环境质量" + value;
+                return barChartLabels[(int) value];
             }
         });
-
 
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setLabelCount(5, false);//设置梯度个数
@@ -165,15 +164,7 @@ public class TaskFragment extends BaseFragment {
         pieChart.setTouchEnabled(false);
         pieChart.getLegend().setEnabled(false);
 
-
-        SpannableString spannableString = new SpannableString("待采样\n\n\n26");
-        //设置字体大小
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_16)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //设置字体颜色
-        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        pieChart.setCenterText(spannableString);
+        pieChart.setCenterText(getSpannableString("待采样\n\n\n26"));
 
         setPendingSamplingViewData();
 
@@ -233,16 +224,7 @@ public class TaskFragment extends BaseFragment {
         pieChart1.setDrawEntryLabels(false);
         pieChart1.setTouchEnabled(false);
         pieChart1.getLegend().setEnabled(false);
-
-        SpannableString spannableString = new SpannableString("待收样\n\n\n30");
-        //设置字体大小
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_16)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //设置字体颜色
-        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        pieChart1.setCenterText(spannableString);
-
+        pieChart1.setCenterText(getSpannableString("待收样\n\n\n30"));
         setWaitReceivedViewData();
         //*******设置值显示线*************
         PieDataSet pieDataSet = (PieDataSet) pieChart1.getData().getDataSet();
@@ -281,7 +263,12 @@ public class TaskFragment extends BaseFragment {
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
 
         for (int i = 0; i < 2; i++) {
-            pieEntries.add(new PieEntry((float) ((Math.random() * 2)), "Party A" + i));
+            if (i == 0) {
+                pieEntries.add(new PieEntry(9f, "Party A" + i));
+            } else {
+                pieEntries.add(new PieEntry(17f, "Party A" + i));
+            }
+
         }
 
         PieDataSet dataSet = new PieDataSet(pieEntries, "Election Results");
@@ -304,9 +291,9 @@ public class TaskFragment extends BaseFragment {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
                 if (dataSetIndex == 0) {
-                    return "一周内到期: " + (int) (value * 26);
+                    return "一周内到期: " + (int) value;
                 }
-                return "一周以上到期: " + (int) (value * 26);
+                return "一周以上到期: " + (int) value;
             }
         });
 
@@ -339,7 +326,11 @@ public class TaskFragment extends BaseFragment {
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
 
         for (int i = 0; i < 2; i++) {
-            pieEntries.add(new PieEntry((float) ((Math.random() * 2)), "Party A" + i));
+            if (i == 0) {
+                pieEntries.add(new PieEntry(12f, "Party A" + i));
+            } else {
+                pieEntries.add(new PieEntry(18f, "Party A" + i));
+            }
         }
 
         PieDataSet dataSet = new PieDataSet(pieEntries, "Election Results");
@@ -367,9 +358,9 @@ public class TaskFragment extends BaseFragment {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
                 if (dataSetIndex == 0) {
-                    return "一周内到期: " + (int) (value * 30);
+                    return "一周内到期: " + (int) value;
                 }
-                return "一周以上到期: " + (int) (value * 30);
+                return "一周以上到期: " + (int) value;
             }
         });
 
@@ -389,7 +380,6 @@ public class TaskFragment extends BaseFragment {
                 break;
             case R.id.btn_sampling:
                 ArtUtils.makeText(getContext(), "已采样");
-
                 break;
             case R.id.btn_wait_sampling:
                 ArtUtils.startActivity(TaskActivity.class);
@@ -398,8 +388,20 @@ public class TaskFragment extends BaseFragment {
                 ArtUtils.makeText(getContext(), "已收样");
                 break;
             case R.id.btn_wait_receive:
-                ArtUtils.startActivity(WastewaterActivity.class);
+                ArtUtils.makeText(getContext(), "待收样");
                 break;
         }
+    }
+
+
+    private SpannableString getSpannableString(String text) {
+        SpannableString spannableString = new SpannableString(text);
+        //设置字体大小
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_16)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //设置字体颜色
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 }

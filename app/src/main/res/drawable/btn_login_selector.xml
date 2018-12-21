@@ -2,8 +2,19 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="false">
         <shape>
-            <solid android:color="#601C2D3F"></solid>
-            <corners android:radius="20dp"></corners>
+            <solid android:color="#99ffffff"></solid>
+            <stroke android:width="@dimen/division_line"
+                android:color="#66ffffff"/>
+            <corners android:radius="28dp"></corners>
+        </shape>
+    </item>
+
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="#99bbe5ff"></solid>
+            <stroke android:width="@dimen/division_line"
+                android:color="#289bff"/>
+            <corners android:radius="28dp"></corners>
         </shape>
     </item>
 </selector>

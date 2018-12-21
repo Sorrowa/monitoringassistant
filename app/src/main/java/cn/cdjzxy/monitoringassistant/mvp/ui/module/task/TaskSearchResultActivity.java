@@ -80,7 +80,24 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
     private void initTaskData() {
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
         QueryBuilder<Project> queryBuilder = DBHelper.get().getProjectDao().queryBuilder();
-        queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.EndDate.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
+
+        if (startDate.contains("1900-01-01")) {
+            if (CheckUtil.isEmpty(types)) {
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
+            } else {
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
+                queryBuilder.where(ProjectDao.Properties.Type.in(types));
+            }
+        } else {
+            if (CheckUtil.isEmpty(types)) {
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
+                queryBuilder.where(ProjectDao.Properties.EndDate.between(startDate, endDate));
+            } else {
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
+                queryBuilder.where(ProjectDao.Properties.EndDate.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
+            }
+        }
+
         final List<Project> projects = queryBuilder.list();
         if (!CheckUtil.isEmpty(projects)) {
             mTaskAdapter = new TaskAdapter(projects);
@@ -93,8 +110,8 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
                 }
             });
             recyclerview.setAdapter(mTaskAdapter);
-        }else {
-            ArtUtils.makeText(this,"未搜索到结果");
+        } else {
+            ArtUtils.makeText(this, "未搜索到结果");
         }
     }
 

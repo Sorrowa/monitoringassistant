@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,6 +39,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MainTabAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.management.ManagementFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.msg.MsgActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.pointMap.PointMapFragment;
@@ -127,7 +129,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
             @Override
             public void showExitTip() {
-                ArtUtils.makeText(getApplicationContext(), "再按一次退出程序");
+                showMessage("再按一次退出程序");
 
             }
 
@@ -195,8 +197,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     public void handleMessage(@NonNull Message message) {
         checkNotNull(message);
         switch (message.what) {
-            case 0:
-
+            case Message.RESULT_FAILURE:
+                mDialogPlus.dismiss();
                 break;
             case Message.RESULT_OK:
                 int progress = mNumberProgressBar.getProgress() + (int) message.obj;
@@ -419,7 +421,15 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         dialogPlusBuilder.setContentWidth(700);
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
+    }
 
+    @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
+    private void reLogin(boolean isReLogin) {
+        //        Intent intent = new Intent(this, LoginActivity.class);
+        //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //        startActivity(intent);
+        //        //        ArtUtils.startActivity(LoginActivity.class);
+        //        finish();
     }
 
 }

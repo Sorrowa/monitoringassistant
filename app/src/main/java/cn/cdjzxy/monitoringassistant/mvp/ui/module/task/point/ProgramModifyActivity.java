@@ -193,6 +193,12 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
         mCustomTab = view.findViewById(R.id.tabview);
         mRecyclerView = view.findViewById(R.id.recyclerView);
+        view.findViewById(R.id.iv_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialogPlus.dismiss();
+            }
+        });
         List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
         if (!CheckUtil.isEmpty(tags)) {
             for (Tags tag : tags) {
