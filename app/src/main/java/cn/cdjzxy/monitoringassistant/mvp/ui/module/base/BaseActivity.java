@@ -208,4 +208,11 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         }
     }
 
+
+    @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
+    private void reLogin(boolean isReLogin) {
+        ArtUtils.startActivity(LoginActivity.class);
+    }
+
+
 }

@@ -1,10 +1,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.setting;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Gravity;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -16,7 +14,6 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 
 public class AboutActivity extends BaseTitileActivity<ApiPresenter> {
-
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {

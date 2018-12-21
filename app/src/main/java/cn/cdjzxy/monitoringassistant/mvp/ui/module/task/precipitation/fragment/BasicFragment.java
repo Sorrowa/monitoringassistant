@@ -10,6 +10,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
@@ -20,11 +25,14 @@ import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
  * 基本信息
@@ -33,6 +41,39 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 public class BasicFragment extends BaseFragment {
 
     private static final int REQUEST_CODE = 24;
+
+    @BindView(R.id.tv_sampling_date)
+    TextView       tvSamplingDate;
+    @BindView(R.id.tv_sampling_user)
+    TextView       tvSamplingUser;
+    @BindView(R.id.tv_sampling_type)
+    TextView       tvSamplingType;
+    @BindView(R.id.tv_sampling_point)
+    TextView       tvSamplingPoint;
+    @BindView(R.id.tv_sampling_no)
+    EditText       tvSamplingNo;
+    @BindView(R.id.tv_sampling_height)
+    EditText       tvSamplingHeight;
+    @BindView(R.id.tv_sampling_area)
+    TextView       tvSamplingArea;
+    @BindView(R.id.tv_sampling_method)
+    TextView       tvSamplingMethod;
+    @BindView(R.id.tv_sampling_device)
+    TextView       tvSamplingDevice;
+    @BindView(R.id.layout_flow_information)
+    RelativeLayout layoutFlowInformation;
+    @BindView(R.id.tv_flow_method)
+    EditText       tvFlowMethod;
+    @BindView(R.id.tv_flow_date)
+    EditText       tvFlowDate;
+    @BindView(R.id.tv_flow_time)
+    EditText       tvFlowTime;
+    @BindView(R.id.layout_flow_information_container)
+    LinearLayout   layoutFlowInformationContainer;
+    @BindView(R.id.iv_add_photo)
+    ImageView      ivAddPhoto;
+    @BindView(R.id.tv_arrow)
+    TextView       tvArrow;
 
     Unbinder unbinder;
 
@@ -46,7 +87,8 @@ public class BasicFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-
+        tvSamplingDate.setText(DateUtils.getDate());
+        tvSamplingUser.setText(UserInfoHelper.get().getUser().getWorkNo());
     }
 
     @Nullable
@@ -99,10 +141,25 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick(R.id.iv_add_photo)
-    public void onClick() {
-        choosePhoto(REQUEST_CODE);
+    @OnClick({R.id.layout_flow_information, R.id.iv_add_photo})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.layout_flow_information:
+                if (tvArrow.getRotation() == 90f) {
+                    tvArrow.setRotation(0f);
+                    layoutFlowInformationContainer.setVisibility(View.GONE);
+                } else {
+                    tvArrow.setRotation(90f);
+                    layoutFlowInformationContainer.setVisibility(View.VISIBLE);
+                }
+
+                break;
+            case R.id.iv_add_photo:
+                choosePhoto(REQUEST_CODE);
+                break;
+        }
     }
+
 
 
 }

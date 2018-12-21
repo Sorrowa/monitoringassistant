@@ -5,7 +5,6 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-
     <include layout="@layout/view_line_basic_info" />
 
     <RelativeLayout style="@style/BasicInfoItemStyle">
@@ -22,34 +21,32 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
-
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="企业名称" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="泸州老窖"
-            android:textColor="#333333"
-            android:textSize="@dimen/text_size_13" />
-
-    </RelativeLayout>
-
-
-    <include layout="@layout/view_line_basic_info" />
-
     <LinearLayout
-        android:id="@+id/layout_flow_information"
+        android:id="@+id/layout_more_information"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="企业名称" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="泸州老窖"
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
 

@@ -60,7 +60,6 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        StatusBarUtil.darkMode(this, false);
         initTaskData();
     }
 

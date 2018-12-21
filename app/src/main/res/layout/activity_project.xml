@@ -7,7 +7,6 @@
 
     <include layout="@layout/layout_title_bar" />
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,6 +37,7 @@
                     android:textSize="@dimen/text_size_14" />
 
                 <ImageView
+                    android:id="@+id/iv_add_monitem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -45,7 +45,6 @@
                     android:src="@mipmap/ic_project_add" />
 
             </RelativeLayout>
-
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_project"
@@ -81,8 +80,8 @@
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_14" />
 
-
                 <ImageView
+                    android:id="@+id/iv_delete_monitem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -95,7 +94,6 @@
                 android:id="@+id/rv_project_selected"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
 
         </LinearLayout>
 

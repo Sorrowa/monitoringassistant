@@ -45,13 +45,13 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("设备选择");
-        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.makeText(getApplicationContext(), "搜索");
-            }
-        });
+//        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
+//        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ArtUtils.makeText(getApplicationContext(), "搜索");
+//            }
+//        });
 
     }
 
@@ -68,7 +68,6 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        StatusBarUtil.darkMode(this, false);
         initTabData();
         initMsgData();
     }
@@ -91,14 +90,14 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
 
     @Override
     public void showMessage(@NonNull String message) {
-
+        ArtUtils.makeText(this, message);
     }
 
     @Override
     public void handleMessage(@NonNull Message message) {
         checkNotNull(message);
         switch (message.what) {
-            case 0:
+            case Message.RESULT_FAILURE:
 
                 break;
             case Message.RESULT_OK:

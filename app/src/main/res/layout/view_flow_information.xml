@@ -7,27 +7,30 @@
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <RelativeLayout
+        android:id="@+id/layout_flow_information"
+        style="@style/BasicInfoItemStyle">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
             android:text="流转信息（选填）" />
 
         <TextView
+            android:id="@+id/tv_arrow"
             style="@style/BasicInfoItemTextViewStyle"
+            android:hint=""
             android:rotation="90"
-            android:text=""
-            android:hint="" />
+            android:text="" />
 
     </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
-
     <LinearLayout
-        android:id="@+id/layout_flow_information"
+        android:id="@+id/layout_flow_information_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <include layout="@layout/view_line_basic_info" />
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
@@ -35,7 +38,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="流转方式" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/tv_flow_method"
+                style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>
 
@@ -47,7 +52,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="送样时间" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/tv_flow_date"
+                style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>
 
@@ -59,7 +66,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="备注" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/tv_flow_time"
+                style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>
 

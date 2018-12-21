@@ -91,7 +91,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     private List<Tags>     mTags      = new ArrayList<>();
     private List<Sampling> mSamplings = new ArrayList<>();
 
-    private Project data;
+    private Project mProject;
 
     private DialogPlus   mDialogPlus;
     private CustomTab    mCustomTab;
@@ -136,8 +136,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void initTask() {
-        data = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
-        bindView(data);
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
+        bindView(mProject);
     }
 
     private void bindView(Project data) {
@@ -315,7 +315,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         switch (view.getId()) {
             case R.id.btn_sampling_point:
                 Intent intent = new Intent(this, PointActivity.class);
-                intent.putExtra("projectId", data.getId());
+                intent.putExtra("projectId", mProject.getId());
                 ArtUtils.startActivity(intent);
                 break;
             case R.id.btn_add_sampling:
@@ -383,10 +383,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
-                    //                    createSampling(mDialogFormSelects.get(position));
-                    ArtUtils.startActivity(PrecipitationActivity.class);
+                    Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                    ArtUtils.startActivity(intent);
                 } else if ("水和废水样品采集与交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
-                    //                    createSampling(mDialogFormSelects.get(position));
+                    Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     ArtUtils.startActivity(WastewaterActivity.class);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
@@ -409,7 +413,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void getSampling(String tagId) {
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(data.getId()), SamplingDao.Properties.ParentTagId.eq(tagId)).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(mProject.getId()), SamplingDao.Properties.ParentTagId.eq(tagId)).list();
         mSamplings.clear();
         if (!CheckUtil.isEmpty(samplings)) {
             mSamplings.addAll(samplings);
@@ -419,23 +423,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Subscriber(tag = EventBusTags.TAG_PROGRAM_MODIFY)
     private void updateData(boolean isModified) {
-        data = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
-        bindView(data);
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
+        bindView(mProject);
     }
 
-    //    private void createSampling(FormSelect formSelect) {
-    //        Sampling sampling = new Sampling();
-    //        sampling.setId(UUID.randomUUID().toString());
-    //        sampling.setSamplingNo("FS1809110101");
-    //        sampling.setProjectId(data.getId());
-    //        sampling.setProjectName(data.getName());
-    //        sampling.setProjectNo(data.getProjectNo());
-    //        sampling.setTagId(formSelect.getTagId());
-    //        sampling.setFormName(formSelect.getFormName());
-    //        sampling.setFormPath(formSelect.getPath());
-    //        sampling.setParentTagId(formSelect.getTagParentId());
-    //        sampling.setStatusName("进行中");
-    //        sampling.setStatus(0);
-    //        DBHelper.get().getSamplingDao().insert(sampling);
-    //    }
+
 }

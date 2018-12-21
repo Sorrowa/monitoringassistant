@@ -56,7 +56,6 @@ import timber.log.Timber;
 /**
  * App相关的数据操作Presenter
  */
-
 public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     public static final int PROGRESS = 100 / 20;
@@ -190,11 +189,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             msg.what = Message.RESULT_FAILURE;
             msg.handleMessageToTarget();
         } else if (!name.equals(userInfo.getWorkNo())) {
-            msg.getTarget().showMessage("用户名错误");
+            msg.getTarget().showMessage("输入的用户名错误,请重新输入");
             msg.what = Message.RESULT_FAILURE;
             msg.handleMessageToTarget();
         } else if (!pwd.equals(userInfo.getPwd())) {
-            msg.getTarget().showMessage("密码错误");
+            msg.getTarget().showMessage("输入的密码错误,请重新输入");
             msg.what = Message.RESULT_FAILURE;
             msg.handleMessageToTarget();
         } else {

@@ -106,7 +106,6 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
     @Override
     public void showLoading() {
         showLoadingDialog("登录中...");
-
     }
 
     @Override
@@ -126,6 +125,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         switch (message.what) {
             case Message.RESULT_FAILURE:
                 showMessage("登录失败");
+                mPresenter.unDispose();
                 break;
             case Message.RESULT_OK:
                 showMessage("登录成功");

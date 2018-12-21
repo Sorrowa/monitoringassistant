@@ -11,26 +11,23 @@ import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
-import org.apache.poi.ss.formula.functions.T;
-import org.greenrobot.greendao.query.QueryBuilder;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemTagRelationDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MonItemAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.GridItemDecoration;
 
 /**
@@ -82,6 +79,13 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
         tags.getMMonItems();
+
+        List<MonItemTagRelation> monItemTagRelations = DBHelper.get().getMonItemTagRelationDao().queryBuilder().where(MonItemTagRelationDao.Properties.TagId.eq(tagId)).list();
+
+        List<MonItems> monItems = DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties.Id.eq(monItemId)).list();
+        mMonItemsSelected.addAll(monItems);
+        mMonItemSelectedAdapter.notifyDataSetChanged();
+
         //        List<MonItemTagRelation> monItemTagRelations = DBHelper.get().getMonItemTagRelationDao().queryBuilder().where(MonItemTagRelationDao.Properties.TagId.notEq(tagId)).list();
         //
         //        if (!CheckUtil.isEmpty(monItemTagRelations)) {
@@ -144,4 +148,15 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         rvProjectSelected.setAdapter(mMonItemSelectedAdapter);
     }
 
+    @OnClick({R.id.iv_add_monitem, R.id.iv_delete_monitem})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_add_monitem:
+
+                break;
+            case R.id.iv_delete_monitem:
+
+                break;
+        }
+    }
 }

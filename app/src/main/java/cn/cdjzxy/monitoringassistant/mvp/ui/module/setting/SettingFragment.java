@@ -60,7 +60,7 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
 
     @Nullable
     @Override
-    public ApiPresenter obtainPresenter() {
+    public ApiPresenter obtainPresenter( ) {
         return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(getContext()));
     }
 
@@ -88,7 +88,7 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
     public void handleMessage(@NonNull Message message) {
         checkNotNull(message);
         switch (message.what) {
-            case 0:
+            case Message.RESULT_FAILURE:
 
                 break;
             case Message.RESULT_OK:

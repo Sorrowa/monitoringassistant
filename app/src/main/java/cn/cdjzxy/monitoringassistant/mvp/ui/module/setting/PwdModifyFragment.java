@@ -150,7 +150,7 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
                     showLoading();
                     mPresenter.modifyPwd(Message.obtain(this, new Object()), oldPwd, newPwd);
                 } else {
-                    showMessage("网络未连接");
+                    showMessage("网络未连接，请联网后操作");
                 }
                 break;
         }

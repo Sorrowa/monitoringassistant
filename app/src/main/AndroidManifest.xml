@@ -99,11 +99,6 @@
             android:screenOrientation="landscape" />
 
         <activity
-            android:name=".mvp.ui.module.setting.PwdModifyActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape" />
-
-        <activity
             android:name=".mvp.ui.module.webview.WebActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />

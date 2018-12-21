@@ -49,7 +49,7 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("点位选择");
-        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
+        //        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
         //        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
         //            @Override
         //            public void onClick(View v) {

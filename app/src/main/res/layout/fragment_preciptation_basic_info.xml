@@ -16,6 +16,7 @@
                 android:text="采样日期" />
 
             <TextView
+                android:id="@+id/tv_sampling_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -34,7 +35,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="采样人" />
 
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
+            <TextView
+                android:id="@+id/tv_sampling_user"
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
@@ -47,7 +50,9 @@
                 android:text="降水类型"
                 android:textColor="#333333" />
 
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
+            <TextView
+                android:id="@+id/tv_sampling_type"
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
@@ -60,7 +65,9 @@
                 android:text="采样点位"
                 android:textColor="#333333" />
 
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
+            <TextView
+                android:id="@+id/tv_sampling_point"
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
@@ -72,7 +79,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="点位编号" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/tv_sampling_no"
+                style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>
 
@@ -84,7 +93,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="采样高度" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/tv_sampling_height"
+                style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>
 
@@ -93,6 +104,7 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
+                android:id="@+id/tv_sampling_area"
                 style="@style/BasicInfoItemNameStyle"
                 android:text="采样器接雨面积（㎡）" />
 
@@ -108,7 +120,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="采样方法" />
 
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
+            <TextView
+                android:id="@+id/tv_sampling_method"
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
@@ -120,7 +134,9 @@
                 style="@style/BasicInfoItemNameStyle"
                 android:text="监测仪器名称、型号及编号（溯源信息）" />
 
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
+            <TextView
+                android:id="@+id/tv_sampling_device"
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 

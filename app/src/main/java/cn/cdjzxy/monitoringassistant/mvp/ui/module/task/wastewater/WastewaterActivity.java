@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.lidroid.xutils.db.annotation.Check;
@@ -18,11 +19,15 @@ import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import org.simple.eventbus.Subscriber;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BasicFragment;
@@ -35,23 +40,36 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.keyboard.KeyboardWatcher;
 import cn.cdjzxy.monitoringassistant.utils.keyboard.callback.OnKeyboardStateChangeListener;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
+import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> implements IView {
+public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
-    @BindView(R.id.layout_container)
-    FrameLayout layoutContainer;
     @BindView(R.id.tabview)
-    CustomTab   tabview;
+    CustomTab         tabview;
+    @BindView(R.id.layout)
+    LinearLayout      layout;
+    @BindView(R.id.viewPager)
+    NoScrollViewPager viewPager;
 
-    TitleBarView mTitleBarView;
+    private String projectId;
+    private String formSelectId;
+
+    private List<Fragment>  mFragments;
+    private FragmentAdapter mFragmentAdapter;
+
+    private BasicFragment             mBasicFragment;
+    private SiteMonitoringFragment    mSiteMonitoringFragment;
+    private BottleSplitFragment       mBottleSplitFragment;
+    private BottleSplitDetailFragment mBottleSplitDetailFragment;
+    private CollectionFragment        mCollectionFragment;
+    private CollectionDetailFragment  mCollectionDetailFragment;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        mTitleBarView = titleBar;
-        mTitleBarView.setTitleMainText("水和废水采样及交接记录");
-        mTitleBarView.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+        titleBar.setTitleMainText("水和废水采样及交接记录");
+        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArtUtils.startActivity(FormPrintActivity.class);
@@ -88,6 +106,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
         initTabData();
         openFragment(0);
     }
@@ -98,34 +117,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
         BasicFragment basicFragment = (BasicFragment) getSupportFragmentManager().findFragmentByTag(BasicFragment.class.getName());
         if (!CheckUtil.isNull(basicFragment)) {
             basicFragment.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void showLoading() {
-
-    }
-
-    @Override
-    public void hideLoading() {
-
-    }
-
-    @Override
-    public void showMessage(@NonNull String message) {
-
-    }
-
-    @Override
-    public void handleMessage(@NonNull Message message) {
-        checkNotNull(message);
-        switch (message.what) {
-            case 0:
-
-                break;
-            case Message.RESULT_OK:
-
-                break;
         }
     }
 
@@ -140,6 +131,25 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
                 openFragment(position);
             }
         });
+
+        mBasicFragment = new BasicFragment();
+        mSiteMonitoringFragment = new SiteMonitoringFragment();
+        mBottleSplitFragment = new BottleSplitFragment();
+        mBottleSplitDetailFragment = new BottleSplitDetailFragment();
+        mCollectionFragment = new CollectionFragment();
+        mCollectionDetailFragment = new CollectionDetailFragment();
+
+        mFragments = new ArrayList<>();
+        mFragments.add(mBasicFragment);
+        mFragments.add(mBottleSplitFragment);
+        mFragments.add(mSiteMonitoringFragment);
+        mFragments.add(mCollectionFragment);
+        mFragments.add(mCollectionDetailFragment);
+        mFragments.add(mBottleSplitDetailFragment);
+
+        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
+        viewPager.setAdapter(mFragmentAdapter);
+        viewPager.setOffscreenPageLimit(6);
     }
 
 
@@ -149,35 +159,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param position
      */
     private void openFragment(int position) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Bundle mBundle = new Bundle();
-        switch (position) {
-            case 0://基本信息
-                ft.replace(R.id.layout_container, new BasicFragment(), BasicFragment.class.getName());
-                break;
-            case 1://样品采集
-                ft.replace(R.id.layout_container, new CollectionFragment(), CollectionFragment.class.getName());
-                break;
-            case 2://现场监测
-                ft.replace(R.id.layout_container, new SiteMonitoringFragment(), SiteMonitoringFragment.class.getName());
-                break;
-            case 3://分瓶信息
-                ft.replace(R.id.layout_container, new BottleSplitFragment(), BottleSplitFragment.class.getName());
-                break;
-            case 4://样品采集详情
-                ft.replace(R.id.layout_container, new CollectionDetailFragment(), CollectionDetailFragment.class.getName());
-                break;
-            case 5://分瓶信息详情
-                ft.replace(R.id.layout_container, new BottleSplitDetailFragment(), BottleSplitDetailFragment.class.getName());
-                break;
-            default:
-                break;
-        }
-        ft.commit();
-
-
+        viewPager.setCurrentItem(position);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -193,7 +176,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void updateBottleFragment(int position) {
         openFragment(position);
     }
-
 
     private void onBack() {
         Fragment fragment = null;
