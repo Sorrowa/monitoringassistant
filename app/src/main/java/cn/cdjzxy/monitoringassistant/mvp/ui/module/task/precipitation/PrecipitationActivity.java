@@ -3,8 +3,6 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -35,7 +33,6 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.B
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionDetailFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
-import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
@@ -58,7 +55,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     private CollectionFragment       mCollectionFragment;
     private CollectionDetailFragment mCollectionDetailFragment;
 
-    private Sampling mSampling;
+    public static Sampling mSampling;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -153,15 +150,12 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
-        Fragment fragment = null;
-        fragment = getSupportFragmentManager().findFragmentByTag(CollectionDetailFragment.class.getName());
-        if (!CheckUtil.isNull(fragment)) {
+        if (viewPager.getCurrentItem() == 2) {
             openFragment(1);
             return;
         }
         finish();
     }
-
 
     private void createSampling() {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
@@ -179,6 +173,5 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         mSampling.setStatusName("进行中");
         mSampling.setStatus(0);
     }
-
 
 }

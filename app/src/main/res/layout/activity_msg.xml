@@ -17,12 +17,14 @@
             android:id="@+id/tabview"
             android:layout_width="258dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dp_4" />
+            android:layout_marginTop="@dimen/dp_4"
+            android:visibility="gone" />
 
         <View
             android:layout_width="@dimen/division_line"
             android:layout_height="match_parent"
-            android:background="@color/dc1" />
+            android:background="@color/dc1"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"

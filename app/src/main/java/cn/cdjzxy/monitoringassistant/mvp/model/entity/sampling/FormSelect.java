@@ -26,10 +26,8 @@ public class FormSelect {
     @Transient
     private List<FormFlow> FormFlows;
 
-
     @Generated(hash = 686341022)
-    public FormSelect(String FormId, String FormCode, String FormName,
-                      String TagParentId, String TagId, String Path) {
+    public FormSelect(String FormId, String FormCode, String FormName, String TagParentId, String TagId, String Path) {
         this.FormId = FormId;
         this.FormCode = FormCode;
         this.FormName = FormName;

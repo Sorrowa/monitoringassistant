@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
@@ -32,6 +33,7 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
@@ -141,7 +143,7 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.layout_flow_information, R.id.iv_add_photo})
+    @OnClick({R.id.layout_flow_information, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_flow_information:
@@ -152,14 +154,38 @@ public class BasicFragment extends BaseFragment {
                     tvArrow.setRotation(90f);
                     layoutFlowInformationContainer.setVisibility(View.VISIBLE);
                 }
-
                 break;
             case R.id.iv_add_photo:
                 choosePhoto(REQUEST_CODE);
                 break;
+            case R.id.tv_sampling_user:
+                createUserSelectDialog();
+                break;
+            case R.id.tv_sampling_point:
+                //                Intent intent = new Intent(this, PointSelectActivity.class);
+                //                intent.putExtra("tagId", mProjectDetial.getTagId());
+                //                ArtUtils.startActivity(intent);
+                //                new AvoidOnResult(getContext()).startForResult(intent, new AvoidOnResult.Callback() {
+                //                    @Override
+                //                    public void onActivityResult(int resultCode, Intent data) {
+                //                        if (resultCode == Activity.RESULT_OK) {
+                //                            //                            mProjectDetial.setAddress(data.getStringExtra("Address"));
+                //                            //                            mProjectDetial.setAddressId(data.getStringExtra("AddressId"));
+                //                            //                            bindView(mProjectDetial);
+                //                        }
+                //                    }
+                //                });
+                break;
+            case R.id.tv_sampling_method:
+
+                break;
+            case R.id.tv_sampling_device:
+
+                break;
         }
     }
 
+    private void createUserSelectDialog() {
 
-
+    }
 }

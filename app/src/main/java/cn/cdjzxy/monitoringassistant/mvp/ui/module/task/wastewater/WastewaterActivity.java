@@ -2,18 +2,12 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
-import com.lidroid.xutils.db.annotation.Check;
-import com.wonders.health.lib.base.mvp.IView;
-import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
@@ -37,12 +31,8 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.Coll
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.SiteMonitoringFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.keyboard.KeyboardWatcher;
-import cn.cdjzxy.monitoringassistant.utils.keyboard.callback.OnKeyboardStateChangeListener;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
-
-import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
@@ -178,19 +168,15 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
-        Fragment fragment = null;
-        fragment = getSupportFragmentManager().findFragmentByTag(CollectionDetailFragment.class.getName());
-        if (!CheckUtil.isNull(fragment)) {
+        if (viewPager.getCurrentItem() == 5) {
             openFragment(1);
             return;
         }
 
-        fragment = getSupportFragmentManager().findFragmentByTag(BottleSplitDetailFragment.class.getName());
-        if (!CheckUtil.isNull(fragment)) {
+        if (viewPager.getCurrentItem() == 4) {
             openFragment(3);
             return;
         }
-
         finish();
     }
 
