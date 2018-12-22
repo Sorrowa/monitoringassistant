@@ -42,7 +42,12 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="样品编码" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/tv_sample_code"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
 
     </RelativeLayout>
 
@@ -54,7 +59,12 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="频次" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/tv_frequency"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
 
     </RelativeLayout>
 
@@ -66,7 +76,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="开始时间" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/tv_start_time"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 
@@ -78,7 +90,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="结束时间" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/tv_end_time"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 
@@ -90,7 +104,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="降水量（mm）" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <EditText
+            android:id="@+id/et_precipitation"
+            style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
 
@@ -102,7 +118,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="雨水体积（ml）" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <EditText
+            android:id="@+id/et_rainwater_volume"
+            style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
 
@@ -114,7 +132,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="备注" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <EditText
+            android:id="@+id/et_remark"
+            style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
 

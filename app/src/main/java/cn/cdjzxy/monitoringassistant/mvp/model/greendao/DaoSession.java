@@ -8,63 +8,63 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Enterprise;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodDevRelation;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemMethodRelation;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemMethodRelation;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodDevRelation;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Enterprise;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DevicesDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DicDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnterpriseDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnterRelatePointDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodDevRelationDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodTagRelationDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemMethodRelationDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemTagRelationDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.RightsDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.WeatherDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TableDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormFlowDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingUserDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TableDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserInfoDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemMethodRelationDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DevicesDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.RightsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.WeatherDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnterRelatePointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodTagRelationDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DicDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodDevRelationDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnterpriseDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemTagRelationDao;
 
 // THIS CODE IS GENERATED BY greenDAO, DO NOT EDIT.
 
@@ -75,124 +75,82 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserInfoDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
-    private final DaoConfig devicesDaoConfig;
-    private final DaoConfig dicDaoConfig;
-    private final DaoConfig enterpriseDaoConfig;
-    private final DaoConfig enterRelatePointDaoConfig;
-    private final DaoConfig envirPointDaoConfig;
-    private final DaoConfig methodDevRelationDaoConfig;
-    private final DaoConfig methodsDaoConfig;
-    private final DaoConfig methodTagRelationDaoConfig;
-    private final DaoConfig monItemMethodRelationDaoConfig;
-    private final DaoConfig monItemsDaoConfig;
-    private final DaoConfig monItemTagRelationDaoConfig;
-    private final DaoConfig rightsDaoConfig;
-    private final DaoConfig tagsDaoConfig;
-    private final DaoConfig userDaoConfig;
-    private final DaoConfig weatherDaoConfig;
     private final DaoConfig msgDaoConfig;
-    private final DaoConfig projectDaoConfig;
-    private final DaoConfig projectDetialDaoConfig;
     private final DaoConfig formDaoConfig;
+    private final DaoConfig samplingFormStandDaoConfig;
+    private final DaoConfig samplingDaoConfig;
+    private final DaoConfig tableDaoConfig;
     private final DaoConfig formFlowDaoConfig;
     private final DaoConfig formSelectDaoConfig;
-    private final DaoConfig samplingDaoConfig;
-    private final DaoConfig samplingDetailDaoConfig;
-    private final DaoConfig samplingFormStandDaoConfig;
-    private final DaoConfig samplingStantdDaoConfig;
     private final DaoConfig samplingUserDaoConfig;
-    private final DaoConfig tableDaoConfig;
+    private final DaoConfig samplingStantdDaoConfig;
+    private final DaoConfig samplingDetailDaoConfig;
     private final DaoConfig userInfoDaoConfig;
+    private final DaoConfig projectDetialDaoConfig;
+    private final DaoConfig projectDaoConfig;
+    private final DaoConfig monItemMethodRelationDaoConfig;
+    private final DaoConfig tagsDaoConfig;
+    private final DaoConfig monItemsDaoConfig;
+    private final DaoConfig envirPointDaoConfig;
+    private final DaoConfig devicesDaoConfig;
+    private final DaoConfig rightsDaoConfig;
+    private final DaoConfig weatherDaoConfig;
+    private final DaoConfig userDaoConfig;
+    private final DaoConfig enterRelatePointDaoConfig;
+    private final DaoConfig methodsDaoConfig;
+    private final DaoConfig methodTagRelationDaoConfig;
+    private final DaoConfig dicDaoConfig;
+    private final DaoConfig methodDevRelationDaoConfig;
+    private final DaoConfig enterpriseDaoConfig;
+    private final DaoConfig monItemTagRelationDaoConfig;
 
-    private final DevicesDao devicesDao;
-    private final DicDao dicDao;
-    private final EnterpriseDao enterpriseDao;
-    private final EnterRelatePointDao enterRelatePointDao;
-    private final EnvirPointDao envirPointDao;
-    private final MethodDevRelationDao methodDevRelationDao;
-    private final MethodsDao methodsDao;
-    private final MethodTagRelationDao methodTagRelationDao;
-    private final MonItemMethodRelationDao monItemMethodRelationDao;
-    private final MonItemsDao monItemsDao;
-    private final MonItemTagRelationDao monItemTagRelationDao;
-    private final RightsDao rightsDao;
-    private final TagsDao tagsDao;
-    private final UserDao userDao;
-    private final WeatherDao weatherDao;
     private final MsgDao msgDao;
-    private final ProjectDao projectDao;
-    private final ProjectDetialDao projectDetialDao;
     private final FormDao formDao;
+    private final SamplingFormStandDao samplingFormStandDao;
+    private final SamplingDao samplingDao;
+    private final TableDao tableDao;
     private final FormFlowDao formFlowDao;
     private final FormSelectDao formSelectDao;
-    private final SamplingDao samplingDao;
-    private final SamplingDetailDao samplingDetailDao;
-    private final SamplingFormStandDao samplingFormStandDao;
-    private final SamplingStantdDao samplingStantdDao;
     private final SamplingUserDao samplingUserDao;
-    private final TableDao tableDao;
+    private final SamplingStantdDao samplingStantdDao;
+    private final SamplingDetailDao samplingDetailDao;
     private final UserInfoDao userInfoDao;
+    private final ProjectDetialDao projectDetialDao;
+    private final ProjectDao projectDao;
+    private final MonItemMethodRelationDao monItemMethodRelationDao;
+    private final TagsDao tagsDao;
+    private final MonItemsDao monItemsDao;
+    private final EnvirPointDao envirPointDao;
+    private final DevicesDao devicesDao;
+    private final RightsDao rightsDao;
+    private final WeatherDao weatherDao;
+    private final UserDao userDao;
+    private final EnterRelatePointDao enterRelatePointDao;
+    private final MethodsDao methodsDao;
+    private final MethodTagRelationDao methodTagRelationDao;
+    private final DicDao dicDao;
+    private final MethodDevRelationDao methodDevRelationDao;
+    private final EnterpriseDao enterpriseDao;
+    private final MonItemTagRelationDao monItemTagRelationDao;
 
     public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
 
-        devicesDaoConfig = daoConfigMap.get(DevicesDao.class).clone();
-        devicesDaoConfig.initIdentityScope(type);
-
-        dicDaoConfig = daoConfigMap.get(DicDao.class).clone();
-        dicDaoConfig.initIdentityScope(type);
-
-        enterpriseDaoConfig = daoConfigMap.get(EnterpriseDao.class).clone();
-        enterpriseDaoConfig.initIdentityScope(type);
-
-        enterRelatePointDaoConfig = daoConfigMap.get(EnterRelatePointDao.class).clone();
-        enterRelatePointDaoConfig.initIdentityScope(type);
-
-        envirPointDaoConfig = daoConfigMap.get(EnvirPointDao.class).clone();
-        envirPointDaoConfig.initIdentityScope(type);
-
-        methodDevRelationDaoConfig = daoConfigMap.get(MethodDevRelationDao.class).clone();
-        methodDevRelationDaoConfig.initIdentityScope(type);
-
-        methodsDaoConfig = daoConfigMap.get(MethodsDao.class).clone();
-        methodsDaoConfig.initIdentityScope(type);
-
-        methodTagRelationDaoConfig = daoConfigMap.get(MethodTagRelationDao.class).clone();
-        methodTagRelationDaoConfig.initIdentityScope(type);
-
-        monItemMethodRelationDaoConfig = daoConfigMap.get(MonItemMethodRelationDao.class).clone();
-        monItemMethodRelationDaoConfig.initIdentityScope(type);
-
-        monItemsDaoConfig = daoConfigMap.get(MonItemsDao.class).clone();
-        monItemsDaoConfig.initIdentityScope(type);
-
-        monItemTagRelationDaoConfig = daoConfigMap.get(MonItemTagRelationDao.class).clone();
-        monItemTagRelationDaoConfig.initIdentityScope(type);
-
-        rightsDaoConfig = daoConfigMap.get(RightsDao.class).clone();
-        rightsDaoConfig.initIdentityScope(type);
-
-        tagsDaoConfig = daoConfigMap.get(TagsDao.class).clone();
-        tagsDaoConfig.initIdentityScope(type);
-
-        userDaoConfig = daoConfigMap.get(UserDao.class).clone();
-        userDaoConfig.initIdentityScope(type);
-
-        weatherDaoConfig = daoConfigMap.get(WeatherDao.class).clone();
-        weatherDaoConfig.initIdentityScope(type);
-
         msgDaoConfig = daoConfigMap.get(MsgDao.class).clone();
         msgDaoConfig.initIdentityScope(type);
 
-        projectDaoConfig = daoConfigMap.get(ProjectDao.class).clone();
-        projectDaoConfig.initIdentityScope(type);
-
-        projectDetialDaoConfig = daoConfigMap.get(ProjectDetialDao.class).clone();
-        projectDetialDaoConfig.initIdentityScope(type);
-
         formDaoConfig = daoConfigMap.get(FormDao.class).clone();
         formDaoConfig.initIdentityScope(type);
+
+        samplingFormStandDaoConfig = daoConfigMap.get(SamplingFormStandDao.class).clone();
+        samplingFormStandDaoConfig.initIdentityScope(type);
+
+        samplingDaoConfig = daoConfigMap.get(SamplingDao.class).clone();
+        samplingDaoConfig.initIdentityScope(type);
+
+        tableDaoConfig = daoConfigMap.get(TableDao.class).clone();
+        tableDaoConfig.initIdentityScope(type);
 
         formFlowDaoConfig = daoConfigMap.get(FormFlowDao.class).clone();
         formFlowDaoConfig.initIdentityScope(type);
@@ -200,191 +158,177 @@ public class DaoSession extends AbstractDaoSession {
         formSelectDaoConfig = daoConfigMap.get(FormSelectDao.class).clone();
         formSelectDaoConfig.initIdentityScope(type);
 
-        samplingDaoConfig = daoConfigMap.get(SamplingDao.class).clone();
-        samplingDaoConfig.initIdentityScope(type);
-
-        samplingDetailDaoConfig = daoConfigMap.get(SamplingDetailDao.class).clone();
-        samplingDetailDaoConfig.initIdentityScope(type);
-
-        samplingFormStandDaoConfig = daoConfigMap.get(SamplingFormStandDao.class).clone();
-        samplingFormStandDaoConfig.initIdentityScope(type);
+        samplingUserDaoConfig = daoConfigMap.get(SamplingUserDao.class).clone();
+        samplingUserDaoConfig.initIdentityScope(type);
 
         samplingStantdDaoConfig = daoConfigMap.get(SamplingStantdDao.class).clone();
         samplingStantdDaoConfig.initIdentityScope(type);
 
-        samplingUserDaoConfig = daoConfigMap.get(SamplingUserDao.class).clone();
-        samplingUserDaoConfig.initIdentityScope(type);
-
-        tableDaoConfig = daoConfigMap.get(TableDao.class).clone();
-        tableDaoConfig.initIdentityScope(type);
+        samplingDetailDaoConfig = daoConfigMap.get(SamplingDetailDao.class).clone();
+        samplingDetailDaoConfig.initIdentityScope(type);
 
         userInfoDaoConfig = daoConfigMap.get(UserInfoDao.class).clone();
         userInfoDaoConfig.initIdentityScope(type);
 
-        devicesDao = new DevicesDao(devicesDaoConfig, this);
-        dicDao = new DicDao(dicDaoConfig, this);
-        enterpriseDao = new EnterpriseDao(enterpriseDaoConfig, this);
-        enterRelatePointDao = new EnterRelatePointDao(enterRelatePointDaoConfig, this);
-        envirPointDao = new EnvirPointDao(envirPointDaoConfig, this);
-        methodDevRelationDao = new MethodDevRelationDao(methodDevRelationDaoConfig, this);
-        methodsDao = new MethodsDao(methodsDaoConfig, this);
-        methodTagRelationDao = new MethodTagRelationDao(methodTagRelationDaoConfig, this);
-        monItemMethodRelationDao = new MonItemMethodRelationDao(monItemMethodRelationDaoConfig, this);
-        monItemsDao = new MonItemsDao(monItemsDaoConfig, this);
-        monItemTagRelationDao = new MonItemTagRelationDao(monItemTagRelationDaoConfig, this);
-        rightsDao = new RightsDao(rightsDaoConfig, this);
-        tagsDao = new TagsDao(tagsDaoConfig, this);
-        userDao = new UserDao(userDaoConfig, this);
-        weatherDao = new WeatherDao(weatherDaoConfig, this);
+        projectDetialDaoConfig = daoConfigMap.get(ProjectDetialDao.class).clone();
+        projectDetialDaoConfig.initIdentityScope(type);
+
+        projectDaoConfig = daoConfigMap.get(ProjectDao.class).clone();
+        projectDaoConfig.initIdentityScope(type);
+
+        monItemMethodRelationDaoConfig = daoConfigMap.get(MonItemMethodRelationDao.class).clone();
+        monItemMethodRelationDaoConfig.initIdentityScope(type);
+
+        tagsDaoConfig = daoConfigMap.get(TagsDao.class).clone();
+        tagsDaoConfig.initIdentityScope(type);
+
+        monItemsDaoConfig = daoConfigMap.get(MonItemsDao.class).clone();
+        monItemsDaoConfig.initIdentityScope(type);
+
+        envirPointDaoConfig = daoConfigMap.get(EnvirPointDao.class).clone();
+        envirPointDaoConfig.initIdentityScope(type);
+
+        devicesDaoConfig = daoConfigMap.get(DevicesDao.class).clone();
+        devicesDaoConfig.initIdentityScope(type);
+
+        rightsDaoConfig = daoConfigMap.get(RightsDao.class).clone();
+        rightsDaoConfig.initIdentityScope(type);
+
+        weatherDaoConfig = daoConfigMap.get(WeatherDao.class).clone();
+        weatherDaoConfig.initIdentityScope(type);
+
+        userDaoConfig = daoConfigMap.get(UserDao.class).clone();
+        userDaoConfig.initIdentityScope(type);
+
+        enterRelatePointDaoConfig = daoConfigMap.get(EnterRelatePointDao.class).clone();
+        enterRelatePointDaoConfig.initIdentityScope(type);
+
+        methodsDaoConfig = daoConfigMap.get(MethodsDao.class).clone();
+        methodsDaoConfig.initIdentityScope(type);
+
+        methodTagRelationDaoConfig = daoConfigMap.get(MethodTagRelationDao.class).clone();
+        methodTagRelationDaoConfig.initIdentityScope(type);
+
+        dicDaoConfig = daoConfigMap.get(DicDao.class).clone();
+        dicDaoConfig.initIdentityScope(type);
+
+        methodDevRelationDaoConfig = daoConfigMap.get(MethodDevRelationDao.class).clone();
+        methodDevRelationDaoConfig.initIdentityScope(type);
+
+        enterpriseDaoConfig = daoConfigMap.get(EnterpriseDao.class).clone();
+        enterpriseDaoConfig.initIdentityScope(type);
+
+        monItemTagRelationDaoConfig = daoConfigMap.get(MonItemTagRelationDao.class).clone();
+        monItemTagRelationDaoConfig.initIdentityScope(type);
+
         msgDao = new MsgDao(msgDaoConfig, this);
-        projectDao = new ProjectDao(projectDaoConfig, this);
-        projectDetialDao = new ProjectDetialDao(projectDetialDaoConfig, this);
         formDao = new FormDao(formDaoConfig, this);
+        samplingFormStandDao = new SamplingFormStandDao(samplingFormStandDaoConfig, this);
+        samplingDao = new SamplingDao(samplingDaoConfig, this);
+        tableDao = new TableDao(tableDaoConfig, this);
         formFlowDao = new FormFlowDao(formFlowDaoConfig, this);
         formSelectDao = new FormSelectDao(formSelectDaoConfig, this);
-        samplingDao = new SamplingDao(samplingDaoConfig, this);
-        samplingDetailDao = new SamplingDetailDao(samplingDetailDaoConfig, this);
-        samplingFormStandDao = new SamplingFormStandDao(samplingFormStandDaoConfig, this);
-        samplingStantdDao = new SamplingStantdDao(samplingStantdDaoConfig, this);
         samplingUserDao = new SamplingUserDao(samplingUserDaoConfig, this);
-        tableDao = new TableDao(tableDaoConfig, this);
+        samplingStantdDao = new SamplingStantdDao(samplingStantdDaoConfig, this);
+        samplingDetailDao = new SamplingDetailDao(samplingDetailDaoConfig, this);
         userInfoDao = new UserInfoDao(userInfoDaoConfig, this);
+        projectDetialDao = new ProjectDetialDao(projectDetialDaoConfig, this);
+        projectDao = new ProjectDao(projectDaoConfig, this);
+        monItemMethodRelationDao = new MonItemMethodRelationDao(monItemMethodRelationDaoConfig, this);
+        tagsDao = new TagsDao(tagsDaoConfig, this);
+        monItemsDao = new MonItemsDao(monItemsDaoConfig, this);
+        envirPointDao = new EnvirPointDao(envirPointDaoConfig, this);
+        devicesDao = new DevicesDao(devicesDaoConfig, this);
+        rightsDao = new RightsDao(rightsDaoConfig, this);
+        weatherDao = new WeatherDao(weatherDaoConfig, this);
+        userDao = new UserDao(userDaoConfig, this);
+        enterRelatePointDao = new EnterRelatePointDao(enterRelatePointDaoConfig, this);
+        methodsDao = new MethodsDao(methodsDaoConfig, this);
+        methodTagRelationDao = new MethodTagRelationDao(methodTagRelationDaoConfig, this);
+        dicDao = new DicDao(dicDaoConfig, this);
+        methodDevRelationDao = new MethodDevRelationDao(methodDevRelationDaoConfig, this);
+        enterpriseDao = new EnterpriseDao(enterpriseDaoConfig, this);
+        monItemTagRelationDao = new MonItemTagRelationDao(monItemTagRelationDaoConfig, this);
 
-        registerDao(Devices.class, devicesDao);
-        registerDao(Dic.class, dicDao);
-        registerDao(Enterprise.class, enterpriseDao);
-        registerDao(EnterRelatePoint.class, enterRelatePointDao);
-        registerDao(EnvirPoint.class, envirPointDao);
-        registerDao(MethodDevRelation.class, methodDevRelationDao);
-        registerDao(Methods.class, methodsDao);
-        registerDao(MethodTagRelation.class, methodTagRelationDao);
-        registerDao(MonItemMethodRelation.class, monItemMethodRelationDao);
-        registerDao(MonItems.class, monItemsDao);
-        registerDao(MonItemTagRelation.class, monItemTagRelationDao);
-        registerDao(Rights.class, rightsDao);
-        registerDao(Tags.class, tagsDao);
-        registerDao(User.class, userDao);
-        registerDao(Weather.class, weatherDao);
         registerDao(Msg.class, msgDao);
-        registerDao(Project.class, projectDao);
-        registerDao(ProjectDetial.class, projectDetialDao);
         registerDao(Form.class, formDao);
+        registerDao(SamplingFormStand.class, samplingFormStandDao);
+        registerDao(Sampling.class, samplingDao);
+        registerDao(Table.class, tableDao);
         registerDao(FormFlow.class, formFlowDao);
         registerDao(FormSelect.class, formSelectDao);
-        registerDao(Sampling.class, samplingDao);
-        registerDao(SamplingDetail.class, samplingDetailDao);
-        registerDao(SamplingFormStand.class, samplingFormStandDao);
-        registerDao(SamplingStantd.class, samplingStantdDao);
         registerDao(SamplingUser.class, samplingUserDao);
-        registerDao(Table.class, tableDao);
+        registerDao(SamplingStantd.class, samplingStantdDao);
+        registerDao(SamplingDetail.class, samplingDetailDao);
         registerDao(UserInfo.class, userInfoDao);
+        registerDao(ProjectDetial.class, projectDetialDao);
+        registerDao(Project.class, projectDao);
+        registerDao(MonItemMethodRelation.class, monItemMethodRelationDao);
+        registerDao(Tags.class, tagsDao);
+        registerDao(MonItems.class, monItemsDao);
+        registerDao(EnvirPoint.class, envirPointDao);
+        registerDao(Devices.class, devicesDao);
+        registerDao(Rights.class, rightsDao);
+        registerDao(Weather.class, weatherDao);
+        registerDao(User.class, userDao);
+        registerDao(EnterRelatePoint.class, enterRelatePointDao);
+        registerDao(Methods.class, methodsDao);
+        registerDao(MethodTagRelation.class, methodTagRelationDao);
+        registerDao(Dic.class, dicDao);
+        registerDao(MethodDevRelation.class, methodDevRelationDao);
+        registerDao(Enterprise.class, enterpriseDao);
+        registerDao(MonItemTagRelation.class, monItemTagRelationDao);
     }
     
     public void clear() {
-        devicesDaoConfig.clearIdentityScope();
-        dicDaoConfig.clearIdentityScope();
-        enterpriseDaoConfig.clearIdentityScope();
-        enterRelatePointDaoConfig.clearIdentityScope();
-        envirPointDaoConfig.clearIdentityScope();
-        methodDevRelationDaoConfig.clearIdentityScope();
-        methodsDaoConfig.clearIdentityScope();
-        methodTagRelationDaoConfig.clearIdentityScope();
-        monItemMethodRelationDaoConfig.clearIdentityScope();
-        monItemsDaoConfig.clearIdentityScope();
-        monItemTagRelationDaoConfig.clearIdentityScope();
-        rightsDaoConfig.clearIdentityScope();
-        tagsDaoConfig.clearIdentityScope();
-        userDaoConfig.clearIdentityScope();
-        weatherDaoConfig.clearIdentityScope();
         msgDaoConfig.clearIdentityScope();
-        projectDaoConfig.clearIdentityScope();
-        projectDetialDaoConfig.clearIdentityScope();
         formDaoConfig.clearIdentityScope();
+        samplingFormStandDaoConfig.clearIdentityScope();
+        samplingDaoConfig.clearIdentityScope();
+        tableDaoConfig.clearIdentityScope();
         formFlowDaoConfig.clearIdentityScope();
         formSelectDaoConfig.clearIdentityScope();
-        samplingDaoConfig.clearIdentityScope();
-        samplingDetailDaoConfig.clearIdentityScope();
-        samplingFormStandDaoConfig.clearIdentityScope();
-        samplingStantdDaoConfig.clearIdentityScope();
         samplingUserDaoConfig.clearIdentityScope();
-        tableDaoConfig.clearIdentityScope();
+        samplingStantdDaoConfig.clearIdentityScope();
+        samplingDetailDaoConfig.clearIdentityScope();
         userInfoDaoConfig.clearIdentityScope();
-    }
-
-    public DevicesDao getDevicesDao() {
-        return devicesDao;
-    }
-
-    public DicDao getDicDao() {
-        return dicDao;
-    }
-
-    public EnterpriseDao getEnterpriseDao() {
-        return enterpriseDao;
-    }
-
-    public EnterRelatePointDao getEnterRelatePointDao() {
-        return enterRelatePointDao;
-    }
-
-    public EnvirPointDao getEnvirPointDao() {
-        return envirPointDao;
-    }
-
-    public MethodDevRelationDao getMethodDevRelationDao() {
-        return methodDevRelationDao;
-    }
-
-    public MethodsDao getMethodsDao() {
-        return methodsDao;
-    }
-
-    public MethodTagRelationDao getMethodTagRelationDao() {
-        return methodTagRelationDao;
-    }
-
-    public MonItemMethodRelationDao getMonItemMethodRelationDao() {
-        return monItemMethodRelationDao;
-    }
-
-    public MonItemsDao getMonItemsDao() {
-        return monItemsDao;
-    }
-
-    public MonItemTagRelationDao getMonItemTagRelationDao() {
-        return monItemTagRelationDao;
-    }
-
-    public RightsDao getRightsDao() {
-        return rightsDao;
-    }
-
-    public TagsDao getTagsDao() {
-        return tagsDao;
-    }
-
-    public UserDao getUserDao() {
-        return userDao;
-    }
-
-    public WeatherDao getWeatherDao() {
-        return weatherDao;
+        projectDetialDaoConfig.clearIdentityScope();
+        projectDaoConfig.clearIdentityScope();
+        monItemMethodRelationDaoConfig.clearIdentityScope();
+        tagsDaoConfig.clearIdentityScope();
+        monItemsDaoConfig.clearIdentityScope();
+        envirPointDaoConfig.clearIdentityScope();
+        devicesDaoConfig.clearIdentityScope();
+        rightsDaoConfig.clearIdentityScope();
+        weatherDaoConfig.clearIdentityScope();
+        userDaoConfig.clearIdentityScope();
+        enterRelatePointDaoConfig.clearIdentityScope();
+        methodsDaoConfig.clearIdentityScope();
+        methodTagRelationDaoConfig.clearIdentityScope();
+        dicDaoConfig.clearIdentityScope();
+        methodDevRelationDaoConfig.clearIdentityScope();
+        enterpriseDaoConfig.clearIdentityScope();
+        monItemTagRelationDaoConfig.clearIdentityScope();
     }
 
     public MsgDao getMsgDao() {
         return msgDao;
     }
 
-    public ProjectDao getProjectDao() {
-        return projectDao;
-    }
-
-    public ProjectDetialDao getProjectDetialDao() {
-        return projectDetialDao;
-    }
-
     public FormDao getFormDao() {
         return formDao;
+    }
+
+    public SamplingFormStandDao getSamplingFormStandDao() {
+        return samplingFormStandDao;
+    }
+
+    public SamplingDao getSamplingDao() {
+        return samplingDao;
+    }
+
+    public TableDao getTableDao() {
+        return tableDao;
     }
 
     public FormFlowDao getFormFlowDao() {
@@ -395,32 +339,88 @@ public class DaoSession extends AbstractDaoSession {
         return formSelectDao;
     }
 
-    public SamplingDao getSamplingDao() {
-        return samplingDao;
-    }
-
-    public SamplingDetailDao getSamplingDetailDao() {
-        return samplingDetailDao;
-    }
-
-    public SamplingFormStandDao getSamplingFormStandDao() {
-        return samplingFormStandDao;
+    public SamplingUserDao getSamplingUserDao() {
+        return samplingUserDao;
     }
 
     public SamplingStantdDao getSamplingStantdDao() {
         return samplingStantdDao;
     }
 
-    public SamplingUserDao getSamplingUserDao() {
-        return samplingUserDao;
-    }
-
-    public TableDao getTableDao() {
-        return tableDao;
+    public SamplingDetailDao getSamplingDetailDao() {
+        return samplingDetailDao;
     }
 
     public UserInfoDao getUserInfoDao() {
         return userInfoDao;
+    }
+
+    public ProjectDetialDao getProjectDetialDao() {
+        return projectDetialDao;
+    }
+
+    public ProjectDao getProjectDao() {
+        return projectDao;
+    }
+
+    public MonItemMethodRelationDao getMonItemMethodRelationDao() {
+        return monItemMethodRelationDao;
+    }
+
+    public TagsDao getTagsDao() {
+        return tagsDao;
+    }
+
+    public MonItemsDao getMonItemsDao() {
+        return monItemsDao;
+    }
+
+    public EnvirPointDao getEnvirPointDao() {
+        return envirPointDao;
+    }
+
+    public DevicesDao getDevicesDao() {
+        return devicesDao;
+    }
+
+    public RightsDao getRightsDao() {
+        return rightsDao;
+    }
+
+    public WeatherDao getWeatherDao() {
+        return weatherDao;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public EnterRelatePointDao getEnterRelatePointDao() {
+        return enterRelatePointDao;
+    }
+
+    public MethodsDao getMethodsDao() {
+        return methodsDao;
+    }
+
+    public MethodTagRelationDao getMethodTagRelationDao() {
+        return methodTagRelationDao;
+    }
+
+    public DicDao getDicDao() {
+        return dicDao;
+    }
+
+    public MethodDevRelationDao getMethodDevRelationDao() {
+        return methodDevRelationDao;
+    }
+
+    public EnterpriseDao getEnterpriseDao() {
+        return enterpriseDao;
+    }
+
+    public MonItemTagRelationDao getMonItemTagRelationDao() {
+        return monItemTagRelationDao;
     }
 
 }
