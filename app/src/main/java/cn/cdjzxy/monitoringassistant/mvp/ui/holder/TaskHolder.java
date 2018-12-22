@@ -55,22 +55,30 @@ public class TaskHolder extends BaseHolder<Project> {
     public void setData(Project data, int position) {
         mIvTaskType.setVisibility(View.VISIBLE);
         mTvTaskName.setText(data.getName());
-        String currentTime = DateUtils.getDate();
-        String endTime = data.getAssignDate();
-        int lastDays = DateUtils.getLastDays(currentTime, endTime.split("T")[0]);
-        if (lastDays <= 1) {
-            mTvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
-        } else if (lastDays <= 3) {
-            mTvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
+
+        if (CheckUtil.isEmpty(data.getPlanBeginTime()) || CheckUtil.isEmpty(data.getPlanEndTime())) {
+            mTvTaskTimeRange.setText("未设置采样计划");
         } else {
-            mTvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
+            String currentTime = DateUtils.getDate();
+            String endTime = data.getPlanEndTime();
+            int lastDays = DateUtils.getLastDays(currentTime, endTime.split("T")[0]);
+            if (lastDays <= 1) {
+                mTvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
+            } else if (lastDays <= 3) {
+                mTvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
+            } else {
+                mTvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
+            }
+
+            mTvTaskTimeRange.setText(data.getPlanBeginTime().split("T")[0].replace("-", "/") + "~" + data.getPlanEndTime().split("T")[0].replace("-", "/"));
         }
+
         StringBuilder users = new StringBuilder("");
         List<String> userIds = data.getSamplingUser();
         if (!CheckUtil.isEmpty(userIds)) {
-            for (String userId : userIds) {
-                User user = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.eq(userId)).unique();
-                if (!CheckUtil.isNull(user)) {
+            List<User> userList = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(userIds)).list();
+            if (!CheckUtil.isEmpty(userList)) {
+                for (User user : userList) {
                     users.append(user.getName() + ",");
                 }
             }
@@ -87,26 +95,30 @@ public class TaskHolder extends BaseHolder<Project> {
             }
         }
 
-       if (users.lastIndexOf(",") > 0){
-           users.deleteCharAt(users.lastIndexOf(","));
-       }
+        if (users.lastIndexOf(",") > 0) {
+            users.deleteCharAt(users.lastIndexOf(","));
+        }
 
-        if (monItems.lastIndexOf(",") > 0){
+        if (monItems.lastIndexOf(",") > 0) {
             monItems.deleteCharAt(monItems.lastIndexOf(","));
         }
 
-        if (points.lastIndexOf(",") > 0){
+        if (points.lastIndexOf(",") > 0) {
             points.deleteCharAt(points.lastIndexOf(","));
         }
 
 
-        mTvTaskTimeRange.setText(data.getCreateDate().split("T")[0].replace("-", "/") + "~" + data.getAssignDate().split("T")[0].replace("-", "/"));
         mTvTaskNum.setText("任务编号:" + data.getProjectNo());
         mTvTaskPoint.setText("点位:" + points.toString());
         mTvTaskProjectNum.setText("项目:" + monItems.toString());
         mTvTaskType.setText("样品性质:" + data.getMonType());
         mTvTaskPerson.setText("人员：" + users.toString());
-        mTvTaskStartTime.setText("下达:" + data.getAssignDate().split("T")[0].replace("-", "/"));
+        if (CheckUtil.isEmpty(data.getAssignDate())) {
+            mTvTaskStartTime.setText("下达:" + "未设置");
+        } else {
+            mTvTaskStartTime.setText("下达:" + data.getAssignDate().split("T")[0].replace("-", "/"));
+        }
+
     }
 
     @Override

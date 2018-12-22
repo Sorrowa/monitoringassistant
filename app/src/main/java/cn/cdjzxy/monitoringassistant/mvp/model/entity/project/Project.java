@@ -67,12 +67,16 @@ public class Project {
     private String              CreateDate;
     private boolean             FinishState;
     private String              FinishDate;
+    private String              PlanBeginTime;
+    private String              PlanEndTime;
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String>        SamplingUser;
     @Transient
     private List<ProjectDetial> ProjectDetials;
-    @Generated(hash = 2020280327)
-    public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, List<String> SamplingUser) {
+
+
+    @Generated(hash = 736282846)
+    public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, List<String> SamplingUser) {
         this.Id = Id;
         this.UpdateTime = UpdateTime;
         this.Name = Name;
@@ -95,150 +99,15 @@ public class Project {
         this.CreateDate = CreateDate;
         this.FinishState = FinishState;
         this.FinishDate = FinishDate;
-        this.SamplingUser = SamplingUser;
-    }
-    @Generated(hash = 1767516619)
-    public Project() {
-    }
-    public String getId() {
-        return this.Id;
-    }
-    public void setId(String Id) {
-        this.Id = Id;
-    }
-    public String getUpdateTime() {
-        return this.UpdateTime;
-    }
-    public void setUpdateTime(String UpdateTime) {
-        this.UpdateTime = UpdateTime;
-    }
-    public String getName() {
-        return this.Name;
-    }
-    public void setName(String Name) {
-        this.Name = Name;
-    }
-    public String getProjectNo() {
-        return this.ProjectNo;
-    }
-    public void setProjectNo(String ProjectNo) {
-        this.ProjectNo = ProjectNo;
-    }
-    public String getUrgency() {
-        return this.Urgency;
-    }
-    public void setUrgency(String Urgency) {
-        this.Urgency = Urgency;
-    }
-    public String getContractCode() {
-        return this.ContractCode;
-    }
-    public void setContractCode(String ContractCode) {
-        this.ContractCode = ContractCode;
-    }
-    public String getType() {
-        return this.Type;
-    }
-    public void setType(String Type) {
-        this.Type = Type;
-    }
-    public String getMonType() {
-        return this.MonType;
-    }
-    public void setMonType(String MonType) {
-        this.MonType = MonType;
-    }
-    public String getClientName() {
-        return this.ClientName;
-    }
-    public void setClientName(String ClientName) {
-        this.ClientName = ClientName;
-    }
-    public String getClientId() {
-        return this.ClientId;
-    }
-    public void setClientId(String ClientId) {
-        this.ClientId = ClientId;
-    }
-    public String getCreaterId() {
-        return this.CreaterId;
-    }
-    public void setCreaterId(String CreaterId) {
-        this.CreaterId = CreaterId;
-    }
-    public String getCreaterName() {
-        return this.CreaterName;
-    }
-    public void setCreaterName(String CreaterName) {
-        this.CreaterName = CreaterName;
-    }
-    public String getRcvId() {
-        return this.RcvId;
-    }
-    public void setRcvId(String RcvId) {
-        this.RcvId = RcvId;
-    }
-    public String getRcvName() {
-        return this.RcvName;
-    }
-    public void setRcvName(String RcvName) {
-        this.RcvName = RcvName;
-    }
-    public String getStartDate() {
-        return this.StartDate;
-    }
-    public void setStartDate(String StartDate) {
-        this.StartDate = StartDate;
-    }
-    public String getEndDate() {
-        return this.EndDate;
-    }
-    public void setEndDate(String EndDate) {
-        this.EndDate = EndDate;
-    }
-    public String getCurrentNodeType() {
-        return this.CurrentNodeType;
-    }
-    public void setCurrentNodeType(String CurrentNodeType) {
-        this.CurrentNodeType = CurrentNodeType;
-    }
-    public String getStatus() {
-        return this.Status;
-    }
-    public void setStatus(String Status) {
-        this.Status = Status;
-    }
-    public String getAssignDate() {
-        return this.AssignDate;
-    }
-    public void setAssignDate(String AssignDate) {
-        this.AssignDate = AssignDate;
-    }
-    public String getCreateDate() {
-        return this.CreateDate;
-    }
-    public void setCreateDate(String CreateDate) {
-        this.CreateDate = CreateDate;
-    }
-    public boolean getFinishState() {
-        return this.FinishState;
-    }
-    public void setFinishState(boolean FinishState) {
-        this.FinishState = FinishState;
-    }
-    public String getFinishDate() {
-        return this.FinishDate;
-    }
-    public void setFinishDate(String FinishDate) {
-        this.FinishDate = FinishDate;
-    }
-    public List<String> getSamplingUser() {
-        return this.SamplingUser;
-    }
-    public void setSamplingUser(List<String> SamplingUser) {
+        this.PlanBeginTime = PlanBeginTime;
+        this.PlanEndTime = PlanEndTime;
         this.SamplingUser = SamplingUser;
     }
 
+    @Generated(hash = 1767516619)
+    public Project() {
+    }
+  
 
     public List<ProjectDetial> getProjectDetials() {
         return ProjectDetials;
@@ -246,5 +115,205 @@ public class Project {
 
     public void setProjectDetials(List<ProjectDetial> projectDetials) {
         ProjectDetials = projectDetials;
+    }
+
+    public String getId() {
+        return this.Id;
+    }
+
+    public void setId(String Id) {
+        this.Id = Id;
+    }
+
+    public String getUpdateTime() {
+        return this.UpdateTime;
+    }
+
+    public void setUpdateTime(String UpdateTime) {
+        this.UpdateTime = UpdateTime;
+    }
+
+    public String getName() {
+        return this.Name;
+    }
+
+    public void setName(String Name) {
+        this.Name = Name;
+    }
+
+    public String getProjectNo() {
+        return this.ProjectNo;
+    }
+
+    public void setProjectNo(String ProjectNo) {
+        this.ProjectNo = ProjectNo;
+    }
+
+    public String getUrgency() {
+        return this.Urgency;
+    }
+
+    public void setUrgency(String Urgency) {
+        this.Urgency = Urgency;
+    }
+
+    public String getContractCode() {
+        return this.ContractCode;
+    }
+
+    public void setContractCode(String ContractCode) {
+        this.ContractCode = ContractCode;
+    }
+
+    public String getType() {
+        return this.Type;
+    }
+
+    public void setType(String Type) {
+        this.Type = Type;
+    }
+
+    public String getMonType() {
+        return this.MonType;
+    }
+
+    public void setMonType(String MonType) {
+        this.MonType = MonType;
+    }
+
+    public String getClientName() {
+        return this.ClientName;
+    }
+
+    public void setClientName(String ClientName) {
+        this.ClientName = ClientName;
+    }
+
+    public String getClientId() {
+        return this.ClientId;
+    }
+
+    public void setClientId(String ClientId) {
+        this.ClientId = ClientId;
+    }
+
+    public String getCreaterId() {
+        return this.CreaterId;
+    }
+
+    public void setCreaterId(String CreaterId) {
+        this.CreaterId = CreaterId;
+    }
+
+    public String getCreaterName() {
+        return this.CreaterName;
+    }
+
+    public void setCreaterName(String CreaterName) {
+        this.CreaterName = CreaterName;
+    }
+
+    public String getRcvId() {
+        return this.RcvId;
+    }
+
+    public void setRcvId(String RcvId) {
+        this.RcvId = RcvId;
+    }
+
+    public String getRcvName() {
+        return this.RcvName;
+    }
+
+    public void setRcvName(String RcvName) {
+        this.RcvName = RcvName;
+    }
+
+    public String getStartDate() {
+        return this.StartDate;
+    }
+
+    public void setStartDate(String StartDate) {
+        this.StartDate = StartDate;
+    }
+
+    public String getEndDate() {
+        return this.EndDate;
+    }
+
+    public void setEndDate(String EndDate) {
+        this.EndDate = EndDate;
+    }
+
+    public String getCurrentNodeType() {
+        return this.CurrentNodeType;
+    }
+
+    public void setCurrentNodeType(String CurrentNodeType) {
+        this.CurrentNodeType = CurrentNodeType;
+    }
+
+    public String getStatus() {
+        return this.Status;
+    }
+
+    public void setStatus(String Status) {
+        this.Status = Status;
+    }
+
+    public String getAssignDate() {
+        return this.AssignDate;
+    }
+
+    public void setAssignDate(String AssignDate) {
+        this.AssignDate = AssignDate;
+    }
+
+    public String getCreateDate() {
+        return this.CreateDate;
+    }
+
+    public void setCreateDate(String CreateDate) {
+        this.CreateDate = CreateDate;
+    }
+
+    public boolean getFinishState() {
+        return this.FinishState;
+    }
+
+    public void setFinishState(boolean FinishState) {
+        this.FinishState = FinishState;
+    }
+
+    public String getFinishDate() {
+        return this.FinishDate;
+    }
+
+    public void setFinishDate(String FinishDate) {
+        this.FinishDate = FinishDate;
+    }
+
+    public String getPlanBeginTime() {
+        return this.PlanBeginTime;
+    }
+
+    public void setPlanBeginTime(String PlanBeginTime) {
+        this.PlanBeginTime = PlanBeginTime;
+    }
+
+    public String getPlanEndTime() {
+        return this.PlanEndTime;
+    }
+
+    public void setPlanEndTime(String PlanEndTime) {
+        this.PlanEndTime = PlanEndTime;
+    }
+
+    public List<String> getSamplingUser() {
+        return this.SamplingUser;
+    }
+
+    public void setSamplingUser(List<String> SamplingUser) {
+        this.SamplingUser = SamplingUser;
     }
 }

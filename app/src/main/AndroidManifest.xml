@@ -149,6 +149,15 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".mvp.ui.module.task.UserActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".mvp.ui.module.task.MethodActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
         <service android:name=".services.RepositoryService" />
 
     </application>

@@ -99,7 +99,8 @@
             <EditText
                 android:id="@+id/tv_sampling_height"
                 style="@style/BasicInfoItemEditTextStyle"
-                android:maxLength="50" />
+                android:maxLength="50"
+                android:inputType="numberDecimal"/>
 
         </RelativeLayout>
 
@@ -114,7 +115,8 @@
 
             <EditText
                 android:id="@+id/et_sampling_area"
-                style="@style/BasicInfoItemEditTextStyle" />
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="numberDecimal"/>
 
         </RelativeLayout>
 

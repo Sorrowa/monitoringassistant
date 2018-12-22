@@ -40,6 +40,8 @@ import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TagAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DateUtil;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 /**
@@ -146,11 +148,16 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
             case R.id.tv_monitem:
                 Intent intent1 = new Intent(this, MonItemActivity.class);
                 intent1.putExtra("tagId", mProjectDetial.getTagId());
-                intent1.putExtra("monItemId", mProjectDetial.getMonItemId());
                 new AvoidOnResult(this).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
-
+                        if (resultCode == Activity.RESULT_OK) {
+                            if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
+                                mProjectDetial.setMonItemName(data.getStringExtra("MonItemName"));
+                                mProjectDetial.setMonItemId(data.getStringExtra("MonItemId"));
+                                bindView(mProjectDetial);
+                            }
+                        }
                     }
                 });
                 break;
@@ -164,6 +171,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mProjectDetial.setDays(Integer.parseInt(etDays.getText().toString()));
                 mProjectDetial.setPeriod(Integer.parseInt(etPeriod.getText().toString()));
                 mProjectDetial.setComment(etComment.getText().toString());
+                mProjectDetial.setUpdateTime(DateUtils.getWholeDate());
                 DBHelper.get().getProjectDetialDao().update(mProjectDetial);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
                 ArtUtils.makeText(this, "保存采样点位数据成功");

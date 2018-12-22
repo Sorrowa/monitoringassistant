@@ -1,4 +1,4 @@
-package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
+package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,27 +17,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemTagRelationDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MonItemAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.UserAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.GridItemDecoration;
 
 /**
- * 监测项目
+ * 采样人员
  */
 
-public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
+public class UserActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     @BindView(R.id.rv_project)
@@ -45,30 +47,28 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.rv_project_selected)
     RecyclerView rvProjectSelected;
 
-    private MonItemAdapter mMonItemAdapter;
+    private UserAdapter mUserAdapter;
 
-    private MonItemAdapter mMonItemSelectedAdapter;
+    private UserAdapter mUserSelectedAdapter;
 
-    private String tagId;
-    private String monItemId;
+    private String projectId;
 
-    private List<MonItems> mMonItems         = new ArrayList<>();
-    private List<MonItems> mMonItemsSelected = new ArrayList<>();
+    private List<User> mUsers         = new ArrayList<>();
+    private List<User> mUsersSelected = new ArrayList<>();
 
-    private StringBuilder MonItemName = new StringBuilder("");
-    private StringBuilder MonItemId   = new StringBuilder("");
+    private StringBuilder UserName = new StringBuilder("");
+    private StringBuilder UserId   = new StringBuilder("");
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.setTitleMainText("监测项目");
-        //        titleBar.addCenterAction(titleBar.new ViewAction(getSearchView()));
+        titleBar.setTitleMainText("采样人员");
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getMonItemsData();
                 Intent intent = new Intent();
-                intent.putExtra("MonItemName", MonItemName.toString());
-                intent.putExtra("MonItemId", MonItemId.toString());
+                intent.putExtra("UserName", UserName.toString());
+                intent.putExtra("UserId", UserId.toString());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -88,60 +88,50 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        initMonItemsView();
-        initMonItemsSelectedView();
+        initUsersView();
+        initUsersSelectedView();
 
-        tagId = getIntent().getStringExtra("tagId");
+        projectId = getIntent().getStringExtra("projectId");
 
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
-        List<MonItems> monItems = tags.getMMonItems();
-        if (!CheckUtil.isEmpty(monItems)) {
-            mMonItems.clear();
-            mMonItems.addAll(monItems);
+        Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
+
+        List<String> userIds = project.getSamplingUser();
+        List<User> users = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(userIds)).list();
+
+        if (!CheckUtil.isEmpty(users)) {
+            mUsers.clear();
+            mUsers.addAll(users);
         }
-
-        mMonItemAdapter.notifyDataSetChanged();
+        mUserAdapter.notifyDataSetChanged();
 
     }
 
-    /**
-     * 获取标题右边View
-     *
-     * @return
-     */
-    private View getSearchView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.view_search, null);
 
-
-        return view;
-    }
-
-
-    private void initMonItemsView() {
+    private void initUsersView() {
         ArtUtils.configRecyclerView(rvProject, new GridLayoutManager(this, 4));
-        mMonItemAdapter = new MonItemAdapter(mMonItems);
-        mMonItemAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+        mUserAdapter = new UserAdapter(mUsers);
+        mUserAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 upateMonItemState(position);
             }
         });
         rvProject.addItemDecoration(new GridItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_16), 4));
-        rvProject.setAdapter(mMonItemAdapter);
+        rvProject.setAdapter(mUserAdapter);
     }
 
 
-    private void initMonItemsSelectedView() {
+    private void initUsersSelectedView() {
         ArtUtils.configRecyclerView(rvProjectSelected, new GridLayoutManager(this, 4));
-        mMonItemSelectedAdapter = new MonItemAdapter(mMonItemsSelected);
-        mMonItemSelectedAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+        mUserSelectedAdapter = new UserAdapter(mUsersSelected);
+        mUserSelectedAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 upateMonItemSelectedState(position);
             }
         });
         rvProjectSelected.addItemDecoration(new GridItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_16), 4));
-        rvProjectSelected.setAdapter(mMonItemSelectedAdapter);
+        rvProjectSelected.setAdapter(mUserSelectedAdapter);
     }
 
     @OnClick({R.id.iv_add_monitem, R.id.iv_delete_monitem})
@@ -162,12 +152,12 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
      * @param position
      */
     private void upateMonItemState(int position) {
-        if (mMonItems.get(position).isSelected()) {
-            mMonItems.get(position).setSelected(false);
+        if (mUsers.get(position).isSelected()) {
+            mUsers.get(position).setSelected(false);
         } else {
-            mMonItems.get(position).setSelected(true);
+            mUsers.get(position).setSelected(true);
         }
-        mMonItemAdapter.notifyDataSetChanged();
+        mUserAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -176,57 +166,57 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
      * @param position
      */
     private void upateMonItemSelectedState(int position) {
-        if (mMonItemsSelected.get(position).isSelected()) {
-            mMonItemsSelected.get(position).setSelected(false);
+        if (mUsersSelected.get(position).isSelected()) {
+            mUsersSelected.get(position).setSelected(false);
         } else {
-            mMonItemsSelected.get(position).setSelected(true);
+            mUsersSelected.get(position).setSelected(true);
         }
-        mMonItemSelectedAdapter.notifyDataSetChanged();
+        mUserSelectedAdapter.notifyDataSetChanged();
     }
 
 
     private void addMonItems() {
-        for (MonItems monItem : mMonItems) {
-            if (monItem.isSelected()) {
-                monItem.setSelected(false);
-                mMonItemsSelected.add(monItem);
-                mMonItems.remove(monItem);
+        for (User user : mUsers) {
+            if (user.isSelected()) {
+                user.setSelected(false);
+                mUsersSelected.add(user);
+                mUsers.remove(user);
             }
         }
-        mMonItemAdapter.notifyDataSetChanged();
-        mMonItemSelectedAdapter.notifyDataSetChanged();
+        mUserAdapter.notifyDataSetChanged();
+        mUserSelectedAdapter.notifyDataSetChanged();
     }
 
     private void deleteMonItems() {
-        for (MonItems monItems : mMonItemsSelected) {
-            if (monItems.isSelected()) {
-                monItems.setSelected(false);
-                mMonItems.add(monItems);
-                mMonItemsSelected.remove(monItems);
+        for (User user : mUsersSelected) {
+            if (user.isSelected()) {
+                user.setSelected(false);
+                mUsers.add(user);
+                mUsersSelected.remove(user);
             }
         }
-        mMonItemAdapter.notifyDataSetChanged();
-        mMonItemSelectedAdapter.notifyDataSetChanged();
+        mUserAdapter.notifyDataSetChanged();
+        mUserSelectedAdapter.notifyDataSetChanged();
     }
 
 
     private void getMonItemsData() {
 
-        if (CheckUtil.isEmpty(mMonItemsSelected)) {
+        if (CheckUtil.isEmpty(mUsersSelected)) {
             return;
         }
 
-        for (MonItems monItems : mMonItemsSelected) {
-            MonItemName.append(monItems.getName() + ",");
-            MonItemId.append(monItems.getId() + ",");
+        for (User user : mUsersSelected) {
+            UserName.append(user.getName() + ",");
+            UserId.append(user.getId() + ",");
         }
 
-        if (MonItemName.lastIndexOf(",") > 0) {
-            MonItemName.deleteCharAt(MonItemName.lastIndexOf(","));
+        if (UserName.lastIndexOf(",") > 0) {
+            UserName.deleteCharAt(UserName.lastIndexOf(","));
         }
 
-        if (MonItemId.lastIndexOf(",") > 0) {
-            MonItemId.deleteCharAt(MonItemId.lastIndexOf(","));
+        if (UserId.lastIndexOf(",") > 0) {
+            UserId.deleteCharAt(UserId.lastIndexOf(","));
         }
     }
 

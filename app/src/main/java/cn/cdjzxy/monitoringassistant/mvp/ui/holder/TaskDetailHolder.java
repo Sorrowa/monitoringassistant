@@ -8,9 +8,12 @@ import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 
 /**
  * 主页tab
@@ -47,6 +50,32 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
             mIvCb.setImageResource(R.mipmap.ic_cb_checked);
         } else {
             mIvCb.setImageResource(R.mipmap.ic_cb_nor);
+        }
+
+//        mIvCb.setVisibility(View.GONE);
+
+        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(data.getParentTagId())).unique();
+
+        if ("水质".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_water);
+        } else if ("煤质".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_coal);
+        } else if ("振动".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_shock);
+        } else if ("土壤".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_soil);
+        } else if ("降水".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_precipitation);
+        } else if ("固废".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_solid);
+        } else if ("辐射".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_radiation);
+        } else if ("废气".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_gas);
+        } else if ("噪声".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_noise);
+        } else if ("空气".equals(tags.getName())) {
+            mIvType.setImageResource(R.mipmap.ic_air);
         }
 
         mTvNum.setText(data.getSamplingNo());

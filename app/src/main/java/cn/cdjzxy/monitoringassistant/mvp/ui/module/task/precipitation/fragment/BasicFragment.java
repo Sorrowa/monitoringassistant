@@ -7,6 +7,8 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,6 +21,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -27,26 +32,31 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodTagRelationDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
  * 基本信息
@@ -88,10 +98,16 @@ public class BasicFragment extends BaseFragment {
     ImageView      ivAddPhoto;
     @BindView(R.id.tv_arrow)
     TextView       tvArrow;
+    @BindView(R.id.recyclerview)
+    RecyclerView   recyclerview;
 
     Unbinder unbinder;
 
+
     private PreciptationPrivateData mPrivateData;
+
+    private List<SamplingFile> mSamplingFiles = new ArrayList<>();
+    private SamplingFileAdapter mSamplingFileAdapter;
 
     public BasicFragment() {
     }
@@ -104,10 +120,27 @@ public class BasicFragment extends BaseFragment {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         mPrivateData = new PreciptationPrivateData();
+        mSamplingFiles.add(new SamplingFile());
         if (!CheckUtil.isNull(PrecipitationActivity.mSampling)) {
             tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
             tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
             tvSamplingType.setText(PrecipitationActivity.mSampling.getFormTypeName());
+            tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
+            tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
+            if (!CheckUtil.isEmpty(PrecipitationActivity.mSampling.getPrivateData())) {
+                mPrivateData = JSONObject.parseObject(PrecipitationActivity.mSampling.getPrivateData(), PreciptationPrivateData.class);
+                if (!CheckUtil.isNull(mPrivateData)) {
+                    tvSamplingHeight.setText(mPrivateData.getSampHight());
+                    etSamplingArea.setText(mPrivateData.getSampArea());
+                }
+            }
+            tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
+            tvSamplingDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
+            tvFlowMethod.setText(PrecipitationActivity.mSampling.getTransfer());
+            tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
+            tvComment.setText(PrecipitationActivity.mSampling.getComment());
+            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+            mSamplingFiles.addAll(samplingFiles);
         }
 
         //点位编号
@@ -215,6 +248,30 @@ public class BasicFragment extends BaseFragment {
             }
         });
 
+
+        ArtUtils.configRecyclerView(recyclerview, new GridLayoutManager(this.getContext(), 9) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+
+
+        mSamplingFileAdapter = new SamplingFileAdapter(mSamplingFiles, new SamplingFileAdapter.OnSamplingFileListener() {
+            @Override
+            public void onChoosePhoto() {
+                choosePhoto(REQUEST_CODE);
+            }
+
+            @Override
+            public void onDeletePhoto(int position) {
+                mSamplingFiles.remove(position);
+                PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
+                mSamplingFileAdapter.notifyDataSetChanged();
+            }
+        });
+        recyclerview.setAdapter(mSamplingFileAdapter);
+
     }
 
     @Nullable
@@ -247,7 +304,18 @@ public class BasicFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             List<String> paths = Matisse.obtainPathResult(data);
-            ArtUtils.makeText(getContext(), paths.toString());
+            for (String path : paths) {
+                SamplingFile samplingFile = new SamplingFile();
+                File file = new File(path);
+                samplingFile.setId(UUID.randomUUID().toString());
+                samplingFile.setFilePath(path);
+                samplingFile.setFileName(file.getName());
+                samplingFile.setSamplingId(PrecipitationActivity.mSampling.getId());
+                mSamplingFiles.add(samplingFile);
+            }
+
+            PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
+            mSamplingFileAdapter.notifyDataSetChanged();
         }
     }
 
@@ -256,7 +324,7 @@ public class BasicFragment extends BaseFragment {
                 .choose(MimeType.ofImage())
                 .capture(true)
                 .captureStrategy(new CaptureStrategy(true, "cn.cdjzxy.monitoringassistant.android7.fileprovider", "MonitoringAssistant"))
-                .maxSelectable(5)
+                .maxSelectable(20)
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
                 .showSingleMediaType(true)
                 .thumbnailScale(0.85f)
@@ -267,9 +335,12 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.layout_flow_information, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
+    @OnClick({R.id.layout_flow_information, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_sampling_date:
+                showDateSelectDialog();
+                break;
             case R.id.layout_flow_information:
                 if (tvArrow.getRotation() == 90f) {
                     tvArrow.setRotation(0f);
@@ -283,33 +354,59 @@ public class BasicFragment extends BaseFragment {
                 choosePhoto(REQUEST_CODE);
                 break;
             case R.id.tv_sampling_user:
-                showUserSelectDialog();
+                Intent intent = new Intent(getContext(), UserActivity.class);
+                intent.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
+                new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
+                                PrecipitationActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
+                                PrecipitationActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
+                                tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
+                            }
+                        }
+                    }
+                });
                 break;
             case R.id.tv_sampling_point:
-                Intent intent = new Intent(getContext(), PointSelectActivity.class);
-                intent.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
-                new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+                Intent intent1 = new Intent(getContext(), PointSelectActivity.class);
+                intent1.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
+                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
                             PrecipitationActivity.mSampling.setAddressName(data.getStringExtra("Address"));
                             PrecipitationActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
-                            tvSamplingPoint.setText(data.getStringExtra("Address"));
+                            tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
                         }
                     }
                 });
                 break;
             case R.id.tv_sampling_method:
-                showMethodSelectDialog();
-                break;
-            case R.id.tv_sampling_device:
-                Intent intent2 = new Intent(getContext(), DeviceActivity.class);
-                intent2.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
+                Intent intent2 = new Intent(getContext(), MethodActivity.class);
+                intent2.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent2, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-
+                            PrecipitationActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
+                            PrecipitationActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
+                            tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
+                        }
+                    }
+                });
+                break;
+            case R.id.tv_sampling_device:
+                Intent intent3 = new Intent(getContext(), DeviceActivity.class);
+                intent3.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
+                new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            PrecipitationActivity.mSampling.setDeviceName(data.getStringExtra("DeviceName"));
+                            PrecipitationActivity.mSampling.setDeviceId(data.getStringExtra("DeviceId"));
+                            tvSamplingDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
                         }
                     }
                 });
@@ -317,29 +414,17 @@ public class BasicFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 创建人员选择dialog
-     */
-    private void showUserSelectDialog() {
-
-    }
-
-    /**
-     * 创建方法选择dialog
-     */
-    private void showMethodSelectDialog() {
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(PrecipitationActivity.mSampling.getParentTagId())).unique();
-        if (!CheckUtil.isNull(tags)) {
-            List<Methods> methods = tags.getMMethods();
-
-            if (!CheckUtil.isEmpty(methods)) {
-                PrecipitationActivity.mSampling.setMethodId(methods.get(0).getId());
-                PrecipitationActivity.mSampling.setMethodName(methods.get(0).getName());
-                tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
+    private void showDateSelectDialog() {
+        //时间选择器
+        TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                PrecipitationActivity.mSampling.setSamplingTimeBegin(DateUtils.getDate(date));
+                tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
             }
-
-
-        }
-
+        }).build();
+        pvTime.setDate(Calendar.getInstance());
+        pvTime.show();
     }
+
 }

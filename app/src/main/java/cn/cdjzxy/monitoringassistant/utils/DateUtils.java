@@ -379,8 +379,27 @@ public class DateUtils {
      *
      * @return 当前年月日
      */
+    public static String getDate(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd").format(date).toString();
+    }
+
+    /**
+     * 获取当前年月日
+     *
+     * @return 当前年月日
+     */
+    public static String getWholeDate() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:MM:ss").format(new Date()).toString();
+    }
+
+
+    /**
+     * 获取当前年月日
+     *
+     * @return 当前年月日
+     */
     public static String getDate() {
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString();
+        return getDate(new Date());
     }
 
 

@@ -47,6 +47,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         public final static Property ProfessionalTitle = new Property(20, String.class, "ProfessionalTitle", false, "PROFESSIONAL_TITLE");
         public final static Property Token = new Property(21, String.class, "Token", false, "TOKEN");
         public final static Property Pwd = new Property(22, String.class, "pwd", false, "PWD");
+        public final static Property IntId = new Property(23, int.class, "intId", false, "INT_ID");
     }
 
 
@@ -84,7 +85,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
                 "\"JOB_TYPE\" TEXT," + // 19: JobType
                 "\"PROFESSIONAL_TITLE\" TEXT," + // 20: ProfessionalTitle
                 "\"TOKEN\" TEXT," + // 21: Token
-                "\"PWD\" TEXT);"); // 22: pwd
+                "\"PWD\" TEXT," + // 22: pwd
+                "\"INT_ID\" INTEGER NOT NULL );"); // 23: intId
     }
 
     /** Drops the underlying database table. */
@@ -211,6 +213,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         if (pwd != null) {
             stmt.bindString(23, pwd);
         }
+        stmt.bindLong(24, entity.getIntId());
     }
 
     @Override
@@ -331,6 +334,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         if (pwd != null) {
             stmt.bindString(23, pwd);
         }
+        stmt.bindLong(24, entity.getIntId());
     }
 
     @Override
@@ -363,7 +367,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // JobType
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // ProfessionalTitle
             cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // Token
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22) // pwd
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // pwd
+            cursor.getInt(offset + 23) // intId
         );
         return entity;
     }
@@ -393,6 +398,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         entity.setProfessionalTitle(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
         entity.setToken(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
         entity.setPwd(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setIntId(cursor.getInt(offset + 23));
      }
     
     @Override

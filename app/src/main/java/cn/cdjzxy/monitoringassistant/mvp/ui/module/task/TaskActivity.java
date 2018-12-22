@@ -17,6 +17,7 @@ import java.util.List;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskAdapter;
@@ -67,8 +68,7 @@ public class TaskActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void initTaskData() {
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
-
-        final List<Project> projects = DBHelper.get().getProjectDao().queryBuilder().limit(20).list();
+        final List<Project> projects = DBHelper.get().getProjectDao().queryBuilder().orderAsc(ProjectDao.Properties.PlanEndTime).limit(20).list();
         if (!CheckUtil.isEmpty(projects)) {
             mTaskAdapter = new TaskAdapter(projects);
             mTaskAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {

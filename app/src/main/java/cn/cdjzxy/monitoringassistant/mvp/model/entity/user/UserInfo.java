@@ -61,13 +61,15 @@ public class UserInfo {
     private String ProfessionalTitle;
     private String Token;
     private String pwd;
-    @Generated(hash = 1693687674)
+    private int    intId;
+    @Generated(hash = 729025362)
     public UserInfo(String Id, String LoginName, String WorkNo, String Name,
             String Sex, String Brithdate, String IdentityCode, String Mobile,
             String DepartmentName, String Position, String ReportSite,
             String Nation, String Province, String City, String Country,
             String Dgree, String Major, String School, String PoliticsStatus,
-            String JobType, String ProfessionalTitle, String Token, String pwd) {
+            String JobType, String ProfessionalTitle, String Token, String pwd,
+            int intId) {
         this.Id = Id;
         this.LoginName = LoginName;
         this.WorkNo = WorkNo;
@@ -91,6 +93,7 @@ public class UserInfo {
         this.ProfessionalTitle = ProfessionalTitle;
         this.Token = Token;
         this.pwd = pwd;
+        this.intId = intId;
     }
     @Generated(hash = 1279772520)
     public UserInfo() {
@@ -233,6 +236,14 @@ public class UserInfo {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
+    public int getIntId() {
+        return this.intId;
+    }
+    public void setIntId(int intId) {
+        this.intId = intId;
+    }
+
+
 
 
 }

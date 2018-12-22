@@ -11,6 +11,7 @@ import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
+import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
@@ -24,9 +25,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -77,11 +80,23 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
+                    List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+                    if (!CheckUtil.isEmpty(samplingFiles)) {
+                        DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+                    }
+                    mSampling.getSamplingFiless().remove(0);
+                    DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
+                }
+
                 if (isNewCreate) {
                     DBHelper.get().getSamplingDao().insert(mSampling);
                 } else {
                     DBHelper.get().getSamplingDao().update(mSampling);
                 }
+
+                EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                 ArtUtils.makeText(getApplicationContext(), "保存成功");
             }
         }));
@@ -122,6 +137,8 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             mSampling = createSampling();
         } else {
             mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
+            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+            mSampling.setSamplingFiless(samplingFiles);
         }
 
         initTabData();
@@ -196,7 +213,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setFormTypeName("降水");
         sampling.setFormName(formSelect.getFormName());
         sampling.setFormPath(formSelect.getPath());
-//        sampling.setFormFlows(formSelect.getFormFlows().toString());
+        //        sampling.setFormFlows(formSelect.getFormFlows().toString());
         sampling.setParentTagId(formSelect.getTagParentId());
         sampling.setStatusName("进行中");
         sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
@@ -215,7 +232,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         StringBuilder samplingNo = new StringBuilder("");
         String dateStr = DateUtils.getDate().replace("-", "").substring(2);
         samplingNo.append(dateStr);
-        samplingNo.append(UserInfoHelper.get().getUser().getWorkNo());
+        samplingNo.append(UserInfoHelper.get().getUser().getIntId());
 
         List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
 

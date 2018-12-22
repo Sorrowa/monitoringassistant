@@ -35,7 +35,7 @@ android {
         debug {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "true"
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
             buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             buildConfigField "boolean", "IS_RELEASE", "false"
             debuggable true
@@ -103,6 +103,7 @@ dependencies {
     implementation rootProject.ext.dependencies["fileprovider"]
     implementation rootProject.ext.dependencies["numberprogressbar"]
     implementation rootProject.ext.dependencies["matisse"]
+    implementation rootProject.ext.dependencies["pickerview"]
     annotationProcessor(rootProject.ext.dependencies["dagger2-compiler"]) {
         exclude module: 'support-annotations'
     }

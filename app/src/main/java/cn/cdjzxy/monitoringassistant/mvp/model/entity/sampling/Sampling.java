@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
@@ -83,6 +84,7 @@ public class Sampling {
     //            [Description("撤回待提交")]
     //    撤回 = 9,
 
+    @Id
     private String                  Id;
     private String                  ProjectId;
     private String                  SamplingNo;
@@ -146,6 +148,8 @@ public class Sampling {
     private List<SamplingFormStand> SamplingFormStandResults;
     @Transient
     private List<SamplingDetail>    SamplingDetailResults;
+    @Transient
+    private List<SamplingFile>      SamplingFiless;
     @Transient
     private boolean                 isSelected;
 
@@ -213,6 +217,49 @@ public class Sampling {
 
     @Generated(hash = 1062560110)
     public Sampling() {
+    }
+
+  
+
+    public List<String> getSamplingUserResults() {
+        return this.SamplingUserResults;
+    }
+
+    public void setSamplingUserResults(List<String> SamplingUserResults) {
+        this.SamplingUserResults = SamplingUserResults;
+    }
+
+
+    public List<SamplingFormStand> getSamplingFormStandResults() {
+        return SamplingFormStandResults;
+    }
+
+    public void setSamplingFormStandResults(List<SamplingFormStand> samplingFormStandResults) {
+        SamplingFormStandResults = samplingFormStandResults;
+    }
+
+    public List<SamplingDetail> getSamplingDetailResults() {
+        return SamplingDetailResults;
+    }
+
+    public void setSamplingDetailResults(List<SamplingDetail> samplingDetailResults) {
+        SamplingDetailResults = samplingDetailResults;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public List<SamplingFile> getSamplingFiless() {
+        return SamplingFiless;
+    }
+
+    public void setSamplingFiless(List<SamplingFile> samplingFiless) {
+        SamplingFiless = samplingFiless;
     }
 
     public String getId() {
@@ -669,38 +716,5 @@ public class Sampling {
 
     public void setFile(String file) {
         this.file = file;
-    }
-
-    public List<String> getSamplingUserResults() {
-        return this.SamplingUserResults;
-    }
-
-    public void setSamplingUserResults(List<String> SamplingUserResults) {
-        this.SamplingUserResults = SamplingUserResults;
-    }
-
-
-    public List<SamplingFormStand> getSamplingFormStandResults() {
-        return SamplingFormStandResults;
-    }
-
-    public void setSamplingFormStandResults(List<SamplingFormStand> samplingFormStandResults) {
-        SamplingFormStandResults = samplingFormStandResults;
-    }
-
-    public List<SamplingDetail> getSamplingDetailResults() {
-        return SamplingDetailResults;
-    }
-
-    public void setSamplingDetailResults(List<SamplingDetail> samplingDetailResults) {
-        SamplingDetailResults = samplingDetailResults;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
     }
 }

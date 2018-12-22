@@ -70,30 +70,30 @@ public class CollectionDetailFragment extends BaseFragment {
     public void initData(@Nullable Bundle savedInstanceState) {
         mSampling = PrecipitationActivity.mSampling;
 
-        // TODO: 2018/12/22 删除
-        mSampling.setSamplingNo("");
+//        // TODO: 2018/12/22 删除
+//        mSampling.setSamplingNo("");
 
-        if (TextUtils.isEmpty(mSampling.getSamplingNo())) {
-            //无样品编码
-
-            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
-            String samplingNo;
-
-            String snDate = DateUtil.getDate().replace("-", "").substring(2);
-            String snPointPosition = mSampling.getAddressNo();
-            String snUserId = UserInfoHelper.get().getUser().getWorkNo();
-            // TODO: 2018/12/22 频次
-            String snFrequency = "01";
-
-            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + snFrequency;
-
-            tvSampleCode.setText(samplingNo);
-            tvFrequency.setText(snFrequency);
-        }else {
-            //已有样品编码
-            tvSampleCode.setText(mSampling.getSamplingNo());
-            tvFrequency.setText(mSampling.getSamplingNo().substring(12,14));
-        }
+//        if (TextUtils.isEmpty(mSampling.getSamplingNo())) {
+//            //无样品编码
+//
+//            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
+//            String samplingNo;
+//
+//            String snDate = DateUtil.getDate().replace("-", "").substring(2);
+//            String snPointPosition = mSampling.getAddressNo();
+//            String snUserId = UserInfoHelper.get().getUser().getWorkNo();
+//            // TODO: 2018/12/22 频次
+//            String snFrequency = "01";
+//
+//            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + snFrequency;
+//
+//            tvSampleCode.setText(samplingNo);
+//            tvFrequency.setText(snFrequency);
+//        }else {
+//            //已有样品编码
+//            tvSampleCode.setText(mSampling.getSamplingNo());
+//            tvFrequency.setText(mSampling.getSamplingNo().substring(12,14));
+//        }
 
 
 

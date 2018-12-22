@@ -1,0 +1,37 @@
+package cn.cdjzxy.monitoringassistant.mvp.ui.adapter;
+
+import android.view.View;
+
+import com.wonders.health.lib.base.base.BaseHolder;
+import com.wonders.health.lib.base.base.DefaultAdapter;
+
+import java.util.List;
+
+import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
+import cn.cdjzxy.monitoringassistant.mvp.ui.holder.MethodHolder;
+import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PointSelectHolder;
+
+
+/**
+ * 主页tab
+ */
+
+public class MethodAdapter extends DefaultAdapter<Methods> {
+
+
+    public MethodAdapter(List<Methods> infos) {
+        super(infos);
+    }
+
+    @Override
+    public int getLayoutId(int viewType) {
+        return R.layout.item_point_select;
+    }
+
+    @Override
+    public BaseHolder<Methods> getHolder(View v, int viewType) {
+        return new MethodHolder(v);
+    }
+}

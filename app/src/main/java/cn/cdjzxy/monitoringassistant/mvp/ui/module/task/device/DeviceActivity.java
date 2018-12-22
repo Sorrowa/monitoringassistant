@@ -22,8 +22,11 @@ import java.util.List;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DevicesDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -36,7 +39,7 @@ import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements IView {
+public class DeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     @BindView(R.id.recyclerView_point)
@@ -79,49 +82,8 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
         methodId = getIntent().getStringExtra("methodId");
         initTabData();
         initDevicesData();
-
-        Methods methods = DBHelper.get().getMethodsDao().queryBuilder().where(MethodsDao.Properties.Id.eq(methodId)).unique();
-        if (!CheckUtil.isNull(methods)) {
-            List<Devices> devices = methods.getMDevices();
-            if (!CheckUtil.isEmpty(devices)) {
-                mDevices.clear();
-                mDevices.addAll(devices);
-                mDeviceAdapter.notifyDataSetChanged();
-            }
-        }
-
-
+        getDeviceData(true);
     }
-
-
-    @Override
-    public void showLoading() {
-
-    }
-
-    @Override
-    public void hideLoading() {
-
-    }
-
-    @Override
-    public void showMessage(@NonNull String message) {
-        ArtUtils.makeText(this, message);
-    }
-
-    @Override
-    public void handleMessage(@NonNull Message message) {
-        checkNotNull(message);
-        switch (message.what) {
-            case Message.RESULT_FAILURE:
-
-                break;
-            case Message.RESULT_OK:
-
-                break;
-        }
-    }
-
 
     /**
      * 初始化Tab数据
@@ -131,7 +93,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-
+                getDeviceData(position == 0 ? true : false);
             }
         });
     }
@@ -159,6 +121,38 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
             }
         });
         recyclerViewPoint.setAdapter(mDeviceAdapter);
+    }
+
+
+    private void getDeviceData(boolean isRelationDevice) {
+        List<Devices> devices = null;
+        if (isRelationDevice) {
+            Methods methods = DBHelper.get().getMethodsDao().queryBuilder().where(MethodsDao.Properties.Id.eq(methodId)).unique();
+            if (!CheckUtil.isNull(methods)) {
+                devices = methods.getMDevices();
+            }
+        } else {
+            Methods methods = DBHelper.get().getMethodsDao().queryBuilder().where(MethodsDao.Properties.Id.eq(methodId)).unique();
+            if (!CheckUtil.isNull(methods)) {
+                List<Devices> reDevices = methods.getMDevices();
+                if (CheckUtil.isEmpty(reDevices)) {
+                    devices = DBHelper.get().getDevicesDao().loadAll();
+                } else {
+                    List<String> deviceIds = new ArrayList<>();
+                    for (Devices reDevice : reDevices) {
+                        deviceIds.add(reDevice.getId());
+                    }
+                    devices = DBHelper.get().getDevicesDao().queryBuilder().where(DevicesDao.Properties.Id.notIn(deviceIds)).list();
+                }
+            }
+        }
+
+        mDevices.clear();
+        if (!CheckUtil.isEmpty(devices)) {
+            mDevices.addAll(devices);
+        }
+
+        mDeviceAdapter.notifyDataSetChanged();
     }
 
 

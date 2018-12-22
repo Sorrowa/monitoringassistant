@@ -3,6 +3,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
+import com.wonders.health.lib.base.widget.dialogplus.OnClickListener;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.Subscriber;
@@ -103,6 +105,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     private List<FormSelect> mDialogFormSelects = new ArrayList<>();
     private FormAdapter mFormAdapter;
 
+
+    private String mTagId;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         mTitleBarView = titleBar;
@@ -143,23 +148,28 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         if (!CheckUtil.isNull(data)) {
             mTitleBarView.setTitleMainText(data.getName() + "采样任务");
             tvTaskName.setText(data.getName());
-            String currentTime = DateUtils.getDate();
-            String endTime = data.getAssignDate();
-            int lastDays = DateUtils.getLastDays(currentTime, endTime.split("T")[0]);
-            if (lastDays <= 1) {
-                tvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
-            } else if (lastDays <= 3) {
-                tvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
+            if (CheckUtil.isEmpty(data.getPlanBeginTime()) || CheckUtil.isEmpty(data.getPlanEndTime())) {
+                tvTaskTimeRange.setText("未设置采样计划");
             } else {
-                tvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
+                String currentTime = DateUtils.getDate();
+                String endTime = data.getPlanEndTime();
+                int lastDays = DateUtils.getLastDays(currentTime, endTime.split("T")[0]);
+                if (lastDays <= 1) {
+                    tvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
+                } else if (lastDays <= 3) {
+                    tvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
+                } else {
+                    tvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
+                }
+                tvTaskTimeRange.setText(data.getPlanBeginTime().split("T")[0].replace("-", "/") + "~" + data.getPlanEndTime().split("T")[0].replace("-", "/"));
             }
 
             StringBuilder users = new StringBuilder("");
             List<String> userIds = data.getSamplingUser();
             if (!CheckUtil.isEmpty(userIds)) {
-                for (String userId : userIds) {
-                    User user = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.eq(userId)).unique();
-                    if (!CheckUtil.isNull(user)) {
+                List<User> userList = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(userIds)).list();
+                if (!CheckUtil.isEmpty(userList)) {
+                    for (User user : userList) {
                         users.append(user.getName() + ",");
                     }
                 }
@@ -188,7 +198,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
                 points.deleteCharAt(points.lastIndexOf(","));
             }
 
-            tvTaskTimeRange.setText(data.getCreateDate().split("T")[0].replace("-", "/") + "~" + data.getAssignDate().split("T")[0].replace("-", "/"));
+
             tvTaskNum.setText("任务编号:" + data.getProjectNo());
             tvTaskPoint.setText("点位:" + points.toString());
             tvTaskProjectNum.setText("项目:" + monItems.toString());
@@ -214,8 +224,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                String tagId = mTags.get(tab.getPosition()).getId();
-                getSampling(tagId);
+                mTagId = mTags.get(tab.getPosition()).getId();
+                getSampling(mTagId);
             }
 
             @Override
@@ -344,6 +354,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         dialogPlusBuilder.setGravity(Gravity.CENTER);
         dialogPlusBuilder.setContentWidth(700);
         dialogPlusBuilder.setContentHeight(800);
+        dialogPlusBuilder.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(@NonNull DialogPlus dialog, @NonNull View view) {
+                mDialogPlus.dismiss();
+            }
+        });
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
     }
@@ -352,13 +368,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_tag, null);
         mCustomTab = view.findViewById(R.id.tabview);
         mRecyclerView = view.findViewById(R.id.recyclerView);
-        mBtnClose = view.findViewById(R.id.iv_close);
-        mBtnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialogPlus.dismiss();
-            }
-        });
         List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
         if (!CheckUtil.isEmpty(tags)) {
             for (Tags tag : tags) {
@@ -400,7 +409,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     intent.putExtra("isNewCreate", true);
-                    ArtUtils.startActivity(WastewaterActivity.class);
+                    ArtUtils.startActivity(intent);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
                 }
@@ -434,6 +443,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     private void updateData(boolean isModified) {
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
         bindView(mProject);
+    }
+
+    @Subscriber(tag = EventBusTags.TAG_SAMPLING_UPDATE)
+    private void updateSamplingData(boolean isModified) {
+        getSampling(mTagId);
     }
 
 
