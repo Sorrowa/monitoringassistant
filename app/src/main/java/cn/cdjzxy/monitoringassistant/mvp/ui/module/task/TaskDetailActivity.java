@@ -26,7 +26,6 @@ import org.simple.eventbus.Subscriber;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -297,9 +296,17 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
-                    ArtUtils.startActivity(PrecipitationActivity.class);
+                    Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    intent.putExtra("samplingId", mSamplings.get(position).getId());
+                    intent.putExtra("isNewCreate", false);
+                    ArtUtils.startActivity(intent);
                 } else if ("水和废水样品采集与交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
-                    ArtUtils.startActivity(WastewaterActivity.class);
+                    Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    intent.putExtra("samplingId", mSamplings.get(position).getId());
+                    intent.putExtra("isNewCreate", false);
+                    ArtUtils.startActivity(intent);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
                 }
@@ -386,11 +393,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
                     Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                    intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(intent);
                 } else if ("水和废水样品采集与交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
-                    Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
+                    Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                    intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(WastewaterActivity.class);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");

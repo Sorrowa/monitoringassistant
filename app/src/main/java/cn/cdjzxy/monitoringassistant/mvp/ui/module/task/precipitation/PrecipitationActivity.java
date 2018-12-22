@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +26,9 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -33,6 +36,9 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.B
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionDetailFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
@@ -45,8 +51,10 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
 
-    private String projectId;
-    private String formSelectId;
+    private String  projectId;
+    private String  formSelectId;
+    private String  samplingId;
+    private boolean isNewCreate;
 
     private List<Fragment>  mFragments;
     private FragmentAdapter mFragmentAdapter;
@@ -69,7 +77,11 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBHelper.get().getSamplingDao().insert(mSampling);
+                if (isNewCreate) {
+                    DBHelper.get().getSamplingDao().insert(mSampling);
+                } else {
+                    DBHelper.get().getSamplingDao().update(mSampling);
+                }
                 ArtUtils.makeText(getApplicationContext(), "保存成功");
             }
         }));
@@ -94,11 +106,24 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mFragments.get(viewPager.getCurrentItem()).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
         projectId = getIntent().getStringExtra("projectId");
         formSelectId = getIntent().getStringExtra("formSelectId");
-        createSampling();
+        samplingId = getIntent().getStringExtra("samplingId");
+        isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
+        if (isNewCreate) {
+            mSampling = createSampling();
+        } else {
+            mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
+        }
+
         initTabData();
         openFragment(0);
     }
@@ -157,21 +182,55 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         finish();
     }
 
-    private void createSampling() {
+    private Sampling createSampling() {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
-        mSampling = new Sampling();
-        mSampling.setId(UUID.randomUUID().toString());
-        mSampling.setSamplingNo("FS1809110101");
-        mSampling.setProjectId(project.getId());
-        mSampling.setProjectName(project.getName());
-        mSampling.setProjectNo(project.getProjectNo());
-        mSampling.setTagId(formSelect.getTagId());
-        mSampling.setFormName(formSelect.getFormName());
-        mSampling.setFormPath(formSelect.getPath());
-        mSampling.setParentTagId(formSelect.getTagParentId());
-        mSampling.setStatusName("进行中");
-        mSampling.setStatus(0);
+        Sampling sampling = new Sampling();
+        sampling.setId(UUID.randomUUID().toString());
+        sampling.setSamplingNo(createSamplingNo());
+        sampling.setProjectId(project.getId());
+        sampling.setProjectName(project.getName());
+        sampling.setProjectNo(project.getProjectNo());
+        sampling.setTagId(formSelect.getTagId());
+        sampling.setFormType(formSelect.getTagParentId());
+        sampling.setFormTypeName("降水");
+        sampling.setFormName(formSelect.getFormName());
+        sampling.setFormPath(formSelect.getPath());
+//        sampling.setFormFlows(formSelect.getFormFlows().toString());
+        sampling.setParentTagId(formSelect.getTagParentId());
+        sampling.setStatusName("进行中");
+        sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
+        sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
+        sampling.setSamplingTimeBegin(DateUtils.getDate());
+        sampling.setStatus(0);
+        return sampling;
+    }
+
+    /**
+     * 创建采样单编号
+     *
+     * @return
+     */
+    private String createSamplingNo() {
+        StringBuilder samplingNo = new StringBuilder("");
+        String dateStr = DateUtils.getDate().replace("-", "").substring(2);
+        samplingNo.append(dateStr);
+        samplingNo.append(UserInfoHelper.get().getUser().getWorkNo());
+
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+
+        if (CheckUtil.isEmpty(samplings)) {
+            samplingNo.append(StringUtil.autoGenericCode(1, 2));
+        } else {
+            String lastSamlingNo = samplings.get(samplings.size() - 1).getSamplingNo();
+            if (!CheckUtil.isEmpty(lastSamlingNo)) {
+                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2)) + 1;
+                samplingNo.append(StringUtil.autoGenericCode(serialNumber, 2));
+            } else {
+                samplingNo.append(StringUtil.autoGenericCode(1, 2));
+            }
+        }
+        return samplingNo.toString();
     }
 
 }

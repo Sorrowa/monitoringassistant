@@ -40,7 +40,7 @@ public class Devices {
     private String  DepartmentName;
     private String  Company;
     private String  PurchasingDate;
-    private float     RePrice;
+    private float   RePrice;
     private String  StoreLoaction;
     private String  ExpireDate;
     private String  Manager;
@@ -48,12 +48,13 @@ public class Devices {
     private boolean IsForceChecked;
     private String  CertCode;
     private String  SourceWay;
+
     @Generated(hash = 765118164)
     public Devices(String Id, String Name, String Specification, String SystemCode,
-            String DevCode, String DepartmentId, String DepartmentName,
-            String Company, String PurchasingDate, float RePrice,
-            String StoreLoaction, String ExpireDate, String Manager, int State,
-            boolean IsForceChecked, String CertCode, String SourceWay) {
+                   String DevCode, String DepartmentId, String DepartmentName,
+                   String Company, String PurchasingDate, float RePrice,
+                   String StoreLoaction, String ExpireDate, String Manager, int State,
+                   boolean IsForceChecked, String CertCode, String SourceWay) {
         this.Id = Id;
         this.Name = Name;
         this.Specification = Specification;
@@ -72,111 +73,146 @@ public class Devices {
         this.CertCode = CertCode;
         this.SourceWay = SourceWay;
     }
+
     @Generated(hash = 597445211)
     public Devices() {
     }
+
     public String getId() {
         return this.Id;
     }
+
     public void setId(String Id) {
         this.Id = Id;
     }
+
     public String getName() {
         return this.Name;
     }
+
     public void setName(String Name) {
         this.Name = Name;
     }
+
     public String getSpecification() {
         return this.Specification;
     }
+
     public void setSpecification(String Specification) {
         this.Specification = Specification;
     }
+
     public String getSystemCode() {
         return this.SystemCode;
     }
+
     public void setSystemCode(String SystemCode) {
         this.SystemCode = SystemCode;
     }
+
     public String getDevCode() {
         return this.DevCode;
     }
+
     public void setDevCode(String DevCode) {
         this.DevCode = DevCode;
     }
+
     public String getDepartmentId() {
         return this.DepartmentId;
     }
+
     public void setDepartmentId(String DepartmentId) {
         this.DepartmentId = DepartmentId;
     }
+
     public String getDepartmentName() {
         return this.DepartmentName;
     }
+
     public void setDepartmentName(String DepartmentName) {
         this.DepartmentName = DepartmentName;
     }
+
     public String getCompany() {
         return this.Company;
     }
+
     public void setCompany(String Company) {
         this.Company = Company;
     }
+
     public String getPurchasingDate() {
         return this.PurchasingDate;
     }
+
     public void setPurchasingDate(String PurchasingDate) {
         this.PurchasingDate = PurchasingDate;
     }
+
     public float getRePrice() {
         return this.RePrice;
     }
+
     public void setRePrice(float RePrice) {
         this.RePrice = RePrice;
     }
+
     public String getStoreLoaction() {
         return this.StoreLoaction;
     }
+
     public void setStoreLoaction(String StoreLoaction) {
         this.StoreLoaction = StoreLoaction;
     }
+
     public String getExpireDate() {
         return this.ExpireDate;
     }
+
     public void setExpireDate(String ExpireDate) {
         this.ExpireDate = ExpireDate;
     }
+
     public String getManager() {
         return this.Manager;
     }
+
     public void setManager(String Manager) {
         this.Manager = Manager;
     }
+
     public int getState() {
         return this.State;
     }
+
     public void setState(int State) {
         this.State = State;
     }
+
     public boolean getIsForceChecked() {
         return this.IsForceChecked;
     }
+
     public void setIsForceChecked(boolean IsForceChecked) {
         this.IsForceChecked = IsForceChecked;
     }
+
     public String getCertCode() {
         return this.CertCode;
     }
+
     public void setCertCode(String CertCode) {
         this.CertCode = CertCode;
     }
+
     public String getSourceWay() {
         return this.SourceWay;
     }
+
     public void setSourceWay(String SourceWay) {
         this.SourceWay = SourceWay;
     }
-  
+
 
 }

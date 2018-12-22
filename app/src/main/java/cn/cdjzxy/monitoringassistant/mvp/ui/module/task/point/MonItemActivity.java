@@ -78,11 +78,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         monItemId = getIntent().getStringExtra("monItemId");
 
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
-        tags.getMMonItems();
-
-        List<MonItemTagRelation> monItemTagRelations = DBHelper.get().getMonItemTagRelationDao().queryBuilder().where(MonItemTagRelationDao.Properties.TagId.eq(tagId)).list();
-
-        List<MonItems> monItems = DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties.Id.eq(monItemId)).list();
+        List<MonItems> monItems = tags.getMMonItems();
         mMonItemsSelected.addAll(monItems);
         mMonItemSelectedAdapter.notifyDataSetChanged();
 

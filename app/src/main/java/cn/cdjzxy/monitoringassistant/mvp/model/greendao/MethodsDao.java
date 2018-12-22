@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.greendao;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,10 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
 
@@ -30,6 +35,9 @@ public class MethodsDao extends AbstractDao<Methods, String> {
         public final static Property Type = new Property(3, String.class, "Type", false, "TYPE");
     }
 
+    private DaoSession daoSession;
+
+    private Query<Methods> tags_MMethodsQuery;
 
     public MethodsDao(DaoConfig config) {
         super(config);
@@ -37,6 +45,7 @@ public class MethodsDao extends AbstractDao<Methods, String> {
     
     public MethodsDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -106,6 +115,12 @@ public class MethodsDao extends AbstractDao<Methods, String> {
     }
 
     @Override
+    protected final void attachEntity(Methods entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
+    }
+
+    @Override
     public String readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
@@ -153,4 +168,19 @@ public class MethodsDao extends AbstractDao<Methods, String> {
         return true;
     }
     
+    /** Internal query to resolve the "mMethods" to-many relationship of Tags. */
+    public List<Methods> _queryTags_MMethods(String TagId) {
+        synchronized (this) {
+            if (tags_MMethodsQuery == null) {
+                QueryBuilder<Methods> queryBuilder = queryBuilder();
+                queryBuilder.join(MethodTagRelation.class, MethodTagRelationDao.Properties.MethodId)
+                    .where(MethodTagRelationDao.Properties.TagId.eq(TagId));
+                tags_MMethodsQuery = queryBuilder.build();
+            }
+        }
+        Query<Methods> query = tags_MMethodsQuery.forCurrentThread();
+        query.setParameter(0, TagId);
+        return query.list();
+    }
+
 }

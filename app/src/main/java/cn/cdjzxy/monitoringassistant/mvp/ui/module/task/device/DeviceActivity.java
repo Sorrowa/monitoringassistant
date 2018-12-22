@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,13 +22,16 @@ import java.util.List;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.DeviceAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TabAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.msg.MsgActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
@@ -40,18 +45,21 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
     CustomTab    tabview;
 
 
+    private String methodId;
+
+    private List<Devices> mDevices = new ArrayList<>();
     private DeviceAdapter mDeviceAdapter;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("设备选择");
-//        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
-//        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ArtUtils.makeText(getApplicationContext(), "搜索");
-//            }
-//        });
+        //        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
+        //        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                ArtUtils.makeText(getApplicationContext(), "搜索");
+        //            }
+        //        });
 
     }
 
@@ -68,15 +76,23 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        methodId = getIntent().getStringExtra("methodId");
         initTabData();
-        initMsgData();
+        initDevicesData();
+
+        Methods methods = DBHelper.get().getMethodsDao().queryBuilder().where(MethodsDao.Properties.Id.eq(methodId)).unique();
+        if (!CheckUtil.isNull(methods)) {
+            List<Devices> devices = methods.getMDevices();
+            if (!CheckUtil.isEmpty(devices)) {
+                mDevices.clear();
+                mDevices.addAll(devices);
+                mDeviceAdapter.notifyDataSetChanged();
+            }
+        }
+
+
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-    }
 
     @Override
     public void showLoading() {
@@ -115,7 +131,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                ArtUtils.makeText(DeviceActivity.this, tab.getTabName());
+
             }
         });
     }
@@ -123,7 +139,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
     /**
      * 初始化Tab数据
      */
-    private void initMsgData() {
+    private void initDevicesData() {
         ArtUtils.configRecyclerView(recyclerViewPoint, new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
@@ -131,12 +147,15 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> implements 
             }
         });
 
-        List<Devices> devices = DBHelper.get().getDevicesDao().loadAll();
-        mDeviceAdapter = new DeviceAdapter(devices);
+        mDeviceAdapter = new DeviceAdapter(mDevices);
         mDeviceAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-
+                Intent intent = new Intent();
+                intent.putExtra("DeviceId", mDevices.get(position).getId());
+                intent.putExtra("DeviceName", mDevices.get(position).getName());
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         });
         recyclerViewPoint.setAdapter(mDeviceAdapter);

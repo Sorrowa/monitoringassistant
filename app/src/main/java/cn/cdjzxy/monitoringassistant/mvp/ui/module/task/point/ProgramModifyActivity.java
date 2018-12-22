@@ -132,7 +132,6 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
             case R.id.tv_point:
                 Intent intent = new Intent(this, PointSelectActivity.class);
                 intent.putExtra("tagId", mProjectDetial.getTagId());
-                //                ArtUtils.startActivity(intent);
                 new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
@@ -148,7 +147,6 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 Intent intent1 = new Intent(this, MonItemActivity.class);
                 intent1.putExtra("tagId", mProjectDetial.getTagId());
                 intent1.putExtra("monItemId", mProjectDetial.getMonItemId());
-                //                ArtUtils.startActivity(intent1);
                 new AvoidOnResult(this).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {

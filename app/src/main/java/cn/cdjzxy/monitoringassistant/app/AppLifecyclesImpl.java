@@ -139,7 +139,7 @@ public class AppLifecyclesImpl implements AppLifecycles, TitleBarViewControl {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
             String fname = sdf.format(new Date());
             try {
-                PrintStream ps = new PrintStream(file.getAbsolutePath() + "/" + fname);
+                PrintStream ps = new PrintStream(file.getAbsolutePath() + "/" + fname +".txt");
                 ps.println(ex.getMessage());
                 ex.printStackTrace(ps);
                 ps.close();

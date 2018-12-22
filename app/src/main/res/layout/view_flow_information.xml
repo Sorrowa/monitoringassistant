@@ -40,7 +40,8 @@
 
             <EditText
                 android:id="@+id/tv_flow_method"
-                style="@style/BasicInfoItemEditTextStyle" />
+                style="@style/BasicInfoItemEditTextStyle"
+                android:maxLength="100"/>
 
         </RelativeLayout>
 
@@ -54,20 +55,6 @@
 
             <EditText
                 android:id="@+id/tv_flow_date"
-                style="@style/BasicInfoItemEditTextStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="备注" />
-
-            <EditText
-                android:id="@+id/tv_flow_time"
                 style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>

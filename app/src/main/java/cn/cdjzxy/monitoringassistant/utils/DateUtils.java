@@ -384,7 +384,6 @@ public class DateUtils {
     }
 
 
-
     /**
      * @param interval 间隔
      * @return

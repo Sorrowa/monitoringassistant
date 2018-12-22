@@ -37,7 +37,9 @@
 
             <TextView
                 android:id="@+id/tv_sampling_user"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/BasicInfoItemTextViewStyle"
+                android:ellipsize="end"
+                android:maxLines="1" />
 
         </RelativeLayout>
 
@@ -81,7 +83,8 @@
 
             <EditText
                 android:id="@+id/tv_sampling_no"
-                style="@style/BasicInfoItemEditTextStyle" />
+                style="@style/BasicInfoItemEditTextStyle"
+                android:maxLength="50" />
 
         </RelativeLayout>
 
@@ -95,7 +98,8 @@
 
             <EditText
                 android:id="@+id/tv_sampling_height"
-                style="@style/BasicInfoItemEditTextStyle" />
+                style="@style/BasicInfoItemEditTextStyle"
+                android:maxLength="50" />
 
         </RelativeLayout>
 
@@ -104,11 +108,13 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                android:id="@+id/tv_sampling_area"
+
                 style="@style/BasicInfoItemNameStyle"
                 android:text="采样器接雨面积（㎡）" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/et_sampling_area"
+                style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>
 
@@ -141,6 +147,21 @@
         </RelativeLayout>
 
         <include layout="@layout/view_flow_information" />
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="备注" />
+
+            <EditText
+                android:id="@+id/tv_comment"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:maxLength="100" />
+
+        </RelativeLayout>
 
         <include layout="@layout/view_add_photo" />
 

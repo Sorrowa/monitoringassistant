@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.greendao;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,10 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodDevRelation;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 
@@ -43,6 +48,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         public final static Property SourceWay = new Property(16, String.class, "SourceWay", false, "SOURCE_WAY");
     }
 
+    private Query<Devices> methods_MDevicesQuery;
 
     public DevicesDao(DaoConfig config) {
         super(config);
@@ -311,4 +317,19 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         return true;
     }
     
+    /** Internal query to resolve the "mDevices" to-many relationship of Methods. */
+    public List<Devices> _queryMethods_MDevices(String MethodId) {
+        synchronized (this) {
+            if (methods_MDevicesQuery == null) {
+                QueryBuilder<Devices> queryBuilder = queryBuilder();
+                queryBuilder.join(MethodDevRelation.class, MethodDevRelationDao.Properties.DevId)
+                    .where(MethodDevRelationDao.Properties.MethodId.eq(MethodId));
+                methods_MDevicesQuery = queryBuilder.build();
+            }
+        }
+        Query<Devices> query = methods_MDevicesQuery.forCurrentThread();
+        query.setParameter(0, MethodId);
+        return query.list();
+    }
+
 }

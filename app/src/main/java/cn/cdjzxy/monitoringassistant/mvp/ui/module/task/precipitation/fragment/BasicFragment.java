@@ -7,6 +7,8 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -31,10 +34,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MethodTagRelation;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodTagRelationDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
-import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 /**
  * 基本信息
@@ -56,8 +68,8 @@ public class BasicFragment extends BaseFragment {
     EditText       tvSamplingNo;
     @BindView(R.id.tv_sampling_height)
     EditText       tvSamplingHeight;
-    @BindView(R.id.tv_sampling_area)
-    TextView       tvSamplingArea;
+    @BindView(R.id.et_sampling_area)
+    EditText       etSamplingArea;
     @BindView(R.id.tv_sampling_method)
     TextView       tvSamplingMethod;
     @BindView(R.id.tv_sampling_device)
@@ -68,8 +80,8 @@ public class BasicFragment extends BaseFragment {
     EditText       tvFlowMethod;
     @BindView(R.id.tv_flow_date)
     EditText       tvFlowDate;
-    @BindView(R.id.tv_flow_time)
-    EditText       tvFlowTime;
+    @BindView(R.id.tv_comment)
+    EditText       tvComment;
     @BindView(R.id.layout_flow_information_container)
     LinearLayout   layoutFlowInformationContainer;
     @BindView(R.id.iv_add_photo)
@@ -78,6 +90,8 @@ public class BasicFragment extends BaseFragment {
     TextView       tvArrow;
 
     Unbinder unbinder;
+
+    private PreciptationPrivateData mPrivateData;
 
     public BasicFragment() {
     }
@@ -89,8 +103,118 @@ public class BasicFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        tvSamplingDate.setText(DateUtils.getDate());
-        tvSamplingUser.setText(UserInfoHelper.get().getUser().getWorkNo());
+        mPrivateData = new PreciptationPrivateData();
+        if (!CheckUtil.isNull(PrecipitationActivity.mSampling)) {
+            tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
+            tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
+            tvSamplingType.setText(PrecipitationActivity.mSampling.getFormTypeName());
+        }
+
+        //点位编号
+        tvSamplingNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                PrecipitationActivity.mSampling.setAddressNo(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+            }
+        });
+
+        tvSamplingHeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mPrivateData.setSampHight(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+                PrecipitationActivity.mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
+            }
+        });
+
+        etSamplingArea.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mPrivateData.setSampArea(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+                PrecipitationActivity.mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
+            }
+        });
+
+        tvFlowMethod.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                PrecipitationActivity.mSampling.setTransfer(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+            }
+        });
+
+        tvFlowDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                PrecipitationActivity.mSampling.setSendSampTime(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+            }
+        });
+
+        tvComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                PrecipitationActivity.mSampling.setComment(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+            }
+        });
+
     }
 
     @Nullable
@@ -159,33 +283,63 @@ public class BasicFragment extends BaseFragment {
                 choosePhoto(REQUEST_CODE);
                 break;
             case R.id.tv_sampling_user:
-                createUserSelectDialog();
+                showUserSelectDialog();
                 break;
             case R.id.tv_sampling_point:
-                //                Intent intent = new Intent(this, PointSelectActivity.class);
-                //                intent.putExtra("tagId", mProjectDetial.getTagId());
-                //                ArtUtils.startActivity(intent);
-                //                new AvoidOnResult(getContext()).startForResult(intent, new AvoidOnResult.Callback() {
-                //                    @Override
-                //                    public void onActivityResult(int resultCode, Intent data) {
-                //                        if (resultCode == Activity.RESULT_OK) {
-                //                            //                            mProjectDetial.setAddress(data.getStringExtra("Address"));
-                //                            //                            mProjectDetial.setAddressId(data.getStringExtra("AddressId"));
-                //                            //                            bindView(mProjectDetial);
-                //                        }
-                //                    }
-                //                });
+                Intent intent = new Intent(getContext(), PointSelectActivity.class);
+                intent.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
+                new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            PrecipitationActivity.mSampling.setAddressName(data.getStringExtra("Address"));
+                            PrecipitationActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
+                            tvSamplingPoint.setText(data.getStringExtra("Address"));
+                        }
+                    }
+                });
                 break;
             case R.id.tv_sampling_method:
-
+                showMethodSelectDialog();
                 break;
             case R.id.tv_sampling_device:
+                Intent intent2 = new Intent(getContext(), DeviceActivity.class);
+                intent2.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
+                new AvoidOnResult(getActivity()).startForResult(intent2, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
 
+                        }
+                    }
+                });
                 break;
         }
     }
 
-    private void createUserSelectDialog() {
+    /**
+     * 创建人员选择dialog
+     */
+    private void showUserSelectDialog() {
+
+    }
+
+    /**
+     * 创建方法选择dialog
+     */
+    private void showMethodSelectDialog() {
+        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(PrecipitationActivity.mSampling.getParentTagId())).unique();
+        if (!CheckUtil.isNull(tags)) {
+            List<Methods> methods = tags.getMMethods();
+
+            if (!CheckUtil.isEmpty(methods)) {
+                PrecipitationActivity.mSampling.setMethodId(methods.get(0).getId());
+                PrecipitationActivity.mSampling.setMethodName(methods.get(0).getName());
+                tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
+            }
+
+
+        }
 
     }
 }

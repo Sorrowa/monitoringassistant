@@ -95,19 +95,16 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mFragments.get(viewPager.getCurrentItem()).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
         initTabData();
         openFragment(0);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        BasicFragment basicFragment = (BasicFragment) getSupportFragmentManager().findFragmentByTag(BasicFragment.class.getName());
-        if (!CheckUtil.isNull(basicFragment)) {
-            basicFragment.onActivityResult(requestCode, resultCode, data);
-        }
     }
 
     /**
