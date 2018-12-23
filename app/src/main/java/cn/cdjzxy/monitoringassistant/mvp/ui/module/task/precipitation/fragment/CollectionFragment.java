@@ -117,7 +117,7 @@ public class CollectionFragment extends BaseFragment {
                 //添加空白
                 if (TextUtils.isEmpty(PrecipitationActivity.mSampling.getAddressNo())) {
                     ArtUtils.makeText(getContext(), "请先填写基本信息");
-//                    return;
+                    return;
                 }
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                 break;

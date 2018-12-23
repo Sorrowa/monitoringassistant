@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -124,29 +125,36 @@ public class CollectionDetailFragment extends BaseFragment {
     private void creatSampleDetailNo() {
         mSampling = PrecipitationActivity.mSampling;
 
+        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
+
+        //无样品编码
+
+        //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
+        String samplingNo;
+
+        String snDate = DateUtil.getDate().replace("-", "").substring(2);
+        String snPointPosition = mSampling.getAddressNo();
+        String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
+        int snFrequency = 1;
+        if (samplingDetailResults != null
+                && samplingDetailResults.size() > 0) {
+            snFrequency = samplingDetailResults.get(samplingDetailResults.size()-1).getFrequecyNo() + 1;
+        }
+
+        samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency,2);
+
+        tvSampleCode.setText(samplingNo);
+        tvFrequency.setText(snFrequency + "");
+
         // TODO: 2018/12/22 mSamplingDetail
-        if (TextUtils.isEmpty(mSampling.getSamplingNo())) {
-            //无样品编码
+        /*if (TextUtils.isEmpty(mSampling.getSamplingNo())) {
 
-            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
-            String samplingNo;
-
-            String snDate = DateUtil.getDate().replace("-", "").substring(2);
-            String snPointPosition = mSampling.getAddressNo();
-            String snUserId = UserInfoHelper.get().getUser().getWorkNo();
-            // TODO: 2018/12/22 频次
-            int snFrequency = 1;
-
-            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency,2);
-
-            tvSampleCode.setText(samplingNo);
-            tvFrequency.setText(snFrequency);
         }else {
             //已有样品编码
             // TODO: 2018/12/23
             tvSampleCode.setText(mSampling.getSamplingNo());
 //            tvFrequency.setText(mSampling.getSamplingNo().substring(12,14));
-        }
+        }*/
 
     }
 
@@ -180,7 +188,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 if (saveCheck()) {
                     SamplingDetail samplingDetail = new SamplingDetail();
                     samplingDetail.setSampingCode(tvSampleCode.getText().toString());
-//                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
+                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
 
                     HashMap<String, String> map = new HashMap<>();
                     map.put("SDataTime",tvStartTime.getText().toString());
