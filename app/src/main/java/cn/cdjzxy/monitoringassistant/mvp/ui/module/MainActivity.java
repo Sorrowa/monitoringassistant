@@ -423,13 +423,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         mDialogPlus.show();
     }
 
-    @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
-    private void reLogin(boolean isReLogin) {
-        //        Intent intent = new Intent(this, LoginActivity.class);
-        //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //        startActivity(intent);
-        //        //        ArtUtils.startActivity(LoginActivity.class);
-        //        finish();
-    }
+
 
 }

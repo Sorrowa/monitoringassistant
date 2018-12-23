@@ -46,6 +46,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -908,8 +909,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
-    public void putProjectContent(final Message msg, List<ProjectContent> ProjectContents) {
-        mModel.putProjectContent(ProjectContents)
+    public void putProjectContent(final Message msg, ProjectPlan projectPlan) {
+        mModel.putProjectContent(projectPlan)
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
                     @Override

@@ -49,6 +49,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
@@ -646,9 +647,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             }
         }
 
-        String json = JSONObject.toJSONString(projectContents);
+        ProjectPlan projectPlan = new ProjectPlan();
+        projectPlan.setId(mProject.getId());
+        projectPlan.setIsCompelSubmit(true);
+        projectPlan.setProjectContents(projectContents);
 
-        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectContents);
+        String json = JSONObject.toJSONString(projectPlan);
+
+        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
 
     /**

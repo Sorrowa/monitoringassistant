@@ -207,7 +207,9 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
         }
     }
 
+    @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
+    private void reLogin(boolean isReLogin) {
 
-
+    }
 
 }

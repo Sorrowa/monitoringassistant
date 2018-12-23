@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
@@ -211,7 +212,7 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
 
     @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
     private void reLogin(boolean isReLogin) {
-        ArtUtils.startActivity(LoginActivity.class);
+
     }
 
 

@@ -19,6 +19,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
@@ -141,7 +142,7 @@ public interface ApiService {
     Observable<BaseResponse> putSamplingFinish(@Body Map<String, String> params);
 
     @PUT(Api.PUT_PROJECT_CONTENT)
-    Observable<BaseResponse> putProjectContent(@Body List<ProjectContent> ProjectContents);
+    Observable<BaseResponse> putProjectContent(@Body ProjectPlan projectPlan);
 
     @GET(Api.GET_SAMPLE_STORAGE)
     Observable<BaseResponse<List<Project>>> getSampleStorageProject();

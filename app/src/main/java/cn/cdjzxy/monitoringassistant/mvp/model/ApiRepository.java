@@ -33,6 +33,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -643,8 +644,8 @@ public class ApiRepository implements IModel {
      *
      * @return
      */
-    public Observable<BaseResponse> putProjectContent(List<ProjectContent> ProjectContents) {
-        return Observable.just(mApiService.putProjectContent(ProjectContents))
+    public Observable<BaseResponse> putProjectContent(ProjectPlan projectPlan) {
+        return Observable.just(mApiService.putProjectContent(projectPlan))
                 .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
                     @Override
                     public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {

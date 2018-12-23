@@ -52,6 +52,9 @@ public class RxObserver<T> implements Observer<T> {
             if (response.getCode() > 0) {
                 mRxCallBack.onSuccess(t);
             } else {
+                if ("已拒绝为此请求授权".equals(response.getMessage())) {
+                    EventBus.getDefault().post(true, EventBusTags.TAG_TOKEN_EXPIRE);
+                }
                 mRxCallBack.onFailure(TYPE_ERROR, response.getMessage());
             }
         } else {
@@ -106,7 +109,6 @@ public class RxObserver<T> implements Observer<T> {
             msg = "服务器发生错误";
         } else if (httpException.code() == 401) {
             msg = "Token授权失效，请重新登录，在执行操作";
-            EventBus.getDefault().post(true, EventBusTags.TAG_TOKEN_EXPIRE);
         } else if (httpException.code() == 404) {
             msg = "请求地址不存在";
         } else if (httpException.code() == 403) {
