@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.api;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+
 /**
  * API接口
  */
@@ -43,6 +45,8 @@ public interface Api {
     String GET_ALL_TASKS       = "api/Project/GetAllPendingTasks";///获取所有任务 GET
     String PUT_SAMPLING_FINISH = "api/Project/PutSamplingFinish";//采样任务完结操作 PUT
     String GET_SAMPLE_STORAGE  = "api/Project/GetSampleStorageProject";//获取流转任务 GET
+    String PUT_PROJECT_CONTENT = "api/Project/PutProjectContent";// 修改任务方案 PUT
+
 
     //*******************流转******************
     String GET_SAMPLE_STORAGE_LIST = "api/SampleStorage/GetSampleStorageList";//获取流转单清单

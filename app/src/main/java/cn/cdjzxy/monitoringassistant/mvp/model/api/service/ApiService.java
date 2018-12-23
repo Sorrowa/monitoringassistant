@@ -16,6 +16,9 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
@@ -135,7 +138,10 @@ public interface ApiService {
     Observable<BaseResponse<List<Project>>> getAllTasks();
 
     @PUT(Api.PUT_SAMPLING_FINISH)
-    Observable<BaseResponse> putSamplingFinish();
+    Observable<BaseResponse> putSamplingFinish(@Body Map<String, String> params);
+
+    @PUT(Api.PUT_PROJECT_CONTENT)
+    Observable<BaseResponse> putProjectContent(@Body List<ProjectContent> ProjectContents);
 
     @GET(Api.GET_SAMPLE_STORAGE)
     Observable<BaseResponse<List<Project>>> getSampleStorageProject();
@@ -153,13 +159,13 @@ public interface ApiService {
     Observable<BaseResponse<List<Table>>> getTableList();
 
     @POST(Api.CREATE_TABLE)
-    Observable<BaseResponse> createTable();
+    Observable<BaseResponse> createTable(@Body PreciptationSampForm preciptationSampForm);
 
     @GET(Api.UPDATE_TABLE)
-    Observable<BaseResponse> updateTable();
+    Observable<BaseResponse> updateTable(@Body PreciptationSampForm preciptationSampForm);
 
     @GET(Api.DELETE_TABLE)
-    Observable<BaseResponse> deleteTable();
+    Observable<BaseResponse> deleteTable(@Query("tableId") String tableId);
 
     @GET(Api.GET_SAMPLINGSTANTD)
     Observable<BaseResponse<List<SamplingStantd>>> getSamplingStantd();
@@ -175,7 +181,6 @@ public interface ApiService {
 
     @GET(Api.GET_SAMPLING)
     Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") List<String> projectIds);
-
 
     //*******************文件******************
     @POST(Api.UPLOAD_FILE)

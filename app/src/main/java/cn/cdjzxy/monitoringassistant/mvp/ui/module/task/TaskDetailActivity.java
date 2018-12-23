@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
+import com.wonders.health.lib.base.mvp.IView;
+import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
@@ -33,6 +35,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
@@ -40,6 +43,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
@@ -57,11 +62,13 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
+import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
+
 /**
  * 任务详情
  */
 
-public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
+public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
@@ -85,6 +92,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
     TextView     tvTaskStartTime;
     @BindView(R.id.tv_sampling_point_count)
     TextView     tvSamplingPointCount;
+    @BindView(R.id.cb_all)
+    ImageView    cbAll;
 
     private TitleBarView      mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
@@ -108,6 +117,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
 
     private String mTagId;
 
+
+    private boolean isSelecteAll = false;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         mTitleBarView = titleBar;
@@ -116,7 +128,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         mTitleBarView.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                putSamplingFinish("测试");
             }
         });
     }
@@ -137,6 +149,34 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         initTask();
         initTabLayout();
         initTaskFormData();
+    }
+
+    @Override
+    public void showLoading() {
+        showLoadingDialog("数据提交中...");
+    }
+
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
+    }
+
+    @Override
+    public void showMessage(@NonNull String message) {
+        ArtUtils.makeText(this, message);
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message message) {
+        checkNotNull(message);
+        switch (message.what) {
+            case Message.RESULT_FAILURE:
+
+                break;
+            case Message.RESULT_OK:
+                showMessage("数据提交成功");
+                break;
+        }
     }
 
     private void initTask() {
@@ -301,10 +341,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
             }
         });
 
-        mTaskDetailAdapter = new TaskDetailAdapter(mSamplings);
-        mTaskDetailAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+        mTaskDetailAdapter = new TaskDetailAdapter(mSamplings, new TaskDetailAdapter.OnSamplingListener() {
             @Override
-            public void onItemClick(View view, int viewType, Object data, int position) {
+            public void onSelected(View view, int position) {
+                updateSamplingStatus(position);
+            }
+
+            @Override
+            public void onClick(View view, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
                     Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
                     intent.putExtra("projectId", mProject.getId());
@@ -321,13 +365,22 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
                 }
             }
+
+            @Override
+            public void onUpload(View view, int position) {
+                if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
+                    //                    uploadProjecteContentData();
+                    uploadSamplingData(position);
+                }
+
+            }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
 
         getSampling(mTags.get(0).getId());
     }
 
-    @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit})
+    @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit, R.id.cb_all})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_sampling_point:
@@ -339,7 +392,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
                 showAddDialog();
                 break;
             case R.id.btn_submit:
+                showMessage("功能开发中");
+                break;
 
+            case R.id.cb_all:
+                if (!isSelecteAll) {
+                    cbAll.setImageResource(R.mipmap.ic_cb_checked);
+                    updateSamplingAllStatus(!isSelecteAll);
+                    isSelecteAll = true;
+                } else {
+                    cbAll.setImageResource(R.mipmap.ic_cb_nor);
+                    updateSamplingAllStatus(!isSelecteAll);
+                    isSelecteAll = false;
+                }
                 break;
         }
     }
@@ -439,6 +504,33 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         mTaskDetailAdapter.notifyDataSetChanged();
     }
 
+
+    /**
+     * 更新sampling选中状态
+     *
+     * @param position
+     */
+    private void updateSamplingStatus(int position) {
+        if (mSamplings.get(position).isSelected()) {
+            mSamplings.get(position).setSelected(false);
+        } else {
+            mSamplings.get(position).setSelected(true);
+        }
+        mTaskDetailAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 更新所有sampling选中状态
+     *
+     * @param isSelecteAll
+     */
+    private void updateSamplingAllStatus(boolean isSelecteAll) {
+        for (Sampling sampling : mSamplings) {
+            sampling.setSelected(isSelecteAll);
+        }
+        mTaskDetailAdapter.notifyDataSetChanged();
+    }
+
     @Subscriber(tag = EventBusTags.TAG_PROGRAM_MODIFY)
     private void updateData(boolean isModified) {
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
@@ -450,5 +542,73 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> {
         getSampling(mTagId);
     }
 
+
+    /**
+     * 采样完结
+     *
+     * @param comment
+     */
+    private void putSamplingFinish(String comment) {
+        showLoading();
+        //接口提交数据
+        mPresenter.putSamplingFinish(Message.obtain(this, new Object()), mProject.getId(), comment);
+    }
+
+    /**
+     * 提交方案数据
+     */
+    private void uploadProjecteContentData() {
+        showLoading();
+        List<ProjectDetial> projectDetials = mProject.getProjectDetials();
+        List<ProjectContent> projectContents = new ArrayList<>();
+        if (!CheckUtil.isEmpty(projectDetials)) {//开始组装数据
+            for (ProjectDetial projectDetial : projectDetials) {
+                ProjectContent projectContent = new ProjectContent();
+                projectContent.setId(projectDetial.getProjectContentId());
+                projectContent.setIsChecked(false);
+                projectContent.setMonItemsName(projectDetial.getMonItemName());
+                projectContent.setTagId(projectDetial.getTagId());
+                projectContent.setTagName(projectDetial.getTagName());
+                projectContent.setAddress(projectDetial.getAddress());
+                projectContent.setAddressIds(projectDetial.getAddressId());
+                projectContent.setDays(projectDetial.getDays());
+                projectContent.setPeriod(projectDetial.getPeriod());
+                projectContent.setComment(projectDetial.getComment());
+                projectContent.setPeriodShow(false);
+                projectContent.setTagParentId(projectDetial.getTagParentId());
+                projectContent.setTagParentName(projectDetial.getTagParentName());
+                projectContent.setGuid("");
+
+                List<ProjectContent.MonItemsBean> monItems = new ArrayList<>();
+                List<ProjectContent.AddressArrBean> addressArrs = new ArrayList<>();
+
+
+                projectContent.setMonItems(monItems);
+                projectContent.setMonItemCount(monItems.size());
+                projectContent.setAddressArr(addressArrs);
+                projectContent.setAddressCount(addressArrs.size());
+                projectContent.setProjectDetials(new ArrayList<>());
+                projectContents.add(projectContent);
+            }
+        }
+
+
+        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectContents);
+    }
+
+    /**
+     * 提交采样单数据
+     */
+    private void uploadSamplingData(int position) {
+        Sampling sampling = mSamplings.get(position);
+        PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
+        //开始组装数据
+        preciptationSampForm.setIsAdd(true);
+        preciptationSampForm.setIsSubmit(true);
+
+
+        //接口提交数据
+        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+    }
 
 }

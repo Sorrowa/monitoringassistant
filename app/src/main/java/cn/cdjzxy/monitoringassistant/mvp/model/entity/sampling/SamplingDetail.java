@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 @Entity
 public class SamplingDetail {
@@ -47,7 +48,7 @@ public class SamplingDetail {
      * Description :
      * PrivateData : null
      */
-
+    @Id
     private String  Id;
     private String  SamplingId;
     private String  ProjectId;
@@ -386,6 +387,8 @@ public class SamplingDetail {
     public void setPrivateData(String PrivateData) {
         this.PrivateData = PrivateData;
     }
+
+   
 
 
 }

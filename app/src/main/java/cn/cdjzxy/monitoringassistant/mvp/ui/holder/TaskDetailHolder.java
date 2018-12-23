@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.holder;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wonders.health.lib.base.base.BaseHolder;
@@ -14,6 +15,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 
 /**
  * 主页tab
@@ -22,37 +24,61 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 public class TaskDetailHolder extends BaseHolder<Sampling> {
 
     @BindView(R.id.iv_cb)
-    ImageView mIvCb;
+    ImageView    mIvCb;
     @BindView(R.id.iv_type)
-    ImageView mIvType;
+    ImageView    mIvType;
     @BindView(R.id.iv_upload)
-    ImageView mIvUpload;
+    ImageView    mIvUpload;
+    @BindView(R.id.layout_container)
+    LinearLayout mLayoutContainer;
     @BindView(R.id.tv_num)
-    TextView  mTvNum;
+    TextView     mTvNum;
     @BindView(R.id.tv_status)
-    TextView  mTvStatus;
+    TextView     mTvStatus;
     @BindView(R.id.tv_name)
-    TextView  mTvName;
+    TextView     mTvName;
     @BindView(R.id.tv_submit_time)
-    TextView  mSubmitTime;
+    TextView     mSubmitTime;
     @BindView(R.id.tv_review_time)
-    TextView  mTvReviewTime;
+    TextView     mTvReviewTime;
     @BindView(R.id.tv_point)
-    TextView  mPoint;
+    TextView     mPoint;
 
-    public TaskDetailHolder(View itemView) {
+    private TaskDetailAdapter.OnSamplingListener onSamplingListener;
+
+    public TaskDetailHolder(View itemView, TaskDetailAdapter.OnSamplingListener onSamplingListener) {
         super(itemView);
+        this.onSamplingListener = onSamplingListener;
     }
 
     @Override
-    public void setData(Sampling data, int position) {
+    public void setData(Sampling data, final int position) {
         if (data.isSelected()) {
             mIvCb.setImageResource(R.mipmap.ic_cb_checked);
         } else {
             mIvCb.setImageResource(R.mipmap.ic_cb_nor);
         }
 
-//        mIvCb.setVisibility(View.GONE);
+        mIvCb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSamplingListener.onSelected(v, position);
+            }
+        });
+
+        mIvUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSamplingListener.onUpload(v, position);
+            }
+        });
+
+        mLayoutContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSamplingListener.onClick(v, position);
+            }
+        });
 
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(data.getParentTagId())).unique();
 
@@ -87,7 +113,13 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
             mIvUpload.setImageResource(R.mipmap.ic_upload);
             mSubmitTime.setVisibility(View.GONE);
             mTvReviewTime.setVisibility(View.GONE);
+            mIvCb.setEnabled(true);
+            mIvUpload.setEnabled(true);
+            mLayoutContainer.setEnabled(true);
         } else {
+            mIvCb.setEnabled(false);
+            mIvUpload.setEnabled(false);
+            mLayoutContainer.setEnabled(false);
             mIvUpload.setImageResource(R.mipmap.ic_finish);
             mSubmitTime.setVisibility(View.VISIBLE);
             mTvReviewTime.setVisibility(View.VISIBLE);
@@ -101,6 +133,7 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
         this.mIvCb = null;
         this.mIvType = null;
         this.mIvUpload = null;
+        this.mLayoutContainer = null;
         this.mTvNum = null;
         this.mTvStatus = null;
         this.mTvName = null;

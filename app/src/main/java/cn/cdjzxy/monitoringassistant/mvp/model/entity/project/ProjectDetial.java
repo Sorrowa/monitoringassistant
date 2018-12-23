@@ -7,7 +7,6 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class ProjectDetial {
 
-
     /**
      * Id : b1bf9d54-e497-47ca-9d38-0ea766c1dbaf
      * ProjectId : 601435b6-8d4d-45b1-ae79-0124dd0276cb
@@ -23,6 +22,9 @@ public class ProjectDetial {
      * MethodName : 水质 pH值的测定 玻璃电极法(GB6920-1986)（无资质)
      * Days : 1
      * Period : 1
+     * ProjectContentId : 0fea7814-efc1-4a40-98fe-00f0796e78f0
+     * TagParentId : d877c7d5-6bb8-42d4-a79c-0f644e130a62
+     * TagParentName : 水质
      */
 
     @Id
@@ -40,11 +42,15 @@ public class ProjectDetial {
     private String MethodName;
     private int    Days;
     private int    Period;
-    @Generated(hash = 683446733)
+    private String ProjectContentId;
+    private String TagParentId;
+    private String TagParentName;
+    @Generated(hash = 475900743)
     public ProjectDetial(String Id, String ProjectId, String UpdateTime,
             String TagId, String TagName, String MonItemId, String MethodId,
             String AddressId, String Address, String Comment, String MonItemName,
-            String MethodName, int Days, int Period) {
+            String MethodName, int Days, int Period, String ProjectContentId,
+            String TagParentId, String TagParentName) {
         this.Id = Id;
         this.ProjectId = ProjectId;
         this.UpdateTime = UpdateTime;
@@ -59,6 +65,9 @@ public class ProjectDetial {
         this.MethodName = MethodName;
         this.Days = Days;
         this.Period = Period;
+        this.ProjectContentId = ProjectContentId;
+        this.TagParentId = TagParentId;
+        this.TagParentName = TagParentName;
     }
     @Generated(hash = 1852370034)
     public ProjectDetial() {
@@ -147,6 +156,23 @@ public class ProjectDetial {
     public void setPeriod(int Period) {
         this.Period = Period;
     }
-
+    public String getProjectContentId() {
+        return this.ProjectContentId;
+    }
+    public void setProjectContentId(String ProjectContentId) {
+        this.ProjectContentId = ProjectContentId;
+    }
+    public String getTagParentId() {
+        return this.TagParentId;
+    }
+    public void setTagParentId(String TagParentId) {
+        this.TagParentId = TagParentId;
+    }
+    public String getTagParentName() {
+        return this.TagParentName;
+    }
+    public void setTagParentName(String TagParentName) {
+        this.TagParentName = TagParentName;
+    }
 
 }

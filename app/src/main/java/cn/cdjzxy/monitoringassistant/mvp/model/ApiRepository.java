@@ -31,6 +31,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -607,6 +609,113 @@ public class ApiRepository implements IModel {
                         return baseResponseObservable.map(new Function<BaseResponse<List<Sampling>>, BaseResponse<List<Sampling>>>() {
                             @Override
                             public BaseResponse<List<Sampling>> apply(BaseResponse<List<Sampling>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 创建
+     *
+     * @return
+     */
+    public Observable<BaseResponse> putSamplingFinish(Map<String, String> params) {
+        return Observable.just(mApiService.putSamplingFinish(params))
+                .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
+                    @Override
+                    public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
+                            @Override
+                            public BaseResponse apply(BaseResponse baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 创建
+     *
+     * @return
+     */
+    public Observable<BaseResponse> putProjectContent(List<ProjectContent> ProjectContents) {
+        return Observable.just(mApiService.putProjectContent(ProjectContents))
+                .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
+                    @Override
+                    public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
+                            @Override
+                            public BaseResponse apply(BaseResponse baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+
+    /**
+     * 创建
+     *
+     * @return
+     */
+    public Observable<BaseResponse> createTable(PreciptationSampForm preciptationSampForm) {
+        return Observable.just(mApiService.createTable(preciptationSampForm))
+                .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
+                    @Override
+                    public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
+                            @Override
+                            public BaseResponse apply(BaseResponse baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 创建
+     *
+     * @return
+     */
+    public Observable<BaseResponse> updateTable(PreciptationSampForm preciptationSampForm) {
+        return Observable.just(mApiService.updateTable(preciptationSampForm))
+                .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
+                    @Override
+                    public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
+                            @Override
+                            public BaseResponse apply(BaseResponse baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+
+    /**
+     * 批量阅读消息
+     *
+     * @return
+     */
+    public Observable<BaseResponse> deleteTable(String tableId) {
+        return Observable.just(mApiService.deleteTable(tableId))
+                .flatMap(new Function<Observable<BaseResponse>, ObservableSource<BaseResponse>>() {
+                    @Override
+                    public ObservableSource<BaseResponse> apply(Observable<BaseResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
+                            @Override
+                            public BaseResponse apply(BaseResponse baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });

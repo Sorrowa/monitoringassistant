@@ -44,6 +44,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -846,11 +848,13 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
 
-                                DBHelper.get().getSamplingDao().deleteAll();
                                 DBHelper.get().getSamplingFormStandDao().deleteAll();
                                 DBHelper.get().getSamplingDetailDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
+
+                                    DBHelper.get().getSamplingDao().delete(sampling);
+
                                     List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
                                     if (!CheckUtil.isEmpty(samplingFormStands)) {
                                         DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
@@ -880,6 +884,109 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
+
+    public void putSamplingFinish(final Message msg, String projectId, String comment) {
+        Map<String, String> params = new HashMap<>();
+        params.put("projectID", projectId);
+        params.put("finishComment", comment);
+        mModel.putSamplingFinish(params)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    public void putProjectContent(final Message msg, List<ProjectContent> ProjectContents) {
+        mModel.putProjectContent(ProjectContents)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    public void createTable(final Message msg, PreciptationSampForm preciptationSampForm) {
+        mModel.createTable(preciptationSampForm)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    public void updateTable(final Message msg, PreciptationSampForm preciptationSampForm) {
+        mModel.updateTable(preciptationSampForm)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    public void deleteTable(final Message msg, String tableId) {
+        mModel.deleteTable(tableId)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
 
     @Override
     public void onDestroy() {

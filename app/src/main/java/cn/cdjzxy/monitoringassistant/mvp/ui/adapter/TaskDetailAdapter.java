@@ -20,9 +20,11 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.TaskDetailHolder;
 
 public class TaskDetailAdapter extends DefaultAdapter<Sampling> {
 
+    private OnSamplingListener onSamplingListener;
 
-    public TaskDetailAdapter(List<Sampling> infos) {
+    public TaskDetailAdapter(List<Sampling> infos, OnSamplingListener onSamplingListener) {
         super(infos);
+        this.onSamplingListener = onSamplingListener;
     }
 
     @Override
@@ -32,6 +34,15 @@ public class TaskDetailAdapter extends DefaultAdapter<Sampling> {
 
     @Override
     public BaseHolder<Sampling> getHolder(View v, int viewType) {
-        return new TaskDetailHolder(v);
+        return new TaskDetailHolder(v, onSamplingListener);
+    }
+
+
+    public interface OnSamplingListener {
+        void onSelected(View view, int position);
+
+        void onClick(View view, int position);
+
+        void onUpload(View view, int position);
     }
 }

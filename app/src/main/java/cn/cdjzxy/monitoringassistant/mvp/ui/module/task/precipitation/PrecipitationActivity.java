@@ -25,10 +25,12 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -90,6 +92,14 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                     DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
                 }
 
+                if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+                    List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+                    if (!CheckUtil.isEmpty(samplingDetails)) {
+                        DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
+                    }
+                    DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
+                }
+
                 if (isNewCreate) {
                     DBHelper.get().getSamplingDao().insert(mSampling);
                 } else {
@@ -97,7 +107,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                 }
 
                 EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-                ArtUtils.makeText(getApplicationContext(), "保存成功");
+                ArtUtils.makeText(getApplicationContext(), "数据保存成功");
             }
         }));
 
@@ -139,6 +149,8 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
             List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
             mSampling.setSamplingFiless(samplingFiles);
+            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+            mSampling.setSamplingDetailResults(samplingDetails);
         }
 
         initTabData();
@@ -203,7 +215,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
         Sampling sampling = new Sampling();
-        sampling.setId(UUID.randomUUID().toString());
+        sampling.setId("LC-" + UUID.randomUUID().toString());
         sampling.setSamplingNo(createSamplingNo());
         sampling.setProjectId(project.getId());
         sampling.setProjectName(project.getName());
@@ -219,6 +231,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
         sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
         sampling.setSamplingTimeBegin(DateUtils.getDate());
+        sampling.setSamplingDetailResults(new ArrayList<>());
         sampling.setStatus(0);
         return sampling;
     }

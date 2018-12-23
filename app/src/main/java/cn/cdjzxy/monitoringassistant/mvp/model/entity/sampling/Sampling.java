@@ -219,7 +219,6 @@ public class Sampling {
     public Sampling() {
     }
 
-  
 
     public List<String> getSamplingUserResults() {
         return this.SamplingUserResults;
