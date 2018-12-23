@@ -15,6 +15,16 @@ public class PreciptationSampForm {
 
     private boolean      IsAdd;
     private boolean      IsSubmit;
+
+    public boolean isDevceForm() {
+        return isDevceForm;
+    }
+
+    public void setDevceForm(boolean devceForm) {
+        isDevceForm = devceForm;
+    }
+
+    private boolean      isDevceForm;
     private SampFormBean SampForm;
     private List<String> UploadFiles;
     private List<String> DelFiles;
@@ -405,6 +415,14 @@ public class PreciptationSampForm {
         }
 
         public static class SamplingDetailsBean {
+            public String getSampingCode() {
+                return SampingCode;
+            }
+
+            public void setSampingCode(String sampingCode) {
+                SampingCode = sampingCode;
+            }
+
             /**
              * SamplingId : 00000000-0000-0000-0000-000000000000
              * ProjectId : 7f2f030e-c690-45d1-a0c7-2f8c35ec6df6
@@ -422,6 +440,7 @@ public class PreciptationSampForm {
              * Description : 备注
              */
 
+            private String  SampingCode;
             private String  SamplingId;
             private String  ProjectId;
             private boolean IsSenceAnalysis;

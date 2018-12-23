@@ -46,7 +46,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
@@ -56,8 +56,6 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -128,6 +126,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
 
     private boolean isSelecteAll = false;
+    private Sampling sampling;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -184,6 +183,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case Message.RESULT_OK:
                 showMessage("数据提交成功");
+                break;
+            case 259:
+                showMessage("数据提交成功");
+
+                sampling.setStatus(7);
+                DBHelper.get().getSamplingDao().update(sampling);
+                getSampling(mTagId);
                 break;
         }
     }
@@ -379,7 +385,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             public void onUpload(View view, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
                     uploadProjecteContentData();
-                    //                    uploadSamplingData(position);
+                    uploadSamplingData(position);
                 }
 
             }
@@ -654,24 +660,120 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         String json = JSONObject.toJSONString(projectPlan);
 
-        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
+//        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
 
     /**
      * 提交采样单数据
      */
     private void uploadSamplingData(int position) {
-        Sampling sampling = mSamplings.get(position);
+        sampling = mSamplings.get(position);
         //采样单 图片文件
-        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+//        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
         //采样单 样品采集
-        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+//        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
 
         PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
         //开始组装数据
         preciptationSampForm.setIsAdd(true);
         preciptationSampForm.setIsSubmit(true);
+        preciptationSampForm.setDevceForm(true);
 
+
+        PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
+
+        sampFormBean.setProjectId(sampling.getProjectId());
+        sampFormBean.setFormPath(sampling.getFormPath());
+        sampFormBean.setFormName(sampling.getFormName());
+        sampFormBean.setProjectName(sampling.getProjectName());
+        sampFormBean.setProjectNo(sampling.getProjectNo());
+        sampFormBean.setMontype(sampling.getMontype());
+        sampFormBean.setParentTagId(sampling.getParentTagId());
+        sampFormBean.setFormType(sampling.getFormType());
+        sampFormBean.setFormTypeName(sampling.getFormTypeName());
+        sampFormBean.setPrivateData(sampling.getPrivateData());
+        sampFormBean.setSendSampTime(sampling.getSendSampTime());
+        sampFormBean.setSamplingNo(sampling.getSamplingNo());
+        sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
+        sampFormBean.setTagName(sampling.getTagName());// TODO: 2018/12/23 @zhanglin 添加
+        sampFormBean.setTagId(sampling.getTagId());
+        sampFormBean.setAddressId(sampling.getAddressId());
+        sampFormBean.setAddressName(sampling.getAddressName());
+        sampFormBean.setAddressNo(sampling.getAddressNo());
+        sampFormBean.setMonitemName(sampling.getMonitemName());
+        sampFormBean.setMethodName(sampling.getMethodName());
+        sampFormBean.setMethodId(sampling.getMethodId());
+        sampFormBean.setDeviceId(sampling.getDeviceId());
+        sampFormBean.setDeviceName(sampling.getDeviceName());
+        sampFormBean.setTransfer(sampling.getTransfer());
+        sampFormBean.setReciveTime(sampling.getReciveTime());
+        sampFormBean.setFile(sampling.getFile());
+//        sampFormBean.setLayTableCheckbox(sampling.get());
+        sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
+        sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
+        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeBegin());
+        sampFormBean.setComment(sampling.getComment());
+        sampFormBean.setFormFlows(sampling.getFormFlows());
+
+
+        if (sampling.getSamplingFormStandResults() != null
+                && sampling.getSamplingFormStandResults().size() > 0) {
+
+            ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
+            for (SamplingFormStand samplingFormStand : sampling.getSamplingFormStandResults()) {
+                PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
+
+                samplingFormStandsBean.setId(samplingFormStand.getId());
+                samplingFormStandsBean.setSamplingId(samplingFormStand.getSamplingId());
+                samplingFormStandsBean.setMonitemIds(samplingFormStand.getMonitemIds());
+                samplingFormStandsBean.setMonitemName(samplingFormStand.getMonitemName());
+
+                samplingFormStandsBeans.add(samplingFormStandsBean);
+            }
+
+            sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
+        }
+
+        // TODO: 2018/12/23 测试添加 需掉采样规范接口
+        ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
+        PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
+        samplingFormStandsBean.setSamplingId("00000000-0000-0000-0000-000000000000");// TODO: 2018/12/23 根据接口去取 参数为降水量
+        samplingFormStandsBean.setMonitemIds("7253950a-9daa-9d4f-bd9a-a84789279c2a");// TODO: 2018/12/23 根据接口去取 参数为降水量
+        samplingFormStandsBean.setMonitemName("降水量");
+        samplingFormStandsBeans.add(samplingFormStandsBean);
+
+        sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
+
+
+        if (sampling.getSamplingDetailResults() != null
+                && sampling.getSamplingDetailResults().size() > 0) {
+
+            ArrayList<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeans = new ArrayList<>();
+            for (SamplingDetail samplingDetail : sampling.getSamplingDetailResults()) {
+                PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
+
+                samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
+                samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
+                samplingDetailsBean.setProjectId(sampFormBean.getProjectId());
+                samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
+                samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");// TODO: 2018/12/23 根据接口去取 参数为降水量
+                samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");// TODO: 2018/12/23 根据接口去取 参数为降水量
+                samplingDetailsBean.setMonitemName("降水量");
+                samplingDetailsBean.setAddresssId(sampFormBean.getAddressId());
+                samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
+                samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
+                samplingDetailsBean.setValue(samplingDetail.getValue());
+                samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex()+"");
+                samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo()+"");
+                samplingDetailsBean.setValue1(samplingDetail.getValue1());
+                samplingDetailsBean.setDescription(samplingDetail.getDescription());
+
+                samplingDetailsBeans.add(samplingDetailsBean);
+            }
+            sampFormBean.setSamplingDetails(samplingDetailsBeans);
+        }
+
+        preciptationSampForm.setSampForm(sampFormBean);
 
         //接口提交数据
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);

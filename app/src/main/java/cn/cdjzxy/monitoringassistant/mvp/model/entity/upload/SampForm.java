@@ -16,6 +16,47 @@ public class SampForm {
      */
 
     private boolean      IsAdd;
+
+    public boolean isAdd() {
+        return IsAdd;
+    }
+
+    public void setAdd(boolean add) {
+        IsAdd = add;
+    }
+
+    public boolean isSubmit() {
+        return IsSubmit;
+    }
+
+    public void setSubmit(boolean submit) {
+        IsSubmit = submit;
+    }
+
+    public SampFormBean getSampForm() {
+        return SampForm;
+    }
+
+    public void setSampForm(SampFormBean sampForm) {
+        SampForm = sampForm;
+    }
+
+    public List<String> getUploadFiles() {
+        return UploadFiles;
+    }
+
+    public void setUploadFiles(List<String> uploadFiles) {
+        UploadFiles = uploadFiles;
+    }
+
+    public List<String> getDelFiles() {
+        return DelFiles;
+    }
+
+    public void setDelFiles(List<String> delFiles) {
+        DelFiles = delFiles;
+    }
+
     private boolean      IsSubmit;
     private SampFormBean SampForm;
     private List<String> UploadFiles;
@@ -23,6 +64,487 @@ public class SampForm {
 
     public static class SampFormBean {
         private String                  Id;
+
+        public String getId() {
+            return Id;
+        }
+
+        public void setId(String id) {
+            Id = id;
+        }
+
+        public String getProjectId() {
+            return ProjectId;
+        }
+
+        public void setProjectId(String projectId) {
+            ProjectId = projectId;
+        }
+
+        public String getSamplingNo() {
+            return SamplingNo;
+        }
+
+        public void setSamplingNo(String samplingNo) {
+            SamplingNo = samplingNo;
+        }
+
+        public String getFormPath() {
+            return FormPath;
+        }
+
+        public void setFormPath(String formPath) {
+            FormPath = formPath;
+        }
+
+        public String getFormName() {
+            return FormName;
+        }
+
+        public void setFormName(String formName) {
+            FormName = formName;
+        }
+
+        public String getProjectName() {
+            return ProjectName;
+        }
+
+        public void setProjectName(String projectName) {
+            ProjectName = projectName;
+        }
+
+        public String getMontype() {
+            return Montype;
+        }
+
+        public void setMontype(String montype) {
+            Montype = montype;
+        }
+
+        public String getSamplingTimeBegin() {
+            return SamplingTimeBegin;
+        }
+
+        public void setSamplingTimeBegin(String samplingTimeBegin) {
+            SamplingTimeBegin = samplingTimeBegin;
+        }
+
+        public String getSamplingTimeEnd() {
+            return SamplingTimeEnd;
+        }
+
+        public void setSamplingTimeEnd(String samplingTimeEnd) {
+            SamplingTimeEnd = samplingTimeEnd;
+        }
+
+        public String getParentTagId() {
+            return ParentTagId;
+        }
+
+        public void setParentTagId(String parentTagId) {
+            ParentTagId = parentTagId;
+        }
+
+        public String getTagId() {
+            return TagId;
+        }
+
+        public void setTagId(String tagId) {
+            TagId = tagId;
+        }
+
+        public String getTagName() {
+            return TagName;
+        }
+
+        public void setTagName(String tagName) {
+            TagName = tagName;
+        }
+
+        public String getAddressId() {
+            return AddressId;
+        }
+
+        public void setAddressId(String addressId) {
+            AddressId = addressId;
+        }
+
+        public String getAddressName() {
+            return AddressName;
+        }
+
+        public void setAddressName(String addressName) {
+            AddressName = addressName;
+        }
+
+        public String getAddressNo() {
+            return AddressNo;
+        }
+
+        public void setAddressNo(String addressNo) {
+            AddressNo = addressNo;
+        }
+
+        public String getSamplingHeight() {
+            return SamplingHeight;
+        }
+
+        public void setSamplingHeight(String samplingHeight) {
+            SamplingHeight = samplingHeight;
+        }
+
+        public String getPollutionType() {
+            return PollutionType;
+        }
+
+        public void setPollutionType(String pollutionType) {
+            PollutionType = pollutionType;
+        }
+
+        public String getRainType() {
+            return RainType;
+        }
+
+        public void setRainType(String rainType) {
+            RainType = rainType;
+        }
+
+        public String getSampProperty() {
+            return SampProperty;
+        }
+
+        public void setSampProperty(String sampProperty) {
+            SampProperty = sampProperty;
+        }
+
+        public String getFormType() {
+            return FormType;
+        }
+
+        public void setFormType(String formType) {
+            FormType = formType;
+        }
+
+        public String getFormTypeName() {
+            return FormTypeName;
+        }
+
+        public void setFormTypeName(String formTypeName) {
+            FormTypeName = formTypeName;
+        }
+
+        public String getDeviceId() {
+            return DeviceId;
+        }
+
+        public void setDeviceId(String deviceId) {
+            DeviceId = deviceId;
+        }
+
+        public String getDeviceName() {
+            return DeviceName;
+        }
+
+        public void setDeviceName(String deviceName) {
+            DeviceName = deviceName;
+        }
+
+        public String getMethodId() {
+            return MethodId;
+        }
+
+        public void setMethodId(String methodId) {
+            MethodId = methodId;
+        }
+
+        public String getMethodName() {
+            return MethodName;
+        }
+
+        public void setMethodName(String methodName) {
+            MethodName = methodName;
+        }
+
+        public String getWeather() {
+            return Weather;
+        }
+
+        public void setWeather(String weather) {
+            Weather = weather;
+        }
+
+        public String getWindSpeed() {
+            return WindSpeed;
+        }
+
+        public void setWindSpeed(String windSpeed) {
+            WindSpeed = windSpeed;
+        }
+
+        public String getTemprature() {
+            return Temprature;
+        }
+
+        public void setTemprature(String temprature) {
+            Temprature = temprature;
+        }
+
+        public String getPressure() {
+            return Pressure;
+        }
+
+        public void setPressure(String pressure) {
+            Pressure = pressure;
+        }
+
+        public String getCalibrationFactor() {
+            return CalibrationFactor;
+        }
+
+        public void setCalibrationFactor(String calibrationFactor) {
+            CalibrationFactor = calibrationFactor;
+        }
+
+        public String getTransfer() {
+            return Transfer;
+        }
+
+        public void setTransfer(String transfer) {
+            Transfer = transfer;
+        }
+
+        public String getSendSampTime() {
+            return SendSampTime;
+        }
+
+        public void setSendSampTime(String sendSampTime) {
+            SendSampTime = sendSampTime;
+        }
+
+        public String getReciveTime() {
+            return ReciveTime;
+        }
+
+        public void setReciveTime(String reciveTime) {
+            ReciveTime = reciveTime;
+        }
+
+        public String getPrivateData() {
+            return PrivateData;
+        }
+
+        public void setPrivateData(String privateData) {
+            PrivateData = privateData;
+        }
+
+        public String getSamplingUserId() {
+            return SamplingUserId;
+        }
+
+        public void setSamplingUserId(String samplingUserId) {
+            SamplingUserId = samplingUserId;
+        }
+
+        public String getSamplingUserName() {
+            return SamplingUserName;
+        }
+
+        public void setSamplingUserName(String samplingUserName) {
+            SamplingUserName = samplingUserName;
+        }
+
+        public String getSubmitId() {
+            return SubmitId;
+        }
+
+        public void setSubmitId(String submitId) {
+            SubmitId = submitId;
+        }
+
+        public String getSubmitName() {
+            return SubmitName;
+        }
+
+        public void setSubmitName(String submitName) {
+            SubmitName = submitName;
+        }
+
+        public String getSubmitDate() {
+            return SubmitDate;
+        }
+
+        public void setSubmitDate(String submitDate) {
+            SubmitDate = submitDate;
+        }
+
+        public String getMonitorPerson() {
+            return MonitorPerson;
+        }
+
+        public void setMonitorPerson(String monitorPerson) {
+            MonitorPerson = monitorPerson;
+        }
+
+        public String getMonitorTime() {
+            return MonitorTime;
+        }
+
+        public void setMonitorTime(String monitorTime) {
+            MonitorTime = monitorTime;
+        }
+
+        public int getStatus() {
+            return Status;
+        }
+
+        public void setStatus(int status) {
+            Status = status;
+        }
+
+        public String getStatusName() {
+            return StatusName;
+        }
+
+        public void setStatusName(String statusName) {
+            StatusName = statusName;
+        }
+
+        public int getTransStatus() {
+            return TransStatus;
+        }
+
+        public void setTransStatus(int transStatus) {
+            TransStatus = transStatus;
+        }
+
+        public String getTransStatusName() {
+            return TransStatusName;
+        }
+
+        public void setTransStatusName(String transStatusName) {
+            TransStatusName = transStatusName;
+        }
+
+        public String getCurUserId() {
+            return CurUserId;
+        }
+
+        public void setCurUserId(String curUserId) {
+            CurUserId = curUserId;
+        }
+
+        public String getCurUserName() {
+            return CurUserName;
+        }
+
+        public void setCurUserName(String curUserName) {
+            CurUserName = curUserName;
+        }
+
+        public String getFormFlows() {
+            return FormFlows;
+        }
+
+        public void setFormFlows(String formFlows) {
+            FormFlows = formFlows;
+        }
+
+        public String getComment() {
+            return Comment;
+        }
+
+        public void setComment(String comment) {
+            Comment = comment;
+        }
+
+        public String getAddTime() {
+            return AddTime;
+        }
+
+        public void setAddTime(String addTime) {
+            AddTime = addTime;
+        }
+
+        public String getUpdateTime() {
+            return UpdateTime;
+        }
+
+        public void setUpdateTime(String updateTime) {
+            UpdateTime = updateTime;
+        }
+
+        public int getVersion() {
+            return Version;
+        }
+
+        public void setVersion(int version) {
+            Version = version;
+        }
+
+        public String getMonitemId() {
+            return MonitemId;
+        }
+
+        public void setMonitemId(String monitemId) {
+            MonitemId = monitemId;
+        }
+
+        public String getMonitemName() {
+            return MonitemName;
+        }
+
+        public void setMonitemName(String monitemName) {
+            MonitemName = monitemName;
+        }
+
+        public String getRecoding() {
+            return Recoding;
+        }
+
+        public void setRecoding(String recoding) {
+            Recoding = recoding;
+        }
+
+        public String getProjectNo() {
+            return ProjectNo;
+        }
+
+        public void setProjectNo(String projectNo) {
+            ProjectNo = projectNo;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        public void setFile(String file) {
+            this.file = file;
+        }
+
+        public List<SamplingDetail> getSamplingDetails() {
+            return SamplingDetails;
+        }
+
+        public void setSamplingDetails(List<SamplingDetail> samplingDetails) {
+            SamplingDetails = samplingDetails;
+        }
+
+        public List<SamplingFormStand> getSamplingFormStands() {
+            return SamplingFormStands;
+        }
+
+        public void setSamplingFormStands(List<SamplingFormStand> samplingFormStands) {
+            SamplingFormStands = samplingFormStands;
+        }
+
+        public List<String> getSamplingDetailYQFs() {
+            return SamplingDetailYQFs;
+        }
+
+        public void setSamplingDetailYQFs(List<String> samplingDetailYQFs) {
+            SamplingDetailYQFs = samplingDetailYQFs;
+        }
+
         private String                  ProjectId;
         private String                  SamplingNo;
         private String                  FormPath;

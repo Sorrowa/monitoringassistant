@@ -43,9 +43,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
@@ -935,7 +933,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
                     @Override
                     public void onSuccess(BaseResponse baseResponse) {
-                        msg.what = Message.RESULT_OK;
+                        msg.what = 259;
                         msg.obj = baseResponse.getMessage();
                         msg.handleMessageToTarget();
                     }

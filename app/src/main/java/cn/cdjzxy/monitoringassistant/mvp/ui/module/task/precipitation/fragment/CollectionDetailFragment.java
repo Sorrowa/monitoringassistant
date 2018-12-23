@@ -42,7 +42,6 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
-import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.MyInputFilter;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
@@ -137,7 +136,7 @@ public class CollectionDetailFragment extends BaseFragment {
             //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
             String samplingNo;
 
-            String snDate = DateUtil.getDate().replace("-", "").substring(2);
+            String snDate = DateUtils.getDate().replace("-", "").substring(2);
             String snPointPosition = mSampling.getAddressNo();
             String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
             int snFrequency = 1;
