@@ -55,4 +55,5 @@ public class PrecipitationCollectHolder extends BaseHolder<SamplingDetail> {
         this.tvPrecipitation = null;
         this.tvRemark = null;
     }
+
 }

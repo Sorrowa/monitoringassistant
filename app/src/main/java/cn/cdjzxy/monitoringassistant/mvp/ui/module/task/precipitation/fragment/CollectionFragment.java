@@ -103,6 +103,7 @@ public class CollectionFragment extends BaseFragment {
                 initRecyclerViewData();
             }
         }
+
     }
 
     @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label})

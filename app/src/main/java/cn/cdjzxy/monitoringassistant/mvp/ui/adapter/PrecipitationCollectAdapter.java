@@ -32,4 +32,5 @@ public class PrecipitationCollectAdapter extends DefaultAdapter<SamplingDetail> 
     public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
         return new PrecipitationCollectHolder(v);
     }
+
 }
