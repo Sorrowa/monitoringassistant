@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
@@ -35,6 +36,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
@@ -43,12 +45,18 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -369,8 +377,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
-                    //                    uploadProjecteContentData();
-                    uploadSamplingData(position);
+                    uploadProjecteContentData();
+                    //                    uploadSamplingData(position);
                 }
 
             }
@@ -559,7 +567,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void uploadProjecteContentData() {
         showLoading();
-        List<ProjectDetial> projectDetials = mProject.getProjectDetials();
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId())).list();
         List<ProjectContent> projectContents = new ArrayList<>();
         if (!CheckUtil.isEmpty(projectDetials)) {//开始组装数据
             for (ProjectDetial projectDetial : projectDetials) {
@@ -578,10 +586,56 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 projectContent.setTagParentId(projectDetial.getTagParentId());
                 projectContent.setTagParentName(projectDetial.getTagParentName());
                 projectContent.setGuid("");
+                List<MonItems> monItemsList = new ArrayList<>();
+                List<EnvirPoint> envirPoints = new ArrayList<>();
+                if (!CheckUtil.isEmpty(projectDetial.getMethodId())) {
+                    if (projectDetial.getMethodId().contains(",")) {
+                        monItemsList = DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties.Id.in(projectDetial.getMonItemId().split(","))).list();
+                    } else {
+                        monItemsList = DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties.Id.eq(projectDetial.getMonItemId())).list();
+                    }
+                }
+
+                if (!CheckUtil.isEmpty(projectDetial.getAddressId())) {
+                    if (projectDetial.getAddressId().contains(",")) {
+                        envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.in(projectDetial.getAddressId().split(","))).list();
+                    } else {
+                        envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.eq(projectDetial.getAddressId())).list();
+                    }
+                }
 
                 List<ProjectContent.MonItemsBean> monItems = new ArrayList<>();
                 List<ProjectContent.AddressArrBean> addressArrs = new ArrayList<>();
 
+                if (!CheckUtil.isEmpty(monItemsList)) {
+                    for (MonItems items : monItemsList) {
+                        ProjectContent.MonItemsBean monItemsBean = new ProjectContent.MonItemsBean();
+                        monItemsBean.setId(items.getId());
+                        monItemsBean.setName(items.getName());
+                        monItemsBean.setMethodId(projectDetial.getMethodId());
+                        monItemsBean.setMethodName(projectDetial.getMethodName());
+                        monItemsBean.setHaveCert("");
+                        monItemsBean.setTagId(projectDetial.getTagId());
+                        monItemsBean.setTagName(projectDetial.getTagName());
+                        monItemsBean.setIsOutsourcing(false);
+                        monItemsBean.setIsOutsourcingtext("");
+                        monItems.add(monItemsBean);
+                    }
+                }
+
+                if (!CheckUtil.isEmpty(envirPoints)) {
+                    for (EnvirPoint envirPoint : envirPoints) {
+                        ProjectContent.AddressArrBean addressArrBean = new ProjectContent.AddressArrBean();
+                        addressArrBean.setId(envirPoint.getId());
+                        addressArrBean.setName(envirPoint.getName());
+                        addressArrBean.setType(0);
+                        addressArrBean.setIstemp(false);
+                        addressArrBean.setPoint("");
+                        addressArrBean.setLevel("");
+                        addressArrBean.setESLimt(new ArrayList<>());
+                        addressArrs.add(addressArrBean);
+                    }
+                }
 
                 projectContent.setMonItems(monItems);
                 projectContent.setMonItemCount(monItems.size());
@@ -592,6 +646,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             }
         }
 
+        String json = JSONObject.toJSONString(projectContents);
 
         mPresenter.putProjectContent(Message.obtain(this, new Object()), projectContents);
     }
@@ -601,6 +656,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void uploadSamplingData(int position) {
         Sampling sampling = mSamplings.get(position);
+        //采样单 图片文件
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+        //采样单 样品采集
+        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+
         PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
         //开始组装数据
         preciptationSampForm.setIsAdd(true);

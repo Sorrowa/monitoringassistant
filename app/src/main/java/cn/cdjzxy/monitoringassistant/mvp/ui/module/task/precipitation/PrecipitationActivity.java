@@ -152,7 +152,6 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
             mSampling.setSamplingDetailResults(samplingDetails);
         }
-
         initTabData();
         openFragment(0);
     }

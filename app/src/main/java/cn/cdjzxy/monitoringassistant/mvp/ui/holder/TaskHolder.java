@@ -107,7 +107,6 @@ public class TaskHolder extends BaseHolder<Project> {
             points.deleteCharAt(points.lastIndexOf(","));
         }
 
-
         mTvTaskNum.setText("任务编号:" + data.getProjectNo());
         mTvTaskPoint.setText("点位:" + points.toString());
         mTvTaskProjectNum.setText("项目:" + monItems.toString());

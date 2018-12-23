@@ -306,13 +306,13 @@ public class ProjectContent {
          * Level : 1
          */
 
-        private String  Id;
-        private String  Name;
-        private int     Type;
-        private boolean Istemp;
-        private Object  Point;
-        private String  Level;
-        private List<?> ESLimt;
+        private String       Id;
+        private String       Name;
+        private int          Type;
+        private boolean      Istemp;
+        private String       Point;
+        private String       Level;
+        private List<String> ESLimt;
 
         public String getId() {
             return Id;
@@ -346,11 +346,11 @@ public class ProjectContent {
             this.Istemp = Istemp;
         }
 
-        public Object getPoint() {
+        public String getPoint() {
             return Point;
         }
 
-        public void setPoint(Object Point) {
+        public void setPoint(String Point) {
             this.Point = Point;
         }
 
@@ -362,11 +362,11 @@ public class ProjectContent {
             this.Level = Level;
         }
 
-        public List<?> getESLimt() {
+        public List<String> getESLimt() {
             return ESLimt;
         }
 
-        public void setESLimt(List<?> ESLimt) {
+        public void setESLimt(List<String> ESLimt) {
             this.ESLimt = ESLimt;
         }
     }
