@@ -1,6 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 
@@ -72,6 +74,7 @@ public class CollectionDetailFragment extends BaseFragment {
     RelativeLayout btnSave;
     private Sampling mSampling;
     private boolean  isStartTime;
+    private int listPosition;
 
 
     public CollectionDetailFragment() {
@@ -110,14 +113,13 @@ public class CollectionDetailFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-
-            creatSampleDetailNo();
-
             tvStartTime.setText("");
             tvEndTime.setText("");
             etPrecipitation.setText("");
             etRainwaterVolume.setText("");
             etRemark.setText("");
+
+            creatSampleDetailNo();
         }
     }
 
@@ -126,24 +128,47 @@ public class CollectionDetailFragment extends BaseFragment {
 
         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
 
-        //无样品编码
+        SharedPreferences collectListSettings= getActivity().getSharedPreferences("setting", 0);
+        listPosition = collectListSettings.getInt("listPosition",-1);
 
-        //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
-        String samplingNo;
+        if (listPosition == -1) {
+            //添加 生成编码
 
-        String snDate = DateUtil.getDate().replace("-", "").substring(2);
-        String snPointPosition = mSampling.getAddressNo();
-        String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-        int snFrequency = 1;
-        if (samplingDetailResults != null
-                && samplingDetailResults.size() > 0) {
-            snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
+            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
+            String samplingNo;
+
+            String snDate = DateUtil.getDate().replace("-", "").substring(2);
+            String snPointPosition = mSampling.getAddressNo();
+            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
+            int snFrequency = 1;
+            if (samplingDetailResults != null
+                    && samplingDetailResults.size() > 0) {
+                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
+            }
+
+            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
+
+            tvSampleCode.setText(samplingNo);
+            tvFrequency.setText(snFrequency + "");
+        }else {
+            btnDelete.setVisibility(View.VISIBLE);
+
+            SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
+            tvSampleCode.setText(samplingDetail.getSampingCode());
+            tvFrequency.setText(samplingDetail.getFrequecyNo()+"");
+
+            String privateData = samplingDetail.getPrivateData();
+            try {
+                JSONObject jsonObject = new JSONObject(privateData);
+                tvStartTime.setText(jsonObject.getString("SDataTime"));
+                tvEndTime.setText(jsonObject.getString("EDataTime"));
+                etRainwaterVolume.setText(jsonObject.getString("RainVol"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            etPrecipitation.setText(samplingDetail.getValue());
+            etRemark.setText(samplingDetail.getDescription());
         }
-
-        samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
-
-        tvSampleCode.setText(samplingNo);
-        tvFrequency.setText(snFrequency + "");
 
     }
 
@@ -170,12 +195,19 @@ public class CollectionDetailFragment extends BaseFragment {
                 initTimePickerView();
                 break;
             case R.id.btn_delete:
-                ArtUtils.makeText(getContext(), "请选择开始时间");
+                mSampling.getSamplingDetailResults().remove(listPosition);
+                ArtUtils.makeText(getContext(), "删除成功");
                 EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                 break;
             case R.id.btn_save:
                 if (saveCheck()) {
-                    SamplingDetail samplingDetail = new SamplingDetail();
+                    SamplingDetail samplingDetail;
+                    if (listPosition ==-1) {
+                        samplingDetail = new SamplingDetail();
+                    }else {
+                        samplingDetail = mSampling.getSamplingDetailResults().get(listPosition);
+                    }
+
                     samplingDetail.setId("LC-" + UUID.randomUUID().toString());
                     samplingDetail.setSamplingId(PrecipitationActivity.mSampling.getId());
                     samplingDetail.setSampingCode(tvSampleCode.getText().toString());
@@ -190,13 +222,17 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setValue(etPrecipitation.getText().toString());
                     samplingDetail.setDescription(etRemark.getText().toString());
 
-                    if (mSampling.getSamplingDetailResults() == null) {
-                        mSampling.setSamplingDetailResults(new ArrayList<SamplingDetail>());
+                    if (listPosition == -1) {
+                        if (mSampling.getSamplingDetailResults() == null) {
+                            mSampling.setSamplingDetailResults(new ArrayList<SamplingDetail>());
+                        }
+                        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
+                        samplingDetailResults.add(samplingDetail);
+                        mSampling.setSamplingDetailResults(samplingDetailResults);
                     }
-                    mSampling.getSamplingDetailResults().add(samplingDetail);
 
                     EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
-                    ArtUtils.makeText(getContext(), "请选择开始时间");
+                    ArtUtils.makeText(getContext(), "保存成功");
                 }
 
                 break;

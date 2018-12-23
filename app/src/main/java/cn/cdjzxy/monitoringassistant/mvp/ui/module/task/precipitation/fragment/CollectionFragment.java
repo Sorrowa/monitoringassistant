@@ -1,6 +1,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,6 +55,8 @@ public class CollectionFragment extends BaseFragment {
     RelativeLayout btnPrintLabel;
 
     private PrecipitationCollectAdapter mPrecipitationCollectAdapter;
+    private SharedPreferences collectListSettings;
+    private SharedPreferences.Editor editor;
 
     public CollectionFragment() {
     }
@@ -78,6 +82,13 @@ public class CollectionFragment extends BaseFragment {
     @Override
     public void setData(@Nullable Object data) {
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        collectListSettings = getActivity().getSharedPreferences("setting", 0);
+        editor = collectListSettings.edit();
     }
 
     @Override
@@ -119,6 +130,8 @@ public class CollectionFragment extends BaseFragment {
                     ArtUtils.makeText(getContext(), "请先填写基本信息");
                     return;
                 }
+                editor.putInt("listPosition",-1);
+                editor.commit();
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                 break;
             case R.id.btn_print_label:
@@ -143,8 +156,12 @@ public class CollectionFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+
+                editor.putInt("listPosition",position);
+                editor.commit();
             }
         });
+
         recyclerview.setAdapter(mPrecipitationCollectAdapter);
     }
 }

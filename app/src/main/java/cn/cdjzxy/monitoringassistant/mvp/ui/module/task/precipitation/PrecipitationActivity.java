@@ -97,7 +97,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                     if (!CheckUtil.isEmpty(samplingDetails)) {
                         DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
                     }
-                    DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
+                    DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailResults());
                 }
 
                 if (isNewCreate) {
