@@ -1,44 +1,58 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.holder;
 
 import android.view.View;
+import android.widget.TextView;
 
 import com.wonders.health.lib.base.base.BaseHolder;
 
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import butterknife.BindView;
+import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 
 /**
- * 主页tab
+ *降水样品采集
  */
 
-public class PrecipitationCollectHolder extends BaseHolder<Tab> {
+public class PrecipitationCollectHolder extends BaseHolder<SamplingDetail> {
 
-//    @BindView(R.id.tab_icon)
-//    ImageView mTabIcon;
-//    @BindView(R.id.tab_name)
-//    TextView  mTabName;
+    @BindView(R.id.tv_frequency)
+    TextView tvFrequency;
+    @BindView(R.id.tv_time)
+    TextView tvTime;
+    @BindView(R.id.tv_precipitation)
+    TextView tvPrecipitation;
+    @BindView(R.id.tv_rainwater_volume)
+    TextView tvRainwaterVolume;
+    @BindView(R.id.tv_remark)
+    TextView tvRemark;
 
     public PrecipitationCollectHolder(View itemView) {
         super(itemView);
     }
 
     @Override
-    public void setData(Tab data, int position) {
-//        mTabName.setText(data.getTabName());
-//        if (data.isSelected()) {
-//            mTabName.setTextColor(Color.WHITE);
-//            mTabIcon.setImageResource(data.getSelectedResId());
-//            itemView.setBackgroundColor(Color.parseColor("#0f87ff"));
-//        } else {
-//            mTabName.setTextColor(Color.parseColor("#939FB0"));
-//            mTabIcon.setImageResource(data.getResId());
-//            itemView.setBackgroundColor(Color.TRANSPARENT);
-//        }
+    public void setData(SamplingDetail data, int position) {
+        tvFrequency.setText("频率：" + data.getOrderIndex());
+        try {
+            JSONObject privateData = new JSONObject(data.getPrivateData());
+            tvTime.setText(privateData.getString("SDataTime") + "--" +privateData.getString("EDataTime"));
+            tvRainwaterVolume.setText("雨水体积(ml)：" + privateData.getString("RainVol"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        tvPrecipitation.setText("降雨量(mm)：" + data.getValue());
+        tvRemark.setText("备注：" + data.getDescription());
     }
 
     @Override
     protected void onRelease() {
-//        this.mTabIcon = null;
-//        this.mTabName = null;
-
+        this.tvFrequency = null;
+        this.tvTime = null;
+        this.tvRainwaterVolume = null;
+        this.tvPrecipitation = null;
+        this.tvRemark = null;
     }
 }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +20,14 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PrecipitationCollectAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 
 /**
@@ -95,6 +93,17 @@ public class CollectionFragment extends BaseFragment {
         unbinder.unbind();
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (mPrecipitationCollectAdapter != null) {
+                mPrecipitationCollectAdapter.notifyDataSetChanged();
+            }else {
+                initRecyclerViewData();
+            }
+        }
+    }
 
     @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label})
     public void onClick(View view) {
@@ -104,7 +113,12 @@ public class CollectionFragment extends BaseFragment {
 
                 break;
             case R.id.btn_add_blank:
-                ArtUtils.makeText(getContext(), "添加空白");
+                //添加空白
+                if (TextUtils.isEmpty(PrecipitationActivity.mSampling.getAddressNo())) {
+                    ArtUtils.makeText(getContext(), "请先填写基本信息");
+//                    return;
+                }
+                EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                 break;
             case R.id.btn_print_label:
                 ArtUtils.startActivity(LabelPrintActivity.class);
@@ -113,6 +127,9 @@ public class CollectionFragment extends BaseFragment {
     }
 
     private void initRecyclerViewData() {
+        if (PrecipitationActivity.mSampling.getSamplingDetailResults() == null) {
+            return;
+        }
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
@@ -120,13 +137,7 @@ public class CollectionFragment extends BaseFragment {
             }
         });
 
-        List<Tab> mTabs = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Tab tab = new Tab();
-            mTabs.add(tab);
-        }
-
-        mPrecipitationCollectAdapter = new PrecipitationCollectAdapter(mTabs);
+        mPrecipitationCollectAdapter = new PrecipitationCollectAdapter(PrecipitationActivity.mSampling.getSamplingDetailResults());
         mPrecipitationCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {

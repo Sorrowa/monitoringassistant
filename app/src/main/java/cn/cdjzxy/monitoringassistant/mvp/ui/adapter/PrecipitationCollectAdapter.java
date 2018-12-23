@@ -8,18 +8,18 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PrecipitationCollectHolder;
 
 
 /**
- * 主页tab
+ * 降水样品采集
  */
 
-public class PrecipitationCollectAdapter extends DefaultAdapter<Tab> {
+public class PrecipitationCollectAdapter extends DefaultAdapter<SamplingDetail> {
 
 
-    public PrecipitationCollectAdapter(List<Tab> infos) {
+    public PrecipitationCollectAdapter(List<SamplingDetail> infos) {
         super(infos);
     }
 
@@ -29,7 +29,7 @@ public class PrecipitationCollectAdapter extends DefaultAdapter<Tab> {
     }
 
     @Override
-    public BaseHolder<Tab> getHolder(View v, int viewType) {
+    public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
         return new PrecipitationCollectHolder(v);
     }
 }

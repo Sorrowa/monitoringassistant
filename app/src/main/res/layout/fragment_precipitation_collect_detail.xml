@@ -106,6 +106,7 @@
 
         <EditText
             android:id="@+id/et_precipitation"
+            android:inputType="numberDecimal"
             style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
@@ -120,6 +121,7 @@
 
         <EditText
             android:id="@+id/et_rainwater_volume"
+            android:inputType="numberDecimal"
             style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
@@ -134,6 +136,7 @@
 
         <EditText
             android:id="@+id/et_remark"
+            android:maxLength="100"
             style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
