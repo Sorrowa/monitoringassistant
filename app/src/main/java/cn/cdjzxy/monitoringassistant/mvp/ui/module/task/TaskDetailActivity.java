@@ -660,7 +660,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         String json = JSONObject.toJSONString(projectPlan);
 
-//        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
+        mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
 
     /**
@@ -671,6 +671,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         //采样单 图片文件
 //        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
         //采样单 样品采集
+        // TODO: 2018/12/23 放开报错，不放开每次打开app需打开降水条目一次，否则获取不到detail
 //        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
 
         PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
