@@ -121,13 +121,12 @@ public class CollectionFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_parallel:
-                ArtUtils.makeText(getContext(), "添加平行");
 
                 break;
             case R.id.btn_add_blank:
                 //添加空白
                 if (TextUtils.isEmpty(PrecipitationActivity.mSampling.getAddressNo())) {
-                    ArtUtils.makeText(getContext(), "请先填写基本信息");
+                    ArtUtils.makeText(getContext(), "请先填写点位编号");
                     return;
                 }
                 editor.putInt("listPosition",-1);
@@ -156,7 +155,6 @@ public class CollectionFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
-
                 editor.putInt("listPosition",position);
                 editor.commit();
             }

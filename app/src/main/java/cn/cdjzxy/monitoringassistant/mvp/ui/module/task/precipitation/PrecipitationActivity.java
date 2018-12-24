@@ -32,6 +32,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -102,6 +103,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
 
                 if (isNewCreate) {
                     DBHelper.get().getSamplingDao().insert(mSampling);
+                    isNewCreate = false;
                 } else {
                     DBHelper.get().getSamplingDao().update(mSampling);
                 }
@@ -220,6 +222,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setProjectName(project.getName());
         sampling.setProjectNo(project.getProjectNo());
         sampling.setTagId(formSelect.getTagId());
+        sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
         sampling.setFormTypeName("降水");
         sampling.setFormName(formSelect.getFormName());

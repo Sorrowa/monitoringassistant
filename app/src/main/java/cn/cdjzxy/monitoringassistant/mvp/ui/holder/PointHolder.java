@@ -81,12 +81,6 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
                 }
             });
             mPointItemAdapter = new PointItemAdapter(envirPoints);
-            mPointItemAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
-                @Override
-                public void onItemClick(View view, int viewType, Object data, int position) {
-                    ArtUtils.startActivity(TaskDetailActivity.class);
-                }
-            });
             mRecyclerViewItem.setAdapter(mPointItemAdapter);
         }
 

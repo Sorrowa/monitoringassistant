@@ -89,7 +89,7 @@ public class BasicFragment extends BaseFragment {
     @BindView(R.id.tv_flow_method)
     EditText       tvFlowMethod;
     @BindView(R.id.tv_flow_date)
-    EditText       tvFlowDate;
+    TextView       tvFlowDate;
     @BindView(R.id.tv_comment)
     EditText       tvComment;
     @BindView(R.id.layout_flow_information_container)
@@ -214,23 +214,6 @@ public class BasicFragment extends BaseFragment {
             }
         });
 
-        tvFlowDate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                PrecipitationActivity.mSampling.setSendSampTime(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
-            }
-        });
-
         tvComment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -335,11 +318,14 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.layout_flow_information, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
+    @OnClick({R.id.layout_flow_information, R.id.tv_flow_date, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_sampling_date:
                 showDateSelectDialog();
+                break;
+            case R.id.tv_flow_date:
+                showDateSelectDialog1();
                 break;
             case R.id.layout_flow_information:
                 if (tvArrow.getRotation() == 90f) {
@@ -371,7 +357,7 @@ public class BasicFragment extends BaseFragment {
                 break;
             case R.id.tv_sampling_point:
                 Intent intent1 = new Intent(getContext(), PointSelectActivity.class);
-                intent1.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
+                intent1.putExtra("tagId", PrecipitationActivity.mSampling.getTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
@@ -421,6 +407,19 @@ public class BasicFragment extends BaseFragment {
             public void onTimeSelect(Date date, View v) {
                 PrecipitationActivity.mSampling.setSamplingTimeBegin(DateUtils.getDate(date));
                 tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
+            }
+        }).build();
+        pvTime.setDate(Calendar.getInstance());
+        pvTime.show();
+    }
+
+    private void showDateSelectDialog1() {
+        //时间选择器
+        TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                PrecipitationActivity.mSampling.setSendSampTime(DateUtils.getDate(date));
+                tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
             }
         }).build();
         pvTime.setDate(Calendar.getInstance());

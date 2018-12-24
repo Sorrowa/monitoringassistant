@@ -46,6 +46,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
@@ -56,6 +57,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -186,7 +189,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case 259:
                 showMessage("数据提交成功");
-
                 sampling.setStatus(7);
                 DBHelper.get().getSamplingDao().update(sampling);
                 getSampling(mTagId);
@@ -573,7 +575,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * 提交方案数据
      */
     private void uploadProjecteContentData() {
-        showLoading();
+
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId())).list();
         List<ProjectContent> projectContents = new ArrayList<>();
         if (!CheckUtil.isEmpty(projectDetials)) {//开始组装数据
@@ -667,12 +669,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * 提交采样单数据
      */
     private void uploadSamplingData(int position) {
+        showLoading();
         sampling = mSamplings.get(position);
         //采样单 图片文件
-//        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
         //采样单 样品采集
-        // TODO: 2018/12/23 放开报错，不放开每次打开app需打开降水条目一次，否则获取不到detail
-//        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
 
         PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
         //开始组装数据
@@ -696,7 +698,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         sampFormBean.setSendSampTime(sampling.getSendSampTime());
         sampFormBean.setSamplingNo(sampling.getSamplingNo());
         sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
-        sampFormBean.setTagName(sampling.getTagName());// TODO: 2018/12/23 @zhanglin 添加
+        sampFormBean.setTagName(sampling.getTagName());
         sampFormBean.setTagId(sampling.getTagId());
         sampFormBean.setAddressId(sampling.getAddressId());
         sampFormBean.setAddressName(sampling.getAddressName());
@@ -709,7 +711,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         sampFormBean.setTransfer(sampling.getTransfer());
         sampFormBean.setReciveTime(sampling.getReciveTime());
         sampFormBean.setFile(sampling.getFile());
-//        sampFormBean.setLayTableCheckbox(sampling.get());
+        //        sampFormBean.setLayTableCheckbox(sampling.get());
         sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
         sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
         sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeBegin());
@@ -746,11 +748,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
 
 
-        if (sampling.getSamplingDetailResults() != null
-                && sampling.getSamplingDetailResults().size() > 0) {
+        if (!CheckUtil.isEmpty(samplingDetails)) {
 
             ArrayList<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeans = new ArrayList<>();
-            for (SamplingDetail samplingDetail : sampling.getSamplingDetailResults()) {
+            for (SamplingDetail samplingDetail : samplingDetails) {
                 PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
 
                 samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
@@ -764,8 +765,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
                 samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
                 samplingDetailsBean.setValue(samplingDetail.getValue());
-                samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex()+"");
-                samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo()+"");
+                samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex() + "");
+                samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
                 samplingDetailsBean.setValue1(samplingDetail.getValue1());
                 samplingDetailsBean.setDescription(samplingDetail.getDescription());
 

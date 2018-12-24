@@ -266,8 +266,8 @@ public class CollectionDetailFragment extends BaseFragment {
                 String selectTime = DateUtils.getTime(date.getTime());
                 try {
                     if (isStartTime) {
-                        if (!TextUtils.isEmpty(tvEndTime.getText().toString()) && DateUtils.compareTime(selectTime, tvEndTime.getText().toString())) {
-                            ArtUtils.makeText(getContext(), "结束时间必须大于开始时间");
+                        if (!TextUtils.isEmpty(tvEndTime.getText().toString()) && !DateUtils.compareTime(selectTime, tvEndTime.getText().toString())) {
+                            ArtUtils.makeText(getContext(), "开始时间必须小于结束时间");
                             return;
                         }
                         tvStartTime.setText(selectTime);
