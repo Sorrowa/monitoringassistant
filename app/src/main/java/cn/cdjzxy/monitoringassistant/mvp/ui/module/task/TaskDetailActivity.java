@@ -189,8 +189,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case 259:
                 showMessage("数据提交成功");
-                sampling.setStatus(7);
-                DBHelper.get().getSamplingDao().update(sampling);
+                DBHelper.get().getSamplingDao().delete(sampling);
                 getSampling(mTagId);
                 break;
         }
@@ -386,7 +385,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
-                    uploadProjecteContentData();
+                    if (mProject.getCanSamplingEidt()){
+                        uploadProjecteContentData();
+                    }
                     uploadSamplingData(position);
                 }
 

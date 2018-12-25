@@ -55,6 +55,8 @@ public class Sampling {
      * SamplingUserName : Admin
      * SubmitId : 61bb48f0-5d8f-49a1-989d-7d6d7033fd91
      * SubmitName : Admin
+     *   "SubmitDate": "2018-12-23",
+     "AuditDate": "2018-12-23T21:31:49.987",
      * SamplingTimeBegin : 2018-11-05T00:00:00
      * SamplingTimeEnd : 2018-11-05T00:00:00
      * Status : 7
@@ -139,6 +141,7 @@ public class Sampling {
     private int                     Version;
     private String                  MonitemId;
     private String                  MonitemName;
+    private String                  AuditDate;
     private String                  Recoding;
     private String                  ProjectNo;
     private String                  file;
@@ -153,8 +156,10 @@ public class Sampling {
     @Transient
     private boolean                 isSelected;
 
-    @Generated(hash = 13489724)
-    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String Recoding, String ProjectNo, String file, List<String> SamplingUserResults) {
+
+
+    @Generated(hash = 491028017)
+    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, List<String> SamplingUserResults) {
         this.Id = Id;
         this.ProjectId = ProjectId;
         this.SamplingNo = SamplingNo;
@@ -209,6 +214,7 @@ public class Sampling {
         this.Version = Version;
         this.MonitemId = MonitemId;
         this.MonitemName = MonitemName;
+        this.AuditDate = AuditDate;
         this.Recoding = Recoding;
         this.ProjectNo = ProjectNo;
         this.file = file;
@@ -218,6 +224,7 @@ public class Sampling {
     @Generated(hash = 1062560110)
     public Sampling() {
     }
+
 
 
     public List<String> getSamplingUserResults() {
@@ -693,6 +700,14 @@ public class Sampling {
         this.MonitemName = MonitemName;
     }
 
+    public String getAuditDate() {
+        return this.AuditDate;
+    }
+
+    public void setAuditDate(String AuditDate) {
+        this.AuditDate = AuditDate;
+    }
+
     public String getRecoding() {
         return this.Recoding;
     }
@@ -716,4 +731,6 @@ public class Sampling {
     public void setFile(String file) {
         this.file = file;
     }
+
+   
 }

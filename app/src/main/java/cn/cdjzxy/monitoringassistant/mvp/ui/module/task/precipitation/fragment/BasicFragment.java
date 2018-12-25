@@ -51,6 +51,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TypeActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
@@ -124,7 +125,7 @@ public class BasicFragment extends BaseFragment {
         if (!CheckUtil.isNull(PrecipitationActivity.mSampling)) {
             tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
             tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
-            tvSamplingType.setText(PrecipitationActivity.mSampling.getFormTypeName());
+            tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
             tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
             tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
             if (!CheckUtil.isEmpty(PrecipitationActivity.mSampling.getPrivateData())) {
@@ -318,7 +319,7 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.layout_flow_information, R.id.tv_flow_date, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
+    @OnClick({R.id.layout_flow_information, R.id.tv_sampling_type, R.id.tv_flow_date, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_sampling_date:
@@ -339,10 +340,25 @@ public class BasicFragment extends BaseFragment {
             case R.id.iv_add_photo:
                 choosePhoto(REQUEST_CODE);
                 break;
-            case R.id.tv_sampling_user:
-                Intent intent = new Intent(getContext(), UserActivity.class);
-                intent.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
+            case R.id.tv_sampling_type:
+                Intent intent = new Intent(getContext(), TypeActivity.class);
+                intent.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            PrecipitationActivity.mSampling.setTagId(data.getStringExtra("TagId"));
+                            PrecipitationActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+                            tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
+
+                        }
+                    }
+                });
+                break;
+            case R.id.tv_sampling_user:
+                Intent intent1 = new Intent(getContext(), UserActivity.class);
+                intent1.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
+                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
@@ -356,23 +372,34 @@ public class BasicFragment extends BaseFragment {
                 });
                 break;
             case R.id.tv_sampling_point:
-                Intent intent1 = new Intent(getContext(), PointSelectActivity.class);
-                intent1.putExtra("tagId", PrecipitationActivity.mSampling.getTagId());
-                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
+                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getTagId())) {
+                    ArtUtils.makeText(getContext(), "请先选择降水类型");
+                    return;
+                }
+                Intent intent2 = new Intent(getContext(), PointSelectActivity.class);
+                intent2.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
+                intent2.putExtra("tagId", PrecipitationActivity.mSampling.getTagId());
+                new AvoidOnResult(getActivity()).startForResult(intent2, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
                             PrecipitationActivity.mSampling.setAddressName(data.getStringExtra("Address"));
                             PrecipitationActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
+                            PrecipitationActivity.mSampling.setAddressNo(data.getStringExtra("AddressNo") );
                             tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
+                            tvSamplingNo.setText(PrecipitationActivity.mSampling.getSamplingNo());
                         }
                     }
                 });
                 break;
             case R.id.tv_sampling_method:
-                Intent intent2 = new Intent(getContext(), MethodActivity.class);
-                intent2.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
-                new AvoidOnResult(getActivity()).startForResult(intent2, new AvoidOnResult.Callback() {
+                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getTagId())) {
+                    ArtUtils.makeText(getContext(), "请先选择降水类型");
+                    return;
+                }
+                Intent intent3 = new Intent(getContext(), MethodActivity.class);
+                intent3.putExtra("tagId", PrecipitationActivity.mSampling.getTagId());
+                new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
@@ -384,9 +411,13 @@ public class BasicFragment extends BaseFragment {
                 });
                 break;
             case R.id.tv_sampling_device:
-                Intent intent3 = new Intent(getContext(), DeviceActivity.class);
-                intent3.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
-                new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
+                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getMethodId())) {
+                    ArtUtils.makeText(getContext(), "请先选择方法");
+                    return;
+                }
+                Intent intent4 = new Intent(getContext(), DeviceActivity.class);
+                intent4.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
+                new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {

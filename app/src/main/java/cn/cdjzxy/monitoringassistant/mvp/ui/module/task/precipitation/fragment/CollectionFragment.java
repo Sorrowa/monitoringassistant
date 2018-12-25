@@ -126,7 +126,7 @@ public class CollectionFragment extends BaseFragment {
             case R.id.btn_add_blank:
                 //添加空白
                 if (TextUtils.isEmpty(PrecipitationActivity.mSampling.getAddressNo())) {
-                    ArtUtils.makeText(getContext(), "请先填写点位编号");
+                    ArtUtils.makeText(getContext(), "请先选择采样点位");
                     return;
                 }
                 editor.putInt("listPosition",-1);

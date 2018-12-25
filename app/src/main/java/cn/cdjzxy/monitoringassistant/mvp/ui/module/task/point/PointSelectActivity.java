@@ -23,7 +23,9 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointSelectAdapter;
@@ -44,6 +46,7 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
     private List<EnvirPoint> mEnvirPoints = new ArrayList<>();
     private PointSelectAdapter mPointSelectAdapter;
 
+    private String projectId;
     private String tagId;
 
     @Override
@@ -72,11 +75,10 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        projectId = getIntent().getStringExtra("projectId");
+        tagId = getIntent().getStringExtra("tagId");
         initTabData();
         initPointData();
-
-        tagId = getIntent().getStringExtra("tagId");
-
         getPointData(true);
     }
 
@@ -106,6 +108,7 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
                 Intent intent = new Intent();
                 intent.putExtra("AddressId", mEnvirPoints.get(position).getId());
                 intent.putExtra("Address", mEnvirPoints.get(position).getName());
+                intent.putExtra("AddressNo", mEnvirPoints.get(position).getCode());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -114,21 +117,44 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void getPointData(boolean isRelationPoint) {
+        List<String> pointIds = new ArrayList<>();
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
+        if (!CheckUtil.isEmpty(projectDetials)) {
+            for (ProjectDetial projectDetial : projectDetials) {
+                pointIds.add(projectDetial.getAddressId());
+            }
+        }
+
         List<EnvirPoint> envirPoints = null;
         if (isRelationPoint) {
-            envirPoints = DBHelper
-                    .get()
-                    .getEnvirPointDao()
-                    .queryBuilder()
-                    .where(EnvirPointDao.Properties.TagId.eq(tagId))
-                    .list();
+            if (CheckUtil.isEmpty(pointIds)) {
+                envirPoints = new ArrayList<>();
+            } else {
+                envirPoints = DBHelper
+                        .get()
+                        .getEnvirPointDao()
+                        .queryBuilder()
+                        .where(EnvirPointDao.Properties.Id.in(pointIds))
+                        .list();
+            }
+
         } else {
-            envirPoints = DBHelper
-                    .get()
-                    .getEnvirPointDao()
-                    .queryBuilder()
-                    .where(EnvirPointDao.Properties.TagId.notEq(tagId))
-                    .list();
+            if (CheckUtil.isEmpty(pointIds)) {
+                envirPoints = DBHelper
+                        .get()
+                        .getEnvirPointDao()
+                        .queryBuilder()
+                        .where(EnvirPointDao.Properties.TagId.eq(tagId))
+                        .list();
+            } else {
+                envirPoints = DBHelper
+                        .get()
+                        .getEnvirPointDao()
+                        .queryBuilder()
+                        .where(EnvirPointDao.Properties.TagId.eq(tagId), EnvirPointDao.Properties.Id.notIn(pointIds))
+                        .list();
+            }
+
         }
 
         mEnvirPoints.clear();

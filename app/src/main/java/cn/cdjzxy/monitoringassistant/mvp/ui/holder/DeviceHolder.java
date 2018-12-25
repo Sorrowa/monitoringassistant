@@ -8,6 +8,7 @@ import com.wonders.health.lib.base.base.BaseHolder;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 /**
  * 主页tab
@@ -36,8 +37,16 @@ public class DeviceHolder extends BaseHolder<Devices> {
         mTvName.setText(data.getName());
         mTvState.setText(data.getSourceWay());
         mTvModel.setText(data.getSpecification());
-        mTvNumbering.setText(data.getDevCode());
-        mTvValidityPeriod.setText("有效期：" + data.getExpireDate());
+        if (CheckUtil.isEmpty(data.getDevCode())) {
+            mTvNumbering.setVisibility(View.GONE);
+        } else {
+            mTvNumbering.setText(data.getDevCode().trim());
+        }
+        if (CheckUtil.isEmpty(data.getExpireDate())) {
+            mTvValidityPeriod.setVisibility(View.GONE);
+        } else {
+            mTvValidityPeriod.setText("有效期：" + data.getExpireDate());
+        }
     }
 
     @Override
@@ -47,8 +56,6 @@ public class DeviceHolder extends BaseHolder<Devices> {
         this.mTvModel = null;
         this.mTvNumbering = null;
         this.mTvValidityPeriod = null;
-
-
     }
 
 

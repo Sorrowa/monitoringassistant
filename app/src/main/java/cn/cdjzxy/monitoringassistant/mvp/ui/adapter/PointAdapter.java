@@ -21,10 +21,12 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PointHolder;
 public class PointAdapter extends DefaultAdapter<ProjectDetial> {
 
     private Context mContext;
+    private boolean isCanEdit;
 
-    public PointAdapter(Context context, List<ProjectDetial> infos) {
+    public PointAdapter(Context context, List<ProjectDetial> infos, boolean isCanEdit) {
         super(infos);
         this.mContext = context;
+        this.isCanEdit = isCanEdit;
     }
 
     @Override
@@ -34,6 +36,6 @@ public class PointAdapter extends DefaultAdapter<ProjectDetial> {
 
     @Override
     public BaseHolder<ProjectDetial> getHolder(View v, int viewType) {
-        return new PointHolder(mContext, v);
+        return new PointHolder(mContext, v, isCanEdit);
     }
 }

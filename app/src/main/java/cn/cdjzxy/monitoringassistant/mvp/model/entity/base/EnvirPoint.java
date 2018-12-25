@@ -21,16 +21,18 @@ public class EnvirPoint {
     @Id
     private String Id;
     private String Name;
-    private double   Longtitude;
-    private double   Latitude;
+    private String    Code;
+    private double Longtitude;
+    private double Latitude;
     private String TagId;
     private String TagName;
     private String UpdateTime;
-    @Generated(hash = 1940633341)
-    public EnvirPoint(String Id, String Name, double Longtitude, double Latitude,
-            String TagId, String TagName, String UpdateTime) {
+    @Generated(hash = 1832485445)
+    public EnvirPoint(String Id, String Name, String Code, double Longtitude,
+            double Latitude, String TagId, String TagName, String UpdateTime) {
         this.Id = Id;
         this.Name = Name;
+        this.Code = Code;
         this.Longtitude = Longtitude;
         this.Latitude = Latitude;
         this.TagId = TagId;
@@ -51,6 +53,12 @@ public class EnvirPoint {
     }
     public void setName(String Name) {
         this.Name = Name;
+    }
+    public String getCode() {
+        return this.Code;
+    }
+    public void setCode(String Code) {
+        this.Code = Code;
     }
     public double getLongtitude() {
         return this.Longtitude;
@@ -82,7 +90,7 @@ public class EnvirPoint {
     public void setUpdateTime(String UpdateTime) {
         this.UpdateTime = UpdateTime;
     }
-   
 
+   
 
 }

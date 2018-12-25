@@ -3,6 +3,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+
 @Entity
 public class EnterRelatePoint {
 
@@ -22,18 +23,20 @@ public class EnterRelatePoint {
     private String Id;
     private String EnterPriseId;
     private String Name;
+    private String    Code;
     private String Longtitude;
     private String Latitude;
     private String TagId;
     private String TagName;
     private String UpdateTime;
-    @Generated(hash = 1964308318)
+    @Generated(hash = 882419821)
     public EnterRelatePoint(String Id, String EnterPriseId, String Name,
-            String Longtitude, String Latitude, String TagId, String TagName,
-            String UpdateTime) {
+            String Code, String Longtitude, String Latitude, String TagId,
+            String TagName, String UpdateTime) {
         this.Id = Id;
         this.EnterPriseId = EnterPriseId;
         this.Name = Name;
+        this.Code = Code;
         this.Longtitude = Longtitude;
         this.Latitude = Latitude;
         this.TagId = TagId;
@@ -60,6 +63,12 @@ public class EnterRelatePoint {
     }
     public void setName(String Name) {
         this.Name = Name;
+    }
+    public String getCode() {
+        return this.Code;
+    }
+    public void setCode(String Code) {
+        this.Code = Code;
     }
     public String getLongtitude() {
         return this.Longtitude;
@@ -91,6 +100,7 @@ public class EnterRelatePoint {
     public void setUpdateTime(String UpdateTime) {
         this.UpdateTime = UpdateTime;
     }
+
 
 
 }

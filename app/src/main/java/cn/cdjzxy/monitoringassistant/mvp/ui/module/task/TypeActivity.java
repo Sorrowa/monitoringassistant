@@ -17,36 +17,33 @@ import java.util.List;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MethodAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointSelectAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TagAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
-public class MethodActivity extends BaseTitileActivity<ApiPresenter> {
+public class TypeActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.recyclerView_point)
     RecyclerView recyclerViewPoint;
     @BindView(R.id.tabview)
     CustomTab    tabview;
 
-    private List<Methods> mMethods = new ArrayList<>();
-    private MethodAdapter mMethodAdapter;
+    private List<Tags> mTags = new ArrayList<>();
+    private TagAdapter mTagAdapter;
 
     private String tagId;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.setTitleMainText("方法");
+        titleBar.setTitleMainText("降水类型选择");
     }
 
     @Nullable
@@ -65,15 +62,16 @@ public class MethodActivity extends BaseTitileActivity<ApiPresenter> {
         tabview.setVisibility(View.GONE);
         initMethodData();
         tagId = getIntent().getStringExtra("tagId");
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
-        if (!CheckUtil.isNull(tags)) {
-            List<Methods> methods = tags.getMMethods();
-            if (!CheckUtil.isEmpty(methods)) {
-                mMethods.clear();
-                mMethods.addAll(methods);
+        List<Tags> tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.ParentId.eq(tagId)).list();
+        if (!CheckUtil.isEmpty(tags)) {
+            for (Tags tag : tags) {
+                if (tag.getLevel() == 1) {
+                    mTags.add(tag);
+                }
             }
         }
-        mMethodAdapter.notifyDataSetChanged();
+
+        mTagAdapter.notifyDataSetChanged();
 
     }
 
@@ -82,18 +80,18 @@ public class MethodActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void initMethodData() {
         ArtUtils.configRecyclerView(recyclerViewPoint, new LinearLayoutManager(this));
-        mMethodAdapter = new MethodAdapter(mMethods);
-        mMethodAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+        mTagAdapter = new TagAdapter(mTags);
+        mTagAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 Intent intent = new Intent();
-                intent.putExtra("MethodId", mMethods.get(position).getId());
-                intent.putExtra("MethodName", mMethods.get(position).getName());
+                intent.putExtra("TagId", mTags.get(position).getId());
+                intent.putExtra("TagName", mTags.get(position).getName());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
-        recyclerViewPoint.setAdapter(mMethodAdapter);
+        recyclerViewPoint.setAdapter(mTagAdapter);
     }
 
 

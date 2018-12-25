@@ -36,6 +36,8 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
     TextView mTvTime;
     @BindView(R.id.tv_project_members)
     TextView mTvMember;
+    @BindView(R.id.tv_edit_plan)
+    TextView mTvEdit;
 
     @BindView(R.id.recyclerview_item)
     RecyclerView mRecyclerViewItem;
@@ -44,17 +46,28 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
 
     private PointItemAdapter mPointItemAdapter;
 
-    public PointHolder(Context context, View itemView) {
+    private boolean isCanEdit;
+
+    public PointHolder(Context context, View itemView, boolean isCanEdit) {
         super(itemView);
         this.mContext = context;
+        this.isCanEdit = isCanEdit;
     }
 
     @Override
     public void setData(ProjectDetial data, int position) {
+        if (!isCanEdit) {
+            mTvEdit.setVisibility(View.GONE);
+        } else {
+            mTvEdit.setVisibility(View.VISIBLE);
+        }
+
         mTvName.setText(data.getTagName());
         mTvTime.setText(data.getDays() + "天" + data.getPeriod() + "次");
         mTvMember.setText(data.getMonItemName());
         initPointItemData(data.getAddressId());
+
+
     }
 
     @Override

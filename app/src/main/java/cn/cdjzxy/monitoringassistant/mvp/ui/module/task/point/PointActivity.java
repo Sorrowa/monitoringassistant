@@ -19,7 +19,9 @@ import java.util.List;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -40,6 +42,8 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private PointAdapter mPointAdapter;
 
+    private Project mProject;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("采样点位");
@@ -59,6 +63,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         initPointData();
         getData();
     }
@@ -68,13 +73,16 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void initPointData() {
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
-        mPointAdapter = new PointAdapter(this, mProjectDetials);
+        mPointAdapter = new PointAdapter(this, mProjectDetials, mProject.getCanSamplingEidt());
         mPointAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
-                intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
-                ArtUtils.startActivity(intent);
+                if (mProject.getCanSamplingEidt()) {
+                    Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
+                    intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
+                    ArtUtils.startActivity(intent);
+                }
+
             }
         });
         recyclerview.setAdapter(mPointAdapter);

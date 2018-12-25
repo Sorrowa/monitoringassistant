@@ -8,6 +8,7 @@ import org.greenrobot.greendao.annotation.Transient;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -15,7 +16,6 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 @Entity
 public class Project {
-
 
     /**
      * Id : 601435b6-8d4d-45b1-ae79-0124dd0276cb
@@ -69,14 +69,15 @@ public class Project {
     private String              FinishDate;
     private String              PlanBeginTime;
     private String              PlanEndTime;
+    private boolean             CanSamplingEidt;//是否允许修改方案
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String>        SamplingUser;
     @Transient
     private List<ProjectDetial> ProjectDetials;
 
-
-    @Generated(hash = 736282846)
-    public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, List<String> SamplingUser) {
+    @Generated(hash = 707494980)
+    public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, boolean CanSamplingEidt,
+            List<String> SamplingUser) {
         this.Id = Id;
         this.UpdateTime = UpdateTime;
         this.Name = Name;
@@ -101,13 +102,13 @@ public class Project {
         this.FinishDate = FinishDate;
         this.PlanBeginTime = PlanBeginTime;
         this.PlanEndTime = PlanEndTime;
+        this.CanSamplingEidt = CanSamplingEidt;
         this.SamplingUser = SamplingUser;
     }
 
     @Generated(hash = 1767516619)
     public Project() {
     }
-  
 
     public List<ProjectDetial> getProjectDetials() {
         return ProjectDetials;
@@ -309,6 +310,14 @@ public class Project {
         this.PlanEndTime = PlanEndTime;
     }
 
+    public boolean getCanSamplingEidt() {
+        return this.CanSamplingEidt;
+    }
+
+    public void setCanSamplingEidt(boolean CanSamplingEidt) {
+        this.CanSamplingEidt = CanSamplingEidt;
+    }
+
     public List<String> getSamplingUser() {
         return this.SamplingUser;
     }
@@ -316,4 +325,5 @@ public class Project {
     public void setSamplingUser(List<String> SamplingUser) {
         this.SamplingUser = SamplingUser;
     }
+
 }
