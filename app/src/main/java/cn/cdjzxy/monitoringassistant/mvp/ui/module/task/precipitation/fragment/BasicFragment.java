@@ -398,7 +398,7 @@ public class BasicFragment extends BaseFragment {
                     return;
                 }
                 Intent intent3 = new Intent(getContext(), MethodActivity.class);
-                intent3.putExtra("tagId", PrecipitationActivity.mSampling.getTagId());
+                intent3.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
