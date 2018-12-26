@@ -387,7 +387,7 @@ public class BasicFragment extends BaseFragment {
                             PrecipitationActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
                             PrecipitationActivity.mSampling.setAddressNo(data.getStringExtra("AddressNo"));
                             tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
-                            tvSamplingNo.setText(PrecipitationActivity.mSampling.getSamplingNo());
+                            tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
                         }
                     }
                 });

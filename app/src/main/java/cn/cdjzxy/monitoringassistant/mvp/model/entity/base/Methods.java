@@ -33,6 +33,7 @@ public class Methods {
     private String Code;
     private String Name;
     private String Type;
+    private int    LabelType; //0 分析方法 1 采样方法
 
     @ToMany
     @JoinEntity(
@@ -48,12 +49,14 @@ public class Methods {
     @Generated(hash = 1623936033)
     private transient MethodsDao myDao;
 
-    @Generated(hash = 98449988)
-    public Methods(String Id, String Code, String Name, String Type) {
+    @Generated(hash = 1570025462)
+    public Methods(String Id, String Code, String Name, String Type,
+            int LabelType) {
         this.Id = Id;
         this.Code = Code;
         this.Name = Name;
         this.Type = Type;
+        this.LabelType = LabelType;
     }
 
     @Generated(hash = 632479964)
@@ -90,6 +93,14 @@ public class Methods {
 
     public void setType(String Type) {
         this.Type = Type;
+    }
+
+    public int getLabelType() {
+        return this.LabelType;
+    }
+
+    public void setLabelType(int LabelType) {
+        this.LabelType = LabelType;
     }
 
     /**
@@ -162,6 +173,7 @@ public class Methods {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getMethodsDao() : null;
     }
-    
+
+
 
 }

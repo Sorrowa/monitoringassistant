@@ -16,6 +16,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 /**
  * 主页tab
@@ -80,6 +81,14 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
             }
         });
 
+        mLayoutContainer.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onSamplingListener.onLongClick(v, position);
+                return false;
+            }
+        });
+
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(data.getParentTagId())).unique();
 
         if ("水质".equals(tags.getName())) {
@@ -109,7 +118,7 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
         mTvName.setText(data.getFormName());
         mPoint.setText(data.getAddressName());
 
-        if (data.getStatus() == 0) {
+        if (data.getStatus() == 0 || data.getStatus() == 4 || data.getStatus() == 9) {
             mIvUpload.setImageResource(R.mipmap.ic_upload);
             mSubmitTime.setVisibility(View.GONE);
             mTvReviewTime.setVisibility(View.GONE);
@@ -119,12 +128,22 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
         } else {
             mIvCb.setEnabled(false);
             mIvUpload.setEnabled(false);
-            mLayoutContainer.setEnabled(false);
             mIvUpload.setImageResource(R.mipmap.ic_finish);
-            mSubmitTime.setVisibility(View.VISIBLE);
-            mTvReviewTime.setVisibility(View.VISIBLE);
-            mSubmitTime.setText("提交：" + data.getSubmitDate());
-            mTvReviewTime.setText("审核：" + data.getAuditDate());
+
+            if (CheckUtil.isEmpty(data.getSubmitDate())) {
+                mSubmitTime.setVisibility(View.GONE);
+            } else {
+                mSubmitTime.setVisibility(View.VISIBLE);
+                mSubmitTime.setText("提交：" + data.getSubmitDate().replace("T", ""));
+            }
+
+            if (CheckUtil.isEmpty(data.getAuditDate())) {
+                mTvReviewTime.setVisibility(View.GONE);
+            } else {
+                mTvReviewTime.setVisibility(View.VISIBLE);
+                mTvReviewTime.setText("审核：" + data.getAuditDate().replace("T", ""));
+            }
+
         }
     }
 

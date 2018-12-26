@@ -52,6 +52,7 @@ public class Project {
     private String              Urgency;
     private String              ContractCode;
     private String              Type;
+    private int                 TypeCode;
     private String              MonType;
     private String              ClientName;
     private String              ClientId;
@@ -75,8 +76,9 @@ public class Project {
     @Transient
     private List<ProjectDetial> ProjectDetials;
 
-    @Generated(hash = 707494980)
-    public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, boolean CanSamplingEidt,
+
+    @Generated(hash = 564896190)
+    public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, int TypeCode, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, boolean CanSamplingEidt,
             List<String> SamplingUser) {
         this.Id = Id;
         this.UpdateTime = UpdateTime;
@@ -85,6 +87,7 @@ public class Project {
         this.Urgency = Urgency;
         this.ContractCode = ContractCode;
         this.Type = Type;
+        this.TypeCode = TypeCode;
         this.MonType = MonType;
         this.ClientName = ClientName;
         this.ClientId = ClientId;
@@ -109,6 +112,7 @@ public class Project {
     @Generated(hash = 1767516619)
     public Project() {
     }
+
 
     public List<ProjectDetial> getProjectDetials() {
         return ProjectDetials;
@@ -172,6 +176,14 @@ public class Project {
 
     public void setType(String Type) {
         this.Type = Type;
+    }
+
+    public int getTypeCode() {
+        return this.TypeCode;
+    }
+
+    public void setTypeCode(int TypeCode) {
+        this.TypeCode = TypeCode;
     }
 
     public String getMonType() {
@@ -325,5 +337,7 @@ public class Project {
     public void setSamplingUser(List<String> SamplingUser) {
         this.SamplingUser = SamplingUser;
     }
+
+    
 
 }

@@ -70,7 +70,11 @@ public class MethodActivity extends BaseTitileActivity<ApiPresenter> {
             List<Methods> methods = tags.getMMethods();
             if (!CheckUtil.isEmpty(methods)) {
                 mMethods.clear();
-                mMethods.addAll(methods);
+                for (Methods method : methods) {
+                    if (method.getLabelType() == 1) {
+                        mMethods.add(method);
+                    }
+                }
             }
         }
         mMethodAdapter.notifyDataSetChanged();

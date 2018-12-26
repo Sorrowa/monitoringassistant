@@ -1,5 +1,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -65,11 +68,13 @@ import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
@@ -209,7 +214,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             } else {
                 String currentTime = DateUtils.getDate();
                 String endTime = data.getPlanEndTime();
-                int lastDays = DateUtils.getLastDays(currentTime, endTime.split("T")[0]);
+                int lastDays = DateUtils.getLastDays(currentTime, endTime.split(" ")[0]);
                 if (lastDays <= 1) {
                     tvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
                 } else if (lastDays <= 3) {
@@ -217,7 +222,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 } else {
                     tvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
                 }
-                tvTaskTimeRange.setText(data.getPlanBeginTime().split("T")[0].replace("-", "/") + "~" + data.getPlanEndTime().split("T")[0].replace("-", "/"));
+                tvTaskTimeRange.setText(data.getPlanBeginTime().split(" ")[0].replace("-", "/") + "~" + data.getPlanEndTime().split(" ")[0].replace("-", "/"));
             }
 
             StringBuilder users = new StringBuilder("");
@@ -260,7 +265,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             tvTaskProjectNum.setText("项目:" + monItems.toString());
             tvTaskType.setText("样品性质:" + data.getMonType());
             tvTaskPerson.setText("人员：" + users.toString());
-            tvTaskStartTime.setText("下达:" + data.getAssignDate().split("T")[0].replace("-", "/"));
+            tvTaskStartTime.setText("下达:" + data.getAssignDate().split(" ")[0].replace("-", "/"));
 
             tvSamplingPointCount.setText("共" + projectDetials.size() + "个");
         }
@@ -380,6 +385,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
                 }
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                showDeleteDialog(position);
             }
 
             @Override
@@ -777,6 +787,30 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         //接口提交数据
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+    }
+
+    private void showDeleteDialog(int position) {
+
+        final Sampling sampling = mSamplings.get(position);
+
+        final Dialog dialog = new AlertDialog.Builder(this)
+                .setMessage("确定删除采样单？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DBHelper.get().getSamplingDao().delete(sampling);
+                        getSampling(mTagId);
+                        showMessage("删除采样单成功");
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 
 }

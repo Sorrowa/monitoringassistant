@@ -21,15 +21,16 @@ public class EnvirPoint {
     @Id
     private String Id;
     private String Name;
-    private String    Code;
+    private String Code;
     private double Longtitude;
     private double Latitude;
     private String TagId;
     private String TagName;
     private String UpdateTime;
+
     @Generated(hash = 1832485445)
     public EnvirPoint(String Id, String Name, String Code, double Longtitude,
-            double Latitude, String TagId, String TagName, String UpdateTime) {
+                      double Latitude, String TagId, String TagName, String UpdateTime) {
         this.Id = Id;
         this.Name = Name;
         this.Code = Code;
@@ -39,58 +40,74 @@ public class EnvirPoint {
         this.TagName = TagName;
         this.UpdateTime = UpdateTime;
     }
+
     @Generated(hash = 1000807744)
     public EnvirPoint() {
     }
+
     public String getId() {
         return this.Id;
     }
+
     public void setId(String Id) {
         this.Id = Id;
     }
+
     public String getName() {
         return this.Name;
     }
+
     public void setName(String Name) {
         this.Name = Name;
     }
+
     public String getCode() {
         return this.Code;
     }
+
     public void setCode(String Code) {
         this.Code = Code;
     }
+
     public double getLongtitude() {
         return this.Longtitude;
     }
+
     public void setLongtitude(double Longtitude) {
         this.Longtitude = Longtitude;
     }
+
     public double getLatitude() {
         return this.Latitude;
     }
+
     public void setLatitude(double Latitude) {
         this.Latitude = Latitude;
     }
+
     public String getTagId() {
         return this.TagId;
     }
+
     public void setTagId(String TagId) {
         this.TagId = TagId;
     }
+
     public String getTagName() {
         return this.TagName;
     }
+
     public void setTagName(String TagName) {
         this.TagName = TagName;
     }
+
     public String getUpdateTime() {
         return this.UpdateTime;
     }
+
     public void setUpdateTime(String UpdateTime) {
         this.UpdateTime = UpdateTime;
     }
 
-   
 
 }
