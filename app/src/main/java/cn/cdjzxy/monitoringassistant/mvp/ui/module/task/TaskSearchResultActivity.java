@@ -81,7 +81,7 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
         QueryBuilder<Project> queryBuilder = DBHelper.get().getProjectDao().queryBuilder();
 
-        if (startDate.contains("1900-01-01")) {
+        if (CheckUtil.isEmpty(startDate)) {
             if (CheckUtil.isEmpty(types)) {
                 queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
             } else {

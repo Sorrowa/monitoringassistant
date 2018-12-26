@@ -164,7 +164,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     @Override
     public void showLoading() {
-        showLoadingDialog("数据提交中...");
+        showLoadingDialog("数据提交中...", false);
     }
 
     @Override
@@ -385,7 +385,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
-                    if (mProject.getCanSamplingEidt()){
+                    if (mProject.getCanSamplingEidt()) {
                         uploadProjecteContentData();
                     }
                     uploadSamplingData(position);
@@ -719,9 +719,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         sampFormBean.setComment(sampling.getComment());
         sampFormBean.setFormFlows(sampling.getFormFlows());
 
-
-        if (sampling.getSamplingFormStandResults() != null
-                && sampling.getSamplingFormStandResults().size() > 0) {
+        if (sampling.getSamplingFormStandResults() != null && sampling.getSamplingFormStandResults().size() > 0) {
 
             ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
             for (SamplingFormStand samplingFormStand : sampling.getSamplingFormStandResults()) {
@@ -747,7 +745,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         samplingFormStandsBeans.add(samplingFormStandsBean);
 
         sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
-
 
         if (!CheckUtil.isEmpty(samplingDetails)) {
 

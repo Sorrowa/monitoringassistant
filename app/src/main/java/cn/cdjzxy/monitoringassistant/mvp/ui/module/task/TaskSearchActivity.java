@@ -248,13 +248,16 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
                     startDate = DateUtils.getDate(7);
                 } else if (i == 2) {
                     startDate = DateUtils.getDate(15);
+                } else {
+                    startDate = "";
                 }
             }
         }
 
-        startDate = startDate + "T00:00:00";
-
-        String endDate = DateUtils.getDate() + "T00:00:00";
+        if (!CheckUtil.isEmpty(startDate)){
+            startDate = startDate + "T00:00:00";
+        }
+        String endDate = DateUtils.getDate() + "T23:59:59";
 
         ArrayList<String> types = new ArrayList<>();
         for (Tab taskType : mTaskTypes) {

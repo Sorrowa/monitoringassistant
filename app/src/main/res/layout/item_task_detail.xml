@@ -10,20 +10,20 @@
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/dp_16"
-        android:paddingRight="@dimen/dp_16">
+        android:paddingLeft="@dimen/dp_8"
+        android:paddingRight="@dimen/dp_8">
 
         <ImageView
             android:id="@+id/iv_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="@dimen/dp_8"
             android:src="@mipmap/ic_cb_nor" />
 
         <ImageView
             android:id="@+id/iv_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_8"
             android:src="@mipmap/ic_water" />
 
         <LinearLayout
@@ -121,7 +121,7 @@
             android:id="@+id/iv_upload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_8"
+            android:padding="@dimen/dp_8"
             android:src="@mipmap/ic_upload" />
 
     </LinearLayout>

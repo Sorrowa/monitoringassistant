@@ -68,7 +68,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         requestPermission();
 
         String username = UserInfoHelper.get().getUserName();
-        etName.setText(CheckUtil.isEmpty(username) ? "liuyang" : username);
+        etName.setText(CheckUtil.isEmpty(username) ? "" : username);
         //        etPwd.setText("123456");
         // 双击退出
         mExitHelper = new ExitHelper.TwicePressHolder(new ExitHelper.IExitInterface() {

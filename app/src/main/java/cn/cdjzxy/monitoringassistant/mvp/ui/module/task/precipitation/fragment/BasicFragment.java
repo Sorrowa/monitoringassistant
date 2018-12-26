@@ -385,7 +385,7 @@ public class BasicFragment extends BaseFragment {
                         if (resultCode == Activity.RESULT_OK) {
                             PrecipitationActivity.mSampling.setAddressName(data.getStringExtra("Address"));
                             PrecipitationActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
-                            PrecipitationActivity.mSampling.setAddressNo(data.getStringExtra("AddressNo") );
+                            PrecipitationActivity.mSampling.setAddressNo(data.getStringExtra("AddressNo"));
                             tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
                             tvSamplingNo.setText(PrecipitationActivity.mSampling.getSamplingNo());
                         }
@@ -393,7 +393,7 @@ public class BasicFragment extends BaseFragment {
                 });
                 break;
             case R.id.tv_sampling_method:
-                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getTagId())) {
+                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getParentTagId())) {
                     ArtUtils.makeText(getContext(), "请先选择降水类型");
                     return;
                 }
