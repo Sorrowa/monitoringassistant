@@ -1,6 +1,9 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +22,7 @@ import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
+import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.json.JSONException;
@@ -41,9 +45,11 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.MyInputFilter;
+import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
 /**
@@ -165,7 +171,7 @@ public class CollectionDetailFragment extends BaseFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            etPrecipitation.setText(samplingDetail.getValue());
+            etPrecipitation.setText(samplingDetail.getValue1());
             etRemark.setText(samplingDetail.getDescription());
         }
 
@@ -194,9 +200,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 initTimePickerView();
                 break;
             case R.id.btn_delete:
-                mSampling.getSamplingDetailResults().remove(listPosition);
-                ArtUtils.makeText(getContext(), "删除成功");
-                EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                showDelDialog();
                 break;
             case R.id.btn_save:
                 if (saveCheck()) {
@@ -219,6 +223,7 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setPrivateData(new JSONObject(map).toString());
 
                     samplingDetail.setValue(etPrecipitation.getText().toString());
+                    samplingDetail.setValue1(etPrecipitation.getText().toString());
                     samplingDetail.setDescription(etRemark.getText().toString());
 
                     if (listPosition == -1) {
@@ -287,5 +292,27 @@ public class CollectionDetailFragment extends BaseFragment {
                 .isCyclic(true)
                 .build();
         pvTime.show();
+    }
+
+    private void showDelDialog() {
+
+        final Dialog dialog = new AlertDialog.Builder(getContext())
+                .setMessage("确定删除数据？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSampling.getSamplingDetailResults().remove(listPosition);
+                        ArtUtils.makeText(getContext(), "删除成功");
+                        EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
     }
 }

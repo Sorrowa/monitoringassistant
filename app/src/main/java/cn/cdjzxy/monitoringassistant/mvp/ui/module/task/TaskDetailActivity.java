@@ -736,11 +736,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
         }
 
-        // TODO: 2018/12/23 测试添加 需掉采样规范接口
+        // TODO: 2018/12/23 测试添加 需调采样规范接口
         ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
         PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
-        samplingFormStandsBean.setSamplingId("00000000-0000-0000-0000-000000000000");// TODO: 2018/12/23 根据接口去取 参数为降水量
-        samplingFormStandsBean.setMonitemIds("7253950a-9daa-9d4f-bd9a-a84789279c2a");// TODO: 2018/12/23 根据接口去取 参数为降水量
+        samplingFormStandsBean.setSamplingId("00000000-0000-0000-0000-000000000000");
+        samplingFormStandsBean.setMonitemIds("7253950a-9daa-9d4f-bd9a-a84789279c2a");
         samplingFormStandsBean.setMonitemName("降水量");
         samplingFormStandsBeans.add(samplingFormStandsBean);
 
@@ -756,8 +756,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
                 samplingDetailsBean.setProjectId(sampFormBean.getProjectId());
                 samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
-                samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");// TODO: 2018/12/23 根据接口去取 参数为降水量
-                samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");// TODO: 2018/12/23 根据接口去取 参数为降水量
+                samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
+                samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
                 samplingDetailsBean.setMonitemName("降水量");
                 samplingDetailsBean.setAddresssId(sampFormBean.getAddressId());
                 samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
