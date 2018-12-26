@@ -83,18 +83,16 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
 
         if (CheckUtil.isEmpty(startDate)) {
             if (CheckUtil.isEmpty(types)) {
-                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword));
             } else {
-                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
-                queryBuilder.where(ProjectDao.Properties.Type.in(types));
+
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Type.in(types));
             }
         } else {
             if (CheckUtil.isEmpty(types)) {
-                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
-                queryBuilder.where(ProjectDao.Properties.PlanEndTime.between(startDate, endDate));
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate));
             } else {
-                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
-                queryBuilder.where(ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
             }
         }
 

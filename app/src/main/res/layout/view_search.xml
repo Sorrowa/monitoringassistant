@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@null"
-        android:hint="请输入任务名称/编号"
+        android:hint="请输入任务编号"
         android:paddingLeft="@dimen/dp_12" />
 
     <ImageView
