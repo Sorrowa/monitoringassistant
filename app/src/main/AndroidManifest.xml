@@ -38,6 +38,7 @@
             android:name=".mvp.ui.module.launch.LoginActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
+            android:launchMode="singleTop"
             android:theme="@style/AppTransparentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -138,7 +139,6 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
-
         <activity
             android:name=".mvp.ui.module.task.point.MonItemActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -153,6 +153,7 @@
             android:name=".mvp.ui.module.task.UserActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
+
         <activity
             android:name=".mvp.ui.module.task.MethodActivity"
             android:configChanges="orientation|keyboardHidden"

@@ -5,18 +5,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jakewharton.rxbinding3.view.RxView;
 import com.wonders.health.lib.base.base.BaseHolder;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import io.reactivex.functions.Consumer;
+import kotlin.Unit;
 
 /**
  * 主页tab
@@ -67,12 +72,22 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
             }
         });
 
-        mIvUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSamplingListener.onUpload(v, position);
-            }
-        });
+        RxView.clicks(mIvUpload)
+                .throttleFirst(3, TimeUnit.SECONDS)//在一秒内只取第一次点击
+                .subscribe(new Consumer<Unit>() {
+                    @Override
+                    public void accept(Unit unit) throws Exception {
+                        onSamplingListener.onUpload(mIvUpload, position);
+                    }
+                });
+
+
+        //        mIvUpload.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                onSamplingListener.onUpload(v, position);
+        //            }
+        //        });
 
         mLayoutContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +132,12 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
         mTvStatus.setText(data.getStatusName());
         mTvName.setText(data.getFormName());
         mPoint.setText(data.getAddressName());
+
+        if (data.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId())) {
+            mIvType.setBackgroundResource(R.drawable.shape_task_detail_blue);
+        } else {
+            mIvType.setBackgroundResource(R.drawable.shape_task_detail_yellow);
+        }
 
         if (data.getStatus() == 0 || data.getStatus() == 4 || data.getStatus() == 9) {
             mIvUpload.setImageResource(R.mipmap.ic_upload);

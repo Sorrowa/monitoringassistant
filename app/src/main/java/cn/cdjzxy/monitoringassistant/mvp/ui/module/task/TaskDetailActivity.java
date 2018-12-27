@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -136,6 +137,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private boolean isSelecteAll = false;
     private Sampling sampling;
 
+
+    private EditText mEtComment;
+    private TextView mTvCancel;
+    private TextView mTvOk;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         mTitleBarView = titleBar;
@@ -144,7 +150,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTitleBarView.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                putSamplingFinish("测试");
+                showFinishDialog();
+                //                putSamplingFinish("测试");
             }
         });
     }
@@ -194,7 +201,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case 259:
                 showMessage("数据提交成功");
-                DBHelper.get().getSamplingDao().delete(sampling);
+                sampling.setIsCanEdit(false);
+                sampling.setIsUpload(true);
+                sampling.setStatusName("已提交");
+                sampling.setStatus(7);
+                sampling.setSubmitDate(DateUtils.getDate());
+                DBHelper.get().getSamplingDao().update(sampling);
                 getSampling(mTagId);
                 break;
         }
@@ -395,7 +407,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
-                    if (mProject.getCanSamplingEidt()) {
+                    if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
                     uploadSamplingData(position);
@@ -437,6 +449,44 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         }
     }
 
+
+    private void showFinishDialog() {
+        DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
+        dialogPlusBuilder.setContentHolder(new ViewHolder(createFinishDialogContentView()));
+        dialogPlusBuilder.setGravity(Gravity.CENTER);
+        dialogPlusBuilder.setContentWidth(700);
+        dialogPlusBuilder.setContentHeight(800);
+        dialogPlusBuilder.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(@NonNull DialogPlus dialog, @NonNull View view) {
+                mDialogPlus.dismiss();
+            }
+        });
+        mDialogPlus = dialogPlusBuilder.create();
+        mDialogPlus.show();
+    }
+
+    private View createFinishDialogContentView() {
+        View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_sampling_finish, null);
+        mEtComment = view.findViewById(R.id.et_comment);
+        mTvOk = view.findViewById(R.id.btn_ok);
+        mTvCancel = view.findViewById(R.id.btn_cancel);
+        mTvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialogPlus.dismiss();
+            }
+        });
+
+        mTvOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialogPlus.dismiss();
+                putSamplingFinish(mEtComment.getText().toString());
+            }
+        });
+        return view;
+    }
 
     /**
      * 显示要素选择框
@@ -524,7 +574,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     }
 
     private void getSampling(String tagId) {
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(mProject.getId()), SamplingDao.Properties.ParentTagId.eq(tagId)).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(mProject.getId()), SamplingDao.Properties.ParentTagId.eq(tagId)).orderDesc(SamplingDao.Properties.SamplingNo).list();
         mSamplings.clear();
         if (!CheckUtil.isEmpty(samplings)) {
             mSamplings.addAll(samplings);
@@ -579,7 +629,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void putSamplingFinish(String comment) {
         showLoading();
         //接口提交数据
-        mPresenter.putSamplingFinish(Message.obtain(this, new Object()), mProject.getId(), comment);
+        mPresenter.putSamplingFinish(Message.obtain(this, new Object()), mProject.getId(), CheckUtil.isEmpty(comment) ? "" : comment);
     }
 
     /**
@@ -680,8 +730,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * 提交采样单数据
      */
     private void uploadSamplingData(int position) {
-        showLoading();
         sampling = mSamplings.get(position);
+        if (!sampling.getIsFinish()) {
+            showMessage("请先完善采样单信息！");
+            return;
+        }
+
+        showLoading();
+
         //采样单 图片文件
         List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
         //采样单 样品采集

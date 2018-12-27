@@ -80,6 +80,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
                 if (mProject.getCanSamplingEidt()) {
                     Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
                     intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
+                    intent.putExtra("projectId", projectId);
                     ArtUtils.startActivity(intent);
                 }
 

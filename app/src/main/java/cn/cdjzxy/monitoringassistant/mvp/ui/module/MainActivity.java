@@ -22,6 +22,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.widget.badgeview.BadgeView;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
@@ -34,7 +35,10 @@ import java.util.List;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MainTabAdapter;
@@ -66,6 +70,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     RecyclerView recyclerView;
     @BindView(R.id.layout_container)
     FrameLayout  layoutContainer;
+
+    private BadgeView mBadgeView;
 
     private NumberProgressBar mNumberProgressBar;
     private TextView          mTvHint;
@@ -140,6 +146,18 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             }
         }, 3000);
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<Msg> msgs = DBHelper.get().getMsgDao().queryBuilder().where(MsgDao.Properties.MsgStatus.eq(0)).list();
+        if (!CheckUtil.isEmpty(msgs)) {
+            mBadgeView.setVisibility(View.VISIBLE);
+        } else {
+            mBadgeView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -222,8 +240,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      */
     private View getTitleRightView() {
         View view = LayoutInflater.from(this).inflate(R.layout.view_main_title_right, null);
-
-
+        mBadgeView = view.findViewById(R.id.red_hot);
         return view;
     }
 
@@ -422,7 +439,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
     }
-
 
 
 }

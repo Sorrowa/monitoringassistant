@@ -169,7 +169,7 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
     public void showLoadingDialog(String str) {
-        showLoadingDialog(str, true);
+        showLoadingDialog(str, false);
     }
 
 
@@ -208,12 +208,5 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
             dialog = null;
         }
     }
-
-
-    @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
-    private void reLogin(boolean isReLogin) {
-
-    }
-
 
 }

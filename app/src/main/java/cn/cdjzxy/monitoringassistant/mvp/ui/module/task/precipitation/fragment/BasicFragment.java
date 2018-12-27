@@ -142,6 +142,34 @@ public class BasicFragment extends BaseFragment {
             tvComment.setText(PrecipitationActivity.mSampling.getComment());
             List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
             mSamplingFiles.addAll(samplingFiles);
+
+            tvSamplingDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingUser.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingType.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingPoint.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingNo.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingHeight.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            etSamplingArea.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingDevice.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvFlowMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvFlowDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvComment.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+
+            //            if (!PrecipitationActivity.mSampling.getIsCanEdit()) {
+            //                tvSamplingDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingUser.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingType.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingPoint.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingNo.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingHeight.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                etSamplingArea.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvSamplingDevice.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvFlowMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvFlowDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //                tvComment.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            //            }
         }
 
         //点位编号

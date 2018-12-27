@@ -145,6 +145,10 @@ public class Sampling {
     private String                  Recoding;
     private String                  ProjectNo;
     private String                  file;
+    private boolean                 isUpload;//是否上传
+    private boolean                 isLocal;//是否为本地创建
+    private boolean                 isCanEdit;//是否可编辑
+    private boolean                 isFinish;//是否完成
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String>            SamplingUserResults;
     @Transient
@@ -156,8 +160,12 @@ public class Sampling {
     @Transient
     private boolean                 isSelected;
 
-    @Generated(hash = 491028017)
-    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, List<String> SamplingUserResults) {
+
+
+
+
+    @Generated(hash = 602039907)
+    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, List<String> SamplingUserResults) {
         this.Id = Id;
         this.ProjectId = ProjectId;
         this.SamplingNo = SamplingNo;
@@ -216,12 +224,19 @@ public class Sampling {
         this.Recoding = Recoding;
         this.ProjectNo = ProjectNo;
         this.file = file;
+        this.isUpload = isUpload;
+        this.isLocal = isLocal;
+        this.isCanEdit = isCanEdit;
+        this.isFinish = isFinish;
         this.SamplingUserResults = SamplingUserResults;
     }
 
     @Generated(hash = 1062560110)
     public Sampling() {
     }
+
+
+
 
 
     public List<String> getSamplingUserResults() {
@@ -729,5 +744,36 @@ public class Sampling {
         this.file = file;
     }
 
+    public boolean getIsUpload() {
+        return this.isUpload;
+    }
+
+    public void setIsUpload(boolean isUpload) {
+        this.isUpload = isUpload;
+    }
+
+    public boolean getIsLocal() {
+        return this.isLocal;
+    }
+
+    public void setIsLocal(boolean isLocal) {
+        this.isLocal = isLocal;
+    }
+
+    public boolean getIsCanEdit() {
+        return this.isCanEdit;
+    }
+
+    public void setIsCanEdit(boolean isCanEdit) {
+        this.isCanEdit = isCanEdit;
+    }
+
+    public boolean getIsFinish() {
+        return this.isFinish;
+    }
+
+    public void setIsFinish(boolean isFinish) {
+        this.isFinish = isFinish;
+    }
 
 }

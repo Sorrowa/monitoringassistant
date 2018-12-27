@@ -71,15 +71,18 @@ public class Project {
     private String              PlanBeginTime;
     private String              PlanEndTime;
     private boolean             CanSamplingEidt;//是否允许修改方案
+    private boolean             isSamplingEidt;//是否修改方案
+
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String>        SamplingUser;
     @Transient
     private List<ProjectDetial> ProjectDetials;
 
 
-    @Generated(hash = 564896190)
+
+    @Generated(hash = 1673097065)
     public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, int TypeCode, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, boolean CanSamplingEidt,
-            List<String> SamplingUser) {
+            boolean isSamplingEidt, List<String> SamplingUser) {
         this.Id = Id;
         this.UpdateTime = UpdateTime;
         this.Name = Name;
@@ -106,12 +109,14 @@ public class Project {
         this.PlanBeginTime = PlanBeginTime;
         this.PlanEndTime = PlanEndTime;
         this.CanSamplingEidt = CanSamplingEidt;
+        this.isSamplingEidt = isSamplingEidt;
         this.SamplingUser = SamplingUser;
     }
 
     @Generated(hash = 1767516619)
     public Project() {
     }
+
 
 
     public List<ProjectDetial> getProjectDetials() {
@@ -330,6 +335,14 @@ public class Project {
         this.CanSamplingEidt = CanSamplingEidt;
     }
 
+    public boolean getIsSamplingEidt() {
+        return this.isSamplingEidt;
+    }
+
+    public void setIsSamplingEidt(boolean isSamplingEidt) {
+        this.isSamplingEidt = isSamplingEidt;
+    }
+
     public List<String> getSamplingUser() {
         return this.SamplingUser;
     }
@@ -338,6 +351,6 @@ public class Project {
         this.SamplingUser = SamplingUser;
     }
 
-    
+
 
 }

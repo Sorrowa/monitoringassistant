@@ -55,8 +55,8 @@ public class CollectionFragment extends BaseFragment {
     RelativeLayout btnPrintLabel;
 
     private PrecipitationCollectAdapter mPrecipitationCollectAdapter;
-    private SharedPreferences collectListSettings;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences           collectListSettings;
+    private SharedPreferences.Editor    editor;
 
     public CollectionFragment() {
     }
@@ -110,7 +110,7 @@ public class CollectionFragment extends BaseFragment {
         if (isVisibleToUser) {
             if (mPrecipitationCollectAdapter != null) {
                 mPrecipitationCollectAdapter.notifyDataSetChanged();
-            }else {
+            } else {
                 initRecyclerViewData();
             }
         }
@@ -129,7 +129,7 @@ public class CollectionFragment extends BaseFragment {
                     ArtUtils.makeText(getContext(), "请先选择采样点位");
                     return;
                 }
-                editor.putInt("listPosition",-1);
+                editor.putInt("listPosition", -1);
                 editor.commit();
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                 break;
@@ -140,6 +140,13 @@ public class CollectionFragment extends BaseFragment {
     }
 
     private void initRecyclerViewData() {
+
+        if (!PrecipitationActivity.mSampling.getIsCanEdit()) {
+            btnAddParallel.setVisibility(View.GONE);
+            btnAddBlank.setVisibility(View.GONE);
+            btnPrintLabel.setVisibility(View.GONE);
+        }
+
         if (PrecipitationActivity.mSampling.getSamplingDetailResults() == null) {
             return;
         }
@@ -155,7 +162,7 @@ public class CollectionFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
-                editor.putInt("listPosition",position);
+                editor.putInt("listPosition", position);
                 editor.commit();
             }
         });

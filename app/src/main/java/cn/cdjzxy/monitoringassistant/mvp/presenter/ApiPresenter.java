@@ -864,9 +864,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     if (!CheckUtil.isEmpty(samplingDetails)) {
                                         DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
                                     }
+                                    sampling.setIsCanEdit(sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9 ? true : false);
+                                    sampling.setIsCanEdit(sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()));
+                                    sampling.setIsLocal(false);
+                                    DBHelper.get().getSamplingDao().insert(sampling);
                                 }
-
-                                DBHelper.get().getSamplingDao().insertInTx(samplings);
                             }
                         }
                         msg.what = Message.RESULT_OK;

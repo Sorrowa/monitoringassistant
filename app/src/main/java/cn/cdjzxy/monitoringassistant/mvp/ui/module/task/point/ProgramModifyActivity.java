@@ -32,7 +32,9 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
@@ -75,6 +77,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
 
+    private Project       mProject;
     private ProjectDetial mProjectDetial;
 
     private DialogPlus mDialogPlus;
@@ -108,7 +111,9 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         btnPrintLabel.setVisibility(View.GONE);
         tvAddParallel.setText("删除");
         tvAddBlank.setText("保存");
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
         mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
+
         bindView(mProjectDetial);
     }
 
@@ -164,6 +169,9 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
             case R.id.btn_add_parallel:
                 DBHelper.get().getProjectDetialDao().delete(mProjectDetial);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
+
+                mProject.setIsSamplingEidt(true);
+                DBHelper.get().getProjectDao().update(mProject);
                 ArtUtils.makeText(this, "删除采样点位数据成功");
                 finish();
                 break;
@@ -173,6 +181,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mProjectDetial.setComment(etComment.getText().toString());
                 mProjectDetial.setUpdateTime(DateUtils.getWholeDate());
                 DBHelper.get().getProjectDetialDao().update(mProjectDetial);
+                mProject.setIsSamplingEidt(true);
+                DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
                 ArtUtils.makeText(this, "保存采样点位数据成功");
                 finish();

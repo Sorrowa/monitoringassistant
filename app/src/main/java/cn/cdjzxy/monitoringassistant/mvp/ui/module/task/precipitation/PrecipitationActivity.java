@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
@@ -27,6 +29,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
@@ -71,49 +74,13 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
 
     public static Sampling mSampling;
 
+    private TitleBarView mTitleBarView;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.setTitleMainText("降水采样交接记录单");
-        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.startActivity(FormPrintActivity.class);
-            }
-        }));
-        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
-                    List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-                    if (!CheckUtil.isEmpty(samplingFiles)) {
-                        DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
-                    }
-                    mSampling.getSamplingFiless().remove(0);
-                    DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
-                }
-
-                if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
-                    List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-                    if (!CheckUtil.isEmpty(samplingDetails)) {
-                        DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
-                    }
-                    DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailResults());
-                }
-
-                if (isNewCreate) {
-                    DBHelper.get().getSamplingDao().insert(mSampling);
-                    isNewCreate = false;
-                } else {
-                    DBHelper.get().getSamplingDao().update(mSampling);
-                }
-
-                EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-                ArtUtils.makeText(getApplicationContext(), "数据保存成功");
-            }
-        }));
-
-        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
+        mTitleBarView = titleBar;
+        mTitleBarView.setTitleMainText("降水采样交接记录单");
+        mTitleBarView.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBack();
@@ -154,6 +121,50 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
             mSampling.setSamplingDetailResults(samplingDetails);
         }
+
+        if (mSampling.getIsCanEdit()) {
+            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArtUtils.startActivity(FormPrintActivity.class);
+                }
+            }));
+            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
+                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+                        if (!CheckUtil.isEmpty(samplingFiles)) {
+                            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+                        }
+                        mSampling.getSamplingFiless().remove(0);
+                        DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
+                    }
+
+                    if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+                        if (!CheckUtil.isEmpty(samplingDetails)) {
+                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
+                        }
+                        DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailResults());
+                    }
+
+                    mSampling.setIsFinish(isSamplingFinish());
+                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                    if (isNewCreate) {
+                        DBHelper.get().getSamplingDao().insert(mSampling);
+                        isNewCreate = false;
+                    } else {
+                        DBHelper.get().getSamplingDao().update(mSampling);
+                    }
+
+                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+                    ArtUtils.makeText(getApplicationContext(), "数据保存成功");
+                }
+            }));
+        }
+
         initTabData();
         openFragment(0);
     }
@@ -236,6 +247,9 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
         sampling.setSamplingTimeBegin(DateUtils.getDate());
         sampling.setSamplingDetailResults(new ArrayList<>());
+        sampling.setIsLocal(true);
+        sampling.setIsUpload(false);
+        sampling.setIsCanEdit(true);
         return sampling;
     }
 
@@ -264,6 +278,37 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
         return samplingNo.toString();
+    }
+
+
+    /**
+     * 采样是否完成
+     *
+     * @return
+     */
+    private boolean isSamplingFinish() {
+        if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getTagName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
+            return false;
+        }
+        return true;
     }
 
 }

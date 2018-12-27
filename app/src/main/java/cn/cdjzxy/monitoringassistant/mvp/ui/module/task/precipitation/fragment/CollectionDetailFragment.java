@@ -44,6 +44,7 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -82,7 +83,7 @@ public class CollectionDetailFragment extends BaseFragment {
     RelativeLayout btnSave;
     private Sampling mSampling;
     private boolean  isStartTime;
-    private int listPosition;
+    private int      listPosition;
 
 
     public CollectionDetailFragment() {
@@ -97,6 +98,8 @@ public class CollectionDetailFragment extends BaseFragment {
     public void initData(@Nullable Bundle savedInstanceState) {
         etPrecipitation.setFilters(new InputFilter[]{new MyInputFilter(2)});
         etRainwaterVolume.setFilters(new InputFilter[]{new MyInputFilter(2)});
+
+
     }
 
     @Nullable
@@ -126,7 +129,6 @@ public class CollectionDetailFragment extends BaseFragment {
             etPrecipitation.setText("");
             etRainwaterVolume.setText("");
             etRemark.setText("");
-
             creatSampleDetailNo();
         }
     }
@@ -136,8 +138,8 @@ public class CollectionDetailFragment extends BaseFragment {
 
         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
 
-        SharedPreferences collectListSettings= getActivity().getSharedPreferences("setting", 0);
-        listPosition = collectListSettings.getInt("listPosition",-1);
+        SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
+        listPosition = collectListSettings.getInt("listPosition", -1);
 
         if (listPosition == -1) {
             //添加 生成编码
@@ -158,12 +160,12 @@ public class CollectionDetailFragment extends BaseFragment {
 
             tvSampleCode.setText(samplingNo);
             tvFrequency.setText(snFrequency + "");
-        }else {
+        } else {
             btnDelete.setVisibility(View.VISIBLE);
 
             SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
             tvSampleCode.setText(samplingDetail.getSampingCode());
-            tvFrequency.setText(samplingDetail.getFrequecyNo()+"");
+            tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
 
             String privateData = samplingDetail.getPrivateData();
             try {
@@ -176,6 +178,16 @@ public class CollectionDetailFragment extends BaseFragment {
             }
             etPrecipitation.setText(samplingDetail.getValue1());
             etRemark.setText(samplingDetail.getDescription());
+        }
+
+        if (!mSampling.getIsCanEdit()) {
+            btnDelete.setVisibility(View.GONE);
+            btnSave.setVisibility(View.GONE);
+            tvStartTime.setEnabled(mSampling.getIsCanEdit());
+            tvEndTime.setEnabled(mSampling.getIsCanEdit());
+            etPrecipitation.setEnabled(mSampling.getIsCanEdit());
+            etRainwaterVolume.setEnabled(mSampling.getIsCanEdit());
+            etRemark.setEnabled(mSampling.getIsCanEdit());
         }
 
     }
@@ -212,9 +224,9 @@ public class CollectionDetailFragment extends BaseFragment {
             case R.id.btn_save:
                 if (saveCheck()) {
                     SamplingDetail samplingDetail;
-                    if (listPosition ==-1) {
+                    if (listPosition == -1) {
                         samplingDetail = new SamplingDetail();
-                    }else {
+                    } else {
                         samplingDetail = mSampling.getSamplingDetailResults().get(listPosition);
                     }
 
@@ -242,12 +254,24 @@ public class CollectionDetailFragment extends BaseFragment {
                         mSampling.setSamplingDetailResults(samplingDetailResults);
                     }
 
+
+                    mSampling.setIsFinish(isSamplingFinish());
+                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                    Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                    if (CheckUtil.isNull(sampling)) {
+                        DBHelper.get().getSamplingDao().insert(mSampling);
+                    } else {
+                        DBHelper.get().getSamplingDao().update(mSampling);
+                    }
+
                     SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getId())).unique();
                     if (!CheckUtil.isNull(samplingDetails)) {
                         DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
                     }
                     DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
 
+
+                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                     ArtUtils.makeText(getContext(), "保存成功");
                 }
@@ -307,8 +331,8 @@ public class CollectionDetailFragment extends BaseFragment {
         pvTime.show();
     }
 
-    private void showDelDialog() {
 
+    private void showDelDialog() {
         final Dialog dialog = new AlertDialog.Builder(getContext())
                 .setMessage("确定删除数据？")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
@@ -334,5 +358,36 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
                 }).create();
         dialog.show();
+    }
+
+    /**
+     * 采样是否完成
+     *
+     * @return
+     */
+    private boolean isSamplingFinish() {
+        if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getTagName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
+            return false;
+        }
+        return true;
+
     }
 }
