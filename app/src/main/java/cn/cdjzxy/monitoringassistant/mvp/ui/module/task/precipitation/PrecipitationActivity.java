@@ -222,7 +222,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setProjectName(project.getName());
         sampling.setProjectNo(project.getProjectNo());
         sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(project.getMonType());
+        sampling.setMontype(project.getTypeCode() + "");
         sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
         sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
@@ -231,11 +231,11 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         //        sampling.setFormFlows(formSelect.getFormFlows().toString());
         sampling.setParentTagId(formSelect.getTagParentId());
         sampling.setStatusName("进行中");
+        sampling.setStatus(0);
         sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
         sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
         sampling.setSamplingTimeBegin(DateUtils.getDate());
         sampling.setSamplingDetailResults(new ArrayList<>());
-        sampling.setStatus(0);
         return sampling;
     }
 

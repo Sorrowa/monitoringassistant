@@ -61,7 +61,7 @@ public class TaskHolder extends BaseHolder<Project> {
         } else {
             String currentTime = DateUtils.getDate();
             String endTime = data.getPlanEndTime();
-            int lastDays = DateUtils.getLastDays(currentTime, endTime.split("T")[0]);
+            int lastDays = DateUtils.getLastDays(currentTime, endTime.split(" ")[0]);
             if (lastDays <= 1) {
                 mTvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
             } else if (lastDays <= 3) {
@@ -70,7 +70,7 @@ public class TaskHolder extends BaseHolder<Project> {
                 mTvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
             }
 
-            mTvTaskTimeRange.setText(data.getPlanBeginTime().split("T")[0].replace("-", "/") + "~" + data.getPlanEndTime().split("T")[0].replace("-", "/"));
+            mTvTaskTimeRange.setText(data.getPlanBeginTime().split(" ")[0].replace("-", "/") + "~" + data.getPlanEndTime().split(" ")[0].replace("-", "/"));
         }
 
         StringBuilder users = new StringBuilder("");
@@ -115,7 +115,7 @@ public class TaskHolder extends BaseHolder<Project> {
         if (CheckUtil.isEmpty(data.getAssignDate())) {
             mTvTaskStartTime.setText("下达:" + "未设置");
         } else {
-            mTvTaskStartTime.setText("下达:" + data.getAssignDate().split("T")[0].replace("-", "/"));
+            mTvTaskStartTime.setText("下达:" + data.getAssignDate().split(" ")[0].replace("-", "/"));
         }
 
     }

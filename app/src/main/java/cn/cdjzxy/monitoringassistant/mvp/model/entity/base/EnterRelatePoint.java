@@ -23,16 +23,17 @@ public class EnterRelatePoint {
     private String Id;
     private String EnterPriseId;
     private String Name;
-    private String    Code;
+    private String Code;
     private String Longtitude;
     private String Latitude;
     private String TagId;
     private String TagName;
     private String UpdateTime;
+
     @Generated(hash = 882419821)
     public EnterRelatePoint(String Id, String EnterPriseId, String Name,
-            String Code, String Longtitude, String Latitude, String TagId,
-            String TagName, String UpdateTime) {
+                            String Code, String Longtitude, String Latitude, String TagId,
+                            String TagName, String UpdateTime) {
         this.Id = Id;
         this.EnterPriseId = EnterPriseId;
         this.Name = Name;
@@ -41,66 +42,84 @@ public class EnterRelatePoint {
         this.Latitude = Latitude;
         this.TagId = TagId;
         this.TagName = TagName;
-        this.UpdateTime = UpdateTime;
-    }
-    @Generated(hash = 2128730093)
-    public EnterRelatePoint() {
-    }
-    public String getId() {
-        return this.Id;
-    }
-    public void setId(String Id) {
-        this.Id = Id;
-    }
-    public String getEnterPriseId() {
-        return this.EnterPriseId;
-    }
-    public void setEnterPriseId(String EnterPriseId) {
-        this.EnterPriseId = EnterPriseId;
-    }
-    public String getName() {
-        return this.Name;
-    }
-    public void setName(String Name) {
-        this.Name = Name;
-    }
-    public String getCode() {
-        return this.Code;
-    }
-    public void setCode(String Code) {
-        this.Code = Code;
-    }
-    public String getLongtitude() {
-        return this.Longtitude;
-    }
-    public void setLongtitude(String Longtitude) {
-        this.Longtitude = Longtitude;
-    }
-    public String getLatitude() {
-        return this.Latitude;
-    }
-    public void setLatitude(String Latitude) {
-        this.Latitude = Latitude;
-    }
-    public String getTagId() {
-        return this.TagId;
-    }
-    public void setTagId(String TagId) {
-        this.TagId = TagId;
-    }
-    public String getTagName() {
-        return this.TagName;
-    }
-    public void setTagName(String TagName) {
-        this.TagName = TagName;
-    }
-    public String getUpdateTime() {
-        return this.UpdateTime;
-    }
-    public void setUpdateTime(String UpdateTime) {
         this.UpdateTime = UpdateTime;
     }
 
+    @Generated(hash = 2128730093)
+    public EnterRelatePoint() {
+    }
+
+    public String getId() {
+        return this.Id;
+    }
+
+    public void setId(String Id) {
+        this.Id = Id;
+    }
+
+    public String getEnterPriseId() {
+        return this.EnterPriseId;
+    }
+
+    public void setEnterPriseId(String EnterPriseId) {
+        this.EnterPriseId = EnterPriseId;
+    }
+
+    public String getName() {
+        return this.Name;
+    }
+
+    public void setName(String Name) {
+        this.Name = Name;
+    }
+
+    public String getCode() {
+        return this.Code;
+    }
+
+    public void setCode(String Code) {
+        this.Code = Code;
+    }
+
+    public String getLongtitude() {
+        return this.Longtitude;
+    }
+
+    public void setLongtitude(String Longtitude) {
+        this.Longtitude = Longtitude;
+    }
+
+    public String getLatitude() {
+        return this.Latitude;
+    }
+
+    public void setLatitude(String Latitude) {
+        this.Latitude = Latitude;
+    }
+
+    public String getTagId() {
+        return this.TagId;
+    }
+
+    public void setTagId(String TagId) {
+        this.TagId = TagId;
+    }
+
+    public String getTagName() {
+        return this.TagName;
+    }
+
+    public void setTagName(String TagName) {
+        this.TagName = TagName;
+    }
+
+    public String getUpdateTime() {
+        return this.UpdateTime;
+    }
+
+    public void setUpdateTime(String UpdateTime) {
+        this.UpdateTime = UpdateTime;
+    }
 
 
 }

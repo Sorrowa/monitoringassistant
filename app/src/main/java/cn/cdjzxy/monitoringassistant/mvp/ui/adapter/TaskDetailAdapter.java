@@ -43,6 +43,8 @@ public class TaskDetailAdapter extends DefaultAdapter<Sampling> {
 
         void onClick(View view, int position);
 
+        void onLongClick(View view, int position);
+
         void onUpload(View view, int position);
     }
 }

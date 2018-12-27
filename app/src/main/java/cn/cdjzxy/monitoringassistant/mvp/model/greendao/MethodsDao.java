@@ -33,6 +33,7 @@ public class MethodsDao extends AbstractDao<Methods, String> {
         public final static Property Code = new Property(1, String.class, "Code", false, "CODE");
         public final static Property Name = new Property(2, String.class, "Name", false, "NAME");
         public final static Property Type = new Property(3, String.class, "Type", false, "TYPE");
+        public final static Property LabelType = new Property(4, int.class, "LabelType", false, "LABEL_TYPE");
     }
 
     private DaoSession daoSession;
@@ -55,7 +56,8 @@ public class MethodsDao extends AbstractDao<Methods, String> {
                 "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: Id
                 "\"CODE\" TEXT," + // 1: Code
                 "\"NAME\" TEXT," + // 2: Name
-                "\"TYPE\" TEXT);"); // 3: Type
+                "\"TYPE\" TEXT," + // 3: Type
+                "\"LABEL_TYPE\" INTEGER NOT NULL );"); // 4: LabelType
     }
 
     /** Drops the underlying database table. */
@@ -87,6 +89,7 @@ public class MethodsDao extends AbstractDao<Methods, String> {
         if (Type != null) {
             stmt.bindString(4, Type);
         }
+        stmt.bindLong(5, entity.getLabelType());
     }
 
     @Override
@@ -112,6 +115,7 @@ public class MethodsDao extends AbstractDao<Methods, String> {
         if (Type != null) {
             stmt.bindString(4, Type);
         }
+        stmt.bindLong(5, entity.getLabelType());
     }
 
     @Override
@@ -131,7 +135,8 @@ public class MethodsDao extends AbstractDao<Methods, String> {
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // Id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // Code
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // Name
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // Type
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // Type
+            cursor.getInt(offset + 4) // LabelType
         );
         return entity;
     }
@@ -142,6 +147,7 @@ public class MethodsDao extends AbstractDao<Methods, String> {
         entity.setCode(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setLabelType(cursor.getInt(offset + 4));
      }
     
     @Override
