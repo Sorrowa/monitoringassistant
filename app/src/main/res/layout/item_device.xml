@@ -34,7 +34,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="xxxx测试仪"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_14" />
 
@@ -45,7 +44,6 @@
                     android:layout_alignParentRight="true"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="检定"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_14" />
 
@@ -63,7 +61,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="3012H型"
                     android:textColor="@color/text_color_666666"
                     android:textSize="@dimen/text_size_13" />
 
@@ -73,7 +70,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="A32939d0sf"
                     android:textColor="@color/text_color_666666"
                     android:textSize="@dimen/text_size_13" />
 
@@ -83,7 +79,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="有效期：2018-11-30"
                     android:textColor="@color/text_color_666666"
                     android:textSize="@dimen/text_size_13" />
 

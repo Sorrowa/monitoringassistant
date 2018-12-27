@@ -455,13 +455,16 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         dialogPlusBuilder.setContentHolder(new ViewHolder(createFinishDialogContentView()));
         dialogPlusBuilder.setGravity(Gravity.CENTER);
         dialogPlusBuilder.setContentWidth(700);
-        dialogPlusBuilder.setContentHeight(800);
         dialogPlusBuilder.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(@NonNull DialogPlus dialog, @NonNull View view) {
                 mDialogPlus.dismiss();
+                if (view.getId() == R.id.btn_ok) {
+                    putSamplingFinish(mEtComment.getText().toString());
+                }
             }
         });
+        dialogPlusBuilder.setContentHeight(400);
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
     }
@@ -469,22 +472,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private View createFinishDialogContentView() {
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_sampling_finish, null);
         mEtComment = view.findViewById(R.id.et_comment);
-        mTvOk = view.findViewById(R.id.btn_ok);
-        mTvCancel = view.findViewById(R.id.btn_cancel);
-        mTvCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialogPlus.dismiss();
-            }
-        });
-
-        mTvOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialogPlus.dismiss();
-                putSamplingFinish(mEtComment.getText().toString());
-            }
-        });
         return view;
     }
 
@@ -497,12 +484,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         dialogPlusBuilder.setGravity(Gravity.CENTER);
         dialogPlusBuilder.setContentWidth(700);
         dialogPlusBuilder.setContentHeight(800);
-        dialogPlusBuilder.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(@NonNull DialogPlus dialog, @NonNull View view) {
-                mDialogPlus.dismiss();
-            }
-        });
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
     }

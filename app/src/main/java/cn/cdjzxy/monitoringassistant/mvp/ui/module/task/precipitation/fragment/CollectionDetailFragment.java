@@ -341,13 +341,24 @@ public class CollectionDetailFragment extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         SamplingDetail samplingDetail1 = mSampling.getSamplingDetailResults().get(listPosition);
 
-                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getId())).unique();
+                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getSamplingId())).unique();
                         if (!CheckUtil.isNull(samplingDetails1)) {
                             DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
                         }
 
                         mSampling.getSamplingDetailResults().remove(listPosition);
+
+                        mSampling.setIsFinish(isSamplingFinish());
+                        mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                        if (CheckUtil.isNull(sampling)) {
+                            DBHelper.get().getSamplingDao().insert(mSampling);
+                        } else {
+                            DBHelper.get().getSamplingDao().update(mSampling);
+                        }
+
                         ArtUtils.makeText(getContext(), "删除成功");
+                        EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                         EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
