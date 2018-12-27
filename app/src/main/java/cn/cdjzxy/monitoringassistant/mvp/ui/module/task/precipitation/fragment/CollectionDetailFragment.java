@@ -203,22 +203,11 @@ public class CollectionDetailFragment extends BaseFragment {
                 initTimePickerView();
                 break;
             case R.id.btn_delete:
-                showDelDialog();
                 if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults()) || listPosition == -1) {
                     ArtUtils.makeText(getContext(), "请先添加采样数据");
                     return;
                 }
-
-                SamplingDetail samplingDetail1 = mSampling.getSamplingDetailResults().get(listPosition);
-
-                SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getId())).unique();
-                if (!CheckUtil.isNull(samplingDetails1)) {
-                    DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
-                }
-
-                mSampling.getSamplingDetailResults().remove(listPosition);
-                ArtUtils.makeText(getContext(), "删除成功");
-                EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                showDelDialog();
                 break;
             case R.id.btn_save:
                 if (saveCheck()) {
@@ -326,6 +315,13 @@ public class CollectionDetailFragment extends BaseFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        SamplingDetail samplingDetail1 = mSampling.getSamplingDetailResults().get(listPosition);
+
+                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getId())).unique();
+                        if (!CheckUtil.isNull(samplingDetails1)) {
+                            DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
+                        }
+
                         mSampling.getSamplingDetailResults().remove(listPosition);
                         ArtUtils.makeText(getContext(), "删除成功");
                         EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
