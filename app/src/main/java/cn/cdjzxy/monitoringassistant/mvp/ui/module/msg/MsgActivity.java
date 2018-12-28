@@ -116,7 +116,7 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> implements IVi
             }
         });
 
-        mMsgs = DBHelper.get().getMsgDao().loadAll();
+        mMsgs = DBHelper.get().getMsgDao().queryBuilder().orderDesc(MsgDao.Properties.SendTime).list();
         mMsgAdapter = new MsgAdapter(mMsgs);
         mMsgAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
