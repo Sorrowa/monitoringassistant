@@ -44,10 +44,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
@@ -187,6 +189,19 @@ public class BasicFragment extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 PrecipitationActivity.mSampling.setAddressNo(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+
+                //点位编号修改后依据新的点位编号重新生成采样单编号
+                String snPointPosition = "采样点位编号未填写";
+                if (!CheckUtil.isEmpty(s.toString())) {
+                    snPointPosition = s.toString();
+                }
+
+                String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
+                for (SamplingDetail samplingDetail : PrecipitationActivity.mSampling.getSamplingDetailResults()) {
+                    String[] sampingCode = samplingDetail.getSampingCode().split("-");
+                    samplingDetail.setSampingCode(sampingCode[0] + "-" + snPointPosition + snUserId + "-" + sampingCode[2]);
+                }
+
             }
         });
 

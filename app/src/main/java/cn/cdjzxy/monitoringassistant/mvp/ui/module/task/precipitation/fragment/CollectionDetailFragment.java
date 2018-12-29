@@ -148,7 +148,10 @@ public class CollectionDetailFragment extends BaseFragment {
             String samplingNo;
 
             String snDate = DateUtils.getDate().replace("-", "").substring(2);
-            String snPointPosition = mSampling.getAddressNo();
+            String snPointPosition = "采样点位编号未填写";
+            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
+                snPointPosition = mSampling.getAddressNo();
+            }
             String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
             int snFrequency = 1;
             if (samplingDetailResults != null
