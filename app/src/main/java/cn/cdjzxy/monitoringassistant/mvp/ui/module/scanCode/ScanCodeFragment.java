@@ -82,16 +82,11 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
 
             @Override
             public void onScanQRCodeOpenCameraError() {
-
+                showMessage("打开摄像机失败，请授权使用摄像机");
             }
         });
 
-        mQR.startCamera(); // 打开后置摄像头开始预览，但是并未开始识别
-        mQR.startSpotAndShowRect(); // 显示扫描框，并且延迟0.1秒后开始识别
-
-
-        mPresenter.getQrInfo(Message.obtain(ScanCodeFragment.this, new Object()), "0218100027");
-
+//        mPresenter.getQrInfo(Message.obtain(ScanCodeFragment.this, new Object()), "0218100027");
     }
 
     @Override
@@ -126,7 +121,10 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
                 }
                 break;
             case Message.RESULT_FAILURE:
-
+                //延时2秒后重新开始扫描，避免重复扫描成功
+                mQR.startSpotDelay(2*1000);
+                //显示扫描框
+                mQR.showScanRect();
                 break;
         }
     }
@@ -155,7 +153,15 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
         mQR.onDestroy();
         super.onDestroyView();
         unbinder.unbind();
+    }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        //开始扫描，跳转到web后跳转回来再次启动扫描
+        mQR.startCamera(); // 打开后置摄像头开始预览，但是并未开始识别
+        mQR.startSpotAndShowRect(); // 显示扫描框，并且延迟0.1秒后开始识别
     }
 
 

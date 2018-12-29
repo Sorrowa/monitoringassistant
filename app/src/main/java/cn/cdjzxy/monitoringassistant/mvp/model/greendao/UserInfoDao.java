@@ -46,8 +46,9 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         public final static Property JobType = new Property(19, String.class, "JobType", false, "JOB_TYPE");
         public final static Property ProfessionalTitle = new Property(20, String.class, "ProfessionalTitle", false, "PROFESSIONAL_TITLE");
         public final static Property Token = new Property(21, String.class, "Token", false, "TOKEN");
-        public final static Property Pwd = new Property(22, String.class, "pwd", false, "PWD");
-        public final static Property IntId = new Property(23, int.class, "intId", false, "INT_ID");
+        public final static Property WebUrl = new Property(22, String.class, "WebUrl", false, "WEB_URL");
+        public final static Property Pwd = new Property(23, String.class, "pwd", false, "PWD");
+        public final static Property IntId = new Property(24, int.class, "intId", false, "INT_ID");
     }
 
 
@@ -85,8 +86,9 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
                 "\"JOB_TYPE\" TEXT," + // 19: JobType
                 "\"PROFESSIONAL_TITLE\" TEXT," + // 20: ProfessionalTitle
                 "\"TOKEN\" TEXT," + // 21: Token
-                "\"PWD\" TEXT," + // 22: pwd
-                "\"INT_ID\" INTEGER NOT NULL );"); // 23: intId
+                "\"WEB_URL\" TEXT," + // 22: WebUrl
+                "\"PWD\" TEXT," + // 23: pwd
+                "\"INT_ID\" INTEGER NOT NULL );"); // 24: intId
     }
 
     /** Drops the underlying database table. */
@@ -209,11 +211,16 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             stmt.bindString(22, Token);
         }
  
+        String WebUrl = entity.getWebUrl();
+        if (WebUrl != null) {
+            stmt.bindString(23, WebUrl);
+        }
+ 
         String pwd = entity.getPwd();
         if (pwd != null) {
-            stmt.bindString(23, pwd);
+            stmt.bindString(24, pwd);
         }
-        stmt.bindLong(24, entity.getIntId());
+        stmt.bindLong(25, entity.getIntId());
     }
 
     @Override
@@ -330,11 +337,16 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             stmt.bindString(22, Token);
         }
  
+        String WebUrl = entity.getWebUrl();
+        if (WebUrl != null) {
+            stmt.bindString(23, WebUrl);
+        }
+ 
         String pwd = entity.getPwd();
         if (pwd != null) {
-            stmt.bindString(23, pwd);
+            stmt.bindString(24, pwd);
         }
-        stmt.bindLong(24, entity.getIntId());
+        stmt.bindLong(25, entity.getIntId());
     }
 
     @Override
@@ -367,8 +379,9 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // JobType
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // ProfessionalTitle
             cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // Token
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // pwd
-            cursor.getInt(offset + 23) // intId
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // WebUrl
+            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // pwd
+            cursor.getInt(offset + 24) // intId
         );
         return entity;
     }
@@ -397,8 +410,9 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         entity.setJobType(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
         entity.setProfessionalTitle(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
         entity.setToken(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setPwd(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setIntId(cursor.getInt(offset + 23));
+        entity.setWebUrl(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setPwd(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
+        entity.setIntId(cursor.getInt(offset + 24));
      }
     
     @Override

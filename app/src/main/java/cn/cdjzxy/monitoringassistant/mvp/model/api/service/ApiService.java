@@ -79,7 +79,7 @@ public interface ApiService {
     @PUT(Api.PWD_MODIFY)
     Observable<BaseResponse> modifyPwd(@QueryMap Map<String, String> params);
 
-    @Headers({DOMAIN_NAME_HEADER + Api.TEMPORARY_SERVER_IP})
+    @Headers({DOMAIN_NAME_HEADER + Api.LOGIN_RESP_WEBURL})
     @GET(Api.QR_INFO)
     Observable<BaseResponse<QrMoreInfo>> getQrModelInfo(@Query("qrCode") String qrCode);
 
