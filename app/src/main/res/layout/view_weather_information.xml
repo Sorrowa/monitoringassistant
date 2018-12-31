@@ -7,16 +7,20 @@
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <RelativeLayout
+        android:id="@+id/weather_info_layout"
+        style="@style/BasicInfoItemStyle">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
             android:text="气象信息（选填）" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle"
-            android:text=""
+        <TextView
+            android:id="@+id/weather_arrow"
+            style="@style/BasicInfoItemTextViewRotateStyle"
             android:hint=""
-            android:rotation="90"/>
+            android:rotation="0"
+            android:text=""/>
 
     </RelativeLayout>
 
@@ -24,17 +28,20 @@
         android:id="@+id/layout_weather_information_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <include layout="@layout/view_line_basic_info" />
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="天气" />
 
-            <TextView style="@style/BasicInfoItemTextViewStyle" />
+            <TextView
+                android:id="@+id/weather_state"
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
@@ -43,10 +50,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="气温" />
+                style="@style/BasicInfoNextItemNameStyle"
+                android:text="气温（℃）" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/weather_temp"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="numberDecimal"
+                android:maxLength="50"/>
 
         </RelativeLayout>
 
@@ -55,10 +66,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="气压" />
+                style="@style/BasicInfoNextItemNameStyle"
+                android:text="气压（kPa）" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/weather_pressure"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="numberDecimal"
+                android:maxLength="50"/>
 
         </RelativeLayout>
 

@@ -7,17 +7,20 @@
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <RelativeLayout
+        android:id="@+id/more_info_layout"
+        style="@style/BasicInfoItemStyle">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
             android:text="更多信息（选填）" />
 
         <TextView
-            style="@style/BasicInfoItemTextViewStyle"
-            android:rotation="90"
-            android:text=""
-            android:hint="" />
+            android:id="@+id/more_arrow"
+            style="@style/BasicInfoItemTextViewRotateStyle"
+            android:hint=""
+            android:rotation="0"
+            android:text="" />
 
     </RelativeLayout>
 
@@ -25,24 +28,22 @@
         android:id="@+id/layout_more_information"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <include layout="@layout/view_line_basic_info" />
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="企业名称" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="泸州老窖"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+            <EditText
+                android:id="@+id/more_name"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="text"
+                android:maxLength="50" />
 
         </RelativeLayout>
 
@@ -51,10 +52,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="企业地址" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/more_address"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="text"
+                android:maxLength="50" />
 
         </RelativeLayout>
 
@@ -63,10 +68,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="处理设施" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/more_device"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="text"
+                android:maxLength="50" />
 
         </RelativeLayout>
 
@@ -75,10 +84,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="受纳水体" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/more_waterbody"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="text"
+                android:maxLength="50" />
 
         </RelativeLayout>
 
