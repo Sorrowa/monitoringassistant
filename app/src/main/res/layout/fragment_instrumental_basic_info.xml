@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测人" />
+
+            <TextView
+                android:id="@+id/tv_test_user"
+                style="@style/BasicInfoItemTextViewStyle"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="选择项目"
+                android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/tv_choose_project"
+                style="@style/BasicInfoItemTextViewStyle" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="分析开始日期" />
+
+            <TextView
+                android:id="@+id/tv_test_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="2018-09-30"
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="分析结束日期" />
+
+            <TextView
+                android:id="@+id/tv_test_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="2018-09-30"
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测方法" />
+
+            <TextView
+                android:id="@+id/tv_test_method"
+                style="@style/BasicInfoItemTextViewStyle" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测仪器名称、型号及编号" />
+
+            <TextView
+                android:id="@+id/tv_test_device"
+                style="@style/BasicInfoItemTextViewStyle" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="备注" />
+
+            <EditText
+                android:id="@+id/tv_comment"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:maxLength="100" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>
