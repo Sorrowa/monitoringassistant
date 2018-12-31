@@ -7,16 +7,19 @@
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <RelativeLayout
+        android:id="@+id/water_info_layout"
+        style="@style/BasicInfoItemStyle">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
             android:text="水体信息（选填）" />
 
         <TextView
-            style="@style/BasicInfoItemTextViewStyle"
+            android:id="@+id/water_arrow"
+            style="@style/BasicInfoItemTextViewRotateStyle"
             android:hint=""
-            android:rotation="90"
+            android:rotation="0"
             android:text="" />
 
     </RelativeLayout>
@@ -25,17 +28,22 @@
         android:id="@+id/layout_water_information_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <include layout="@layout/view_line_basic_info" />
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="水温（℃）" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/water_temp"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="numberDecimal"
+                android:maxLength="50"/>
 
         </RelativeLayout>
 
@@ -44,10 +52,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="流速（m/s）" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/water_speed"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="numberDecimal"
+                android:maxLength="50"/>
 
         </RelativeLayout>
 
@@ -56,10 +68,14 @@
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
             <TextView
-                style="@style/BasicInfoItemNameStyle"
+                style="@style/BasicInfoNextItemNameStyle"
                 android:text="流量（m³/s）" />
 
-            <EditText style="@style/BasicInfoItemEditTextStyle" />
+            <EditText
+                android:id="@+id/water_flow"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:inputType="numberDecimal"
+                android:maxLength="50" />
 
         </RelativeLayout>
 

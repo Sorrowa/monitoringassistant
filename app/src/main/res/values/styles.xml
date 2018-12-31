@@ -52,6 +52,16 @@
         <item name="android:textSize">@dimen/text_size_14</item>
     </style>
 
+    <!-- 下一级信息ItemNameStyle-->
+    <style name="BasicInfoNextItemNameStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/text_color_333333</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+        <item name="android:layout_marginLeft">@dimen/dp_20</item>
+    </style>
+
     <!-- 基础信息ItemEditTextStyle-->
     <style name="BasicInfoItemEditTextStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -67,7 +77,6 @@
         <item name="android:gravity">right</item>
     </style>
 
-
     <!-- 基础信息ItemTextViewStyle-->
     <style name="BasicInfoItemTextViewStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -82,6 +91,16 @@
         <item name="android:minWidth">200dp</item>
         <item name="android:gravity">right</item>
         <item name="android:hint">请选择</item>
+    </style>
+
+    <!-- 基础信息ItemTextViewStyle view rotate-->
+    <style name="BasicInfoItemTextViewRotateStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:drawablePadding">@dimen/dp_8</item>
+        <item name="android:drawableRight">@mipmap/ic_has_next</item>
     </style>
 
 
