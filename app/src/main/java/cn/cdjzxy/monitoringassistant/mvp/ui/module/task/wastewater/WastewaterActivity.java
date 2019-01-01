@@ -83,6 +83,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     public void setTitleBar(TitleBarView titleBar) {
         mTitleBarView=titleBar;
         titleBar.setTitleMainText("水和废水采样及交接记录");
+        /*
         titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +97,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                 ArtUtils.makeText(getApplicationContext(), "保存");
             }
         }));
-
+        */
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,15 +212,16 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
         mFragments = new ArrayList<>();
         mFragments.add(mBasicFragment);
-        mFragments.add(mBottleSplitFragment);
         //mFragments.add(mSiteMonitoringFragment);
         mFragments.add(mCollectionFragment);
+        mFragments.add(mBottleSplitFragment);
         mFragments.add(mCollectionDetailFragment);
         mFragments.add(mBottleSplitDetailFragment);
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
-        viewPager.setOffscreenPageLimit(6);
+        //viewPager.setOffscreenPageLimit(6);
+        viewPager.setOffscreenPageLimit(5);
     }
 
 
@@ -248,6 +250,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
+        /*
         if (viewPager.getCurrentItem() == 5) {
             openFragment(1);
             return;
@@ -255,6 +258,16 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
         if (viewPager.getCurrentItem() == 4) {
             openFragment(3);
+            return;
+        }
+        */
+        if (viewPager.getCurrentItem() == 4) {
+            openFragment(2);
+            return;
+        }
+
+        if (viewPager.getCurrentItem() == 3) {
+            openFragment(1);
             return;
         }
         finish();

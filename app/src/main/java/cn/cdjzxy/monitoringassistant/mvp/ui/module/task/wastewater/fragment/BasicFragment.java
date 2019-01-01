@@ -7,11 +7,14 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -25,9 +28,12 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +44,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -108,6 +115,13 @@ public class BasicFragment extends BaseFragment {
     EditText tv_flow_method;
     @BindView(R.id.tv_flow_date)
     TextView tv_flow_date;
+    @BindView(R.id.iv_add_photo)
+    ImageView iv_add_photo;
+    @BindView(R.id.recyclerview)
+    RecyclerView recyclerview;
+
+    private List<SamplingFile> sampleFiles = new ArrayList<>();
+    private SamplingFileAdapter sampleFileAdapter;
 
     Unbinder unbinder;
 
@@ -174,6 +188,37 @@ public class BasicFragment extends BaseFragment {
 
         }
 
+        base_sample_handle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                base_sample_handle.setChecked(!base_sample_handle.isChecked());
+            }
+        });
+
+        ArtUtils.configRecyclerView(recyclerview, new GridLayoutManager(this.getContext(), 9) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+
+        sampleFiles.add(new SamplingFile());
+
+        sampleFileAdapter = new SamplingFileAdapter(sampleFiles, new SamplingFileAdapter.OnSamplingFileListener() {
+            @Override
+            public void onChoosePhoto() {
+                choosePhoto(REQUEST_CODE);
+            }
+
+            @Override
+            public void onDeletePhoto(int position) {
+                sampleFiles.remove(position);
+                WastewaterActivity.mSample.setSamplingFiless(sampleFiles);
+                sampleFileAdapter.notifyDataSetChanged();
+            }
+        });
+        recyclerview.setAdapter(sampleFileAdapter);
+
 
     }
 
@@ -196,6 +241,19 @@ public class BasicFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             List<String> paths = Matisse.obtainPathResult(data);
             ArtUtils.makeText(getContext(), paths.toString());
+
+            for (String path : paths) {
+                SamplingFile samplingFile = new SamplingFile();
+                File file = new File(path);
+                samplingFile.setId("LC-" + UUID.randomUUID().toString());
+                samplingFile.setFilePath(path);
+                samplingFile.setFileName(file.getName());
+                samplingFile.setSamplingId(PrecipitationActivity.mSampling.getId());
+                sampleFiles.add(samplingFile);
+            }
+
+            WastewaterActivity.mSample.setSamplingFiless(sampleFiles);
+            sampleFileAdapter.notifyDataSetChanged();
         }
     }
 

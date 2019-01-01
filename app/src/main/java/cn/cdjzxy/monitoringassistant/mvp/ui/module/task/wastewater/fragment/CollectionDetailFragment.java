@@ -7,12 +7,16 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckedTextView;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 
 import org.simple.eventbus.EventBus;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -24,6 +28,24 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
  */
 
 public class CollectionDetailFragment extends BaseFragment {
+    @BindView(R.id.sample_code)
+    TextView sample_code;
+    @BindView(R.id.sample_frequency)
+    EditText sample_frequency;
+    @BindView(R.id.sample_quality)
+    EditText sample_quality;
+    @BindView(R.id.sample_monitor_items)
+    TextView sample_monitor_items;
+    @BindView(R.id.sample_monitor)
+    TextView sample_monitor;
+    @BindView(R.id.sample_add_preserve)
+    CheckedTextView sample_add_preserve;
+    @BindView(R.id.sample_compare_monitor)
+    CheckedTextView sample_compare_monitor;
+    @BindView(R.id.sample_mark)
+    TextView sample_mark;
+
+
     Unbinder unbinder;
 
 
@@ -37,6 +59,19 @@ public class CollectionDetailFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        sample_add_preserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sample_add_preserve.setChecked(!sample_add_preserve.isChecked());
+            }
+        });
+
+        sample_compare_monitor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sample_compare_monitor.setChecked(!sample_compare_monitor.isChecked());
+            }
+        });
 
     }
 
@@ -64,8 +99,22 @@ public class CollectionDetailFragment extends BaseFragment {
         unbinder.unbind();
     }
 
-    @OnClick(R.id.btn_back)
-    public void onClick() {
-        EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
+    @OnClick({R.id.btn_back,R.id.sample_monitor_items,R.id.sample_monitor,R.id.btn_delete,R.id.btn_save})
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btn_back:
+                EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
+                break;
+            case R.id.sample_monitor_items:
+                break;
+            case R.id.sample_monitor:
+                break;
+            case R.id.btn_delete:
+                break;
+            case R.id.btn_save:
+                break;
+            default:
+                break;
+        }
     }
 }

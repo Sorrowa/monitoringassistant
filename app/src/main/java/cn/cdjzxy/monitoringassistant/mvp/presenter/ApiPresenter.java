@@ -1015,7 +1015,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
 
         //动态设置weburl
-        RetrofitUrlManager.getInstance().putDomain(Api.LOGIN_RESP_WEBURL, userInfo.getWebUrl());
+        if (!CheckUtil.isEmpty(userInfo.getWebUrl())){
+            RetrofitUrlManager.getInstance().putDomain(Api.LOGIN_RESP_WEBURL, userInfo.getWebUrl());
+        }
     }
 
 }

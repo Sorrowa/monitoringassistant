@@ -42,7 +42,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="样品编码" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/sample_code"
+            style="@style/BasicInfoItemTextViewNoRightDrawableStyle" />
 
     </RelativeLayout>
 
@@ -54,7 +56,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="频次" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <EditText
+            android:id="@+id/sample_frequency"
+            style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
 
@@ -66,7 +70,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="质控" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <EditText
+            android:id="@+id/sample_quality"
+            style="@style/BasicInfoItemEditTextStyle" />
 
     </RelativeLayout>
 
@@ -78,7 +84,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="监测项目（6）" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/sample_monitor_items"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 
@@ -90,7 +98,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="现场监测（0）" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <TextView
+            android:id="@+id/sample_monitor"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 
@@ -102,7 +112,14 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="是否添加保存剂" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <CheckedTextView
+            android:id="@+id/sample_add_preserve"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/icon_switch_button"
+            android:checked="false" />
 
     </RelativeLayout>
 
@@ -114,7 +131,14 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="是否对比监测" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <CheckedTextView
+            android:id="@+id/sample_compare_monitor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/icon_switch_button"
+            android:checked="false" />
 
     </RelativeLayout>
 
@@ -126,7 +150,10 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="备注" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <EditText
+            android:id="@+id/sample_mark"
+            style="@style/BasicInfoItemEditTextStyle"
+            android:maxLength="100"/>
 
     </RelativeLayout>
 

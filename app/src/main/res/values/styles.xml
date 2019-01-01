@@ -93,6 +93,21 @@
         <item name="android:hint">请选择</item>
     </style>
 
+    <!-- 基础信息ItemTextViewStyle no right drawable-->
+    <style name="BasicInfoItemTextViewNoRightDrawableStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:drawablePadding">@dimen/dp_8</item>
+        <item name="android:textColor">@color/text_color_333333</item>
+        <item name="android:textColorHint">@color/text_color_999999</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+        <item name="android:minWidth">200dp</item>
+        <item name="android:gravity">right</item>
+        <item name="android:hint">请选择</item>
+    </style>
+
     <!-- 基础信息ItemTextViewStyle view rotate-->
     <style name="BasicInfoItemTextViewRotateStyle">
         <item name="android:layout_width">wrap_content</item>
