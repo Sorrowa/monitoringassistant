@@ -91,6 +91,11 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".mvp.ui.module.task.instrumental.InstrumentalActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
             android:name=".mvp.ui.module.repository.RepositorySearchActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />

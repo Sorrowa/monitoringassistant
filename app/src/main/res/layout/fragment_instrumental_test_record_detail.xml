@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height_dp_52"
+        android:background="#F5F5F5">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:drawablePadding="@dimen/dp_16"
+            android:drawableRight="@mipmap/ic_has_next"
+            android:gravity="center_vertical"
+            android:text="监测结果"
+            android:textColor="#303030"
+            android:textSize="@dimen/text_size_14" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:gravity="center_vertical"
+            android:text="监测详情"
+            android:textColor="#676767"
+            android:textSize="@dimen/text_size_14" />
+
+
+    </LinearLayout>
+
+    <include layout="@layout/view_line" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="样品编码" />
+
+        <TextView
+            android:id="@+id/tv_sample_code"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="频次" />
+
+        <TextView
+            android:id="@+id/tv_frequency"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="点位" />
+
+        <TextView
+            android:id="@+id/tv_point"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="内控" />
+
+        <TextView
+            android:id="@+id/tv_control"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="监测日期" />
+
+        <TextView
+            android:id="@+id/tv_test_time"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:drawableRight="@null"
+            android:hint=""
+            />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="分析时间" />
+
+        <TextView
+            android:id="@+id/tv_analyse_time"
+            style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="分析结果" />
+
+        <EditText
+            android:id="@+id/et_analyse_result"
+            android:maxLength="100"
+            style="@style/BasicInfoItemEditTextStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <TextView
+            style="@style/BasicInfoItemNameStyle"
+            android:text="结果单位" />
+
+        <TextView
+            android:id="@+id/tv_test_company"
+            style="@style/BasicInfoItemTextViewStyle" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/view_line_basic_info" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height_dp_52"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@mipmap/ic_add_parallel"
+                android:drawablePadding="@dimen/dp_12"
+                android:text="删除"
+                android:textColor="@color/text_color_2b99ff"
+                android:textSize="@dimen/text_size_14" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/division_line"
+                android:layout_alignParentTop="true"
+                android:background="@color/dc1" />
+
+
+            <View
+                android:layout_width="@dimen/division_line"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@color/dc1" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@mipmap/ic_add_blank"
+                android:drawablePadding="@dimen/dp_12"
+                android:text="保存"
+                android:textColor="@color/text_color_2b99ff"
+                android:textSize="@dimen/text_size_14" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/division_line"
+                android:layout_alignParentTop="true"
+                android:background="@color/dc1" />
+
+            <View
+                android:layout_width="@dimen/division_line"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@color/dc1" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
