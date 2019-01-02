@@ -6,6 +6,4 @@ public class Constant {
     public static String REPOSITORY_DIR     = ""; //知识库文件目录
     public static String FILE_DIR     = ""; //文件目录
     public static String DATABASE_DIR = ""; //数据库目录
-
-
 }

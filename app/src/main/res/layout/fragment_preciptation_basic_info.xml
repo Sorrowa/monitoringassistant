@@ -112,7 +112,7 @@
             <TextView
 
                 style="@style/BasicInfoItemNameStyle"
-                android:text="采样器接雨面积（㎡）" />
+                android:text="采样器接雨面积（c㎡）" />
 
             <EditText
                 android:id="@+id/et_sampling_area"

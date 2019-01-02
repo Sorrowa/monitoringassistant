@@ -111,8 +111,6 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private View getSearchView() {
         View view = LayoutInflater.from(this).inflate(R.layout.view_search, null);
-
-
         return view;
     }
 

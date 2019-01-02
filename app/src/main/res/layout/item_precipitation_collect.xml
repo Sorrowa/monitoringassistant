@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
-                    android:text="接雨体积（ml）：--"
+                    android:text="接水体积（ml）：--"
                     android:textColor="@color/text_color_666666"
                     android:textSize="@dimen/text_size_12" />
 

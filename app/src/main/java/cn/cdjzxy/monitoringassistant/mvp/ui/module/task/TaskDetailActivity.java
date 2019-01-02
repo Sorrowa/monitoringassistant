@@ -822,6 +822,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         preciptationSampForm.setSampForm(sampFormBean);
 
+        String json = JSONObject.toJSONString(preciptationSampForm);
+
         //接口提交数据
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
     }

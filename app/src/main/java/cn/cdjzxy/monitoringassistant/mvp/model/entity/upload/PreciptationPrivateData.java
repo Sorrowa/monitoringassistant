@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.upload;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import lombok.Data;
 
 /**
@@ -14,10 +16,13 @@ public class PreciptationPrivateData {
      * SampHight : 采样高度
      * SampArea : 采样器接雨面积
      */
-
+    @JSONField(name = "ClientName")
     private String ClientName;
+    @JSONField(name = "ClientAdd")
     private String ClientAdd;
+    @JSONField(name = "SampHight")
     private String SampHight;
+    @JSONField(name = "SampArea")
     private String SampArea;
 
 }
