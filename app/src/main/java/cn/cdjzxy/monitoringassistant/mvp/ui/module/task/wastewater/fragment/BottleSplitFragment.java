@@ -118,7 +118,7 @@ public class BottleSplitFragment extends BaseFragment {
         mWasteWaterBottleAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                EventBus.getDefault().post(5, EventBusTags.TAG_WASTEWATER_BOTTLE);
+                EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_BOTTLE);
             }
         });
         recyclerview.setAdapter(mWasteWaterBottleAdapter);

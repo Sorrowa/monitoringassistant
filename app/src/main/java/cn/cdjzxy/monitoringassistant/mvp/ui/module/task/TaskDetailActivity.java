@@ -70,6 +70,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -394,6 +395,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     intent.putExtra("samplingId", mSamplings.get(position).getId());
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
+                } else if ("现场监测仪器法".equals(mDialogFormSelects.get(position).getFormName())) {
+                    Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                    intent.putExtra("isNewCreate", true);
+                    ArtUtils.startActivity(intent);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
                 }
@@ -530,6 +537,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     ArtUtils.startActivity(intent);
                 } else if ("水和废水样品采集与交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
                     Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                    intent.putExtra("isNewCreate", true);
+                    ArtUtils.startActivity(intent);
+                } else if ("现场监测仪器法".equals(mDialogFormSelects.get(position).getFormName())) {
+                    Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     intent.putExtra("isNewCreate", true);

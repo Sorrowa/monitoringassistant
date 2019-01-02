@@ -42,7 +42,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="监测项目" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <TextView
+            android:id="@+id/sample_project"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 
@@ -54,7 +56,10 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="采样量" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <EditText
+            android:id="@+id/sample_quantity"
+            style="@style/BasicInfoItemEditTextStyle"
+            android:maxLength="20"/>
 
     </RelativeLayout>
 
@@ -66,7 +71,10 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="容器" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <EditText
+            android:id="@+id/sample_vessel"
+            style="@style/BasicInfoItemEditTextStyle"
+            android:maxLength="20"/>
 
     </RelativeLayout>
 
@@ -78,7 +86,11 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="数量（瓶）" />
 
-        <TextView style="@style/BasicInfoItemTextViewStyle" />
+        <EditText
+            android:id="@+id/sample_number"
+            style="@style/BasicInfoItemEditTextStyle"
+            android:maxLength="2"
+            android:inputType="number"/>
 
     </RelativeLayout>
 
@@ -90,7 +102,10 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="保存方法" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <EditText
+            android:id="@+id/sample_method"
+            style="@style/BasicInfoItemEditTextStyle"
+            android:maxLength="20"/>
 
     </RelativeLayout>
 
@@ -102,7 +117,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="保存时间" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <TextView
+            android:id="@+id/sample_date"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 
@@ -114,7 +131,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="分析地点" />
 
-        <EditText style="@style/BasicInfoItemEditTextStyle" />
+        <TextView
+            android:id="@+id/sample_place"
+            style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
 

@@ -13,9 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.app.rx.RxObserver;
 import cn.cdjzxy.monitoringassistant.app.rx.RxUtils;
 import cn.cdjzxy.monitoringassistant.mvp.model.ApiRepository;
+import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
@@ -52,6 +54,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import timber.log.Timber;
 
 /**
@@ -162,6 +165,10 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         UserInfoHelper.get().saveUserLoginStatee(true);
                         UserInfoHelper.get().saveUserInfo(userInfo);
                         HawkUtil.putBoolean("isUpdated", false);
+
+                        //重新设置weburl
+                        resetWebUrl(userInfo);
+
                         msg.what = Message.RESULT_OK;
                         msg.obj = response.getData();
                         msg.handleMessageToTarget();
@@ -199,6 +206,10 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             msg.handleMessageToTarget();
         } else {
             UserInfoHelper.get().saveUserLoginStatee(true);
+
+            //重新设置weburl
+            resetWebUrl(userInfo);
+
             msg.what = Message.RESULT_OK;
             msg.obj = userInfo;
             msg.handleMessageToTarget();
@@ -994,5 +1005,19 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         super.onDestroy();
     }
 
+    /**
+     * 重新设置WebUrl
+     * @param userInfo
+     */
+    public void resetWebUrl(UserInfo userInfo){
+        if(CheckUtil.isNull((userInfo))){
+            userInfo = UserInfoHelper.get().getUserInfo();
+        }
+
+        //动态设置weburl
+        if (!CheckUtil.isEmpty(userInfo.getWebUrl())){
+            RetrofitUrlManager.getInstance().putDomain(Api.LOGIN_RESP_WEBURL, userInfo.getWebUrl());
+        }
+    }
 
 }

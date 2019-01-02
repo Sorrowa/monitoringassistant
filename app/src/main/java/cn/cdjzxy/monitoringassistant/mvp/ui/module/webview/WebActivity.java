@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 
 import com.wonders.health.lib.base.mvp.IPresenter;
+import com.wonders.health.lib.base.utils.ArtUtils;
 
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
@@ -47,11 +48,18 @@ public class WebActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return mWebFragment.onFragmentKeyDown(keyCode, event);
+        //传递按键到web层
+        boolean result = mWebFragment.onFragmentKeyDown(keyCode, event);
+
+        //web层未处理返回操作，已返回到首页，再次返回则退出当前activity
+        if (!result && keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            finish();
+        }
+
+        return result;
     }
 
     public String getUrl() {
         return getIntent().getStringExtra(WebFragment.URL_KEY);
     }
-
 }

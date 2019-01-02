@@ -71,6 +71,7 @@ public interface Api {
     String PUT_READ_MSG = "api/Massage/PutReadMessage";//批量阅读消息
 
     String TEMPORARY_SERVER_IP = "TEMPORARY_SERVER_IP";//临时IP
+    String LOGIN_RESP_WEBURL = "LOGIN_RESP_WEBURL";//登录返回的webUrl
 }
 
 

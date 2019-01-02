@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name="com.wonders.health.lib.base.base.BaseApplication"
@@ -86,6 +87,11 @@
 
         <activity
             android:name=".mvp.ui.module.repository.RepositoryActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".mvp.ui.module.task.instrumental.InstrumentalActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 

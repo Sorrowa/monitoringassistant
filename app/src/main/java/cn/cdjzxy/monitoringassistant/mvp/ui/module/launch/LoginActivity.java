@@ -91,6 +91,10 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         super.onResume();
         if (UserInfoHelper.get().isLogin()) {
             name = UserInfoHelper.get().getUserName();
+
+            //重新设置weburl
+            mPresenter.resetWebUrl(null);
+
             initAppDataDir();
             toMian();
             return;
