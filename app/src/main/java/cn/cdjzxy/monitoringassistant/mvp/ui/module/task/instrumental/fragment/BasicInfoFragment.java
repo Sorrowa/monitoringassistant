@@ -90,7 +90,7 @@ public class BasicInfoFragment  extends BaseFragment {
 
     @Override
     public View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_preciptation_basic_info, null);
+        return inflater.inflate(R.layout.fragment_instrumental_basic_info, null);
     }
 
     @Override
