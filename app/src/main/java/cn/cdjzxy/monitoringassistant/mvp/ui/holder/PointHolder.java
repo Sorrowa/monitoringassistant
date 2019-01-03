@@ -83,8 +83,13 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
      * 初始化Tab数据
      */
     private void initPointItemData(String pointId) {
+        List<EnvirPoint> envirPoints = new ArrayList<>();
 
-        List<EnvirPoint> envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.eq(pointId)).list();
+        if (pointId.contains(",")) {
+            envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.in(pointId.split(","))).list();
+        } else {
+            envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.eq(pointId)).list();
+        }
 
         if (!CheckUtil.isEmpty(envirPoints)) {
             ArtUtils.configRecyclerView(mRecyclerViewItem, new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false) {

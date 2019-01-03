@@ -117,9 +117,9 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         } else {
             mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
             List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-            mSampling.setSamplingFiless(samplingFiles);
+            mSampling.setSamplingFiless(CheckUtil.isEmpty(samplingFiles) ? new ArrayList<>() : samplingFiles);
             List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-            mSampling.setSamplingDetailResults(samplingDetails);
+            mSampling.setSamplingDetailResults(CheckUtil.isEmpty(samplingDetails) ? new ArrayList<>() : samplingDetails);
         }
 
         if (mSampling.getIsCanEdit()) {
@@ -247,6 +247,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
         sampling.setSamplingTimeBegin(DateUtils.getDate());
         sampling.setSamplingDetailResults(new ArrayList<>());
+        sampling.setSamplingFiless(new ArrayList<>());
         sampling.setIsLocal(true);
         sampling.setIsUpload(false);
         sampling.setIsCanEdit(true);

@@ -33,7 +33,10 @@
 
         <TextView
             android:id="@+id/tv_point"
-            style="@style/BasicInfoItemTextViewStyle" />
+            style="@style/BasicInfoItemTextViewStyle"
+            android:layout_marginLeft="100dp"
+            android:ellipsize="end"
+            android:maxLines="2" />
 
     </RelativeLayout>
 
@@ -47,7 +50,10 @@
 
         <TextView
             android:id="@+id/tv_monitem"
-            style="@style/BasicInfoItemTextViewStyle" />
+            style="@style/BasicInfoItemTextViewStyle"
+            android:layout_marginLeft="100dp"
+            android:ellipsize="end"
+            android:maxLines="2" />
 
     </RelativeLayout>
 

@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * 降水数据保存实体
  */
-@Data
+
 public class PreciptationPrivateData {
 
     /**
@@ -16,13 +16,42 @@ public class PreciptationPrivateData {
      * SampHight : 采样高度
      * SampArea : 采样器接雨面积
      */
-    @JSONField(name = "ClientName")
+
     private String ClientName;
-    @JSONField(name = "ClientAdd")
     private String ClientAdd;
-    @JSONField(name = "SampHight")
     private String SampHight;
-    @JSONField(name = "SampArea")
     private String SampArea;
 
+    @JSONField(name = "ClientName")
+    public String getClientName() {
+        return ClientName;
+    }
+    @JSONField(name = "ClientName")
+    public void setClientName(String clientName) {
+        ClientName = clientName;
+    }
+    @JSONField(name = "ClientAdd")
+    public String getClientAdd() {
+        return ClientAdd;
+    }
+    @JSONField(name = "ClientAdd")
+    public void setClientAdd(String clientAdd) {
+        ClientAdd = clientAdd;
+    }
+    @JSONField(name = "SampHight")
+    public String getSampHight() {
+        return SampHight;
+    }
+    @JSONField(name = "SampHight")
+    public void setSampHight(String sampHight) {
+        SampHight = sampHight;
+    }
+    @JSONField(name = "SampArea")
+    public String getSampArea() {
+        return SampArea;
+    }
+    @JSONField(name = "SampArea")
+    public void setSampArea(String sampArea) {
+        SampArea = sampArea;
+    }
 }

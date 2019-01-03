@@ -255,8 +255,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
             if (!CheckUtil.isEmpty(projectDetials)) {
                 for (ProjectDetial projectDetial : projectDetials) {
-                    monItems.append(projectDetial.getMonItemName() + ",");
-                    points.append(projectDetial.getAddress() + ",");
+                    if (!monItems.toString().contains(projectDetial.getMonItemName())) {
+                        monItems.append(projectDetial.getMonItemName() + ",");
+                    }
+
+                    if (!points.toString().contains(projectDetial.getAddress())) {
+                        points.append(projectDetial.getAddress() + ",");
+                    }
                 }
             }
 
@@ -272,7 +277,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 points.deleteCharAt(points.lastIndexOf(","));
             }
 
-
             tvTaskNum.setText("任务编号:" + data.getProjectNo());
             tvTaskPoint.setText("点位:" + points.toString());
             tvTaskProjectNum.setText("项目:" + monItems.toString());
@@ -280,7 +284,15 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             tvTaskPerson.setText("人员：" + users.toString());
             tvTaskStartTime.setText("下达:" + data.getAssignDate().split(" ")[0].replace("-", "/"));
 
-            tvSamplingPointCount.setText("共" + projectDetials.size() + "个");
+            if (points.toString().contains(",")) {
+                tvSamplingPointCount.setText("共" + points.toString().split(",").length + "个");
+            } else {
+                if (CheckUtil.isEmpty(points.toString())) {
+                    tvSamplingPointCount.setText("共" + 0 + "个");
+                } else {
+                    tvSamplingPointCount.setText("共" + 1 + "个");
+                }
+            }
         }
     }
 

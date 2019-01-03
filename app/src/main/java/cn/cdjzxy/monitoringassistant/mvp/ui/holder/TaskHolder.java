@@ -90,8 +90,13 @@ public class TaskHolder extends BaseHolder<Project> {
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
-                monItems.append(projectDetial.getMonItemName() + ",");
-                points.append(projectDetial.getAddress() + ",");
+                if (!monItems.toString().contains(projectDetial.getMonItemName())) {
+                    monItems.append(projectDetial.getMonItemName() + ",");
+                }
+
+                if (!points.toString().contains(projectDetial.getAddress())) {
+                    points.append(projectDetial.getAddress() + ",");
+                }
             }
         }
 

@@ -54,9 +54,9 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
     private List<MonItems> mMonItems         = new ArrayList<>();
     private List<MonItems> mMonItemsSelected = new ArrayList<>();
-
-    private StringBuilder MonItemName = new StringBuilder("");
-    private StringBuilder MonItemId   = new StringBuilder("");
+    private List<MonItems> mMonItemsDelete   = new ArrayList<>();
+    private StringBuilder  MonItemName       = new StringBuilder("");
+    private StringBuilder  MonItemId         = new StringBuilder("");
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -184,25 +184,29 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     private void addMonItems() {
+        mMonItemsDelete.clear();
         for (MonItems monItem : mMonItems) {
             if (monItem.isSelected()) {
                 monItem.setSelected(false);
                 mMonItemsSelected.add(monItem);
-                mMonItems.remove(monItem);
+                mMonItemsDelete.add(monItem);
             }
         }
+        mMonItems.removeAll(mMonItemsDelete);
         mMonItemAdapter.notifyDataSetChanged();
         mMonItemSelectedAdapter.notifyDataSetChanged();
     }
 
     private void deleteMonItems() {
+        mMonItemsDelete.clear();
         for (MonItems monItems : mMonItemsSelected) {
             if (monItems.isSelected()) {
                 monItems.setSelected(false);
                 mMonItems.add(monItems);
-                mMonItemsSelected.remove(monItems);
+                mMonItemsDelete.add(monItems);
             }
         }
+        mMonItemsSelected.removeAll(mMonItemsDelete);
         mMonItemAdapter.notifyDataSetChanged();
         mMonItemSelectedAdapter.notifyDataSetChanged();
     }
