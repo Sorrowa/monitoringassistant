@@ -41,11 +41,11 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     RecyclerView recyclerview;
 
     private String projectId;
-    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
+
     private PointAdapter mPointAdapter;
 
     private Project mProject;
-
+    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
 
     @Override
@@ -108,10 +108,17 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
                     mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
                 } else {
                     ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
-                    projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
-                    projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
-                    projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
-                    projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
+
+                    if (!projectDetial1.getAddressId().contains(projectDetial.getAddressId())) {
+                        projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
+                        projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
+                    }
+
+                    if (!projectDetial1.getMonItemId().contains(projectDetial.getMonItemId())) {
+                        projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
+                        projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
+                    }
+
                     mStringProjectDetialMap.put(projectDetial1.getProjectContentId(), projectDetial1);
                 }
             }
