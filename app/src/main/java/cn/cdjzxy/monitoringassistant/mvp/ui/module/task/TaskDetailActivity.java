@@ -34,7 +34,9 @@ import org.simple.eventbus.Subscriber;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -142,6 +144,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private EditText mEtComment;
     private TextView mTvCancel;
     private TextView mTvOk;
+
+    private List<ProjectDetial>        mProjectDetials         = new ArrayList<>();
+    private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -255,8 +260,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
             if (!CheckUtil.isEmpty(projectDetials)) {
                 for (ProjectDetial projectDetial : projectDetials) {
-                    monItems.append(projectDetial.getMonItemName() + ",");
-                    points.append(projectDetial.getAddress() + ",");
+                    if (!monItems.toString().contains(projectDetial.getMonItemName())) {
+                        monItems.append(projectDetial.getMonItemName() + ",");
+                    }
+
+                    if (!points.toString().contains(projectDetial.getAddress())) {
+                        points.append(projectDetial.getAddress() + ",");
+                    }
                 }
             }
 
@@ -272,7 +282,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 points.deleteCharAt(points.lastIndexOf(","));
             }
 
-
             tvTaskNum.setText("任务编号:" + data.getProjectNo());
             tvTaskPoint.setText("点位:" + points.toString());
             tvTaskProjectNum.setText("项目:" + monItems.toString());
@@ -280,7 +289,15 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             tvTaskPerson.setText("人员：" + users.toString());
             tvTaskStartTime.setText("下达:" + data.getAssignDate().split(" ")[0].replace("-", "/"));
 
-            tvSamplingPointCount.setText("共" + projectDetials.size() + "个");
+            if (points.toString().contains(",")) {
+                tvSamplingPointCount.setText("共" + points.toString().split(",").length + "个");
+            } else {
+                if (CheckUtil.isEmpty(points.toString())) {
+                    tvSamplingPointCount.setText("共" + 0 + "个");
+                } else {
+                    tvSamplingPointCount.setText("共" + 1 + "个");
+                }
+            }
         }
     }
 
@@ -383,23 +400,26 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onClick(View view, int position) {
-                if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
+                if ("/FormTemplate/FILL_JS_GAS_XD".equals(mSamplings.get(position).getFormPath())) {
+                    //降水采样及样品交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("samplingId", mSamplings.get(position).getId());
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
-                } else if ("水和废水样品采集与交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
+                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mSamplings.get(position).getFormPath())) {
+                    //水和废水样品采集与交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("samplingId", mSamplings.get(position).getId());
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
-                } else if ("现场监测仪器法".equals(mDialogFormSelects.get(position).getFormName())) {
+                } else if ("/FormTemplate/FILL_YQF_WATER".equals(mSamplings.get(position).getFormPath())) {
+                    //现场监测仪器法
                     Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
                     intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
-                    intent.putExtra("isNewCreate", true);
+                    intent.putExtra("samplingId", mSamplings.get(position).getId());
+                    intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
@@ -413,7 +433,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onUpload(View view, int position) {
-                if ("降水采样及样品交接记录（新都）".equals(mSamplings.get(position).getFormName())) {
+                if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mSamplings.get(position).getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
@@ -529,19 +549,22 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mFormAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                if ("降水采样及样品交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
+                if ("/FormTemplate/FILL_JS_GAS_XD".equals(mDialogFormSelects.get(position).getPath())) {
+                    //降水采样及样品交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(intent);
-                } else if ("水和废水样品采集与交接记录（新都）".equals(mDialogFormSelects.get(position).getFormName())) {
+                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mDialogFormSelects.get(position).getPath())) {
+                    //水和废水样品采集与交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(intent);
-                } else if ("现场监测仪器法".equals(mDialogFormSelects.get(position).getFormName())) {
+                } else if ("/FormTemplate/FILL_YQF_WATER".equals(mDialogFormSelects.get(position).getPath())) {
+                    //现场监测仪器法
                     Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
@@ -632,9 +655,37 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void uploadProjecteContentData() {
 
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId())).list();
-        List<ProjectContent> projectContents = new ArrayList<>();
-        if (!CheckUtil.isEmpty(projectDetials)) {//开始组装数据
+
+        if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
+                if (CheckUtil.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
+                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
+                } else {
+                    ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
+
+                    if (!projectDetial1.getAddressId().contains(projectDetial.getAddressId())) {
+                        projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
+                        projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
+                    }
+
+                    if (!projectDetial1.getMonItemId().contains(projectDetial.getMonItemId())) {
+                        projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
+                        projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
+                    }
+
+                    mStringProjectDetialMap.put(projectDetial1.getProjectContentId(), projectDetial1);
+                }
+            }
+
+            for (String key : mStringProjectDetialMap.keySet()) {
+                mProjectDetials.add(mStringProjectDetialMap.get(key));
+            }
+
+        }
+
+        List<ProjectContent> projectContents = new ArrayList<>();
+        if (!CheckUtil.isEmpty(mProjectDetials)) {//开始组装数据
+            for (ProjectDetial projectDetial : mProjectDetials) {
                 ProjectContent projectContent = new ProjectContent();
                 projectContent.setId(projectDetial.getProjectContentId());
                 projectContent.setIsChecked(false);
@@ -809,6 +860,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         if (!CheckUtil.isEmpty(samplingDetails)) {
 
             ArrayList<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeans = new ArrayList<>();
+            int count = 1;
             for (SamplingDetail samplingDetail : samplingDetails) {
                 PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
 
@@ -823,17 +875,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
                 samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
                 samplingDetailsBean.setValue(samplingDetail.getValue());
-                samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex() + "");
+                samplingDetailsBean.setOrderIndex(count + "");
                 samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
                 samplingDetailsBean.setValue1(samplingDetail.getValue1());
                 samplingDetailsBean.setDescription(samplingDetail.getDescription());
-
                 samplingDetailsBeans.add(samplingDetailsBean);
+                count++;
             }
             sampFormBean.setSamplingDetails(samplingDetailsBeans);
         }
 
         preciptationSampForm.setSampForm(sampFormBean);
+
+        String json = JSONObject.toJSONString(preciptationSampForm);
 
         //接口提交数据
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);

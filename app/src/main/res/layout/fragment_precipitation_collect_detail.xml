@@ -118,7 +118,7 @@
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
-            android:text="雨水体积（ml）" />
+            android:text="接雨体积（ml）" />
 
         <EditText
             android:id="@+id/et_rainwater_volume"

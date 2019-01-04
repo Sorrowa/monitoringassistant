@@ -344,7 +344,7 @@ public class CollectionDetailFragment extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         SamplingDetail samplingDetail1 = mSampling.getSamplingDetailResults().get(listPosition);
 
-                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getSamplingId())).unique();
+                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail1.getId())).unique();
                         if (!CheckUtil.isNull(samplingDetails1)) {
                             DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
                         }

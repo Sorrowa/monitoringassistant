@@ -14,7 +14,9 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
@@ -39,10 +41,12 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     RecyclerView recyclerview;
 
     private String projectId;
-    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
+
     private PointAdapter mPointAdapter;
 
     private Project mProject;
+    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
+    private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -99,7 +103,30 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
         mProjectDetials.clear();
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
-            mProjectDetials.addAll(projectDetials);
+            for (ProjectDetial projectDetial : projectDetials) {
+                if (CheckUtil.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
+                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
+                } else {
+                    ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
+
+                    if (!projectDetial1.getAddressId().contains(projectDetial.getAddressId())) {
+                        projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
+                        projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
+                    }
+
+                    if (!projectDetial1.getMonItemId().contains(projectDetial.getMonItemId())) {
+                        projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
+                        projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
+                    }
+
+                    mStringProjectDetialMap.put(projectDetial1.getProjectContentId(), projectDetial1);
+                }
+            }
+
+            for (String key : mStringProjectDetialMap.keySet()) {
+                mProjectDetials.add(mStringProjectDetialMap.get(key));
+            }
+
         }
         mPointAdapter.notifyDataSetChanged();
     }

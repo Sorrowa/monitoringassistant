@@ -78,8 +78,6 @@ public class Project {
     @Transient
     private List<ProjectDetial> ProjectDetials;
 
-
-
     @Generated(hash = 1673097065)
     public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, int TypeCode, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, boolean CanSamplingEidt,
             boolean isSamplingEidt, List<String> SamplingUser) {

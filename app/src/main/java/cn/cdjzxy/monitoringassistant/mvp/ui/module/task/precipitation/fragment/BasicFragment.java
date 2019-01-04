@@ -142,8 +142,7 @@ public class BasicFragment extends BaseFragment {
             tvFlowMethod.setText(PrecipitationActivity.mSampling.getTransfer());
             tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
             tvComment.setText(PrecipitationActivity.mSampling.getComment());
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-            mSamplingFiles.addAll(samplingFiles);
+            mSamplingFiles.addAll(PrecipitationActivity.mSampling.getSamplingFiless());
 
             tvSamplingDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
             tvSamplingUser.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
@@ -157,21 +156,6 @@ public class BasicFragment extends BaseFragment {
             tvFlowMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
             tvFlowDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
             tvComment.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-
-            //            if (!PrecipitationActivity.mSampling.getIsCanEdit()) {
-            //                tvSamplingDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingUser.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingType.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingPoint.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingNo.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingHeight.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                etSamplingArea.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvSamplingDevice.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvFlowMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvFlowDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //                tvComment.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            //            }
         }
 
         //点位编号
@@ -189,7 +173,6 @@ public class BasicFragment extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 PrecipitationActivity.mSampling.setAddressNo(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
-
                 //点位编号修改后依据新的点位编号重新生成采样单编号
                 String snPointPosition = "采样点位编号未填写";
                 if (!CheckUtil.isEmpty(s.toString())) {
@@ -201,7 +184,6 @@ public class BasicFragment extends BaseFragment {
                     String[] sampingCode = samplingDetail.getSampingCode().split("-");
                     samplingDetail.setSampingCode(sampingCode[0] + "-" + snPointPosition + snUserId + "-" + sampingCode[2]);
                 }
-
             }
         });
 
@@ -310,6 +292,14 @@ public class BasicFragment extends BaseFragment {
     @Override
     public void setData(@Nullable Object data) {
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+        }
     }
 
     @Override
@@ -492,10 +482,12 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                PrecipitationActivity.mSampling.setSendSampTime(DateUtils.getDate(date));
+                PrecipitationActivity.mSampling.setSendSampTime(DateUtils.getTime(date.getTime()));
                 tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
             }
-        }).build();
+        }).setType(new boolean[]{true, true, true, true, true, true})
+                .isCyclic(true)
+                .build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }

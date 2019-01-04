@@ -63,6 +63,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_4"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="总氮、镁离子、砷"
                 android:textColor="@color/text_color_333333"
                 android:textSize="@dimen/text_size_14" />

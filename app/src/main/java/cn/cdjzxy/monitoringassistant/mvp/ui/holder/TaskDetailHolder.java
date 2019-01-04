@@ -152,14 +152,14 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
             mIvUpload.setImageResource(R.mipmap.ic_finish);
 
             if (CheckUtil.isEmpty(data.getSubmitDate())) {
-                mSubmitTime.setVisibility(View.GONE);
+                mSubmitTime.setVisibility(View.INVISIBLE);
             } else {
                 mSubmitTime.setVisibility(View.VISIBLE);
                 mSubmitTime.setText("提交：" + data.getSubmitDate().replace("T", ""));
             }
 
             if (CheckUtil.isEmpty(data.getAuditDate())) {
-                mTvReviewTime.setVisibility(View.GONE);
+                mTvReviewTime.setVisibility(View.INVISIBLE);
             } else {
                 mTvReviewTime.setVisibility(View.VISIBLE);
                 mTvReviewTime.setText("审核：" + data.getAuditDate().replace("T", ""));

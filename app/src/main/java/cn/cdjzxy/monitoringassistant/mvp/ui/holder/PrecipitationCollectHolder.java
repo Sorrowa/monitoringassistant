@@ -39,11 +39,11 @@ public class PrecipitationCollectHolder extends BaseHolder<SamplingDetail> {
         try {
             JSONObject privateData = new JSONObject(data.getPrivateData());
             tvTime.setText(privateData.getString("SDataTime") + "--" +privateData.getString("EDataTime"));
-            tvRainwaterVolume.setText("雨水体积(ml)：" + privateData.getString("RainVol"));
+            tvRainwaterVolume.setText("接雨体积(ml)：" + privateData.getString("RainVol"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        tvPrecipitation.setText("降雨量(mm)：" + data.getValue());
+        tvPrecipitation.setText("降水量(mm)：" + data.getValue());
         tvRemark.setText("备注：" + data.getDescription());
     }
 

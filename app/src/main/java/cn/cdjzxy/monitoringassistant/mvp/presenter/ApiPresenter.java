@@ -859,7 +859,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             if (!CheckUtil.isEmpty(samplings)) {
 
                                 DBHelper.get().getSamplingFormStandDao().deleteAll();
-                                DBHelper.get().getSamplingDetailDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
 
@@ -873,10 +872,13 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     List<SamplingDetail> samplingDetails = sampling.getSamplingDetailResults();
 
                                     if (!CheckUtil.isEmpty(samplingDetails)) {
+                                        for (SamplingDetail samplingDetail : samplingDetails) {
+                                            DBHelper.get().getSamplingDetailDao().delete(samplingDetail);
+                                        }
                                         DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
                                     }
-                                    sampling.setIsCanEdit(sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9 ? true : false);
-                                    sampling.setIsCanEdit(sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()));
+                                    sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
+                                            && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
                                     sampling.setIsLocal(false);
                                     DBHelper.get().getSamplingDao().insert(sampling);
                                 }
@@ -1007,15 +1009,16 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     /**
      * 重新设置WebUrl
+     *
      * @param userInfo
      */
-    public void resetWebUrl(UserInfo userInfo){
-        if(CheckUtil.isNull((userInfo))){
+    public void resetWebUrl(UserInfo userInfo) {
+        if (CheckUtil.isNull((userInfo))) {
             userInfo = UserInfoHelper.get().getUserInfo();
         }
 
         //动态设置weburl
-        if (!CheckUtil.isEmpty(userInfo.getWebUrl())){
+        if (!CheckUtil.isEmpty(userInfo.getWebUrl())) {
             RetrofitUrlManager.getInstance().putDomain(Api.LOGIN_RESP_WEBURL, userInfo.getWebUrl());
         }
     }

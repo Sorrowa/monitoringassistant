@@ -4,16 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
-import com.wonders.health.lib.base.utils.StatusBarUtil;
 
-import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
@@ -27,32 +23,26 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.BasicInfoFragment;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.TestRecordDetailFragment;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.TestRecordFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.BasicFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionDetailFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
-
-import cn.cdjzxy.monitoringassistant.R;
 
 public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
@@ -71,11 +61,11 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
     private List<Fragment>  mFragments;
     private FragmentAdapter mFragmentAdapter;
 
-    private BasicFragment            mBasicFragment;
-    private CollectionFragment       mCollectionFragment;
-    private CollectionDetailFragment mCollectionDetailFragment;
+    private BasicInfoFragment mBasicFragment;
+    private TestRecordFragment mTestRecordFragment;
+    private TestRecordDetailFragment mTestRecordDetailFragment;
 
-    public static Sampling mSampling;
+//    public static Sampling mSampling;
 
     private TitleBarView mTitleBarView;
 
@@ -110,64 +100,64 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
-        projectId = getIntent().getStringExtra("projectId");
-        formSelectId = getIntent().getStringExtra("formSelectId");
-        samplingId = getIntent().getStringExtra("samplingId");
-        isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
-        if (isNewCreate) {
-            mSampling = createSampling();
-        } else {
-            mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-            mSampling.setSamplingFiless(samplingFiles);
-            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-            mSampling.setSamplingDetailResults(samplingDetails);
-        }
-
-        if (mSampling.getIsCanEdit()) {
-            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ArtUtils.startActivity(FormPrintActivity.class);
-                }
-            }));
-            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
-                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingFiles)) {
-                            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
-                        }
-                        mSampling.getSamplingFiless().remove(0);
-                        DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
-                    }
-
-                    if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
-                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingDetails)) {
-                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
-                        }
-                        DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailResults());
-                    }
-
-                    mSampling.setIsFinish(isSamplingFinish());
-                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
-                    if (isNewCreate) {
-                        DBHelper.get().getSamplingDao().insert(mSampling);
-                        isNewCreate = false;
-                    } else {
-                        DBHelper.get().getSamplingDao().update(mSampling);
-                    }
-
-                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-                    ArtUtils.makeText(getApplicationContext(), "数据保存成功");
-                }
-            }));
-        }
-
+//        layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
+//        projectId = getIntent().getStringExtra("projectId");
+//        formSelectId = getIntent().getStringExtra("formSelectId");
+//        samplingId = getIntent().getStringExtra("samplingId");
+//        isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
+//        if (isNewCreate) {
+//            mSampling = createSampling();
+//        } else {
+//            mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
+//            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+//            mSampling.setSamplingFiless(samplingFiles);
+//            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+//            mSampling.setSamplingDetailResults(samplingDetails);
+//        }
+//
+//        if (mSampling.getIsCanEdit()) {
+//            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    ArtUtils.startActivity(FormPrintActivity.class);
+//                }
+//            }));
+//            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
+//                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+//                        if (!CheckUtil.isEmpty(samplingFiles)) {
+//                            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+//                        }
+//                        mSampling.getSamplingFiless().remove(0);
+//                        DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
+//                    }
+//
+//                    if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+//                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+//                        if (!CheckUtil.isEmpty(samplingDetails)) {
+//                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
+//                        }
+//                        DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailResults());
+//                    }
+//
+//                    mSampling.setIsFinish(isSamplingFinish());
+//                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+//                    if (isNewCreate) {
+//                        DBHelper.get().getSamplingDao().insert(mSampling);
+//                        isNewCreate = false;
+//                    } else {
+//                        DBHelper.get().getSamplingDao().update(mSampling);
+//                    }
+//
+//                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+//                    ArtUtils.makeText(getApplicationContext(), "数据保存成功");
+//                }
+//            }));
+//        }
+//
         initTabData();
         openFragment(0);
     }
@@ -184,14 +174,14 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
             }
         });
 
-        mBasicFragment = new BasicFragment();
-        mCollectionFragment = new CollectionFragment();
-        mCollectionDetailFragment = new CollectionDetailFragment();
+        mBasicFragment = new BasicInfoFragment();
+        mTestRecordFragment = new TestRecordFragment();
+        mTestRecordDetailFragment = new TestRecordDetailFragment();
 
         mFragments = new ArrayList<>();
         mFragments.add(mBasicFragment);
-        mFragments.add(mCollectionFragment);
-        mFragments.add(mCollectionDetailFragment);
+        mFragments.add(mTestRecordFragment);
+        mFragments.add(mTestRecordDetailFragment);
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
@@ -290,27 +280,27 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
      * @return
      */
     private boolean isSamplingFinish() {
-        if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getTagName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
-            return false;
-        }
+//        if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+//            return false;
+//        }
+//        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
+//            return false;
+//        }
+//        if (CheckUtil.isEmpty(mSampling.getTagName())) {
+//            return false;
+//        }
+//        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
+//            return false;
+//        }
+//        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
+//            return false;
+//        }
+//        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
+//            return false;
+//        }
+//        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
+//            return false;
+//        }
         return true;
     }
 
