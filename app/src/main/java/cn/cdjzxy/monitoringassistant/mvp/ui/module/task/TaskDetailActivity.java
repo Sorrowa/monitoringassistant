@@ -34,7 +34,9 @@ import org.simple.eventbus.Subscriber;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -142,6 +144,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private EditText mEtComment;
     private TextView mTvCancel;
     private TextView mTvOk;
+
+    private List<ProjectDetial>        mProjectDetials         = new ArrayList<>();
+    private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -644,9 +649,37 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void uploadProjecteContentData() {
 
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId())).list();
-        List<ProjectContent> projectContents = new ArrayList<>();
-        if (!CheckUtil.isEmpty(projectDetials)) {//开始组装数据
+
+        if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
+                if (CheckUtil.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
+                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
+                } else {
+                    ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
+
+                    if (!projectDetial1.getAddressId().contains(projectDetial.getAddressId())) {
+                        projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
+                        projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
+                    }
+
+                    if (!projectDetial1.getMonItemId().contains(projectDetial.getMonItemId())) {
+                        projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
+                        projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
+                    }
+
+                    mStringProjectDetialMap.put(projectDetial1.getProjectContentId(), projectDetial1);
+                }
+            }
+
+            for (String key : mStringProjectDetialMap.keySet()) {
+                mProjectDetials.add(mStringProjectDetialMap.get(key));
+            }
+
+        }
+
+        List<ProjectContent> projectContents = new ArrayList<>();
+        if (!CheckUtil.isEmpty(mProjectDetials)) {//开始组装数据
+            for (ProjectDetial projectDetial : mProjectDetials) {
                 ProjectContent projectContent = new ProjectContent();
                 projectContent.setId(projectDetial.getProjectContentId());
                 projectContent.setIsChecked(false);
@@ -821,6 +854,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         if (!CheckUtil.isEmpty(samplingDetails)) {
 
             ArrayList<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeans = new ArrayList<>();
+            int count = 1;
             for (SamplingDetail samplingDetail : samplingDetails) {
                 PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
 
@@ -835,12 +869,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
                 samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
                 samplingDetailsBean.setValue(samplingDetail.getValue());
-                samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex() + "");
+                samplingDetailsBean.setOrderIndex(count + "");
                 samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
                 samplingDetailsBean.setValue1(samplingDetail.getValue1());
                 samplingDetailsBean.setDescription(samplingDetail.getDescription());
-
                 samplingDetailsBeans.add(samplingDetailsBean);
+                count++;
             }
             sampFormBean.setSamplingDetails(samplingDetailsBeans);
         }

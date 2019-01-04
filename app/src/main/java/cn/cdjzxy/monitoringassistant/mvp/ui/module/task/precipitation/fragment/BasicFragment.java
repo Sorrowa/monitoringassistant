@@ -482,10 +482,12 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                PrecipitationActivity.mSampling.setSendSampTime(DateUtils.getDate(date));
+                PrecipitationActivity.mSampling.setSendSampTime(DateUtils.getTime(date.getTime()));
                 tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
             }
-        }).build();
+        }).setType(new boolean[]{true, true, true, true, true, true})
+                .isCyclic(true)
+                .build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
