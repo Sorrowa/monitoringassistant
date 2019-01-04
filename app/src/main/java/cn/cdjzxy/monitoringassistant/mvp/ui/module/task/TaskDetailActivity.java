@@ -407,11 +407,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     intent.putExtra("samplingId", mSamplings.get(position).getId());
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
-                } else if ("现场监测仪器法".equals(mDialogFormSelects.get(position).getFormName())) {
+                } else if ("现场监测仪器法".equals(mSamplings.get(position).getFormName())) {
                     Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
                     intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
-                    intent.putExtra("isNewCreate", true);
+                    intent.putExtra("samplingId", mSamplings.get(position).getId());
+                    intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
                 } else {
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");

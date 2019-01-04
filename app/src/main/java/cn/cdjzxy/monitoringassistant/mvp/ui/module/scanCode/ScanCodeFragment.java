@@ -28,6 +28,7 @@ import cn.bingoogolapple.qrcode.zxing.ZXingView;
 import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebActivity;
@@ -110,13 +111,20 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
         switch (message.what) {
             case Message.RESULT_OK:
                 QrMoreInfo qrMoreInfo = (QrMoreInfo) message.obj;
+
                 if (!CheckUtil.isNull(qrMoreInfo)) {
                     Intent intent = new Intent(getContext(), WebActivity.class);
-                    if (qrMoreInfo.getType() == 2) {//相对路径
-                        intent.putExtra(WebFragment.URL_KEY, BuildConfig.SERVER_IP + qrMoreInfo.getContent() + "&userId=" + UserInfoHelper.get().getUser().getId());
-                    } else if (qrMoreInfo.getType() == 3) {//绝对路径
+
+                    if (qrMoreInfo.getType() == 2) {
+                        //获取用户信息
+                        UserInfo user = UserInfoHelper.get().getUserInfo();
+                        //相对路径
+                        intent.putExtra(WebFragment.URL_KEY, user.getWebUrl() + qrMoreInfo.getContent() + "&userId=" + user.getId());
+                    } else if (qrMoreInfo.getType() == 3) {
+                        //绝对路径
                         intent.putExtra(WebFragment.URL_KEY, qrMoreInfo.getContent());
                     }
+
                     startActivity(intent);
                 }
                 break;
@@ -197,6 +205,4 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
         Vibrator vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(200);
     }
-
-
 }
