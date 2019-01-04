@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:text="2018-09-30"
+                android:text=""
                 android:textColor="#333333"
                 android:textSize="@dimen/text_size_13" />
 

@@ -282,7 +282,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
         Sampling sampling = new Sampling();
-        sampling.setId("LC-" + UUID.randomUUID().toString());
+        sampling.setId("FS-" + UUID.randomUUID().toString());
         sampling.setSamplingNo(createSamplingNo());
         sampling.setProjectId(project.getId());
         sampling.setProjectName(project.getName());

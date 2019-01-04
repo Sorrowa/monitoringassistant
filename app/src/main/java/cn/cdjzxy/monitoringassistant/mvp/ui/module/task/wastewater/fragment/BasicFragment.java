@@ -17,13 +17,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
@@ -41,11 +41,10 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
@@ -135,22 +134,11 @@ public class BasicFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-
-    }
-
-    @Nullable
-    @Override
-    public IPresenter obtainPresenter() {
-        return null;
-    }
-
-    @Override
-    public void setData(@Nullable Object data) {
         if (!CheckUtil.isNull(WastewaterActivity.mSample)) {
-            base_sample_date.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
-            base_sample_user.setText(PrecipitationActivity.mSampling.getSamplingUserName());
+            base_sample_date.setText(WastewaterActivity.mSample.getSamplingTimeBegin());
+            base_sample_user.setText(WastewaterActivity.mSample.getSamplingUserName());
             //tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
-            base_sample_point.setText(PrecipitationActivity.mSampling.getAddressName());
+            base_sample_point.setText(WastewaterActivity.mSample.getAddressName());
 //            tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
 //            if (!CheckUtil.isEmpty(PrecipitationActivity.mSampling.getPrivateData())) {
 //                mPrivateData = JSONObject.parseObject(PrecipitationActivity.mSampling.getPrivateData(), PreciptationPrivateData.class);
@@ -159,7 +147,7 @@ public class BasicFragment extends BaseFragment {
 //                    etSamplingArea.setText(mPrivateData.getSampArea());
 //                }
 //            }
-            base_sample_method.setText(PrecipitationActivity.mSampling.getMethodName());
+            base_sample_method.setText(WastewaterActivity.mSample.getMethodName());
 
 //
 //
@@ -219,6 +207,16 @@ public class BasicFragment extends BaseFragment {
         });
         recyclerview.setAdapter(sampleFileAdapter);
 
+    }
+
+    @Nullable
+    @Override
+    public IPresenter obtainPresenter() {
+        return null;
+    }
+
+    @Override
+    public void setData(@Nullable Object data) {
 
     }
 
@@ -248,7 +246,7 @@ public class BasicFragment extends BaseFragment {
                 samplingFile.setId("LC-" + UUID.randomUUID().toString());
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
-                samplingFile.setSamplingId(PrecipitationActivity.mSampling.getId());
+                samplingFile.setSamplingId(WastewaterActivity.mSample.getId());
                 sampleFiles.add(samplingFile);
             }
 
@@ -283,13 +281,13 @@ public class BasicFragment extends BaseFragment {
                 showDateSelectDialog(base_sample_date);
                 break;
             case R.id.base_sample_user:
-
+                showSamplingUser();
                 break;
             case R.id.base_sample_property:
 
                 break;
             case R.id.base_sample_point:
-
+                showSamplingPoints();
                 break;
             case R.id.base_sample_method:
 
@@ -343,10 +341,10 @@ public class BasicFragment extends BaseFragment {
     }
 
     /**
+     * 时间选择器
      * data picker
      */
     private void showDateSelectDialog(TextView dateTextView) {
-        //时间选择器
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
@@ -356,5 +354,39 @@ public class BasicFragment extends BaseFragment {
         }).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
+    }
+
+    private void showSamplingUser(){
+        Intent intent = new Intent(getContext(), UserActivity.class);
+        intent.putExtra("projectId", WastewaterActivity.mSample.getProjectId());
+        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
+                        WastewaterActivity.mSample.setSamplingUserId(data.getStringExtra("UserId"));
+                        WastewaterActivity.mSample.setSamplingUserName(data.getStringExtra("UserName"));
+                        base_sample_user.setText(WastewaterActivity.mSample.getSamplingUserName());
+                    }
+                }
+            }
+        });
+    }
+
+    private void showSamplingPoints(){
+        Intent intent = new Intent(getContext(), PointSelectActivity.class);
+        intent.putExtra("projectId", WastewaterActivity.mSample.getProjectId());
+        intent.putExtra("tagId", WastewaterActivity.mSample.getTagId());
+        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    WastewaterActivity.mSample.setAddressName(data.getStringExtra("Address"));
+                    WastewaterActivity.mSample.setAddressId(data.getStringExtra("AddressId"));
+                    WastewaterActivity.mSample.setAddressNo(data.getStringExtra("AddressNo"));
+                    base_sample_point.setText(WastewaterActivity.mSample.getAddressName());
+                }
+            }
+        });
     }
 }
