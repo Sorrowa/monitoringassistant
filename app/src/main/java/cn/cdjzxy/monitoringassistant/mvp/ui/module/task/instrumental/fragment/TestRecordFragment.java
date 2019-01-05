@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
+import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
@@ -28,31 +30,32 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 
-public class TestRecordFragment  extends BaseFragment {
+public class TestRecordFragment extends BaseFragment {
 
     Unbinder unbinder;
     @BindView(R.id.recyclerview)
-    RecyclerView   recyclerview;
+    RecyclerView recyclerview;
 
     @BindView(R.id.tv_add_parallel)
-    TextView       tvAddParallel;
+    TextView tvAddParallel;
     @BindView(R.id.btn_add_parallel)
     RelativeLayout btnAddParallel;
 
     @BindView(R.id.tv_add_blank)
-    TextView       tvAddBlank;
+    TextView tvAddBlank;
     @BindView(R.id.btn_add_blank)
     RelativeLayout btnAddBlank;
 
     @BindView(R.id.tv_print_label)
-    TextView       tvPrintLabel;
+    TextView tvPrintLabel;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
 
     private InstrumentalTestRecordAdapter mInstrumentalTestRecordAdapter;
     private SharedPreferences collectListSettings;
-    private SharedPreferences.Editor    editor;
+    private SharedPreferences.Editor editor;
 
     public TestRecordFragment() {
     }
@@ -125,34 +128,33 @@ public class TestRecordFragment  extends BaseFragment {
                 editor.commit();
 
                 //跳转到添加样品
-                EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                EventBus.getDefault().post(2, EventBusTags.TAG_INSTRUMENTAL_RECORD);
                 break;
         }
     }
 
     private void initRecyclerViewData() {
+        if (!InstrumentalActivity.mSampling.getIsCanEdit()) {
+            btnAddParallel.setVisibility(View.GONE);
+            btnAddBlank.setVisibility(View.GONE);
+        }
 
-//        if (!PrecipitationActivity.mSampling.getIsCanEdit()) {
-//            btnAddParallel.setVisibility(View.GONE);
-//            btnAddBlank.setVisibility(View.GONE);
-//        }
-//
-//        if (PrecipitationActivity.mSampling.getSamplingDetailResults() == null) {
-//                return;
-//        }
-//        ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
-//            @Override
-//            public boolean canScrollVertically() {//设置RecyclerView不可滑动
-//                return true;
-//            }
-//        });
+        if (InstrumentalActivity.mSampling.getSamplingDetailYQFs() == null) {
+            return;
+        }
 
-        List<Object> list = new ArrayList<>();
-        mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(list);
+        ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {//设置RecyclerView不可滑动
+                return true;
+            }
+        });
+
+        mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                EventBus.getDefault().post(2, EventBusTags.TAG_INSTRUMENTAL_RECORD);
                 editor.putInt("listPosition", position);
                 editor.commit();
             }

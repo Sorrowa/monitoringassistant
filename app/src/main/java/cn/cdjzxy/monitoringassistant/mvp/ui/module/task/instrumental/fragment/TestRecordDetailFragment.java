@@ -6,9 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +23,12 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,40 +36,89 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class TestRecordDetailFragment  extends BaseFragment {
+public class TestRecordDetailFragment extends BaseFragment {
 
     Unbinder unbinder;
+
+    /**
+     * 样品编码
+     */
     @BindView(R.id.tv_sample_code)
     TextView tvSampleCode;
 
+    /**
+     * 频次
+     */
     @BindView(R.id.tv_frequency)
-    TextView       tvFrequency;
+    TextView tvFrequency;
 
+    /**
+     * 点位
+     */
     @BindView(R.id.tv_point)
-    TextView       tvPoint;
+    TextView tvPoint;
 
+    /**
+     * 内控，平行/样品
+     */
     @BindView(R.id.tv_control)
-    TextView       tvControl;
+    TextView tvControl;
 
+    /**
+     * 检测日期
+     */
     @BindView(R.id.tv_test_time)
-    TextView       tvTestTime;
+    TextView tvTestTime;
 
+    /**
+     * 分析时间
+     */
     @BindView(R.id.tv_analyse_time)
-    TextView       tvAnalyseTime;
+    TextView tvAnalyseTime;
 
+    /**
+     * 分析结果
+     */
     @BindView(R.id.et_analyse_result)
-    EditText       etAnalyseResult;
+    EditText etAnalyseResult;
 
+    /**
+     * 结果单位
+     */
     @BindView(R.id.tv_test_company)
-    TextView       tvTestCompany;
+    TextView tvTestCompany;
 
+    /**
+     * 删除按钮
+     */
     @BindView(R.id.btn_delete)
     RelativeLayout btnDelete;
 
+    /**
+     * 保存按钮
+     */
     @BindView(R.id.btn_save)
     RelativeLayout btnSave;
+
+    /**
+     * 实体
+     */
+    private Sampling mSampling;
+    private boolean  isStartTime;
+    private int      listPosition;
 
 
     public TestRecordDetailFragment() {
@@ -112,64 +164,63 @@ public class TestRecordDetailFragment  extends BaseFragment {
     }
 
     private void creatSampleDetailNo() {
-//        mSampling = PrecipitationActivity.mSampling;
-//
-//        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
-//
-//        SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
-//        listPosition = collectListSettings.getInt("listPosition", -1);
-//
-//        if (listPosition == -1) {
-//            //添加 生成编码
-//
-//            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
-//            String samplingNo;
-//
-//            String snDate = DateUtils.getDate().replace("-", "").substring(2);
-//            String snPointPosition = "采样点位编号未填写";
-//            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
-//                snPointPosition = mSampling.getAddressNo();
-//            }
-//            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-//            int snFrequency = 1;
-//            if (samplingDetailResults != null
-//                    && samplingDetailResults.size() > 0) {
-//                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
-//            }
-//
-//            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
-//
-//            tvSampleCode.setText(samplingNo);
-//            tvFrequency.setText(snFrequency + "");
-//        } else {
-//            btnDelete.setVisibility(View.VISIBLE);
-//
-//            SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
-//            tvSampleCode.setText(samplingDetail.getSampingCode());
-//            tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
-//
-//            String privateData = samplingDetail.getPrivateData();
-//            try {
-//                JSONObject jsonObject = new JSONObject(privateData);
-//                tvStartTime.setText(jsonObject.getString("SDataTime"));
-//                tvEndTime.setText(jsonObject.getString("EDataTime"));
-//                etRainwaterVolume.setText(jsonObject.getString("RainVol"));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            etPrecipitation.setText(samplingDetail.getValue1());
-//            etRemark.setText(samplingDetail.getDescription());
-//        }
-//
-//        if (!mSampling.getIsCanEdit()) {
-//            btnDelete.setVisibility(View.GONE);
-//            btnSave.setVisibility(View.GONE);
-//            tvStartTime.setEnabled(mSampling.getIsCanEdit());
-//            tvEndTime.setEnabled(mSampling.getIsCanEdit());
-//            etPrecipitation.setEnabled(mSampling.getIsCanEdit());
-//            etRainwaterVolume.setEnabled(mSampling.getIsCanEdit());
-//            etRemark.setEnabled(mSampling.getIsCanEdit());
-//        }
+        mSampling = InstrumentalActivity.mSampling;
+
+        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailYQFs();
+
+        SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
+        listPosition = collectListSettings.getInt("listPosition", -1);
+
+        if (listPosition == -1) {
+            //添加 生成编码
+
+            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
+            String samplingNo;
+
+            String snDate = DateUtils.getDate().replace("-", "").substring(2);
+            String snPointPosition = "采样点位编号未填写";
+            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
+                snPointPosition = mSampling.getAddressNo();
+            }
+            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
+            int snFrequency = 1;
+            if (samplingDetailResults != null
+                    && samplingDetailResults.size() > 0) {
+                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
+            }
+
+            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
+
+            tvSampleCode.setText(samplingNo);
+            tvFrequency.setText(snFrequency + "");
+        } else {
+            btnDelete.setVisibility(View.VISIBLE);
+
+            SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
+            tvSampleCode.setText(samplingDetail.getSampingCode());
+            tvFrequency.setText(samplingDetail.getFrequecyNo());
+//          TODO:tvPoint.setText();
+            tvTestTime.setText(samplingDetail.getSamplingTime());
+            try {
+                JSONObject jsonObject = new JSONObject(samplingDetail.getPrivateData());
+                tvControl.setText(jsonObject.getBoolean("HasPX")?"平行":"样品");
+                tvAnalyseTime.setText(jsonObject.getString("SamplingOnTime"));
+                etAnalyseResult.setText(jsonObject.getString("CaleValue"));
+//              TODO:tvTestCompany.setText(jsonObject.getString("CaleValue"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!mSampling.getIsCanEdit()) {
+            btnDelete.setVisibility(View.GONE);
+            btnSave.setVisibility(View.GONE);
+
+            tvTestTime.setEnabled(mSampling.getIsCanEdit());
+            tvAnalyseTime.setEnabled(mSampling.getIsCanEdit());
+            etAnalyseResult.setEnabled(mSampling.getIsCanEdit());
+            tvTestCompany.setEnabled(mSampling.getIsCanEdit());
+        }
     }
 
     @Override
@@ -180,7 +231,7 @@ public class TestRecordDetailFragment  extends BaseFragment {
 
     @OnClick(R.id.btn_back)
     public void onClick() {
-        EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+        EventBus.getDefault().post(1, EventBusTags.TAG_INSTRUMENTAL_RECORD);
     }
 
     @OnClick({R.id.tv_analyse_time, R.id.tv_test_company, R.id.btn_delete, R.id.btn_save})
@@ -197,67 +248,66 @@ public class TestRecordDetailFragment  extends BaseFragment {
                 break;
 
             case R.id.btn_delete:
-//                if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults()) || listPosition == -1) {
-//                    ArtUtils.makeText(getContext(), "请先添加采样数据");
-//                    return;
-//                }
-//                showDelDialog();
+                if (CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs()) || listPosition == -1) {
+                    ArtUtils.makeText(getContext(), "请先添加采样数据");
+                    return;
+                }
+                showDelDialog();
                 break;
 
             case R.id.btn_save:
-//                if (saveCheck()) {
-//                    SamplingDetail samplingDetail;
-//                    if (listPosition == -1) {
-//                        samplingDetail = new SamplingDetail();
-//                    } else {
-//                        samplingDetail = mSampling.getSamplingDetailResults().get(listPosition);
-//                    }
-//
-//                    samplingDetail.setId("LC-" + UUID.randomUUID().toString());
-//                    samplingDetail.setSamplingId(PrecipitationActivity.mSampling.getId());
-//                    samplingDetail.setSampingCode(tvSampleCode.getText().toString());
-//                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
-//
-//                    HashMap<String, String> map = new HashMap<>();
-//                    map.put("SDataTime", tvStartTime.getText().toString());
-//                    map.put("EDataTime", tvEndTime.getText().toString());
-//                    map.put("RainVol", etRainwaterVolume.getText().toString());
-//                    samplingDetail.setPrivateData(new JSONObject(map).toString());
-//
-//                    samplingDetail.setValue(etPrecipitation.getText().toString());
-//                    samplingDetail.setValue1(etPrecipitation.getText().toString());
-//                    samplingDetail.setDescription(etRemark.getText().toString());
-//
-//                    if (listPosition == -1) {
-//                        if (mSampling.getSamplingDetailResults() == null) {
-//                            mSampling.setSamplingDetailResults(new ArrayList<SamplingDetail>());
-//                        }
-//                        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
-//                        samplingDetailResults.add(samplingDetail);
-//                        mSampling.setSamplingDetailResults(samplingDetailResults);
-//                    }
-//
-//
-//                    mSampling.setIsFinish(isSamplingFinish());
-//                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
-//                    Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
-//                    if (CheckUtil.isNull(sampling)) {
-//                        DBHelper.get().getSamplingDao().insert(mSampling);
-//                    } else {
-//                        DBHelper.get().getSamplingDao().update(mSampling);
-//                    }
-//
-//                    SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getId())).unique();
-//                    if (!CheckUtil.isNull(samplingDetails)) {
-//                        DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
-//                    }
-//                    DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
-//
-//
-//                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-//                    EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
-//                    ArtUtils.makeText(getContext(), "保存成功");
-//                }
+                if (saveCheck()) {
+                    SamplingDetail samplingDetail;
+                    if (listPosition == -1) {
+                        samplingDetail = new SamplingDetail();
+                    } else {
+                        samplingDetail = mSampling.getSamplingDetailYQFs().get(listPosition);
+                    }
+
+                    samplingDetail.setId("LC-" + UUID.randomUUID().toString());
+                    samplingDetail.setSamplingId(InstrumentalActivity.mSampling.getId());
+                    samplingDetail.setSampingCode(tvSampleCode.getText().toString());
+                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
+
+                    HashMap<String, String> map = new HashMap<>();
+                    Boolean hasPx = "平行".equals(tvControl.getText().toString());
+                    map.put("HasPX", hasPx.toString());
+                    map.put("SamplingOnTime", tvAnalyseTime.getText().toString());
+                    map.put("CaleValue", etAnalyseResult.getText().toString());
+//                  TODO:map.put("CaleValue", tvTestCompany.getText().toString());
+
+                    samplingDetail.setPrivateData(new JSONObject(map).toString());
+
+                    if (listPosition == -1) {
+                        if (mSampling.getSamplingDetailYQFs() == null) {
+                            mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
+                        }
+                        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailYQFs();
+                        samplingDetailResults.add(samplingDetail);
+                        mSampling.setSamplingDetailYQFs(samplingDetailResults);
+                    }
+
+
+                    mSampling.setIsFinish(isSamplingFinish());
+                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                    Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                    if (CheckUtil.isNull(sampling)) {
+                        DBHelper.get().getSamplingDao().insert(mSampling);
+                    } else {
+                        DBHelper.get().getSamplingDao().update(mSampling);
+                    }
+
+                    SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getId())).unique();
+                    if (!CheckUtil.isNull(samplingDetails)) {
+                        DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
+                    }
+                    DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+
+
+                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+                    EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                    ArtUtils.makeText(getContext(), "保存成功");
+                }
 
                 break;
         }
@@ -298,27 +348,27 @@ public class TestRecordDetailFragment  extends BaseFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        SamplingDetail samplingDetail1 = mSampling.getSamplingDetailResults().get(listPosition);
-//
-//                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getSamplingId())).unique();
-//                        if (!CheckUtil.isNull(samplingDetails1)) {
-//                            DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
-//                        }
-//
-//                        mSampling.getSamplingDetailResults().remove(listPosition);
-//
-//                        mSampling.setIsFinish(isSamplingFinish());
-//                        mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
-//                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
-//                        if (CheckUtil.isNull(sampling)) {
-//                            DBHelper.get().getSamplingDao().insert(mSampling);
-//                        } else {
-//                            DBHelper.get().getSamplingDao().update(mSampling);
-//                        }
-//
-//                        ArtUtils.makeText(getContext(), "删除成功");
-//                        EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-//                        EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                        SamplingDetail samplingDetail1 = mSampling.getSamplingDetailYQFs().get(listPosition);
+
+                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getSamplingId())).unique();
+                        if (!CheckUtil.isNull(samplingDetails1)) {
+                            DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
+                        }
+
+                        mSampling.getSamplingDetailYQFs().remove(listPosition);
+
+                        mSampling.setIsFinish(isSamplingFinish());
+                        mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                        if (CheckUtil.isNull(sampling)) {
+                            DBHelper.get().getSamplingDao().insert(mSampling);
+                        } else {
+                            DBHelper.get().getSamplingDao().update(mSampling);
+                        }
+
+                        ArtUtils.makeText(getContext(), "删除成功");
+                        EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+                        EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
 
@@ -328,5 +378,36 @@ public class TestRecordDetailFragment  extends BaseFragment {
                     }
                 }).create();
         dialog.show();
+    }
+
+    /**
+     * 采样是否完成
+     *
+     * @return
+     */
+    private boolean isSamplingFinish() {
+        if (CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getTagName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
+            return false;
+        }
+        return true;
+
     }
 }

@@ -27,36 +27,17 @@ import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TypeActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
@@ -95,6 +76,24 @@ public class BasicInfoFragment  extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        if (!CheckUtil.isNull(InstrumentalActivity.mSampling)) {
+            tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
+            tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
+            tvTestStartDate.setText(InstrumentalActivity.mSampling.getSamplingTimeBegin());
+            tvTestEndDate.setText(InstrumentalActivity.mSampling.getSamplingTimeEnd());
+            tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
+            tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
+            tvComment.setText(InstrumentalActivity.mSampling.getComment());
+
+            tvTestUser.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvChooseProject.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvTestStartDate.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvTestEndDate.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvTestMethod.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvTestDevice.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvComment.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+        }
+
         tvComment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -108,7 +107,7 @@ public class BasicInfoFragment  extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-//                PrecipitationActivity.mSampling.setComment(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+                InstrumentalActivity.mSampling.setComment(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
             }
         });
     }
@@ -146,33 +145,33 @@ public class BasicInfoFragment  extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_test_user:
-//                Intent intent1 = new Intent(getContext(), UserActivity.class);
-//                intent1.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
-//                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
-//                    @Override
-//                    public void onActivityResult(int resultCode, Intent data) {
-//                        if (resultCode == Activity.RESULT_OK) {
-//                            if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
-//                                PrecipitationActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
-//                                PrecipitationActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
-//                                tvTestUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
-//                            }
-//                        }
-//                    }
-//                });
+                Intent intent1 = new Intent(getContext(), UserActivity.class);
+                intent1.putExtra("projectId", InstrumentalActivity.mSampling.getProjectId());
+                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
+                                InstrumentalActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
+                                InstrumentalActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
+                                tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
+                            }
+                        }
+                    }
+                });
                 break;
 
             case R.id.tv_choose_project:
 //                Intent intent1 = new Intent(getContext(), UserActivity.class);
-//                intent1.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
+//                intent1.putExtra("projectId", InstrumentalActivity.mSampling.getProjectId());
 //                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
 //                    @Override
 //                    public void onActivityResult(int resultCode, Intent data) {
 //                        if (resultCode == Activity.RESULT_OK) {
 //                            if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
-//                                PrecipitationActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
-//                                PrecipitationActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
-//                                tvTestUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
+//                                InstrumentalActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
+//                                InstrumentalActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
+//                                tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
 //                            }
 //                        }
 //                    }
@@ -200,41 +199,41 @@ public class BasicInfoFragment  extends BaseFragment {
                 break;
 
             case R.id.tv_test_method:
-//                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getParentTagId())) {
+//                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getParentTagId())) {
 //                    ArtUtils.makeText(getContext(), "请先选择降水类型");
 //                    return;
 //                }
 //                Intent intent3 = new Intent(getContext(), MethodActivity.class);
-//                intent3.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
+//                intent3.putExtra("tagId", InstrumentalActivity.mSampling.getParentTagId());
 //                new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
 //                    @Override
 //                    public void onActivityResult(int resultCode, Intent data) {
 //                        if (resultCode == Activity.RESULT_OK) {
-//                            PrecipitationActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
-//                            PrecipitationActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
-//                            tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
+//                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
+//                            InstrumentalActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
+//                            tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
 //                        }
 //                    }
 //                });
                 break;
 
             case R.id.tv_test_device:
-//                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getMethodId())) {
-//                    ArtUtils.makeText(getContext(), "请先选择方法");
-//                    return;
-//                }
-//                Intent intent4 = new Intent(getContext(), DeviceActivity.class);
-//                intent4.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
-//                new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
-//                    @Override
-//                    public void onActivityResult(int resultCode, Intent data) {
-//                        if (resultCode == Activity.RESULT_OK) {
-//                            PrecipitationActivity.mSampling.setDeviceName(data.getStringExtra("DeviceName"));
-//                            PrecipitationActivity.mSampling.setDeviceId(data.getStringExtra("DeviceId"));
-//                            tvTestDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
-//                        }
-//                    }
-//                });
+                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getMethodId())) {
+                    ArtUtils.makeText(getContext(), "请先选择方法");
+                    return;
+                }
+                Intent intent4 = new Intent(getContext(), DeviceActivity.class);
+                intent4.putExtra("methodId", InstrumentalActivity.mSampling.getMethodId());
+                new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            InstrumentalActivity.mSampling.setDeviceName(data.getStringExtra("DeviceName"));
+                            InstrumentalActivity.mSampling.setDeviceId(data.getStringExtra("DeviceId"));
+                            tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
+                        }
+                    }
+                });
                 break;
         }
     }

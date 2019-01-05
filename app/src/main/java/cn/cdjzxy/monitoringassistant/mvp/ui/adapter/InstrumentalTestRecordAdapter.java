@@ -8,6 +8,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.InstrumentalTestRecordHolder;
 
 
@@ -15,10 +16,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.InstrumentalTestRecordHolder;
  * 降水样品采集
  */
 
-public class InstrumentalTestRecordAdapter extends DefaultAdapter<Object> {
+public class InstrumentalTestRecordAdapter extends DefaultAdapter<SamplingDetail> {
 
 
-    public InstrumentalTestRecordAdapter(List<Object> infos) {
+    public InstrumentalTestRecordAdapter(List<SamplingDetail> infos) {
         super(infos);
     }
 
@@ -28,7 +29,7 @@ public class InstrumentalTestRecordAdapter extends DefaultAdapter<Object> {
     }
 
     @Override
-    public BaseHolder<Object> getHolder(View v, int viewType) {
+    public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
         return new InstrumentalTestRecordHolder(v);
     }
 
