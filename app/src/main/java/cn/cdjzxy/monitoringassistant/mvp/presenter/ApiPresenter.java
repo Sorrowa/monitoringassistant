@@ -32,6 +32,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
@@ -639,6 +640,33 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             DBHelper.get().getUserDao().deleteAll();
                             DBHelper.get().getUserDao().insertInTx(baseResponse.getData());
+                        }
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = PROGRESS;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    /**
+     * @param msg
+     */
+    public void getUnit(final Message msg) {
+        mModel.getUnit()
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Unit>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Unit>> baseResponse) {
+                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            DBHelper.get().getUnitDao().deleteAll();
+                            DBHelper.get().getUnitDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;

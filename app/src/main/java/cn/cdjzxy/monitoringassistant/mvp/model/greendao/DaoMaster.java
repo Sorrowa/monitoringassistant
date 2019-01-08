@@ -34,6 +34,7 @@ public class DaoMaster extends AbstractDaoMaster {
         MonItemTagRelationDao.createTable(db, ifNotExists);
         RightsDao.createTable(db, ifNotExists);
         TagsDao.createTable(db, ifNotExists);
+        UnitDao.createTable(db, ifNotExists);
         UserDao.createTable(db, ifNotExists);
         WeatherDao.createTable(db, ifNotExists);
         MsgDao.createTable(db, ifNotExists);
@@ -67,6 +68,7 @@ public class DaoMaster extends AbstractDaoMaster {
         MonItemTagRelationDao.dropTable(db, ifExists);
         RightsDao.dropTable(db, ifExists);
         TagsDao.dropTable(db, ifExists);
+        UnitDao.dropTable(db, ifExists);
         UserDao.dropTable(db, ifExists);
         WeatherDao.dropTable(db, ifExists);
         MsgDao.dropTable(db, ifExists);
@@ -114,6 +116,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(MonItemTagRelationDao.class);
         registerDaoClass(RightsDao.class);
         registerDaoClass(TagsDao.class);
+        registerDaoClass(UnitDao.class);
         registerDaoClass(UserDao.class);
         registerDaoClass(WeatherDao.class);
         registerDaoClass(MsgDao.class);

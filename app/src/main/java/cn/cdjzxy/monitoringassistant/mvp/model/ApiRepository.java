@@ -24,6 +24,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
@@ -464,6 +465,27 @@ public class ApiRepository implements IModel {
                         return baseResponseObservable.map(new Function<BaseResponse<List<User>>, BaseResponse<List<User>>>() {
                             @Override
                             public BaseResponse<List<User>> apply(BaseResponse<List<User>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
+     * 获取结果单位
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<Unit>>> getUnit() {
+        return Observable.just(mApiService.getUnit())
+                .flatMap(new Function<Observable<BaseResponse<List<Unit>>>, ObservableSource<BaseResponse<List<Unit>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Unit>>> apply(Observable<BaseResponse<List<Unit>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Unit>>, BaseResponse<List<Unit>>>() {
+                            @Override
+                            public BaseResponse<List<Unit>> apply(BaseResponse<List<Unit>> baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });

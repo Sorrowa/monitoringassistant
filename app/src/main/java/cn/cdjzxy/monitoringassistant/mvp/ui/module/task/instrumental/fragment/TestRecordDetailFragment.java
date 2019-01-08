@@ -1,8 +1,10 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +23,7 @@ import com.bigkoo.pickerview.view.TimePickerView;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
 import org.simple.eventbus.EventBus;
 
@@ -42,10 +45,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UnitActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -98,8 +104,8 @@ public class TestRecordDetailFragment extends BaseFragment {
     /**
      * 结果单位
      */
-    @BindView(R.id.tv_test_company)
-    TextView tvTestCompany;
+    @BindView(R.id.tv_test_unit)
+    TextView tvTestUnit;
 
     /**
      * 删除按钮
@@ -117,8 +123,9 @@ public class TestRecordDetailFragment extends BaseFragment {
      * 实体
      */
     private Sampling mSampling;
-    private boolean  isStartTime;
-    private int      listPosition;
+    private boolean isStartTime;
+    private int listPosition;
+    private String unitId;
 
 
     public TestRecordDetailFragment() {
@@ -155,9 +162,12 @@ public class TestRecordDetailFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+
+        TestRecordDetailFragment.this.unitId = "";
+
         if (isVisibleToUser) {
             tvAnalyseTime.setText("");
-            tvTestCompany.setText("");
+            tvTestUnit.setText("");
             etAnalyseResult.setText("");
             creatSampleDetailNo();
         }
@@ -203,10 +213,10 @@ public class TestRecordDetailFragment extends BaseFragment {
             tvTestTime.setText(samplingDetail.getSamplingTime());
             try {
                 JSONObject jsonObject = new JSONObject(samplingDetail.getPrivateData());
-                tvControl.setText(jsonObject.getBoolean("HasPX")?"平行":"样品");
+                tvControl.setText(jsonObject.getBoolean("HasPX") ? "平行" : "样品");
                 tvAnalyseTime.setText(jsonObject.getString("SamplingOnTime"));
                 etAnalyseResult.setText(jsonObject.getString("CaleValue"));
-//              TODO:tvTestCompany.setText(jsonObject.getString("CaleValue"));
+//              TODO:tvTestUnit.setText(jsonObject.getString("CaleValue"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -219,7 +229,7 @@ public class TestRecordDetailFragment extends BaseFragment {
             tvTestTime.setEnabled(mSampling.getIsCanEdit());
             tvAnalyseTime.setEnabled(mSampling.getIsCanEdit());
             etAnalyseResult.setEnabled(mSampling.getIsCanEdit());
-            tvTestCompany.setEnabled(mSampling.getIsCanEdit());
+            tvTestUnit.setEnabled(mSampling.getIsCanEdit());
         }
     }
 
@@ -234,7 +244,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         EventBus.getDefault().post(1, EventBusTags.TAG_INSTRUMENTAL_RECORD);
     }
 
-    @OnClick({R.id.tv_analyse_time, R.id.tv_test_company, R.id.btn_delete, R.id.btn_save})
+    @OnClick({R.id.tv_analyse_time, R.id.tv_test_unit, R.id.btn_delete, R.id.btn_save})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_analyse_time:
@@ -245,6 +255,20 @@ public class TestRecordDetailFragment extends BaseFragment {
                     }
                 });
 
+                break;
+
+            case R.id.tv_test_unit:
+                Intent intent4 = new Intent(getContext(), UnitActivity.class);
+                new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            //记录结果单位
+                            TestRecordDetailFragment.this.unitId = data.getStringExtra("UnitId");
+                            tvTestUnit.setText(data.getStringExtra("UnitName"));
+                        }
+                    }
+                });
                 break;
 
             case R.id.btn_delete:
@@ -270,11 +294,12 @@ public class TestRecordDetailFragment extends BaseFragment {
                     samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
 
                     HashMap<String, String> map = new HashMap<>();
-                    Boolean hasPx = "平行".equals(tvControl.getText().toString());
-                    map.put("HasPX", hasPx.toString());
                     map.put("SamplingOnTime", tvAnalyseTime.getText().toString());
                     map.put("CaleValue", etAnalyseResult.getText().toString());
-//                  TODO:map.put("CaleValue", tvTestCompany.getText().toString());
+                    map.put("ValueUnit", TestRecordDetailFragment.this.unitId);
+                    map.put("ValueUnitName", tvTestUnit.getText().toString());
+                    Boolean hasPx = "平行".equals(tvControl.getText().toString());
+                    map.put("HasPX", hasPx.toString());
 
                     samplingDetail.setPrivateData(new JSONObject(map).toString());
 
@@ -286,7 +311,6 @@ public class TestRecordDetailFragment extends BaseFragment {
                         samplingDetailResults.add(samplingDetail);
                         mSampling.setSamplingDetailYQFs(samplingDetailResults);
                     }
-
 
                     mSampling.setIsFinish(isSamplingFinish());
                     mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
@@ -302,7 +326,6 @@ public class TestRecordDetailFragment extends BaseFragment {
                         DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
                     }
                     DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
-
 
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
@@ -324,7 +347,7 @@ public class TestRecordDetailFragment extends BaseFragment {
             return false;
         }
 
-        if (TextUtils.isEmpty(tvTestCompany.getText().toString())) {
+        if (TextUtils.isEmpty(tvTestUnit.getText().toString())) {
             ArtUtils.makeText(getContext(), "请选择结果单位");
             return false;
         }

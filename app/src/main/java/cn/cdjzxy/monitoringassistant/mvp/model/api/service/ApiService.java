@@ -7,6 +7,7 @@ import java.util.Map;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
@@ -129,6 +130,9 @@ public interface ApiService {
 
     @GET(Api.GET_USER)
     Observable<BaseResponse<List<User>>> getUser();
+
+    @GET(Api.GET_Unit)
+    Observable<BaseResponse<List<Unit>>> getUnit();
 
 
     //*******************任务******************

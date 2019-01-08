@@ -21,6 +21,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
@@ -51,6 +52,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemTagRelationDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.RightsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UnitDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.WeatherDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
@@ -90,6 +92,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig monItemTagRelationDaoConfig;
     private final DaoConfig rightsDaoConfig;
     private final DaoConfig tagsDaoConfig;
+    private final DaoConfig unitDaoConfig;
     private final DaoConfig userDaoConfig;
     private final DaoConfig weatherDaoConfig;
     private final DaoConfig msgDaoConfig;
@@ -120,6 +123,7 @@ public class DaoSession extends AbstractDaoSession {
     private final MonItemTagRelationDao monItemTagRelationDao;
     private final RightsDao rightsDao;
     private final TagsDao tagsDao;
+    private final UnitDao unitDao;
     private final UserDao userDao;
     private final WeatherDao weatherDao;
     private final MsgDao msgDao;
@@ -179,6 +183,9 @@ public class DaoSession extends AbstractDaoSession {
 
         tagsDaoConfig = daoConfigMap.get(TagsDao.class).clone();
         tagsDaoConfig.initIdentityScope(type);
+
+        unitDaoConfig = daoConfigMap.get(UnitDao.class).clone();
+        unitDaoConfig.initIdentityScope(type);
 
         userDaoConfig = daoConfigMap.get(UserDao.class).clone();
         userDaoConfig.initIdentityScope(type);
@@ -241,6 +248,7 @@ public class DaoSession extends AbstractDaoSession {
         monItemTagRelationDao = new MonItemTagRelationDao(monItemTagRelationDaoConfig, this);
         rightsDao = new RightsDao(rightsDaoConfig, this);
         tagsDao = new TagsDao(tagsDaoConfig, this);
+        unitDao = new UnitDao(unitDaoConfig, this);
         userDao = new UserDao(userDaoConfig, this);
         weatherDao = new WeatherDao(weatherDaoConfig, this);
         msgDao = new MsgDao(msgDaoConfig, this);
@@ -271,6 +279,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(MonItemTagRelation.class, monItemTagRelationDao);
         registerDao(Rights.class, rightsDao);
         registerDao(Tags.class, tagsDao);
+        registerDao(Unit.class, unitDao);
         registerDao(User.class, userDao);
         registerDao(Weather.class, weatherDao);
         registerDao(Msg.class, msgDao);
@@ -303,6 +312,7 @@ public class DaoSession extends AbstractDaoSession {
         monItemTagRelationDaoConfig.clearIdentityScope();
         rightsDaoConfig.clearIdentityScope();
         tagsDaoConfig.clearIdentityScope();
+        unitDaoConfig.clearIdentityScope();
         userDaoConfig.clearIdentityScope();
         weatherDaoConfig.clearIdentityScope();
         msgDaoConfig.clearIdentityScope();
@@ -371,6 +381,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public TagsDao getTagsDao() {
         return tagsDao;
+    }
+
+    public UnitDao getUnitDao() {
+        return unitDao;
     }
 
     public UserDao getUserDao() {

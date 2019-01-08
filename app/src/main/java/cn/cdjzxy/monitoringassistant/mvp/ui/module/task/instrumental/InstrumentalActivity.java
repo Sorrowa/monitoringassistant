@@ -235,7 +235,8 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
         sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
         sampling.setSamplingTimeBegin(DateUtils.getDate());
-//        sampling.setSamplingYQFs(new ArrayList<>());
+        sampling.setSamplingTimeEnd(DateUtils.getDate());
+        sampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
         sampling.setIsLocal(true);
         sampling.setIsUpload(false);
         sampling.setIsCanEdit(true);

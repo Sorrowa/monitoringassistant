@@ -180,6 +180,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             mPresenter.getDic(Message.obtain(this, new Object()), 7);
             mPresenter.getWeather(Message.obtain(this, new Object()));
             mPresenter.getUser(Message.obtain(this, new Object()));
+            mPresenter.getUnit(Message.obtain(this, new Object()));
             mPresenter.getMsgs(Message.obtain(this, new Object()));
             mPresenter.getFormSelect(Message.obtain(this, new Object()));
             mPresenter.getSamplingStantd(Message.obtain(this, new Object()));

@@ -18,6 +18,8 @@ import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 
@@ -161,5 +164,62 @@ public class TestRecordFragment extends BaseFragment {
         });
 
         recyclerview.setAdapter(mInstrumentalTestRecordAdapter);
+    }
+
+    /**
+     * 计算仪器法数据
+     */
+    private void calcYQFData(List<SamplingDetail> details) {
+        if (details == null || details.size() == 0) {
+            return;
+        }
+
+        for (SamplingDetail detail : details) {
+            SamplingDetail pxItem = findPXItem(details, detail);
+            if (pxItem == null) {
+                continue;
+            }
+            //计算均值和相对偏差
+        }
+    }
+
+    /**
+     * 查找原始记录的平行数据
+     *
+     * @param details
+     * @param sourceItem
+     * @return
+     */
+    private SamplingDetail findPXItem(List<SamplingDetail> details, SamplingDetail sourceItem) {
+        try {
+            //原数据是平行数据，无须再查找
+            if (sourceItem.getPrivateJsonData().getBoolean("HasPX")) {
+                return null;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        for (SamplingDetail item : details) {
+            if (item == sourceItem) {
+                continue;//过滤原数据
+            }
+
+            //平行数据，频次相等
+            if (item.getFrequecyNo() != sourceItem.getFrequecyNo()) {
+                continue;
+            }
+
+            //解析私有数据
+            try {
+                if (item.getPrivateJsonData().getBoolean("HasPX")) {
+                    return item;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
     }
 }

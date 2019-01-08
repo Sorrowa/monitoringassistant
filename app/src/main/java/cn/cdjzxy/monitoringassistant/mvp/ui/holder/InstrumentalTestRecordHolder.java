@@ -50,19 +50,13 @@ public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
     public void setData(SamplingDetail data, int position) {
         tvFrequency.setText("频次：" + data.getFrequecyNo());
         tvTime.setText(data.getSamplingTime());//TODO:SamplingOnTime
-//        tvPoint.setText("点位：");
+        tvAveValue.setText(data.getValue());//均值
+//        tvPoint.setText("点位：");TODO
 
-        try {
-            JSONObject privateData = new JSONObject(data.getPrivateData());
-            tvAnalyseTime.setText("分析时间：" + privateData.getString("SamplingOnTime"));
-            tvAnalyseResult.setText("分析结果：" + privateData.getString("CaleValue"));
-            tvHasPX.setText(privateData.getBoolean("HasPX")?"平行":"样品");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-//        tvAveValue//TODO:均值
-//        tvRelaOffset//TODO:相对偏差
+        tvAnalyseTime.setText("分析时间：" + data.getPrivateDataStringValue("SamplingOnTime"));
+        tvAnalyseResult.setText("分析结果：" + data.getPrivateDataStringValue("CaleValue"));
+        tvHasPX.setText(data.getPrivateDataBooleanValue("HasPX") ? "平行" : "样品");
+        tvRelaOffset.setText("相对偏差" + data.getPrivateDataStringValue("RPDValue"));//相对偏差
     }
 
     @Override

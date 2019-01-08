@@ -35,6 +35,7 @@ public interface Api {
     String GET_DIC                    = "api/BaseData/GetDic";//获取字典  GET
     String GET_WEATHER                = "api/BaseData/GetWeather";//获取天气  GET
     String GET_USER                   = "api/BaseData/GetUser";//获取采样用户  GET
+    String GET_Unit                   = "api/BaseData/GetUnit";//获取结果单位  GET
 
     //*******************文件******************
     String UPLOAD_FILE = "api/File/Upload";//上传文件 POST

@@ -35,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
@@ -199,22 +200,22 @@ public class BasicInfoFragment  extends BaseFragment {
                 break;
 
             case R.id.tv_test_method:
-//                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getParentTagId())) {
-//                    ArtUtils.makeText(getContext(), "请先选择降水类型");
-//                    return;
-//                }
-//                Intent intent3 = new Intent(getContext(), MethodActivity.class);
-//                intent3.putExtra("tagId", InstrumentalActivity.mSampling.getParentTagId());
-//                new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
-//                    @Override
-//                    public void onActivityResult(int resultCode, Intent data) {
-//                        if (resultCode == Activity.RESULT_OK) {
-//                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
-//                            InstrumentalActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
-//                            tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
-//                        }
-//                    }
-//                });
+                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getParentTagId())) {
+                    ArtUtils.makeText(getContext(), "需要父要素ID");
+                    return;
+                }
+                Intent intent3 = new Intent(getContext(), MethodActivity.class);
+                intent3.putExtra("tagId", InstrumentalActivity.mSampling.getParentTagId());
+                new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
+                            InstrumentalActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
+                            tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
+                        }
+                    }
+                });
                 break;
 
             case R.id.tv_test_device:
