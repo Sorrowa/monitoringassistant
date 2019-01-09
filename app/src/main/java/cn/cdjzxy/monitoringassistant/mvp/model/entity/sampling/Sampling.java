@@ -2,12 +2,11 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
-
-import org.greenrobot.greendao.annotation.Generated;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
 
@@ -87,80 +86,80 @@ public class Sampling {
     //    撤回 = 9,
 
     @Id
-    private String                  Id;
-    private String                  ProjectId;
-    private String                  SamplingNo;
-    private String                  FormPath;
-    private String                  FormName;
-    private String                  ProjectName;
-    private String                  Montype;
-    private String                  SamplingTimeBegin;
-    private String                  SamplingTimeEnd;
-    private String                  ParentTagId;
-    private String                  TagId;
-    private String                  TagName;
-    private String                  AddressId;
-    private String                  AddressName;
-    private String                  AddressNo;
-    private String                  SamplingHeight;
-    private String                  PollutionType;
-    private String                  RainType;
-    private String                  SampProperty;
-    private String                  FormType;
-    private String                  FormTypeName;
-    private String                  DeviceId;
-    private String                  DeviceName;
-    private String                  MethodId;
-    private String                  MethodName;
-    private String                  Weather;
-    private String                  WindSpeed;
-    private String                  Temprature;
-    private String                  Pressure;
-    private String                  CalibrationFactor;
-    private String                  Transfer;
-    private String                  SendSampTime;
-    private String                  ReciveTime;
-    private String                  PrivateData;
-    private String                  SamplingUserId;
-    private String                  SamplingUserName;
-    private String                  SubmitId;
-    private String                  SubmitName;
-    private String                  SubmitDate;
-    private String                  MonitorPerson;
-    private String                  MonitorTime;
-    private int                     Status;
-    private String                  StatusName;
-    private int                     TransStatus;
-    private String                  TransStatusName;
-    private String                  CurUserId;
-    private String                  CurUserName;
-    private String                  FormFlows;
-    private String                  Comment;
-    private String                  AddTime;
-    private String                  UpdateTime;
-    private int                     Version;
-    private String                  MonitemId;
-    private String                  MonitemName;
-    private String                  AuditDate;
-    private String                  Recoding;
-    private String                  ProjectNo;
-    private String                  file;
-    private boolean                 isUpload;//是否上传
-    private boolean                 isLocal;//是否为本地创建
-    private boolean                 isCanEdit;//是否IsAdd可编辑
-    private boolean                 isFinish;//是否完成
+    private String Id;
+    private String ProjectId;
+    private String SamplingNo;
+    private String FormPath;
+    private String FormName;
+    private String ProjectName;
+    private String Montype;
+    private String SamplingTimeBegin;
+    private String SamplingTimeEnd;
+    private String ParentTagId;
+    private String TagId;//水和废水中作为样品性质
+    private String TagName;
+    private String AddressId;
+    private String AddressName;
+    private String AddressNo;
+    private String SamplingHeight;
+    private String PollutionType;
+    private String RainType;
+    private String SampProperty;
+    private String FormType;
+    private String FormTypeName;
+    private String DeviceId;
+    private String DeviceName;
+    private String MethodId;
+    private String MethodName;
+    private String Weather;//天气
+    private String WindSpeed;
+    private String Temprature;//温度
+    private String Pressure;//气压
+    private String CalibrationFactor;
+    private String Transfer;//流转方式
+    private String SendSampTime;//送样时间
+    private String ReciveTime;//收样时间
+    private String PrivateData;
+    private String SamplingUserId;
+    private String SamplingUserName;
+    private String SubmitId;
+    private String SubmitName;
+    private String SubmitDate;
+    private String MonitorPerson;
+    private String MonitorTime;
+    private int Status;
+    private String StatusName;
+    private int TransStatus;
+    private String TransStatusName;
+    private String CurUserId;
+    private String CurUserName;
+    private String FormFlows;
+    private String Comment;//备注
+    private String AddTime;
+    private String UpdateTime;
+    private int Version;
+    private String MonitemId;
+    private String MonitemName;
+    private String AuditDate;
+    private String Recoding;
+    private String ProjectNo;
+    private String file;
+    private boolean isUpload;//是否上传
+    private boolean isLocal;//是否为本地创建
+    private boolean isCanEdit;//是否可编辑
+    private boolean isFinish;//是否完成
+
     @Convert(columnType = String.class, converter = StringConverter.class)
-    private List<String>            SamplingUserResults;
+    private List<String> SamplingUserResults;
     @Transient
     private List<SamplingFormStand> SamplingFormStandResults;
     @Transient
-    private List<SamplingDetail>    SamplingDetailResults;
+    private List<SamplingDetail> SamplingDetailResults;
     @Transient
-    private List<SamplingFile>      SamplingFiless;
+    private List<SamplingFile> SamplingFiless;
     @Transient
-    private boolean                 isSelected;
-    @Transient
-    private List<SamplingDetail>    SamplingDetailYQFs;
+    private boolean isSelected;
+
 
     @Generated(hash = 602039907)
     public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, List<String> SamplingUserResults) {
@@ -234,9 +233,6 @@ public class Sampling {
     }
 
 
-
-
-
     public List<String> getSamplingUserResults() {
         return this.SamplingUserResults;
     }
@@ -260,14 +256,6 @@ public class Sampling {
 
     public void setSamplingDetailResults(List<SamplingDetail> samplingDetailResults) {
         SamplingDetailResults = samplingDetailResults;
-    }
-
-    public List<SamplingDetail> getSamplingDetailYQFs() {
-        return SamplingDetailYQFs;
-    }
-
-    public void setSamplingDetailYQFs(List<SamplingDetail> samplingDetailYQFs) {
-        SamplingDetailYQFs = samplingDetailYQFs;
     }
 
     public boolean isSelected() {
@@ -781,5 +769,6 @@ public class Sampling {
     public void setIsFinish(boolean isFinish) {
         this.isFinish = isFinish;
     }
+
 
 }

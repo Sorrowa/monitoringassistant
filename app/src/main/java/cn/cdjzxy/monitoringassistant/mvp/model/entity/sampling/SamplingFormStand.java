@@ -41,14 +41,15 @@ public class SamplingFormStand {
     private String       SaveTimes;
     private int          Index;
     private String       UpdateTime;
+    private String       SampingCode;//和SamplingId一样，唯一标识一条采样信息
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> MonItems;
-    @Generated(hash = 1024081025)
+    @Generated(hash = 705730091)
     public SamplingFormStand(String Id, String SamplingId, int StandNo,
             String MonitemIds, String MonitemName, String SamplingAmount,
             String AnalysisSite, String SaveMehtod, String Preservative, int Count,
             String Container, String SaveTimes, int Index, String UpdateTime,
-            List<String> MonItems) {
+            String SampingCode, List<String> MonItems) {
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.StandNo = StandNo;
@@ -63,6 +64,7 @@ public class SamplingFormStand {
         this.SaveTimes = SaveTimes;
         this.Index = Index;
         this.UpdateTime = UpdateTime;
+        this.SampingCode = SampingCode;
         this.MonItems = MonItems;
     }
     @Generated(hash = 922621764)
@@ -157,6 +159,12 @@ public class SamplingFormStand {
     }
     public void setMonItems(List<String> MonItems) {
         this.MonItems = MonItems;
+    }
+    public String getSampingCode() {
+        return this.SampingCode;
+    }
+    public void setSampingCode(String SampingCode) {
+        this.SampingCode = SampingCode;
     }
 
 

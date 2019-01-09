@@ -57,6 +57,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
     private List<MonItems> mMonItemsDelete   = new ArrayList<>();
     private StringBuilder  MonItemName       = new StringBuilder("");
     private StringBuilder  MonItemId         = new StringBuilder("");
+    private String[] selectItems;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -92,15 +93,39 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         initMonItemsSelectedView();
 
         tagId = getIntent().getStringExtra("tagId");
+        String selectItemsStr=getIntent().getStringExtra("selectItems");
+        if (!CheckUtil.isEmpty(selectItemsStr)){
+            selectItems=selectItemsStr.split(",");
+        }
 
+        //设置未选中的item
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
         List<MonItems> monItems = tags.getMMonItems();
         if (!CheckUtil.isEmpty(monItems)) {
             mMonItems.clear();
-            mMonItems.addAll(monItems);
+            if (!CheckUtil.isEmpty(selectItemsStr)){
+                for (MonItems monItem:monItems){
+                    if (!selectItemsStr.contains(monItem.getId())){
+                        mMonItems.add(monItem);
+                    }
+                }
+            }else {
+                mMonItems.addAll(monItems);
+            }
         }
-
         mMonItemAdapter.notifyDataSetChanged();
+        //设置选中的items
+        if (!CheckUtil.isEmpty(monItems)) {
+            mMonItemsSelected.clear();
+            if (!CheckUtil.isEmpty(selectItemsStr)){
+                for (MonItems monItem:monItems){
+                    if (selectItemsStr.contains(monItem.getId())){
+                        mMonItemsSelected.add(monItem);
+                    }
+                }
+                mMonItemSelectedAdapter.notifyDataSetChanged();
+            }
+        }
 
     }
 

@@ -38,14 +38,12 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BasicFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BottleSplitDetailFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BottleSplitFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.CollectionDetailFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.CollectionFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.SiteMonitoringFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
@@ -55,49 +53,34 @@ import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.tabview)
-    CustomTab         tabview;
+    CustomTab tabview;
     @BindView(R.id.layout)
-    LinearLayout      layout;
+    LinearLayout layout;
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
 
-    private String projectId;
-    private String formSelectId;
-    private String  samplingId;
-    private boolean isNewCreate;
+    private String projectId;//项目id
+    private String formSelectId;//采样要素id（TagId）
+    private String samplingId;//采样单id
+    private boolean isNewCreate;//是否是新增采样单
     public static Sampling mSample;
 
-    private List<Fragment>  mFragments;
+    private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
 
-    private BasicFragment             mBasicFragment;
+    private BasicFragment mBasicFragment;
     //private SiteMonitoringFragment    mSiteMonitoringFragment;
-    private BottleSplitFragment       mBottleSplitFragment;
+    private BottleSplitFragment mBottleSplitFragment;
     private BottleSplitDetailFragment mBottleSplitDetailFragment;
-    private CollectionFragment        mCollectionFragment;
-    private CollectionDetailFragment  mCollectionDetailFragment;
+    private CollectionFragment mCollectionFragment;
+    private CollectionDetailFragment mCollectionDetailFragment;
 
     private TitleBarView mTitleBarView;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        mTitleBarView=titleBar;
+        mTitleBarView = titleBar;
         titleBar.setTitleMainText("水和废水采样及交接记录");
-        /*
-        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.startActivity(FormPrintActivity.class);
-            }
-        }));
-
-        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.makeText(getApplicationContext(), "保存");
-            }
-        }));
-        */
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,9 +120,9 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             mSample = createSample();
         } else {
             mSample = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
             mSample.setSamplingFiless(samplingFiles);
-            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
             mSample.setSamplingDetailResults(samplingDetails);
         }
 
@@ -153,33 +136,32 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if (!checkBaseInfo()){
+                        return;
+                    }
+                    //保存文件
                     if (!CheckUtil.isEmpty(mSample.getSamplingFiless())) {
-                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
                         if (!CheckUtil.isEmpty(samplingFiles)) {
                             DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
                         }
                         mSample.getSamplingFiless().remove(0);
                         DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
                     }
-
+                    //保存样品
                     if (!CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
-                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
                         if (!CheckUtil.isEmpty(samplingDetails)) {
                             DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
                         }
                         DBHelper.get().getSamplingDetailDao().insertInTx(mSample.getSamplingDetailResults());
                     }
+                    //保存分瓶信息
 
                     mSample.setIsFinish(isSamplingFinish());
                     mSample.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
-                    if (isNewCreate) {
-                        DBHelper.get().getSamplingDao().insert(mSample);
-                        isNewCreate = false;
-                    } else {
-                        DBHelper.get().getSamplingDao().update(mSample);
-                    }
-
+                    //保存基本信息
+                    saveBaseInfo();
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     ArtUtils.makeText(getApplicationContext(), "数据保存成功");
                 }
@@ -250,17 +232,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
-        /*
-        if (viewPager.getCurrentItem() == 5) {
-            openFragment(1);
-            return;
-        }
-
-        if (viewPager.getCurrentItem() == 4) {
-            openFragment(3);
-            return;
-        }
-        */
         if (viewPager.getCurrentItem() == 4) {
             openFragment(2);
             return;
@@ -276,18 +247,19 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
     /**
      * 创建采样单
+     *
      * @return
      */
     private Sampling createSample() {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
         Sampling sampling = new Sampling();
-        sampling.setId("FS-" + UUID.randomUUID().toString());
+        sampling.setId("FS-" + UUID.randomUUID().toString());//唯一标志
         sampling.setSamplingNo(createSamplingNo());
         sampling.setProjectId(project.getId());
         sampling.setProjectName(project.getName());
         sampling.setProjectNo(project.getProjectNo());
-        sampling.setTagId(formSelect.getTagId());
+        //sampling.setTagId(formSelect.getTagId());
         sampling.setMontype(project.getTypeCode() + "");
         //sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
@@ -363,6 +335,38 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 基本信息校验
+     * @return
+     */
+    private boolean checkBaseInfo(){
+        if (CheckUtil.isEmpty(mSample.getSamplingTimeBegin())){
+            ArtUtils.makeText(getApplicationContext(), "请选择采样日期");
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getTagId())){
+            ArtUtils.makeText(getApplicationContext(), "请选择样品性质");
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getAddressId())){
+            ArtUtils.makeText(getApplicationContext(), "请选择样监测点位");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 保存基本信息
+     */
+    private void saveBaseInfo(){
+        if (isNewCreate) {
+            DBHelper.get().getSamplingDao().insert(mSample);
+            isNewCreate = false;
+        } else {
+            DBHelper.get().getSamplingDao().update(mSample);
+        }
     }
 
 }
