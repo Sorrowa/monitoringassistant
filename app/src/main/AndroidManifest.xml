@@ -170,6 +170,21 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".mvp.ui.module.task.WeatherActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".mvp.ui.module.task.PlaceActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".mvp.ui.module.task.UnitActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
         <service android:name=".services.RepositoryService" />
 
     </application>
