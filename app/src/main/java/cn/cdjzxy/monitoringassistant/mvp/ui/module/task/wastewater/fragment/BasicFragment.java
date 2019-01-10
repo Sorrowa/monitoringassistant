@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -40,12 +42,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TypeActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.WeatherActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
@@ -114,6 +119,8 @@ public class BasicFragment extends BaseFragment {
     EditText tv_flow_method;
     @BindView(R.id.tv_flow_date)
     TextView tv_flow_date;
+    @BindView(R.id.base_sample_comment)
+    TextView base_sample_comment;
     @BindView(R.id.iv_add_photo)
     ImageView iv_add_photo;
     @BindView(R.id.recyclerview)
@@ -121,6 +128,7 @@ public class BasicFragment extends BaseFragment {
 
     private List<SamplingFile> sampleFiles = new ArrayList<>();
     private SamplingFileAdapter sampleFileAdapter;
+    private FsExtends fsExtends;
 
     Unbinder unbinder;
 
@@ -134,52 +142,61 @@ public class BasicFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+
+        //设置文件选择
+        sampleFiles.add(new SamplingFile());
         if (!CheckUtil.isNull(WastewaterActivity.mSample)) {
+            Gson gson=new Gson();
+            fsExtends=gson.fromJson(WastewaterActivity.mSample.getPrivateData(),FsExtends.class);
+            if (fsExtends==null){
+                fsExtends=new FsExtends();
+            }
             base_sample_date.setText(WastewaterActivity.mSample.getSamplingTimeBegin());
             base_sample_user.setText(WastewaterActivity.mSample.getSamplingUserName());
-            //tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
+            base_sample_property.setText(WastewaterActivity.mSample.getTagName());
             base_sample_point.setText(WastewaterActivity.mSample.getAddressName());
-//            tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
-//            if (!CheckUtil.isEmpty(PrecipitationActivity.mSampling.getPrivateData())) {
-//                mPrivateData = JSONObject.parseObject(PrecipitationActivity.mSampling.getPrivateData(), PreciptationPrivateData.class);
-//                if (!CheckUtil.isNull(mPrivateData)) {
-//                    tvSamplingHeight.setText(mPrivateData.getSampHight());
-//                    etSamplingArea.setText(mPrivateData.getSampArea());
-//                }
-//            }
+            base_sample_frequency.setText(fsExtends==null?"":fsExtends.getFrequencyNo());
             base_sample_method.setText(WastewaterActivity.mSample.getMethodName());
+            boolean sewageDisposal=false;
+            if (fsExtends!=null && !TextUtils.isEmpty(fsExtends.getSewageDisposal()) && fsExtends.getSewageDisposal().equals("是")){
+                sewageDisposal=true;
+            }
+            base_sample_handle.setChecked(sewageDisposal);
+            base_sample_comment.setText(WastewaterActivity.mSample.getComment());
+            //水体信息
+            water_temp.setText(fsExtends==null?"":fsExtends.getWaterWD());
+            water_speed.setText(fsExtends==null?"":fsExtends.getWaterLS());
+            water_flow.setText(fsExtends==null?"":fsExtends.getWaterLL());
+            //气象信息
+            weather_state.setText(WastewaterActivity.mSample.getWeather());
+            weather_temp.setText(WastewaterActivity.mSample.getTemprature());
+            weather_pressure.setText(WastewaterActivity.mSample.getPressure());
+            //更多信息
+            more_name.setText(fsExtends==null?"":fsExtends.getClientName());
+            more_address.setText(fsExtends==null?"":fsExtends.getClientAdd());
+            more_device.setText(fsExtends==null?"":fsExtends.getHandleDevice());
+            more_waterbody.setText(fsExtends==null?"":fsExtends.getReceiving());
+            //流转信息
+            tv_flow_method.setText(WastewaterActivity.mSample.getTransfer());
+            tv_flow_date.setText(WastewaterActivity.mSample.getSendSampTime());
+            //图片信息
+            if (WastewaterActivity.mSample.getSamplingFiless()!=null && WastewaterActivity.mSample.getSamplingFiless().size()>0){
+                sampleFiles.addAll(WastewaterActivity.mSample.getSamplingFiless());
+            }
 
-//
-//
-//
-//
-//            tvSamplingDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
-//            tvFlowMethod.setText(PrecipitationActivity.mSampling.getTransfer());
-//            tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
-//            tvComment.setText(PrecipitationActivity.mSampling.getComment());
-//            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-//            mSamplingFiles.addAll(samplingFiles);
-//
-//            tvSamplingDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingUser.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingType.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingPoint.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingNo.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingHeight.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            etSamplingArea.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvSamplingDevice.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvFlowMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvFlowDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-//            tvComment.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
         }else {
-
+            fsExtends=new FsExtends();
         }
 
         base_sample_handle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 base_sample_handle.setChecked(!base_sample_handle.isChecked());
+                if (!base_sample_handle.isChecked()){
+                    fsExtends.setSewageDisposal("是");
+                }else{
+                    fsExtends.setSewageDisposal("否");
+                }
             }
         });
 
@@ -189,8 +206,6 @@ public class BasicFragment extends BaseFragment {
                 return false;
             }
         });
-
-        sampleFiles.add(new SamplingFile());
 
         sampleFileAdapter = new SamplingFileAdapter(sampleFiles, new SamplingFileAdapter.OnSamplingFileListener() {
             @Override
@@ -243,7 +258,7 @@ public class BasicFragment extends BaseFragment {
             for (String path : paths) {
                 SamplingFile samplingFile = new SamplingFile();
                 File file = new File(path);
-                samplingFile.setId("LC-" + UUID.randomUUID().toString());
+                samplingFile.setId("FS-" + UUID.randomUUID().toString());
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(WastewaterActivity.mSample.getId());
@@ -271,9 +286,9 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.iv_add_photo,R.id.base_sample_date,R.id.base_sample_user,R.id.base_sample_property,R.id.base_sample_point,R.id.base_sample_method,R.id.water_info_layout,R.id.weather_info_layout,R.id.more_info_layout,R.id.layout_flow_information,R.id.weather_state,R.id.tv_flow_date})
+    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.water_info_layout, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date})
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_add_photo:
                 choosePhoto(REQUEST_CODE);
                 break;
@@ -284,13 +299,13 @@ public class BasicFragment extends BaseFragment {
                 showSamplingUser();
                 break;
             case R.id.base_sample_property:
-
+                showSamplingType();
                 break;
             case R.id.base_sample_point:
                 showSamplingPoints();
                 break;
             case R.id.base_sample_method:
-
+                showSamplingMethods();
                 break;
             case R.id.water_info_layout:
                 if (water_arrow.getRotation() == 90f) {
@@ -329,7 +344,7 @@ public class BasicFragment extends BaseFragment {
                 }
                 break;
             case R.id.weather_state:
-
+                showWeatherChoose();
                 break;
             case R.id.tv_flow_date:
                 showDateSelectDialog(tv_flow_date);
@@ -348,7 +363,7 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                //PrecipitationActivity.mSampling.setSamplingTimeBegin(DateUtils.getDate(date));
+                WastewaterActivity.mSample.setSamplingTimeBegin(DateUtils.getDate(date));
                 dateTextView.setText(DateUtils.getDate(date));
             }
         }).build();
@@ -356,7 +371,10 @@ public class BasicFragment extends BaseFragment {
         pvTime.show();
     }
 
-    private void showSamplingUser(){
+    /**
+     * 选择采样人
+     */
+    private void showSamplingUser() {
         Intent intent = new Intent(getContext(), UserActivity.class);
         intent.putExtra("projectId", WastewaterActivity.mSample.getProjectId());
         new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
@@ -373,7 +391,33 @@ public class BasicFragment extends BaseFragment {
         });
     }
 
-    private void showSamplingPoints(){
+    /**
+     * 选择样品性质
+     */
+    private void showSamplingType() {
+        Intent intent = new Intent(getContext(), TypeActivity.class);
+        intent.putExtra("tagId", WastewaterActivity.mSample.getParentTagId());
+        intent.putExtra("title", "请选择样品性质");
+        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    WastewaterActivity.mSample.setTagId(data.getStringExtra("TagId"));
+                    WastewaterActivity.mSample.setTagName(data.getStringExtra("TagName"));
+                    base_sample_property.setText(WastewaterActivity.mSample.getTagName());
+                }
+            }
+        });
+    }
+
+    /**
+     * 选择采样点位
+     */
+    private void showSamplingPoints() {
+        if (CheckUtil.isEmpty(WastewaterActivity.mSample.getTagId())) {
+            ArtUtils.makeText(getContext(), "请先选择样品性质");
+            return;
+        }
         Intent intent = new Intent(getContext(), PointSelectActivity.class);
         intent.putExtra("projectId", WastewaterActivity.mSample.getProjectId());
         intent.putExtra("tagId", WastewaterActivity.mSample.getTagId());
@@ -389,4 +433,43 @@ public class BasicFragment extends BaseFragment {
             }
         });
     }
+
+    /**
+     * 选择采样方法
+     */
+    private void showSamplingMethods() {
+        if (CheckUtil.isEmpty(WastewaterActivity.mSample.getFormType())) {
+            ArtUtils.makeText(getContext(), "请先设置表单类型");
+            return;
+        }
+        Intent intent = new Intent(getContext(), MethodActivity.class);
+        intent.putExtra("tagId", WastewaterActivity.mSample.getFormType());
+        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    WastewaterActivity.mSample.setMethodName(data.getStringExtra("MethodName"));
+                    WastewaterActivity.mSample.setMethodId(data.getStringExtra("MethodId"));
+                    base_sample_method.setText(WastewaterActivity.mSample.getMethodName());
+                }
+            }
+        });
+    }
+
+    /**
+     * 选择天气
+     */
+    private void showWeatherChoose() {
+        Intent intent = new Intent(getContext(), WeatherActivity.class);
+        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    WastewaterActivity.mSample.setWeather(data.getStringExtra("weather"));
+                    weather_state.setText(WastewaterActivity.mSample.getWeather());
+                }
+            }
+        });
+    }
+
 }

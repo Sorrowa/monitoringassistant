@@ -81,8 +81,9 @@
     <RelativeLayout style="@style/BasicInfoItemStyle">
 
         <TextView
+            android:id="@+id/sample_monitor_items_title"
             style="@style/BasicInfoItemNameStyle"
-            android:text="监测项目（6）" />
+            android:text="监测项目（0）" />
 
         <TextView
             android:id="@+id/sample_monitor_items"
@@ -95,6 +96,7 @@
     <RelativeLayout style="@style/BasicInfoItemStyle">
 
         <TextView
+            android:id="@+id/sample_monitor_title"
             style="@style/BasicInfoItemNameStyle"
             android:text="现场监测（0）" />
 

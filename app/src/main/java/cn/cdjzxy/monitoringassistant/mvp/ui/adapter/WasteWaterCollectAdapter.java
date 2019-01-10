@@ -8,19 +8,19 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
-import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterBottleHolder;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterCollectHolder;
 
 
 /**
- * 主页tab
+ * 水和废水采样
  */
 
-public class WasteWaterCollectAdapter extends DefaultAdapter<Tab> {
+public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingDetail> {
 
 
-    public WasteWaterCollectAdapter(List<Tab> infos) {
-        super(infos);
+    public WasteWaterCollectAdapter(List<SamplingDetail> details) {
+        super(details);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class WasteWaterCollectAdapter extends DefaultAdapter<Tab> {
     }
 
     @Override
-    public BaseHolder<Tab> getHolder(View v, int viewType) {
-        return new WasteWaterBottleHolder(v);
+    public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
+        return new WasteWaterCollectHolder(v);
     }
 }

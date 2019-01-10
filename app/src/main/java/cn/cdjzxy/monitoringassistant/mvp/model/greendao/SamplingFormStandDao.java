@@ -41,7 +41,8 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
         public final static Property SaveTimes = new Property(11, String.class, "SaveTimes", false, "SAVE_TIMES");
         public final static Property Index = new Property(12, int.class, "Index", false, "INDEX");
         public final static Property UpdateTime = new Property(13, String.class, "UpdateTime", false, "UPDATE_TIME");
-        public final static Property MonItems = new Property(14, String.class, "MonItems", false, "MON_ITEMS");
+        public final static Property SampingCode = new Property(14, String.class, "SampingCode", false, "SAMPING_CODE");
+        public final static Property MonItems = new Property(15, String.class, "MonItems", false, "MON_ITEMS");
     }
 
     private final StringConverter MonItemsConverter = new StringConverter();
@@ -72,7 +73,8 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
                 "\"SAVE_TIMES\" TEXT," + // 11: SaveTimes
                 "\"INDEX\" INTEGER NOT NULL ," + // 12: Index
                 "\"UPDATE_TIME\" TEXT," + // 13: UpdateTime
-                "\"MON_ITEMS\" TEXT);"); // 14: MonItems
+                "\"SAMPING_CODE\" TEXT," + // 14: SampingCode
+                "\"MON_ITEMS\" TEXT);"); // 15: MonItems
     }
 
     /** Drops the underlying database table. */
@@ -143,9 +145,14 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
             stmt.bindString(14, UpdateTime);
         }
  
+        String SampingCode = entity.getSampingCode();
+        if (SampingCode != null) {
+            stmt.bindString(15, SampingCode);
+        }
+ 
         List MonItems = entity.getMonItems();
         if (MonItems != null) {
-            stmt.bindString(15, MonItemsConverter.convertToDatabaseValue(MonItems));
+            stmt.bindString(16, MonItemsConverter.convertToDatabaseValue(MonItems));
         }
     }
 
@@ -211,9 +218,14 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
             stmt.bindString(14, UpdateTime);
         }
  
+        String SampingCode = entity.getSampingCode();
+        if (SampingCode != null) {
+            stmt.bindString(15, SampingCode);
+        }
+ 
         List MonItems = entity.getMonItems();
         if (MonItems != null) {
-            stmt.bindString(15, MonItemsConverter.convertToDatabaseValue(MonItems));
+            stmt.bindString(16, MonItemsConverter.convertToDatabaseValue(MonItems));
         }
     }
 
@@ -239,7 +251,8 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // SaveTimes
             cursor.getInt(offset + 12), // Index
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // UpdateTime
-            cursor.isNull(offset + 14) ? null : MonItemsConverter.convertToEntityProperty(cursor.getString(offset + 14)) // MonItems
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // SampingCode
+            cursor.isNull(offset + 15) ? null : MonItemsConverter.convertToEntityProperty(cursor.getString(offset + 15)) // MonItems
         );
         return entity;
     }
@@ -260,7 +273,8 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
         entity.setSaveTimes(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setIndex(cursor.getInt(offset + 12));
         entity.setUpdateTime(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setMonItems(cursor.isNull(offset + 14) ? null : MonItemsConverter.convertToEntityProperty(cursor.getString(offset + 14)));
+        entity.setSampingCode(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setMonItems(cursor.isNull(offset + 15) ? null : MonItemsConverter.convertToEntityProperty(cursor.getString(offset + 15)));
      }
     
     @Override

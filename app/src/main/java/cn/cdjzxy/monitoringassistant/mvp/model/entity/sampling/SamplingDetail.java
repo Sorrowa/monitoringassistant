@@ -92,24 +92,21 @@ public class SamplingDetail {
     private String DeviceId;
     private String Description;
     private String PrivateData;
-
+    private boolean isAddPreserve;
     @Transient
     private JSONObject PrivateJsonData;
 
-    @Generated(hash = 1521611973)
-    public SamplingDetail(String Id, String SamplingId, String ProjectId,
-                          int OrderIndex, String SampingCode, int FrequecyNo, String SamplingTime,
-                          int SamplingType, String SampStandId, String MonitemId,
-                          String MonitemName, String AddresssId, String AddressName,
-                          int SamplingCount, String Preservative, String SampleCollection,
-                          String SampleAcceptance, boolean IsSenceAnalysis, boolean IsCompare,
-                          String AnasysTime, String Value1, String ValueUnit1,
-                          String valueUnit1Name, String Value2, String valueUnit2,
-                          String valueUnit2Name, String Value3, String ValueUnit3,
-                          String valueUnit3Name, String Value, String ValueUnit,
-                          String ValueUnitNname, String Value4, String Value5, String MethodName,
-                          String MethodId, String DeviceIdName, String DeviceId,
-                          String Description, String PrivateData) {
+    @Generated(hash = 1844433884)
+    public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex,
+            String SampingCode, int FrequecyNo, String SamplingTime, int SamplingType,
+            String SampStandId, String MonitemId, String MonitemName, String AddresssId,
+            String AddressName, int SamplingCount, String Preservative, String SampleCollection,
+            String SampleAcceptance, boolean IsSenceAnalysis, boolean IsCompare, String AnasysTime,
+            String Value1, String ValueUnit1, String valueUnit1Name, String Value2, String valueUnit2,
+            String valueUnit2Name, String Value3, String ValueUnit3, String valueUnit3Name,
+            String Value, String ValueUnit, String ValueUnitNname, String Value4, String Value5,
+            String MethodName, String MethodId, String DeviceIdName, String DeviceId,
+            String Description, String PrivateData, boolean isAddPreserve) {
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.ProjectId = ProjectId;
@@ -150,6 +147,7 @@ public class SamplingDetail {
         this.DeviceId = DeviceId;
         this.Description = Description;
         this.PrivateData = PrivateData;
+        this.isAddPreserve = isAddPreserve;
     }
 
     @Generated(hash = 735789381)
@@ -541,5 +539,13 @@ public class SamplingDetail {
         }
 
         return false;
+    }
+
+    public boolean getIsAddPreserve() {
+        return this.isAddPreserve;
+    }
+
+    public void setIsAddPreserve(boolean isAddPreserve) {
+        this.isAddPreserve = isAddPreserve;
     }
 }

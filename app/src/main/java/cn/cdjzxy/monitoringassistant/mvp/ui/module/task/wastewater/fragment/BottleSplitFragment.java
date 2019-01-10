@@ -1,6 +1,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,17 +21,14 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterBottleAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 
 /**
  * 分瓶信息
@@ -39,15 +38,17 @@ public class BottleSplitFragment extends BaseFragment {
 
     Unbinder unbinder;
     @BindView(R.id.recyclerview)
-    RecyclerView   recyclerview;
+    RecyclerView recyclerview;
     @BindView(R.id.btn_add_parallel)
     RelativeLayout btnAddParallel;
     @BindView(R.id.tv_add_blank)
-    TextView       tvAddBlank;
+    TextView tvAddBlank;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
 
     private WasteWaterBottleAdapter mWasteWaterBottleAdapter;
+    private SharedPreferences collectListSettings;
+    private SharedPreferences.Editor editor;
 
     public BottleSplitFragment() {
     }
@@ -65,6 +66,18 @@ public class BottleSplitFragment extends BaseFragment {
         initRecyclerViewData();
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (mWasteWaterBottleAdapter != null) {
+                mWasteWaterBottleAdapter.notifyDataSetChanged();
+            } else {
+                initRecyclerViewData();
+            }
+        }
+    }
+
     @Nullable
     @Override
     public IPresenter obtainPresenter() {
@@ -74,6 +87,13 @@ public class BottleSplitFragment extends BaseFragment {
     @Override
     public void setData(@Nullable Object data) {
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        collectListSettings = getActivity().getSharedPreferences("setting", 0);
+        editor = collectListSettings.edit();
     }
 
     @Override
@@ -94,13 +114,18 @@ public class BottleSplitFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_blank:
-                ArtUtils.makeText(getContext(), "添加");
+                editor.putInt("bottleListPosition", -1);
+                editor.commit();
+                EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_COLLECTION);
                 break;
 
         }
     }
 
     private void initRecyclerViewData() {
+        if (WastewaterActivity.mSample.getSamplingFormStandResults() == null) {
+            return;
+        }
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
@@ -108,13 +133,8 @@ public class BottleSplitFragment extends BaseFragment {
             }
         });
 
-        List<Tab> mTabs = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Tab tab = new Tab();
-            mTabs.add(tab);
-        }
 
-        mWasteWaterBottleAdapter = new WasteWaterBottleAdapter(mTabs);
+        mWasteWaterBottleAdapter = new WasteWaterBottleAdapter(WastewaterActivity.mSample.getSamplingFormStandResults());
         mWasteWaterBottleAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {

@@ -14,7 +14,6 @@ import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.PermissionUtil;
-import com.wonders.health.lib.base.widget.selector.SelectorDrawable;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
     @BindView(R.id.et_pwd)
     ClearEditText etPwd;
     @BindView(R.id.btn_login)
-    Button        btnLogin;
+    Button btnLogin;
 
     private ExitHelper.TwicePressHolder mExitHelper;
 

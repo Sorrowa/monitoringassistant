@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -43,6 +44,11 @@ public class TypeActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
+        String title = getIntent().getStringExtra("title");
+        if (!TextUtils.isEmpty(title)){
+            titleBar.setTitleMainText(title);
+            return;
+        }
         titleBar.setTitleMainText("降水类型选择");
     }
 

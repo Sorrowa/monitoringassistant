@@ -10,6 +10,9 @@ import org.greenrobot.greendao.annotation.Generated;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
 
+/**
+ * 采样规范
+ */
 @Entity
 public class SamplingStantd {
 
