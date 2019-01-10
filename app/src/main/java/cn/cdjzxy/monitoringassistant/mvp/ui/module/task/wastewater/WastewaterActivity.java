@@ -27,11 +27,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -157,6 +159,13 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                         DBHelper.get().getSamplingDetailDao().insertInTx(mSample.getSamplingDetailResults());
                     }
                     //保存分瓶信息
+                    if (!CheckUtil.isEmpty(mSample.getSamplingFormStandResults())) {
+                        List<SamplingFormStand> samplingFormStands = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
+                        if (!CheckUtil.isEmpty(samplingFormStands)) {
+                            DBHelper.get().getSamplingFormStandDao().deleteInTx(samplingFormStands);
+                        }
+                        DBHelper.get().getSamplingFormStandDao().insertInTx(mSample.getSamplingFormStandResults());
+                    }
 
                     mSample.setIsFinish(isSamplingFinish());
                     mSample.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
@@ -361,6 +370,9 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * 保存基本信息
      */
     private void saveBaseInfo(){
+        if (mBasicFragment!=null){
+            mBasicFragment.saveFsExtends();
+        }
         if (isNewCreate) {
             DBHelper.get().getSamplingDao().insert(mSample);
             isNewCreate = false;

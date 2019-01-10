@@ -7,6 +7,7 @@ import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 @Entity
 public class SamplingFormStand {
@@ -26,7 +27,7 @@ public class SamplingFormStand {
      * SaveTimes :
      * Index : 1
      */
-
+    @Id
     private String       Id;
     private String       SamplingId;
     private int          StandNo;

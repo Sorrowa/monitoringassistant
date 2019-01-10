@@ -18,7 +18,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand
 /** 
  * DAO for table "SAMPLING_FORM_STAND".
 */
-public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
+public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, String> {
 
     public static final String TABLENAME = "SAMPLING_FORM_STAND";
 
@@ -27,7 +27,7 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "Id", false, "ID");
+        public final static Property Id = new Property(0, String.class, "Id", true, "ID");
         public final static Property SamplingId = new Property(1, String.class, "SamplingId", false, "SAMPLING_ID");
         public final static Property StandNo = new Property(2, int.class, "StandNo", false, "STAND_NO");
         public final static Property MonitemIds = new Property(3, String.class, "MonitemIds", false, "MONITEM_IDS");
@@ -59,7 +59,7 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"SAMPLING_FORM_STAND\" (" + //
-                "\"ID\" TEXT," + // 0: Id
+                "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: Id
                 "\"SAMPLING_ID\" TEXT," + // 1: SamplingId
                 "\"STAND_NO\" INTEGER NOT NULL ," + // 2: StandNo
                 "\"MONITEM_IDS\" TEXT," + // 3: MonitemIds
@@ -230,8 +230,8 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
 
     @Override
@@ -278,20 +278,22 @@ public class SamplingFormStandDao extends AbstractDao<SamplingFormStand, Void> {
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(SamplingFormStand entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final String updateKeyAfterInsert(SamplingFormStand entity, long rowId) {
+        return entity.getId();
     }
     
     @Override
-    public Void getKey(SamplingFormStand entity) {
-        return null;
+    public String getKey(SamplingFormStand entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(SamplingFormStand entity) {
-        // TODO
-        return false;
+        return entity.getId() != null;
     }
 
     @Override

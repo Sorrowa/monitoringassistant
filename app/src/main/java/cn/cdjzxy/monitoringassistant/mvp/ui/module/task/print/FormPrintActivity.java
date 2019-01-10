@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print;
 
+import android.animation.ObjectAnimator;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -13,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
@@ -44,16 +46,25 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
     private List<BluetoothDevice> mBlueList=new ArrayList<>();
     private BluetoothAdapter mBluetoothAdapter;
 
+    private long loadInterval=10000;//10s
+    private ObjectAnimator loadAnimator;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("表单打印");
-        titleBar.setRightTextDrawable(R.mipmap.ic_form_print);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //bluetoothUtils.startScanDevices();
+                finish();
             }
         });
+        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_form_print, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startLoadAnimator(v);
+                        scanDevices();
+                    }
+                }));
     }
 
     @Nullable
@@ -72,6 +83,9 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
         registerBlueCast();
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter==null){
+            return;
+        }
         // Get a set of currently paired devices
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
@@ -154,8 +168,12 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 mScanning = false;
                 //btDeviceScan.setText("扫描完成");
                 mBluetoothAdapter.cancelDiscovery();
+                closeLoadingDialog();
+
             }
-        }, 10000);
+        }, loadInterval);
+        //显示加载
+        showLoadingDialog();
 
     }
 
@@ -180,6 +198,21 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
         }
     };
 
+    /**
+     * 加载数据动画效果
+     * @param view
+     */
+    private void startLoadAnimator(View view){
+        if (loadAnimator!=null && (loadAnimator.isStarted()||loadAnimator.isRunning())){
+            return;
+        }
+        loadAnimator = ObjectAnimator.ofFloat(view, "rotation", 0f, 360*4f);
+        LinearInterpolator interpolator = new LinearInterpolator();
+        loadAnimator.setInterpolator(interpolator);
+        loadAnimator.setDuration(loadInterval);
+        loadAnimator.start();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -189,5 +222,9 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
         if (mFindBlueToothReceiver != null){
             this.unregisterReceiver(mFindBlueToothReceiver);
         }
+        if (loadAnimator!=null){
+            loadAnimator.end();
+        }
+        closeLoadingDialog();
     }
 }
