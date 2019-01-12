@@ -227,23 +227,5 @@
 -dontwarn android.app.Notification
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+################gprinter#################
+-keep class com.gprinter.** { *; }

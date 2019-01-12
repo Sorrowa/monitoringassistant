@@ -34,5 +34,5 @@ dependencies {
     implementation files('libs/jcc-bate-0.7.3.jar')
     implementation files('libs/ksoap2-android-assembly-2.5.2-jar-with-dependencies.jar')
     implementation files('libs/xUtils-2.6.14.jar')
-    implementation 'com.squareup.retrofit2:converter-gson:2.0.0'
+    implementation 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
 }

@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.wonders.health.lib.base.utils.ArtUtils;
-
 public class PairingRequest extends BroadcastReceiver {
     String strPsw = "0000";
     final String ACTION_PAIRING_REQUEST = "android.bluetooth.device.action.PAIRING_REQUEST";

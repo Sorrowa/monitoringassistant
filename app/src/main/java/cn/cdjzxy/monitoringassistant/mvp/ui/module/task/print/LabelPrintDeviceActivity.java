@@ -51,14 +51,15 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
     private BluetoothDeviceAdapter mDeviceAdapter;
     private BluetoothAdapter mBluetoothAdapter;
-    public static GpService mGpService;
     private List<DeviceInfo> mDeviceList = new ArrayList<>();
     private List<BluetoothDevice> devices = new ArrayList<>();
     private boolean isStart = false;
     private DeviceInfo currDevice = null;
 
-    private PrinterServiceConnection conn = null;
     public static final int MESSAGE_CONNECT = 1;
+    public static final String CONNECT_STATUS = "connect.status";
+    public static final String PRINTER_ADDR = "printer.addr";
+    private static PortParameters mPortParam = new PortParameters();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +92,29 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        getDeviceList();
         registerBroadcast();
-        connection();
+        initPortParam();
         initDeviceData();
 
         //自动开始刷新
         discoveryDevice();
+    }
+
+    private void initPortParam() {
+        mPortParam.setPortOpenState(getConnectState());
+        mPortParam.setPortType(PortParameters.BLUETOOTH);
+    }
+
+    public boolean getConnectState() {
+        try {
+            if (LabelPrintActivity.GpService.getPrinterConnectStatus(LabelPrintActivity.PrinterIndex) == GpDevice.STATE_CONNECTED) {
+                return true;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     @Override
@@ -112,6 +129,10 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         // Unregister broadcast listeners
         if (mFindBlueToothReceiver != null)
             this.unregisterReceiver(mFindBlueToothReceiver);
+
+        if (PrinterStatusBroadcastReceiver != null) {
+            this.unregisterReceiver(PrinterStatusBroadcastReceiver);
+        }
     }
 
     /**
@@ -139,7 +160,6 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                 if (device != currDevice) {
                     //记录当前设备
                     currDevice = device;
-                    currDevice.setIndex(position);
                     //异步连接
                     mHandler.sendEmptyMessage(MESSAGE_CONNECT);
                 }
@@ -153,23 +173,25 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
      * 获取设备列表
      */
     protected void getDeviceList() {
-        // Register for broadcasts when a device is discovered
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(mFindBlueToothReceiver, filter);
-        // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(mFindBlueToothReceiver, filter);
-        // Get the local Bluetooth adapter
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // Get a set of currently paired devices
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         // If there are paired devices, add each one to the ArrayAdapter
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
                 devices.add(device);
-                mDeviceList.add(new DeviceInfo(device.getName(), device.getAddress(), GpDevice.STATE_NONE));
+                mDeviceList.add(new DeviceInfo(device.getName(), device.getAddress(), getDevieStatus(device.getAddress())));
             }
         }
+    }
+
+    private int getDevieStatus(String addr) {
+        int status = GpDevice.STATE_NONE;
+
+        if (addr != null && addr.equals(mPortParam.getBluetoothAddr())) {
+            status = mPortParam.getPortOpenState() ? GpDevice.STATE_VALID_PRINTER : GpDevice.STATE_NONE;
+        }
+
+        return status;
     }
 
     /**
@@ -182,12 +204,14 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
             mBluetoothAdapter.cancelDiscovery();
             return;
         }
-        titleBar.setRightText("刷新中...");
+        isStart = true;
 
-        // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
-        setTitle(R.string.scaning);
-        // Turn on sub-title for new devices
+        titleBar.setRightText("刷新中...");
+        devices.clear();
+        mDeviceList.clear();
+        mDeviceAdapter.notifyDataSetChanged();
+
+        getDeviceList();
 
         // If we're already discovering, stop it
         if (mBluetoothAdapter.isDiscovering()) {
@@ -195,7 +219,6 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         }
         // Request discover from BluetoothDeviceAdapter
         mBluetoothAdapter.startDiscovery();
-        isStart = true;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -206,32 +229,6 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         }, 10000);
 
     }
-
-//    // The on-click listener for all devices in the ListViews
-//    private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
-//        @Override
-//        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-//            // Cancel discovery because it's costly and we're about to connect
-//
-//            mBluetoothAdapter.cancelDiscovery();
-//            // Get the device MAC address, which is the last 17 chars in the View
-//            String info = ((TextView) v).getText().toString();
-//            String noDevices = getResources().getText(R.string.none_paired).toString();
-//            String noNewDevice = getResources().getText(R.string.none_bluetooth_device_found).toString();
-//            Log.i("tag", info);
-//            if (!info.equals(noDevices) && !info.equals(noNewDevice)) {
-//                String address = info.substring(info.length() - 17);
-//                // Create the result Intent and include the MAC address
-//                Intent intent = new Intent();
-//                intent.putExtra(GpPrintService.PORT_TYPE, PortParameters.BLUETOOTH);
-//                intent.putExtra(GpPrintService.BLUETOOT_ADDR, address);
-//                intent.putExtra("Device_Name", info.split("\n")[0]);
-//                // Set result and finish this Activity
-//                setResult(Activity.RESULT_OK, intent);
-//                finish();
-//            }
-//        }
-//    };
 
     /**
      * 扫描结果接收
@@ -250,13 +247,13 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     if (!devices.contains(device)) {
                         devices.add(device);
-                        mDeviceList.add(new DeviceInfo(device.getName(), device.getAddress(), GpDevice.STATE_NONE));
+
+                        mDeviceList.add(new DeviceInfo(device.getName(), device.getAddress(), getDevieStatus(device.getAddress())));
                         mDeviceAdapter.notifyDataSetChanged();
                     }
                 }
                 // When discovery is finished, change the Activity title
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED
-                    .equals(action)) {
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.i("tag", "finish discovery " + mDeviceList.size());
                 if (mDeviceList.size() == 0) {
                     ArtUtils.makeText(LabelPrintDeviceActivity.this, "未找到可用设备！");
@@ -272,57 +269,53 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         IntentFilter filter = new IntentFilter();
         filter.addAction(GpCom.ACTION_CONNECT_STATUS);
         this.registerReceiver(PrinterStatusBroadcastReceiver, filter);
-    }
 
-    private void connection() {
-        conn = new PrinterServiceConnection();
-        Log.i(TAG, "connection");
-        Intent intent = new Intent(this, GpPrintService.class);
-        bindService(intent, conn, Context.BIND_AUTO_CREATE); // bindService
+        // Register for broadcasts when a device is discovered
+        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(mFindBlueToothReceiver, filter);
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        this.registerReceiver(mFindBlueToothReceiver, filter);
+        // Get the local Bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     void connectToDevice() {
-        BluetoothDevice btDev = findDevice(currDevice);
-        if (btDev == null) {
+        if (currDevice == null) {
             return;
+        }
+
+        if (mPortParam.getBluetoothAddr().equals(currDevice.getAddress()) && mPortParam.getPortOpenState()) {
+            return;
+        }
+
+        try {
+            LabelPrintActivity.GpService.closePort(LabelPrintActivity.PrinterIndex);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
 
         int rel = 0;
         try {
-            rel = mGpService.openPort(currDevice.index, PortParameters.BLUETOOTH, currDevice.getAddress(), 0);
+            rel = LabelPrintActivity.GpService.openPort(LabelPrintActivity.PrinterIndex, PortParameters.BLUETOOTH, currDevice.getAddress(), 0);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
         GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
         Log.e(TAG, "result :" + String.valueOf(r));
-        if (r != GpCom.ERROR_CODE.SUCCESS) {
-            if (r == GpCom.ERROR_CODE.DEVICE_ALREADY_OPEN) {
-                mDeviceAdapter.notifyDataSetChanged();
-            } else {
-                ArtUtils.makeText(LabelPrintDeviceActivity.this, "连接错误：" + GpCom.getErrorText(r));
-            }
+        if (r == GpCom.ERROR_CODE.SUCCESS) {
+            mPortParam.setBluetoothAddr(currDevice.getAddress());
+        } else {
+            ArtUtils.makeText(LabelPrintDeviceActivity.this, "连接错误：" + GpCom.getErrorText(r));
         }
-    }
-
-    BluetoothDevice findDevice(DeviceInfo deviceInfo) {
-        for (BluetoothDevice device : devices) {
-            if (device.getAddress().equals(deviceInfo.getAddress())) {
-                return device;
-            }
-        }
-
-        return null;
     }
 
     private void disConnectToDevice() {
-        if (currDevice == null) {
-            return;
-        }
-
         Log.d(TAG, "DisconnectToDevice ");
         try {
-            mGpService.closePort(this.currDevice.index);
+            LabelPrintActivity.GpService.closePort(LabelPrintActivity.PrinterIndex);
+            currDevice = null;
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -347,36 +340,31 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         public void onReceive(Context context, Intent intent) {
             if (GpCom.ACTION_CONNECT_STATUS.equals(intent.getAction())) {
                 int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
-                int id = intent.getIntExtra(GpPrintService.PRINTER_ID, 0);
+//                int id = intent.getIntExtra(GpPrintService.PRINTER_ID, 0);
                 Log.d(TAG, "connect status " + type);
                 if (currDevice != null) {
                     currDevice.setStatus(type);
                 }
                 mDeviceAdapter.notifyDataSetChanged();
+
+                switch (type) {
+                    case GpDevice.STATE_NONE:
+                        mPortParam.setPortOpenState(false);
+                        break;
+
+                    case GpDevice.STATE_CONNECTED:
+                    case GpDevice.STATE_VALID_PRINTER:
+                        mPortParam.setPortOpenState(true);
+                        break;
+                }
             }
         }
     };
-
-    class PrinterServiceConnection implements ServiceConnection {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-            Log.i(TAG, "onServiceDisconnected() called");
-            mGpService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mGpService = GpService.Stub.asInterface(service);
-        }
-    }
-
 
     public class DeviceInfo {
         private String name;
         private String address;
         private int status;
-        private int index;
 
         public String getName() {
             return name;
@@ -402,14 +390,6 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
             this.status = status;
         }
 
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
         public DeviceInfo() {
         }
 
@@ -428,9 +408,9 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                     return "等待中";
 
                 case GpDevice.STATE_CONNECTING:
+                case GpDevice.STATE_CONNECTED:
                     return "连接中...";
 
-                case GpDevice.STATE_CONNECTED:
                 case GpDevice.STATE_VALID_PRINTER:
                     return "连接成功";
 

@@ -199,6 +199,19 @@
 
         <service android:name=".services.RepositoryService" />
 
+        <!-- 佳博蓝牙打印 -->
+        <service
+            android:name="com.gprinter.service.GpPrintService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="GpPrintService">
+            <intent-filter>
+                <action android:name="com.gprinter.aidl.GpPrintService" />
+            </intent-filter>
+        </service>
+        <service android:name="com.gprinter.service.AllService"></service>
+
+        <!-- 自动蓝牙配对 -->
         <receiver android:name=".mvp.ui.module.task.print.PairingRequest">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.PAIRING_REQUEST" />
@@ -206,5 +219,4 @@
         </receiver>
 
     </application>
-
 </manifest>

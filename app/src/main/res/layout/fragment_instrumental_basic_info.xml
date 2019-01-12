@@ -49,13 +49,7 @@
 
             <TextView
                 android:id="@+id/tv_test_start_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="2018-09-30"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
@@ -69,13 +63,7 @@
 
             <TextView
                 android:id="@+id/tv_test_end_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="2018-09-30"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+                style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
 
