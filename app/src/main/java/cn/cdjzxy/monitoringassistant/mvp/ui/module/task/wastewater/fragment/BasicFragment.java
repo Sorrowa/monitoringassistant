@@ -193,9 +193,9 @@ public class BasicFragment extends BaseFragment {
             public void onClick(View v) {
                 base_sample_handle.setChecked(!base_sample_handle.isChecked());
                 if (!base_sample_handle.isChecked()){
-                    fsExtends.setSewageDisposal("是");
-                }else{
                     fsExtends.setSewageDisposal("否");
+                }else{
+                    fsExtends.setSewageDisposal("是");
                 }
             }
         });
@@ -470,6 +470,28 @@ public class BasicFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+
+    /**
+     * 保存扩展信息
+     * @return
+     */
+    public void saveFsExtends(){
+        if (fsExtends!=null && WastewaterActivity.mSample!=null){
+            fsExtends.setFrequencyNo(base_sample_frequency.getText().toString());
+            fsExtends.setWaterWD(water_temp.getText().toString());
+            fsExtends.setWaterLL(water_flow.getText().toString());
+            fsExtends.setWaterLS(water_speed.getText().toString());
+            fsExtends.setClientName(more_name.getText().toString());
+            fsExtends.setClientAdd(more_address.getText().toString());
+            fsExtends.setHandleDevice(more_device.getText().toString());
+            fsExtends.setReceiving(more_waterbody.getText().toString());
+
+            Gson gson=new Gson();
+            String jsonStr=gson.toJson(fsExtends);
+            WastewaterActivity.mSample.setPrivateData(jsonStr);
+        }
     }
 
 }
