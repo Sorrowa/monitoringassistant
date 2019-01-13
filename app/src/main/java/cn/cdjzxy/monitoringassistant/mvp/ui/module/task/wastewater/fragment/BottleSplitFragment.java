@@ -63,6 +63,7 @@ public class BottleSplitFragment extends BaseFragment {
         btnAddParallel.setVisibility(View.GONE);
         btnPrintLabel.setVisibility(View.GONE);
         tvAddBlank.setText("添加");
+        tvAddBlank.setVisibility(View.GONE);
         initRecyclerViewData();
     }
 
@@ -138,6 +139,8 @@ public class BottleSplitFragment extends BaseFragment {
         mWasteWaterBottleAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
+                editor.putInt("bottleListPosition", position);
+                editor.commit();
                 EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_BOTTLE);
             }
         });

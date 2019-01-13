@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PrinterAdapter;
@@ -39,6 +41,8 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
+    @BindView(R.id.preview_print)
+    Button preview_print;
 
     private PrinterAdapter mPrinterAdapter;
     private BluetoothUtils bluetoothUtils;
@@ -115,6 +119,18 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
         initData();
     }
 
+    @OnClick({R.id.preview_print})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.preview_print:
+                ArtUtils.startActivity(PreviewPrintActivity.class);
+                break;
+            default:
+                break;
+        }
+
+    }
+
     /**
      * init data
      */
@@ -159,6 +175,7 @@ public class FormPrintActivity extends BaseTitileActivity<ApiPresenter> {
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
         }
+        mPrinterAdapter.notifyDataSetChanged();
         // Request discover from BluetoothAdapter
         mBluetoothAdapter.startDiscovery();
         mScanning = true;

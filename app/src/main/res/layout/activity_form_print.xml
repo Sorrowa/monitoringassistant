@@ -26,6 +26,7 @@
             android:textSize="@dimen/text_size_14" />
 
         <Button
+            android:id="@+id/preview_print"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/btn_height_dp_36"
             android:layout_alignParentRight="true"

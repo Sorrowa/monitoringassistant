@@ -122,7 +122,7 @@ public class CollectionFragment extends BaseFragment {
                 break;
             case R.id.btn_add_blank:
                 //添加空白
-                if (TextUtils.isEmpty(WastewaterActivity.mSample.getAddressNo())) {
+                if (TextUtils.isEmpty(WastewaterActivity.mSample.getAddressId())) {
                     ArtUtils.makeText(getContext(), "请先选择采样点位");
                     return;
                 }

@@ -126,6 +126,10 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             mSample.setSamplingFiless(samplingFiles);
             List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
             mSample.setSamplingDetailResults(samplingDetails);
+            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+            if (!CheckUtil.isEmpty(formStantdsList)){
+                WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
+            }
         }
 
         if (mSample.getIsCanEdit()) {

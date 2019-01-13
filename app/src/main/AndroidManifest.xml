@@ -185,6 +185,11 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".mvp.ui.module.task.print.PreviewPrintActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
         <service android:name=".services.RepositoryService" />
 
     </application>
