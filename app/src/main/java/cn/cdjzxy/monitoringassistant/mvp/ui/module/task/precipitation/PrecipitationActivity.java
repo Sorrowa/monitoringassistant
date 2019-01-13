@@ -107,12 +107,12 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-//        layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
+        layout.scrollTo(0, StatusBarUtil.getStatusBarHeight(this));
         projectId = getIntent().getStringExtra("projectId");
         formSelectId = getIntent().getStringExtra("formSelectId");
         samplingId = getIntent().getStringExtra("samplingId");
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
-        
+
         if (isNewCreate) {
             mSampling = createSampling();
         } else {
