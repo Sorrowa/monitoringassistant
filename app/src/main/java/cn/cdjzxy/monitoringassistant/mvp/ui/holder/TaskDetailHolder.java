@@ -14,7 +14,6 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -29,7 +28,7 @@ import kotlin.Unit;
 
 public class TaskDetailHolder extends BaseHolder<Sampling> {
 
-    @BindView(R.id.iv_cb)
+    @BindView(R.id.ivChoose)
     ImageView    mIvCb;
     @BindView(R.id.iv_type)
     ImageView    mIvType;

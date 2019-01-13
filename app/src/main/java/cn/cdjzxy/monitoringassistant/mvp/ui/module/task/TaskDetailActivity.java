@@ -114,6 +114,21 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     @BindView(R.id.cb_all)
     ImageView    cbAll;
 
+    /**
+     * 降水表单路径/路径
+     */
+    public static final String PATH_PRECIPITATION="/FormTemplate/FILL_JS_GAS_XD";
+
+    /**
+     * 废水表单路径/路径
+     */
+    public static final String PATH_WASTEWATER="/FormTemplate/FILL_WATER_NEW_XD";
+
+    /**
+     * 仪器法表单路径/路径
+     */
+    public static final String PATH_INSTRUMENTAL="/FormTemplate/FILL_YQF_WATER";
+
     private TitleBarView      mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
 
@@ -400,21 +415,21 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onClick(View view, int position) {
-                if ("/FormTemplate/FILL_JS_GAS_XD".equals(mSamplings.get(position).getFormPath())) {
+                if (PATH_PRECIPITATION.equals(mSamplings.get(position).getFormPath())) {
                     //降水采样及样品交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("samplingId", mSamplings.get(position).getId());
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
-                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mSamplings.get(position).getFormPath())) {
+                } else if (PATH_WASTEWATER.equals(mSamplings.get(position).getFormPath())) {
                     //水和废水样品采集与交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("samplingId", mSamplings.get(position).getId());
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
-                } else if ("/FormTemplate/FILL_YQF_WATER".equals(mSamplings.get(position).getFormPath())) {
+                } else if (PATH_INSTRUMENTAL.equals(mSamplings.get(position).getFormPath())) {
                     //现场监测仪器法
                     Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
                     intent.putExtra("projectId", mProject.getId());
@@ -554,21 +569,21 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mFormAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                if ("/FormTemplate/FILL_JS_GAS_XD".equals(mDialogFormSelects.get(position).getPath())) {
+                if (PATH_PRECIPITATION.equals(mDialogFormSelects.get(position).getPath())) {
                     //降水采样及样品交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(intent);
-                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mDialogFormSelects.get(position).getPath())) {
+                } else if (PATH_WASTEWATER.equals(mDialogFormSelects.get(position).getPath())) {
                     //水和废水样品采集与交接记录（新都）
                     Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
                     intent.putExtra("projectId", mProject.getId());
                     intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                     intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(intent);
-                } else if ("/FormTemplate/FILL_YQF_WATER".equals(mDialogFormSelects.get(position).getPath())) {
+                } else if (PATH_INSTRUMENTAL.equals(mDialogFormSelects.get(position).getPath())) {
                     //现场监测仪器法
                     Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
                     intent.putExtra("projectId", mProject.getId());

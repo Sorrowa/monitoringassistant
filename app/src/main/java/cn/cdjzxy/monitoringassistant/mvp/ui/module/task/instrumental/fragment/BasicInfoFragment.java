@@ -39,6 +39,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterMoniteActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
@@ -163,20 +164,20 @@ public class BasicInfoFragment  extends BaseFragment {
                 break;
 
             case R.id.tv_choose_project:
-//                Intent intent1 = new Intent(getContext(), UserActivity.class);
-//                intent1.putExtra("projectId", InstrumentalActivity.mSampling.getProjectId());
-//                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
-//                    @Override
-//                    public void onActivityResult(int resultCode, Intent data) {
-//                        if (resultCode == Activity.RESULT_OK) {
-//                            if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
-//                                InstrumentalActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
-//                                InstrumentalActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
-//                                tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
-//                            }
-//                        }
-//                    }
-//                });
+                intent1 = new Intent(getContext(), WasteWaterMoniteActivity.class);
+                intent1.putExtra("projectId", InstrumentalActivity.mSampling.getProjectId());
+                new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            if (!CheckUtil.isEmpty(data.getStringExtra("MonitemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonitemName"))) {
+                                InstrumentalActivity.mSampling.setMonitemId(data.getStringExtra("MonitemId"));
+                                InstrumentalActivity.mSampling.setMonitemName(data.getStringExtra("MonitemName"));
+                                tvTestUser.setText(InstrumentalActivity.mSampling.getMonitemName());
+                            }
+                        }
+                    }
+                });
                 break;
 
             case R.id.tv_test_start_date:

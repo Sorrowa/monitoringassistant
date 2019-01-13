@@ -62,9 +62,9 @@ public class UnitActivity extends BaseTitileActivity<ApiPresenter> {
         initUnitData();
 
         List<Unit> units = DBHelper.get().getUnitDao().loadAll();
-        if (!CheckUtil.isEmpty(units)) {
+        if (!CheckUtil.isEmpty(units) || units.size() != mUnits.size()) {
             mUnits.clear();
-            mUnits.addAll(DBHelper.get().getUnitDao().loadAll());
+            mUnits.addAll(units);
         }
 
         mUnitAdapter.notifyDataSetChanged();

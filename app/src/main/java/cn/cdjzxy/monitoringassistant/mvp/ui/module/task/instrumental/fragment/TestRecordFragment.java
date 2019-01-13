@@ -1,12 +1,15 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +37,9 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UnitActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterSamplingActivity;
 
 public class TestRecordFragment extends BaseFragment {
 
@@ -107,6 +113,15 @@ public class TestRecordFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            mInstrumentalTestRecordAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
@@ -126,12 +141,21 @@ public class TestRecordFragment extends BaseFragment {
 
                 break;
             case R.id.btn_add_blank:
-                //添加空白
-                editor.putInt("listPosition", -1);
-                editor.commit();
+                if (TextUtils.isEmpty(InstrumentalActivity.mSampling.getMonitemId())) {
+                    ArtUtils.makeText(getContext(), "请选择项目！");
+                    return;
+                }
 
                 //跳转到添加样品
-                EventBus.getDefault().post(2, EventBusTags.TAG_INSTRUMENTAL_RECORD);
+                Intent intent4 = new Intent(getContext(), WasteWaterSamplingActivity.class);
+                new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
+                    @Override
+                    public void onActivityResult(int resultCode, Intent data) {
+                        if (resultCode == Activity.RESULT_OK) {
+                            mInstrumentalTestRecordAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
                 break;
         }
     }
@@ -143,7 +167,7 @@ public class TestRecordFragment extends BaseFragment {
         }
 
         if (InstrumentalActivity.mSampling.getSamplingDetailYQFs() == null) {
-            return;
+            InstrumentalActivity.mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
         }
 
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {

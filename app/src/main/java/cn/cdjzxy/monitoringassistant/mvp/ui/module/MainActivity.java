@@ -69,30 +69,30 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.layout_container)
-    FrameLayout  layoutContainer;
+    FrameLayout layoutContainer;
 
     private BadgeView mBadgeView;
 
     private NumberProgressBar mNumberProgressBar;
-    private TextView          mTvHint;
-    private DialogPlus        mDialogPlus;
+    private TextView mTvHint;
+    private DialogPlus mDialogPlus;
 
     private TitleBarView mTitleBarView;
 
     private ExitHelper.TwicePressHolder mExitHelper;
 
     private MainTabAdapter mMainTabAdapter;
-    private List<Tab>      mTabs;
+    private List<Tab> mTabs;
 
     private FragmentManager mFragmentManager;
 
-    private WebFragment        mWebFragment;
-    private TaskFragment       mTaskFragment;
-    private ScanCodeFragment   mScanCodeFragment;
-    private PointMapFragment   mPointMapFragment;
-    private ProgressFragment   mProgressFragment;
+    private WebFragment mWebFragment;
+    private TaskFragment mTaskFragment;
+    private ScanCodeFragment mScanCodeFragment;
+    private PointMapFragment mPointMapFragment;
+    private ProgressFragment mProgressFragment;
     private RepositoryFragment mRepositoryFragment;
-    private SettingFragment    mSettingFragment;
+    private SettingFragment mSettingFragment;
     private ManagementFragment mManagementFragment;
 
 
@@ -220,19 +220,31 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 mDialogPlus.dismiss();
                 break;
             case Message.RESULT_OK:
-                int progress = mNumberProgressBar.getProgress() + (int) message.obj;
-                mNumberProgressBar.setProgress(progress);
-                if (progress == 100) {
-                    mDialogPlus.dismiss();
-                }
+                updateProgress((int) message.obj);
                 break;
             case TYPE_TASK:
-                mNumberProgressBar.setProgress(mNumberProgressBar.getProgress() + ApiPresenter.PROGRESS);
+                updateProgress(ApiPresenter.PROGRESS);
                 mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);
                 break;
         }
     }
 
+    /**
+     * 更新进度
+     * @param addValue
+     */
+    private void updateProgress(int addValue) {
+        if (!mDialogPlus.isShowing()) {
+            return;
+        }
+
+        int progress = mNumberProgressBar.getProgress() + addValue;
+        mNumberProgressBar.setProgress(progress);
+
+        if (progress >= 100) {
+            mDialogPlus.dismiss();
+        }
+    }
 
     /**
      * 获取标题右边View

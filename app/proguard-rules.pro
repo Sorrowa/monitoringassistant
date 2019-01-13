@@ -237,4 +237,5 @@
 # Marshmallow removed Notification.setLatestEventInfo()
 -dontwarn android.app.Notification
 
-
+################gprinter#################
+-keep class com.gprinter.** { *; }

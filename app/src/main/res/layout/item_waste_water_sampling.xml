@@ -25,7 +25,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/dp_6"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -37,21 +36,22 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_frequency"
+                    android:id="@+id/tv1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="频次：--"
+                    android:gravity="center"
+                    android:text="样品编码"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_10" />
 
                 <TextView
-                    android:id="@+id/tv_analyse_time"
+                    android:id="@+id/tvSamplingCode"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_4"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/dp_2"
                     android:layout_weight="1"
-                    android:text="分析时间：02:00"
+                    android:gravity="center"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_10" />
 
@@ -64,47 +64,22 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_time"
+                    android:id="@+id/tv2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="2018/10/29"
+                    android:gravity="center"
+                    android:text="频次"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_10" />
 
                 <TextView
-                    android:id="@+id/tv_analyse_result"
+                    android:id="@+id/tvFrequency"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_4"
+                    android:layout_marginTop="@dimen/dp_2"
                     android:layout_weight="1"
-                    android:text="分析结果：23mg/L"
-                    android:textColor="@color/text_color_333333"
-                    android:textSize="@dimen/text_size_10" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_point"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="点位1"
-                    android:textColor="@color/text_color_333333"
-                    android:textSize="@dimen/text_size_10" />
-
-                <TextView
-                    android:id="@+id/tv_ave_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_4"
-                    android:layout_weight="1"
-                    android:text="均值：15mg/L"
+                    android:gravity="center"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_10" />
             </LinearLayout>
@@ -116,30 +91,27 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_has_PX"
+                    android:id="@+id/tv3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="点位"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_10" />
 
                 <TextView
-                    android:id="@+id/tv_rela_offset"
+                    android:id="@+id/tvPoint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_4"
+                    android:layout_marginTop="@dimen/dp_2"
                     android:layout_weight="1"
-                    android:text="相对偏差：-20%"
+                    android:gravity="center"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_10" />
             </LinearLayout>
 
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_has_next" />
 
     </LinearLayout>
 
