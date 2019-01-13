@@ -123,6 +123,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
         // Make sure we're not doing discovery anymore
         if (mBluetoothAdapter != null) {
+            isStart=false;
             mBluetoothAdapter.cancelDiscovery();
         }
 
@@ -222,9 +223,11 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                isStart = false;
-                titleBar.setRightText("刷新");
-                mBluetoothAdapter.cancelDiscovery();
+                if(isStart){
+                    isStart = false;
+                    titleBar.setRightText("刷新");
+                    mBluetoothAdapter.cancelDiscovery();
+                }
             }
         }, 10000);
 

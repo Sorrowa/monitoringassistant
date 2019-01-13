@@ -112,6 +112,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         formSelectId = getIntent().getStringExtra("formSelectId");
         samplingId = getIntent().getStringExtra("samplingId");
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
+        
         if (isNewCreate) {
             mSampling = createSampling();
         } else {

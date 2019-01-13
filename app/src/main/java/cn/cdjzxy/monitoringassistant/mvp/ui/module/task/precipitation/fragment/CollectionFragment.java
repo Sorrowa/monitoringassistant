@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
@@ -22,15 +25,25 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PrecipitationCollectAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
  * 样品收集
@@ -40,23 +53,23 @@ public class CollectionFragment extends BaseFragment {
 
     Unbinder unbinder;
     @BindView(R.id.recyclerview)
-    RecyclerView   recyclerview;
+    RecyclerView recyclerview;
     @BindView(R.id.tv_add_parallel)
-    TextView       tvAddParallel;
+    TextView tvAddParallel;
     @BindView(R.id.btn_add_parallel)
     RelativeLayout btnAddParallel;
     @BindView(R.id.tv_add_blank)
-    TextView       tvAddBlank;
+    TextView tvAddBlank;
     @BindView(R.id.btn_add_blank)
     RelativeLayout btnAddBlank;
     @BindView(R.id.tv_print_label)
-    TextView       tvPrintLabel;
+    TextView tvPrintLabel;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
 
     private PrecipitationCollectAdapter mPrecipitationCollectAdapter;
-    private SharedPreferences           collectListSettings;
-    private SharedPreferences.Editor    editor;
+    private SharedPreferences collectListSettings;
+    private SharedPreferences.Editor editor;
 
     public CollectionFragment() {
     }
@@ -134,7 +147,16 @@ public class CollectionFragment extends BaseFragment {
                 EventBus.getDefault().post(2, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                 break;
             case R.id.btn_print_label:
-                ArtUtils.startActivity(LabelPrintActivity.class);
+                Gson gson = new Gson();
+                //构建标签数据
+                String labelStr = gson.toJson(buildPrintLabelList(PrecipitationActivity.mSampling));
+                //构建封条数据
+                String sealStr = gson.toJson(buildSealInfo(PrecipitationActivity.mSampling));
+
+                Intent intent = new Intent(getContext(), LabelPrintActivity.class);
+                intent.putExtra(LabelPrintActivity.LABEL_JSON_DATA, labelStr);
+                intent.putExtra(LabelPrintActivity.SEAL_JSON_DATA, sealStr);
+                ArtUtils.startActivity(intent);
                 break;
         }
     }
@@ -168,5 +190,49 @@ public class CollectionFragment extends BaseFragment {
         });
 
         recyclerview.setAdapter(mPrecipitationCollectAdapter);
+    }
+
+    /**
+     * 构建打印的标签信息列表
+     *
+     * @return
+     */
+    private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
+        ArrayList<LabelInfo> result = new ArrayList<>();
+
+        //组装标签信息
+        for (SamplingDetail item : sampling.getSamplingDetailResults()) {
+            LabelInfo info = new LabelInfo();
+            info.setTaskName(sampling.getProjectName());
+            info.setNumber(sampling.getSamplingNo());
+            info.setFrequecyNo("频次：" + item.getFrequecyNo());
+            info.setType("降水");//项目类型固定“降水”
+            info.setMonitemName("降水量");//监测项目固定“降水量”
+            info.setSampingCode(item.getSampingCode());
+            info.setRemark("");//保存方法
+            info.setCb1("交接");
+            info.setCb2("分析");
+            info.setQrCode(item.getSampingCode());//二维码为样品编码
+
+            result.add(info);
+        }
+
+        return result;
+    }
+
+    /**
+     * 构造封条信息
+     *
+     * @return
+     */
+    private SealInfo buildSealInfo(Sampling sampling) {
+        SealInfo result = new SealInfo();
+        result.setTitle("新都区环境监测站");
+        result.setTaskName(sampling.getProjectName());
+        result.setSampingAddr(sampling.getAddressName());
+        result.setType(sampling.getSampProperty());//样品性质
+        result.setTime(DateUtils.getTime(new Date().getTime()));
+
+        return result;
     }
 }

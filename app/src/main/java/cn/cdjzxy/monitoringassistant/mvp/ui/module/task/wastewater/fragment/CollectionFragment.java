@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
@@ -22,14 +24,25 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
  * 样品收集
@@ -131,7 +144,16 @@ public class CollectionFragment extends BaseFragment {
                 EventBus.getDefault().post(3, EventBusTags.TAG_WASTEWATER_COLLECTION);
                 break;
             case R.id.btn_print_label:
-                ArtUtils.makeText(getContext(), "打印标签");
+                Gson gson = new Gson();
+                //构建标签数据
+                String labelStr = gson.toJson(buildPrintLabelList(WastewaterActivity.mSample));
+                //构建封条数据
+                String sealStr = gson.toJson(buildSealInfo(WastewaterActivity.mSample));
+
+                Intent intent = new Intent(getContext(), LabelPrintActivity.class);
+                intent.putExtra(LabelPrintActivity.LABEL_JSON_DATA, labelStr);
+                intent.putExtra(LabelPrintActivity.SEAL_JSON_DATA, sealStr);
+                ArtUtils.startActivity(intent);
                 break;
         }
     }
@@ -157,5 +179,75 @@ public class CollectionFragment extends BaseFragment {
             }
         });
         recyclerview.setAdapter(mWasteWaterCollectAdapter);
+    }
+
+    /**
+     * 构建打印的标签信息列表
+     *
+     * @return
+     */
+    private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
+        ArrayList<LabelInfo> result = new ArrayList<>();
+
+        //组装标签信息\
+        for (SamplingDetail item : sampling.getSamplingDetailResults()) {
+            LabelInfo info = new LabelInfo();
+            info.setTaskName(sampling.getProjectName());
+            info.setNumber(sampling.getSamplingNo());
+            info.setFrequecyNo("频次：" + item.getFrequecyNo());
+            info.setType("废水");//项目类型固定废水
+            info.setMonitemName(item.getMonitemName());//监测项目
+            info.setSampingCode(item.getSampingCode());//样品编码
+            info.setCb1("交接");
+            info.setCb2("分析");
+            info.setQrCode(item.getSampingCode());//二维码为样品编码
+
+            //根据样品的监测项目获取对应的分瓶信息
+            SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
+            if (samplingFormStand != null) {
+                //保存方法
+                info.setRemark(samplingFormStand.getPreservative());
+            }
+
+            result.add(info);
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取监测项目对应的分瓶信息
+     *
+     * @param sampling
+     * @param monitemName
+     * @return
+     */
+    private SamplingFormStand getSamplingFormStand(Sampling sampling, String monitemName) {
+        if (TextUtils.isEmpty(monitemName)) {
+            return null;
+        }
+
+        for (SamplingFormStand item : sampling.getSamplingFormStandResults()) {
+            if (monitemName.equals(item.getMonitemName())) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 构造封条信息
+     *
+     * @return
+     */
+    private SealInfo buildSealInfo(Sampling sampling) {
+        SealInfo result = new SealInfo();
+        result.setTitle("新都区环境监测站");
+        result.setTaskName(sampling.getProjectName());
+        result.setSampingAddr(sampling.getAddressName());
+        result.setType(sampling.getSampProperty());//样品性质
+        result.setTime(DateUtils.getTime(new Date().getTime()));
+
+        return result;
     }
 }

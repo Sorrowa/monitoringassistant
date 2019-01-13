@@ -85,10 +85,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
     private boolean isSelectAll = false;
     private SealInfo sealInfo = null;
 
-    private int mTotalCopies = 0;
-    private Gson gson = new Gson();
-
-
     private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
     private static final int UPDATE_STATUS = 1;
     public static final String LABEL_JSON_DATA = "label_json_data";
@@ -140,6 +136,8 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化数据
      */
     private void initLabelData() {
+        Gson gson = new Gson();
+
         //读取传过来的标签数据
         String labelStr = getIntent().getStringExtra(LABEL_JSON_DATA);
         if (!TextUtils.isEmpty(labelStr)) {
@@ -157,8 +155,8 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             }.getType());
         }
 
-        //增加测试数据
-        addTestData();
+//        //增加测试数据
+//        addTestData();
 
         ArtUtils.configRecyclerView(recyclerview, new GridLayoutManager(this, 2));
 
@@ -277,14 +275,15 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 continue;
             }
 
-            mPrintList.add(item);
+//            mPrintList.add(item);
+            printLabelInfo(item);
         }
 
         //如果有选中，则开始打印
         if (mPrintList.size() > 0) {
-            printNextLabel();
+//            printNextLabel();
         } else {
-            ArtUtils.makeText(this, "请选择要打印的标签！");
+//            ArtUtils.makeText(this, "请选择要打印的标签！");
         }
     }
 
@@ -478,8 +477,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         tsc.addReference(0, 0);// 设置原点坐标
         tsc.addTear(EscCommand.ENABLE.ON); // 撕纸模式开启
         tsc.addCls();// 清除打印缓冲区
-        // 开启带Response的打印，用于连续打印
-        tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
 
         // 先绘制表格
 //        tsc.addBox(10,20,60,50,1);
@@ -516,24 +513,24 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         // 绘制-任务名称
         addTextToLabel(tsc, sx, sy, ex, sy + normalHeight, item.getTaskName(), false, thickness);
 
-        //边框-采样单流水号，宽度6/10
+        //边框-采样单流水号，宽度5/8
         sy += normalHeight;
-        ex = (int) (maxX * 0.6);
+        ex = (int) (maxX * 0.625);
         ey = sy + normalHeight;
         tsc.addBox(sx, sy, ex, ey, thickness);
 
         // 绘制-采样单流水号
         addTextToLabel(tsc, sx, sy, ex, ey, item.getNumber(), false, thickness);
 
-        //边框-频次，4/10
+        //边框-频次，3/8
         tsc.addBox(ex, sy, maxX, ey, thickness);
 
         // 绘制-频次
         addTextToLabel(tsc, ex, sy, maxX, ey, item.getFrequecyNo(), false, thickness);
 
-        //边框-废水，宽度2/10
+        //边框-废水，宽度3/8
         sy = ey;
-        ex = (int) (maxX * 0.2);
+        ex = (int) (maxX * 0.375);
         ey += normalHeight;
         tsc.addBox(minX, sy, ex, ey, thickness);
 
@@ -570,9 +567,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         // 绘制-容器、采样量、保存方法
         addTextToLabel(tsc, ex, sy, maxX, ey, item.getRemark(), false, thickness);
 
-        //边框-交接，宽度3/10
+        //边框-交接，宽度3/6
         sx = ex;
-        ex = (int) ((maxX - sx) * 0.3) + sx;
+        ex = (int) ((maxX - sx) * 0.5) + sx;
         sy = ey;
         ey = sy + normalHeight;
         tsc.addBox(sx, sy, ex, maxY, thickness);
@@ -582,7 +579,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         //绘制-勾选框
 //        addBoxToLabel(tsc, sx - 40, sy, ex - 40, maxY, 20, 1);
 
-        //边框-分析，宽度7/10
+        //边框-分析，宽度3/6
         tsc.addBox(ex, sy, maxX, maxY, thickness);
         // 绘制-分析和勾选框
         addTextToLabel(tsc, ex, sy, maxX, maxY, item.getCb2(), true, thickness);
@@ -590,6 +587,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         tsc.addPrint(1, 1); // 打印标签
 //        tsc.addSound(2, 100); // 打印标签后 蜂鸣器响
         tsc.addCashdrwer(LabelCommand.FOOT.F5, 255, 255);
+//        //开启带Response的打印，用于连续打印
+//        tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
+
         Vector<Byte> datas = tsc.getCommand(); // 发送数据
         byte[] bytes = GpUtils.ByteTo_byte(datas);
         String str = Base64.encodeToString(bytes, Base64.DEFAULT);
@@ -793,6 +793,10 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * @param text
      */
     private void addTextToLabel(LabelCommand tsc, int sx, int sy, int ex, int ey, String text, boolean addCheckBox, int thickness, LabelCommand.FONTMUL fontmul) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
+
         int[] size = getTextSize(text);
         int width = (int) (size[0] * 1.8);
         int height = (int) (size[1] * 1.7);
@@ -850,6 +854,10 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * @param text
      */
     private void addQRCodeToLabel(LabelCommand tsc, int sx, int sy, int ex, int ey, String text, int[] size) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
+
         int width = size[0];
         int height = size[1];
 
@@ -1018,21 +1026,22 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                     if (!TextUtils.isEmpty(str)) {
                         ArtUtils.makeText(context, "打印机：" + PrinterIndex + " 状态：" + str);
                     }
-                } else if (action.equals(GpCom.ACTION_LABEL_RESPONSE)) {
-                    byte[] data = intent.getByteArrayExtra(GpCom.EXTRA_PRINTER_LABEL_RESPONSE);
-                    int cnt = intent.getIntExtra(GpCom.EXTRA_PRINTER_LABEL_RESPONSE_CNT, 1);
-                    String d = new String(data, 0, cnt);
-                    /**
-                     * 这里的d的内容根据RESPONSE_MODE去判断返回的内容去判断是否成功，具体可以查看标签编程手册SET
-                     * RESPONSE指令
-                     * 该sample中实现的是发一张就返回一次,这里返回的是{00,00001}。这里的对应{Status,######,ID}
-                     * 所以我们需要取出STATUS
-                     */
-                    Log.d("LABEL RESPONSE", d);
-                    if (--mTotalCopies > 0 && d.charAt(1) == 0x00) {
-                        printNextLabel();
-                    }
                 }
+//                else if (action.equals(GpCom.ACTION_LABEL_RESPONSE)) {
+//                    byte[] data = intent.getByteArrayExtra(GpCom.EXTRA_PRINTER_LABEL_RESPONSE);
+//                    int cnt = intent.getIntExtra(GpCom.EXTRA_PRINTER_LABEL_RESPONSE_CNT, 1);
+//                    String d = new String(data, 0, cnt);
+//                    /**
+//                     * 这里的d的内容根据RESPONSE_MODE去判断返回的内容去判断是否成功，具体可以查看标签编程手册SET
+//                     * RESPONSE指令
+//                     * 该sample中实现的是发一张就返回一次,这里返回的是{00,00001}。这里的对应{Status,######,ID}
+//                     * 所以我们需要取出STATUS
+//                     */
+//                    Log.d("LABEL RESPONSE", d);
+//                    if (d.charAt(1) == 0x00) {
+//                        printNextLabel();
+//                    }
+//                }
             }
         }
     };
