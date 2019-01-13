@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
@@ -24,6 +26,7 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
@@ -328,22 +331,25 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getSamplingUserName())) {
+        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getTagName())) {
+        if (CheckUtil.isEmpty(mSample.getTagId())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getAddressName())) {
+        if (CheckUtil.isEmpty(mSample.getAddressId())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getPrivateData())) {
+        Gson gson=new Gson();
+        FsExtends fsExtends=gson.fromJson(WastewaterActivity.mSample.getPrivateData(),FsExtends.class);
+        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getFrequencyNo())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getMethodName())) {
+        if (CheckUtil.isEmpty(mSample.getMethodId())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getDeviceName())) {
+
+        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())){
             return false;
         }
         return true;

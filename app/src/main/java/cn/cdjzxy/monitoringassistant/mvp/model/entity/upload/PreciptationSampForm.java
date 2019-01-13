@@ -29,6 +29,10 @@ public class PreciptationSampForm {
     private List<String> UploadFiles;
     private List<String> DelFiles;
 
+    private boolean isCompelSubmit;//是否强制提交
+    private String addTime;
+    private String updateTime;
+
     public boolean isIsAdd() {
         return IsAdd;
     }
@@ -67,6 +71,30 @@ public class PreciptationSampForm {
 
     public void setDelFiles(List<String> DelFiles) {
         this.DelFiles = DelFiles;
+    }
+
+    public boolean isCompelSubmit() {
+        return isCompelSubmit;
+    }
+
+    public void setCompelSubmit(boolean compelSubmit) {
+        isCompelSubmit = compelSubmit;
+    }
+
+    public String getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(String addTime) {
+        this.addTime = addTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public static class SampFormBean {
@@ -455,6 +483,14 @@ public class PreciptationSampForm {
             private String  FrequecyNo;
             private String  Value1;
             private String  Description;
+            //new
+            private String SamplingTime;
+            private String SamplingType;
+            private String SamplingCount;
+            private String Preservative;
+            private boolean IsCompare;
+            private String SampleCollection;
+            private String SampleAcceptance;
 
             public String getSamplingId() {
                 return SamplingId;
@@ -567,6 +603,70 @@ public class PreciptationSampForm {
             public void setDescription(String Description) {
                 this.Description = Description;
             }
+
+            public boolean isSenceAnalysis() {
+                return IsSenceAnalysis;
+            }
+
+            public void setSenceAnalysis(boolean senceAnalysis) {
+                IsSenceAnalysis = senceAnalysis;
+            }
+
+            public String getSamplingTime() {
+                return SamplingTime;
+            }
+
+            public void setSamplingTime(String samplingTime) {
+                SamplingTime = samplingTime;
+            }
+
+            public String getSamplingType() {
+                return SamplingType;
+            }
+
+            public void setSamplingType(String samplingType) {
+                SamplingType = samplingType;
+            }
+
+            public String getSamplingCount() {
+                return SamplingCount;
+            }
+
+            public void setSamplingCount(String samplingCount) {
+                SamplingCount = samplingCount;
+            }
+
+            public String getPreservative() {
+                return Preservative;
+            }
+
+            public void setPreservative(String preservative) {
+                Preservative = preservative;
+            }
+
+            public boolean getIsCompare() {
+                return IsCompare;
+            }
+
+            public void setIsCompare(boolean isCompare) {
+                IsCompare = isCompare;
+            }
+
+            public String getSampleCollection() {
+                return SampleCollection;
+            }
+
+            public void setSampleCollection(String sampleCollection) {
+                SampleCollection = sampleCollection;
+            }
+
+            public String getSampleAcceptance() {
+                return SampleAcceptance;
+            }
+
+            public void setSampleAcceptance(String sampleAcceptance) {
+                SampleAcceptance = sampleAcceptance;
+            }
         }
 
         public static class SamplingFormStandsBean {
@@ -581,6 +681,18 @@ public class PreciptationSampForm {
             private String SamplingId;
             private String MonitemIds;
             private String MonitemName;
+            private int StandNo;
+            private int Count;
+            private String SamplingAmount;
+            private String AnalysisSite;
+            private String SaveMehtod;
+            private String Preservative;
+            private String Container;
+            private String SaveTimes;
+            private String Index;
+            private String UpdateTime;
+            private List<String> MonItems;
+
 
             public String getId() {
                 return Id;
@@ -612,6 +724,94 @@ public class PreciptationSampForm {
 
             public void setMonitemName(String MonitemName) {
                 this.MonitemName = MonitemName;
+            }
+
+            public int getStandNo() {
+                return StandNo;
+            }
+
+            public void setStandNo(int standNo) {
+                StandNo = standNo;
+            }
+
+            public int getCount() {
+                return Count;
+            }
+
+            public void setCount(int count) {
+                Count = count;
+            }
+
+            public String getSamplingAmount() {
+                return SamplingAmount;
+            }
+
+            public void setSamplingAmount(String samplingAmount) {
+                SamplingAmount = samplingAmount;
+            }
+
+            public String getAnalysisSite() {
+                return AnalysisSite;
+            }
+
+            public void setAnalysisSite(String analysisSite) {
+                AnalysisSite = analysisSite;
+            }
+
+            public String getSaveMehtod() {
+                return SaveMehtod;
+            }
+
+            public void setSaveMehtod(String saveMehtod) {
+                SaveMehtod = saveMehtod;
+            }
+
+            public String getPreservative() {
+                return Preservative;
+            }
+
+            public void setPreservative(String preservative) {
+                Preservative = preservative;
+            }
+
+            public String getContainer() {
+                return Container;
+            }
+
+            public void setContainer(String container) {
+                Container = container;
+            }
+
+            public String getSaveTimes() {
+                return SaveTimes;
+            }
+
+            public void setSaveTimes(String saveTimes) {
+                SaveTimes = saveTimes;
+            }
+
+            public String getIndex() {
+                return Index;
+            }
+
+            public void setIndex(String index) {
+                Index = index;
+            }
+
+            public String getUpdateTime() {
+                return UpdateTime;
+            }
+
+            public void setUpdateTime(String updateTime) {
+                UpdateTime = updateTime;
+            }
+
+            public List<String> getMonItems() {
+                return MonItems;
+            }
+
+            public void setMonItems(List<String> monItems) {
+                MonItems = monItems;
             }
         }
     }

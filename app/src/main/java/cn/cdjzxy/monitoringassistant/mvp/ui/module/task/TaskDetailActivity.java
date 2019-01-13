@@ -79,6 +79,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterAct
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
@@ -457,7 +458,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
-
+                    uploadFsData(position);
                 }
 
             }
@@ -938,6 +939,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     }
 
 
+    /**
+     * 上传废水数据
+     * @param position
+     */
     private void uploadFsData(int position){
         sampling = mSamplings.get(position);
         if (!sampling.getIsFinish()) {
@@ -945,65 +950,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             return;
         }
         showLoading();
-
-        //开始组装数据
-        PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
-        preciptationSampForm.setIsAdd(true);
-        preciptationSampForm.setIsSubmit(true);
-        preciptationSampForm.setDevceForm(true);
-        //SampFormBean
-        PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
-        sampFormBean.setProjectId(sampling.getProjectId());
-        sampFormBean.setFormPath(sampling.getFormPath());
-        sampFormBean.setFormName(sampling.getFormName());
-        sampFormBean.setProjectName(sampling.getProjectName());
-        sampFormBean.setProjectNo(sampling.getProjectNo());
-        sampFormBean.setMontype(sampling.getMontype());
-        sampFormBean.setParentTagId(sampling.getParentTagId());
-        sampFormBean.setFormType(sampling.getFormType());
-        sampFormBean.setFormTypeName(sampling.getFormTypeName());
-        sampFormBean.setPrivateData(sampling.getPrivateData());
-        sampFormBean.setSendSampTime(sampling.getSendSampTime());
-        sampFormBean.setSamplingNo(sampling.getSamplingNo());
-        sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
-        sampFormBean.setTagName(sampling.getTagName());
-        sampFormBean.setTagId(sampling.getTagId());
-        sampFormBean.setAddressId(sampling.getAddressId());
-        sampFormBean.setAddressName(sampling.getAddressName());
-        sampFormBean.setAddressNo(sampling.getAddressNo());
-        sampFormBean.setMonitemName(sampling.getMonitemName());
-        sampFormBean.setMethodName(sampling.getMethodName());
-        sampFormBean.setMethodId(sampling.getMethodId());
-        sampFormBean.setDeviceId(sampling.getDeviceId());
-        sampFormBean.setDeviceName(sampling.getDeviceName());
-        sampFormBean.setTransfer(sampling.getTransfer());
-        sampFormBean.setReciveTime(sampling.getReciveTime());
-        sampFormBean.setFile(sampling.getFile());
-        sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
-        sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
-        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeBegin());
-        sampFormBean.setComment(sampling.getComment());
-        sampFormBean.setFormFlows(sampling.getFormFlows());
-
-        if (sampling.getSamplingFormStandResults() != null && sampling.getSamplingFormStandResults().size() > 0) {
-
-            ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
-            for (SamplingFormStand samplingFormStand : sampling.getSamplingFormStandResults()) {
-                PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
-
-                samplingFormStandsBean.setId(samplingFormStand.getId());
-                samplingFormStandsBean.setSamplingId(samplingFormStand.getSamplingId());
-                samplingFormStandsBean.setMonitemIds(samplingFormStand.getMonitemIds());
-                samplingFormStandsBean.setMonitemName(samplingFormStand.getMonitemName());
-
-                samplingFormStandsBeans.add(samplingFormStandsBean);
-            }
-
-            sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
-        }
-
+        PreciptationSampForm preciptationSampForm=SubmitDataUtil.setUpFSData(sampling);
+        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
     }
-
-
 
 }
