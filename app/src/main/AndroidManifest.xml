@@ -103,6 +103,16 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".mvp.ui.module.task.instrumental.WasteWaterMoniteActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".mvp.ui.module.task.instrumental.WasteWaterSamplingActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
             android:name=".mvp.ui.module.repository.RepositorySearchActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />

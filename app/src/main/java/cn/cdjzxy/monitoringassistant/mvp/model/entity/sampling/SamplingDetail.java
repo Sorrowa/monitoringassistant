@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
+import android.text.TextUtils;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -95,18 +97,22 @@ public class SamplingDetail {
     private boolean isAddPreserve;
     @Transient
     private JSONObject PrivateJsonData;
+    @Transient
+    private boolean isSelect;
+    @Transient
+    private boolean isCanSelect;
 
     @Generated(hash = 1844433884)
     public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex,
-            String SampingCode, int FrequecyNo, String SamplingTime, int SamplingType,
-            String SampStandId, String MonitemId, String MonitemName, String AddresssId,
-            String AddressName, int SamplingCount, String Preservative, String SampleCollection,
-            String SampleAcceptance, boolean IsSenceAnalysis, boolean IsCompare, String AnasysTime,
-            String Value1, String ValueUnit1, String valueUnit1Name, String Value2, String valueUnit2,
-            String valueUnit2Name, String Value3, String ValueUnit3, String valueUnit3Name,
-            String Value, String ValueUnit, String ValueUnitNname, String Value4, String Value5,
-            String MethodName, String MethodId, String DeviceIdName, String DeviceId,
-            String Description, String PrivateData, boolean isAddPreserve) {
+                          String SampingCode, int FrequecyNo, String SamplingTime, int SamplingType,
+                          String SampStandId, String MonitemId, String MonitemName, String AddresssId,
+                          String AddressName, int SamplingCount, String Preservative, String SampleCollection,
+                          String SampleAcceptance, boolean IsSenceAnalysis, boolean IsCompare, String AnasysTime,
+                          String Value1, String ValueUnit1, String valueUnit1Name, String Value2, String valueUnit2,
+                          String valueUnit2Name, String Value3, String ValueUnit3, String valueUnit3Name,
+                          String Value, String ValueUnit, String ValueUnitNname, String Value4, String Value5,
+                          String MethodName, String MethodId, String DeviceIdName, String DeviceId,
+                          String Description, String PrivateData, boolean isAddPreserve) {
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.ProjectId = ProjectId;
@@ -476,12 +482,40 @@ public class SamplingDetail {
         this.PrivateJsonData = null;
     }
 
+    public boolean getIsAddPreserve() {
+        return this.isAddPreserve;
+    }
+
+    public void setIsAddPreserve(boolean isAddPreserve) {
+        this.isAddPreserve = isAddPreserve;
+    }
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
+
+    public boolean isCanSelect() {
+        return isCanSelect;
+    }
+
+    public void setCanSelect(boolean canSelect) {
+        isCanSelect = canSelect;
+    }
+
     /**
      * 获取私有数据的JSON数据
      *
      * @return
      */
     public JSONObject getPrivateJsonData() {
+        if (TextUtils.isEmpty(this.PrivateData)) {
+            return null;
+        }
+
         if (this.PrivateJsonData == null) {
             try {
                 this.PrivateJsonData = new JSONObject(this.PrivateData);
@@ -500,13 +534,32 @@ public class SamplingDetail {
      * @return
      */
     public String getPrivateDataStringValue(String key) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            return "";
+        }
+
         try {
-            return getPrivateJsonData().getString(key);
-        } catch (JSONException e) {
+            return obj.getString(key);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return "";
+    }
+
+    public void setPrivateDataStringValue(String key, String value) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            obj = new JSONObject();
+        }
+
+        try {
+            obj.put(key, value);
+            this.setPrivateData(obj.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -516,8 +569,13 @@ public class SamplingDetail {
      * @return
      */
     public int getPrivateDataIntValue(String key) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            return 0;
+        }
+
         try {
-            return getPrivateJsonData().getInt(key);
+            return obj.getInt(key);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -532,8 +590,13 @@ public class SamplingDetail {
      * @return
      */
     public boolean getPrivateDataBooleanValue(String key) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            return false;
+        }
+
         try {
-            return getPrivateJsonData().getBoolean(key);
+            return obj.getBoolean(key);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -541,11 +604,17 @@ public class SamplingDetail {
         return false;
     }
 
-    public boolean getIsAddPreserve() {
-        return this.isAddPreserve;
-    }
+    public void setPrivateDataBooleanValue(String key, Boolean value) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            obj = new JSONObject();
+        }
 
-    public void setIsAddPreserve(boolean isAddPreserve) {
-        this.isAddPreserve = isAddPreserve;
+        try {
+            obj.put(key, value);
+            this.setPrivateData(obj.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
