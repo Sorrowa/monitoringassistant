@@ -98,9 +98,9 @@ public class SamplingDetail {
     @Transient
     private JSONObject PrivateJsonData;
     @Transient
-    private boolean isSelect;
-    @Transient
     private boolean isCanSelect;
+    @Transient
+    private boolean isSelected;
 
     @Generated(hash = 1844433884)
     public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex,
@@ -490,20 +490,20 @@ public class SamplingDetail {
         this.isAddPreserve = isAddPreserve;
     }
 
-    public boolean isSelect() {
-        return isSelect;
-    }
-
-    public void setSelect(boolean select) {
-        isSelect = select;
-    }
-
     public boolean isCanSelect() {
         return isCanSelect;
     }
 
     public void setCanSelect(boolean canSelect) {
         isCanSelect = canSelect;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     /**

@@ -208,17 +208,17 @@ public class TestRecordFragment extends BaseFragment {
                 }
 
                 if (currSelectDetails == item) {
-                    currSelectDetails.setSelect(false);
+                    currSelectDetails.setSelected(false);
                     currSelectDetails = null;
                     currPosition = 0;
                 } else if (item.isCanSelect()) {
                     if (currSelectDetails != null) {
-                        currSelectDetails.setSelect(false);
+                        currSelectDetails.setSelected(false);
                     }
 
                     //记录选中项
                     currSelectDetails = item;
-                    currSelectDetails.setSelect(true);
+                    currSelectDetails.setSelected(true);
                 }
 
                 //更新列表
@@ -283,7 +283,7 @@ public class TestRecordFragment extends BaseFragment {
         InstrumentalActivity.mSampling.getSamplingDetailYQFs().add(currPosition + 1, samplingDetail);
 
         currSelectDetails.setCanSelect(false);
-        currSelectDetails.setSelect(false);
+        currSelectDetails.setSelected(false);
         currSelectDetails = null;
         currPosition = 0;
 

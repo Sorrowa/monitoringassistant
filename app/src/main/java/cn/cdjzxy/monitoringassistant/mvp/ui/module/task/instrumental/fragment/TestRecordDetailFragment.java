@@ -264,6 +264,9 @@ public class TestRecordDetailFragment extends BaseFragment {
                 samplingDetail.setPrivateDataStringValue("ValueUnitName", tvTestUnit.getText().toString());
 //                    samplingDetail.setPrivateDataBooleanValue("HasPX", "平行".equals(tvControl.getText().toString()));
 
+                //计算均值和偏差值
+                calcPXData(samplingDetail, false);
+
                 //未完成状态改变为已完成，则更新到数据库
                 if (!mSampling.getIsFinish()) {
                     //是否完成
@@ -310,7 +313,7 @@ public class TestRecordDetailFragment extends BaseFragment {
     /**
      * 计算平行均值、相对偏差数据
      */
-    private void calcPXData(SamplingDetail detail) {
+    private void calcPXData(SamplingDetail detail, boolean isDelete) {
         if (detail == null) {
             return;
         }
@@ -321,6 +324,13 @@ public class TestRecordDetailFragment extends BaseFragment {
             detail.setPrivateDataStringValue("RPDValue", "");
             detail.setValue("");
             return;//还未添加平行数据
+        } else if (isDelete) {
+            //删除操作，重置对应的数据
+            targetItem.setPrivateDataStringValue("RPDValue", "");
+            targetItem.setValue("");
+            //更新到数据库
+            DBHelper.get().getSamplingDetailDao().update(targetItem);
+            return;
         }
 
         //样品数据
@@ -359,7 +369,6 @@ public class TestRecordDetailFragment extends BaseFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //TODO:删除样品数据时删除平行数据
                         SamplingDetail samplingDetail1 = mSampling.getSamplingDetailYQFs().get(listPosition);
 
                         SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail1.getId())).unique();
@@ -368,6 +377,18 @@ public class TestRecordDetailFragment extends BaseFragment {
                         }
 
                         mSampling.getSamplingDetailYQFs().remove(samplingDetail1);
+
+                        if (samplingDetail1.getPrivateDataBooleanValue("HasPX")) {
+                            //删除平行数据，重新计算样品计算均值和偏差值
+                            calcPXData(samplingDetail1, true);
+                        } else {
+                            //删除样品数据时删除平行数据
+                            SamplingDetail pxItem = TestRecordFragment.findPXItem(mSampling.getSamplingDetailYQFs(), samplingDetail1);
+                            if (pxItem != null) {
+                                DBHelper.get().getSamplingDetailDao().delete(pxItem);
+                                mSampling.getSamplingDetailYQFs().remove(pxItem);
+                            }
+                        }
 
                         ArtUtils.makeText(getContext(), "删除成功");
                         EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);

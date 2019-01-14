@@ -26,6 +26,8 @@ import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,10 +40,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
@@ -69,6 +74,7 @@ public class CollectionFragment extends BaseFragment {
     private WasteWaterCollectAdapter mWasteWaterCollectAdapter;
     private SharedPreferences collectListSettings;
     private SharedPreferences.Editor editor;
+    private SamplingDetail selectSamplingDetail;
 
     public CollectionFragment() {
     }
@@ -131,7 +137,15 @@ public class CollectionFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_parallel:
-                ArtUtils.makeText(getContext(), "添加平行");
+                if (CheckUtil.isNull(selectSamplingDetail)){
+                    ArtUtils.makeText(getContext(), "请先选择一项样品");
+                    return;
+                }
+                if (selectSamplingDetail.getSamplingType()!=0){
+                    ArtUtils.makeText(getContext(), "请选择非平行样");
+                    return;
+                }
+                addTheSameSample();
                 break;
             case R.id.btn_add_blank:
                 //添加空白
@@ -169,7 +183,12 @@ public class CollectionFragment extends BaseFragment {
             }
         });
 
-        mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingDetailResults());
+        mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingDetailResults(),new WasteWaterCollectAdapter.OnWasteWaterCollectListener(){
+            @Override
+            public void onSelected(View view, int position, boolean isSelected) {
+                changSelectState(position,isSelected);
+            }
+        });
         mWasteWaterCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
@@ -249,5 +268,52 @@ public class CollectionFragment extends BaseFragment {
         result.setTime(DateUtils.getTime(new Date().getTime()));
 
         return result;
+    }
+
+    /**
+     * 设置选中状态
+     * @param position
+     * @param isSelected
+     */
+    private void changSelectState(int position, boolean isSelected){
+        List<SamplingDetail> detailList= WastewaterActivity.mSample.getSamplingDetailResults();
+        if (!CheckUtil.isEmpty(detailList)){
+            for (SamplingDetail detail:detailList){
+                detail.setSelected(false);
+            }
+            detailList.get(position).setSelected(isSelected);
+            mWasteWaterCollectAdapter.notifyDataSetChanged();
+
+            if (isSelected){
+                selectSamplingDetail=detailList.get(position);
+            }else {
+                selectSamplingDetail=null;
+            }
+        }
+    }
+
+    /**
+     * 添加平行样品
+     */
+    private void addTheSameSample(){
+        SamplingDetail detail=new SamplingDetail();
+        detail.setProjectId(selectSamplingDetail.getProjectId());
+        detail.setId("FS-" + UUID.randomUUID().toString());
+        detail.setSamplingId(selectSamplingDetail.getSamplingId());
+        detail.setSampingCode(selectSamplingDetail.getSampingCode());
+        detail.setFrequecyNo(selectSamplingDetail.getFrequecyNo());
+        detail.setDescription(selectSamplingDetail.getDescription());
+        detail.setSamplingType(1);
+        detail.setIsCompare(selectSamplingDetail.getIsCompare());
+        detail.setIsAddPreserve(selectSamplingDetail.getIsAddPreserve());
+        detail.setMonitemName(selectSamplingDetail.getMonitemName());
+        detail.setMonitemId(selectSamplingDetail.getMonitemId());
+        detail.setAddressName(selectSamplingDetail.getAddressName());
+        detail.setAddresssId(selectSamplingDetail.getAddresssId());
+        //数据处理
+        WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+        DBHelper.get().getSamplingDetailDao().insert(detail);
+        //刷新界面
+        mWasteWaterCollectAdapter.notifyDataSetChanged();
     }
 }

@@ -68,7 +68,7 @@ public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
         if (data.isCanSelect()) {
             ivChoose.setVisibility(View.VISIBLE);
 
-            if (data.isSelect()) {
+            if (data.isSelected()) {
                 ivChoose.setImageResource(R.mipmap.ic_cb_checked);
             } else {
                 ivChoose.setImageResource(R.mipmap.ic_cb_nor);

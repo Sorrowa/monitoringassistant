@@ -1,6 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.holder;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wonders.health.lib.base.base.BaseHolder;
@@ -8,6 +9,7 @@ import com.wonders.health.lib.base.base.BaseHolder;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
@@ -24,9 +26,14 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
     TextView collect_monitor_project;
     @BindView(R.id.collect_live_measure)
     TextView collect_live_measure;
+    @BindView(R.id.choose_img)
+    ImageView choose_img;
 
-    public WasteWaterCollectHolder(View itemView) {
+    private WasteWaterCollectAdapter.OnWasteWaterCollectListener collectListener;
+
+    public WasteWaterCollectHolder(View itemView, WasteWaterCollectAdapter.OnWasteWaterCollectListener collectListener) {
         super(itemView);
+        this.collectListener=collectListener;
     }
 
     @Override
@@ -42,6 +49,27 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
         if (!CheckUtil.isEmpty(monitorStr) && monitorStr.length()>0){
             collect_live_measure.setText("现场监测（"+monitorStr.split(",").length+"）：" + detail.getAddressName());
         }
+
+        if (detail.getSamplingType()==0){
+            collect_operate.setText("");
+        }else if (detail.getSamplingType()==1){
+            collect_operate.setText("添加平行");
+        }
+
+        if (detail.isSelected()){
+            choose_img.setImageResource(R.mipmap.radio_select);
+        }else {
+            choose_img.setImageResource(R.mipmap.radio);
+        }
+        choose_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (collectListener!=null){
+                    collectListener.onSelected(v,position,!detail.isSelected());
+                }
+            }
+        });
+
     }
 
     @Override
