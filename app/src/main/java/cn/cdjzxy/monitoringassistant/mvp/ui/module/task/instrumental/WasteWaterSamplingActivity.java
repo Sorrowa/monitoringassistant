@@ -224,6 +224,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             samplingDetail.setPrivateDataStringValue("RPDValue","");
             samplingDetail.setValue("");//均值
 
+            //新加样品都可选择
+            samplingDetail.setCanSelect(true);
+
             currSampling.add(samplingDetail);
 
             //保存到数据库

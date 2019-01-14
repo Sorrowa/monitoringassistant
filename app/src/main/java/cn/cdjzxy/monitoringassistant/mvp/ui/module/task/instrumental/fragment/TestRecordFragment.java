@@ -28,6 +28,9 @@ import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -70,7 +73,6 @@ public class TestRecordFragment extends BaseFragment {
 //    private SharedPreferences.Editor editor;
 
     SamplingDetail currSelectDetails = null;
-    int currPosition = 0;
 
     public TestRecordFragment() {
     }
@@ -189,6 +191,9 @@ public class TestRecordFragment extends BaseFragment {
         //检查平行数据，决定是否可选中
         checkPxData(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
 
+        //排序
+        Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
+
         mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
@@ -210,7 +215,6 @@ public class TestRecordFragment extends BaseFragment {
                 if (currSelectDetails == item) {
                     currSelectDetails.setSelected(false);
                     currSelectDetails = null;
-                    currPosition = 0;
                 } else if (item.isCanSelect()) {
                     if (currSelectDetails != null) {
                         currSelectDetails.setSelected(false);
@@ -280,12 +284,14 @@ public class TestRecordFragment extends BaseFragment {
         DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
 
         //添加到样品记录的下一行
-        InstrumentalActivity.mSampling.getSamplingDetailYQFs().add(currPosition + 1, samplingDetail);
+        InstrumentalActivity.mSampling.getSamplingDetailYQFs().add(samplingDetail);
 
         currSelectDetails.setCanSelect(false);
         currSelectDetails.setSelected(false);
         currSelectDetails = null;
-        currPosition = 0;
+
+        //排序
+        Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
 
         //更新列表
         mInstrumentalTestRecordAdapter.notifyDataSetChanged();
@@ -319,5 +325,24 @@ public class TestRecordFragment extends BaseFragment {
         }
 
         return null;
+    }
+
+    class DetailComparator implements Comparator<SamplingDetail> {
+
+        @Override
+        public int compare(SamplingDetail o1, SamplingDetail o2) {
+            if (o1.getFrequecyNo() < o2.getFrequecyNo()) {
+                return -1;
+            } else if (o1.getFrequecyNo() > o2.getFrequecyNo()) {
+                return 1;
+            } else {
+                if (!o1.getPrivateDataBooleanValue("HasPX")) {
+                    return -1;
+                }
+
+                return 0;
+            }
+
+        }
     }
 }

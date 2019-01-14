@@ -141,7 +141,10 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                     mSampling.setIsFinish(IsSamplingFinish());
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
-                        DBHelper.get().getSamplingDao().insert(mSampling);
+                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                        if (CheckUtil.isNull(sampling)) {
+                            DBHelper.get().getSamplingDao().insert(mSampling);
+                        }
                         isNewCreate = false;
                     } else {
                         DBHelper.get().getSamplingDao().update(mSampling);

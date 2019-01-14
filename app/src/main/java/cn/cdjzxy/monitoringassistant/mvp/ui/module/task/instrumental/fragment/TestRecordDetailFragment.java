@@ -27,6 +27,7 @@ import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
 import org.simple.eventbus.EventBus;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -293,17 +294,25 @@ public class TestRecordDetailFragment extends BaseFragment {
 
     private boolean saveCheck() {
         if (TextUtils.isEmpty(tvAnalyseTime.getText().toString())) {
-            ArtUtils.makeText(getContext(), "请选择分析时间");
+            ArtUtils.makeText(getContext(), "请选择分析时间！");
             return false;
         }
 
-        if (TextUtils.isEmpty(etAnalyseResult.getText().toString())) {
-            ArtUtils.makeText(getContext(), "请输入分析结果");
+        String result = etAnalyseResult.getText().toString();
+        if (TextUtils.isEmpty(result)) {
+            ArtUtils.makeText(getContext(), "请输入分析结果！");
+            return false;
+        }
+
+        try {
+            Double.parseDouble(result);
+        } catch (Exception e) {
+            ArtUtils.makeText(getContext(), "分析结果不是合法数字！");
             return false;
         }
 
         if (TextUtils.isEmpty(tvTestUnit.getText().toString())) {
-            ArtUtils.makeText(getContext(), "请选择结果单位");
+            ArtUtils.makeText(getContext(), "请选择结果单位！");
             return false;
         }
 
@@ -328,6 +337,7 @@ public class TestRecordDetailFragment extends BaseFragment {
             //删除操作，重置对应的数据
             targetItem.setPrivateDataStringValue("RPDValue", "");
             targetItem.setValue("");
+            targetItem.setCanSelect(true);
             //更新到数据库
             DBHelper.get().getSamplingDetailDao().update(targetItem);
             return;
@@ -338,19 +348,67 @@ public class TestRecordDetailFragment extends BaseFragment {
         //平行数据
         double pxValue = 0;
 
-        if (detail.getPrivateDataBooleanValue("HasPX")) {
-            pxValue = Double.parseDouble(detail.getPrivateDataStringValue("CaleValue"));
-            sourceValue = Double.parseDouble(targetItem.getPrivateDataStringValue("CaleValue"));
-        } else if (targetItem.getPrivateDataBooleanValue("HasPX")) {
-            pxValue = Double.parseDouble(targetItem.getPrivateDataStringValue("CaleValue"));
-            sourceValue = Double.parseDouble(detail.getPrivateDataStringValue("CaleValue"));
+        try {
+            if (detail.getPrivateDataBooleanValue("HasPX")) {
+                pxValue = getCaleValue(detail);
+                sourceValue = getCaleValue(targetItem);
+            } else if (targetItem.getPrivateDataBooleanValue("HasPX")) {
+                pxValue = getCaleValue(targetItem);
+                sourceValue = getCaleValue(detail);
+            }
+        } catch (Exception e) {
+            return;//数字异常
         }
 
-        double avg = (pxValue + sourceValue) / 2;
-        double rpdValue = (sourceValue - pxValue) / (sourceValue + pxValue) * 100;
+        double avg = handleNumber((pxValue + sourceValue) / 2);
+        double rpdValue = handleNumber2((sourceValue - pxValue) / (sourceValue + pxValue), 4) * 100;
+
         //TODO:四舍六入算法
         detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
         detail.setValue(avg + "");
+
+        targetItem.setPrivateDataStringValue("RPDValue", rpdValue + "");
+        targetItem.setValue(avg + "");
+    }
+
+    /**
+     * 获取分析结果
+     *
+     * @param detail
+     * @return
+     */
+    private double getCaleValue(SamplingDetail detail) {
+        return Double.parseDouble(detail.getPrivateDataStringValue("CaleValue"));
+    }
+
+    /**
+     * 处理数字
+     *
+     * @param value
+     * @return
+     */
+    public static double handleNumber(double value) {
+        NumberFormat nfFormat = NumberFormat.getInstance();
+        if (value > 0.5) {
+            nfFormat.setMaximumFractionDigits(0);
+        } else {
+            nfFormat.setMaximumFractionDigits(1);
+        }
+
+        return Double.parseDouble(nfFormat.format(value));
+    }
+
+    /**
+     * 处理数字
+     *
+     * @param value
+     * @return
+     */
+    public static double handleNumber2(double value, int save) {
+        NumberFormat nfFormat = NumberFormat.getInstance();
+        nfFormat.setMaximumFractionDigits(save);
+
+        return Double.parseDouble(nfFormat.format(value));
     }
 
     private void initTimePickerView(OnTimeSelectListener listener) {
