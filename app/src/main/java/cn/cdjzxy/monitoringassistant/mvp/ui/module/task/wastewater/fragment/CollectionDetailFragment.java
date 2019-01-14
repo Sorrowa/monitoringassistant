@@ -328,8 +328,8 @@ public class CollectionDetailFragment extends BaseFragment {
             samplingDetail.setSampingCode(sample_code.getText().toString());
             samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getText().toString()));
 
-            samplingDetail.setValueUnitNname(sample_add_preserve.getText().toString());
-            samplingDetail.setValue1(sample_monitor.getText().toString());
+            //samplingDetail.setValueUnitNname(sample_add_preserve.getText().toString());
+            //samplingDetail.setValue1(sample_monitor.getText().toString());
             samplingDetail.setDescription(sample_mark.getText().toString());
 
             if (fsListPosition == -1) {
@@ -355,6 +355,7 @@ public class CollectionDetailFragment extends BaseFragment {
             //SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())).unique();
             if (fsListPosition == -1) {
                 samplingDetail.setId("FS-" + UUID.randomUUID().toString());
+                samplingDetail.setSamplingType(0);
                 DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
             }else {
                 DBHelper.get().getSamplingDetailDao().update(samplingDetail);

@@ -18,9 +18,11 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterCollectHolder;
 
 public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingDetail> {
 
+    private OnWasteWaterCollectListener collectListener;
 
-    public WasteWaterCollectAdapter(List<SamplingDetail> details) {
+    public WasteWaterCollectAdapter(List<SamplingDetail> details,OnWasteWaterCollectListener collectListener) {
         super(details);
+        this.collectListener=collectListener;
     }
 
     @Override
@@ -30,6 +32,10 @@ public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingDetail> {
 
     @Override
     public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
-        return new WasteWaterCollectHolder(v);
+        return new WasteWaterCollectHolder(v,collectListener);
+    }
+
+    public interface OnWasteWaterCollectListener {
+        void onSelected(View view, int position,boolean isSelected);
     }
 }

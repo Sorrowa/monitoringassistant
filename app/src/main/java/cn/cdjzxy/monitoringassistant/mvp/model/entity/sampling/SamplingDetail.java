@@ -95,6 +95,8 @@ public class SamplingDetail {
     private boolean isAddPreserve;
     @Transient
     private JSONObject PrivateJsonData;
+    @Transient
+    private boolean isSelected;
 
     @Generated(hash = 1844433884)
     public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex,
@@ -547,5 +549,13 @@ public class SamplingDetail {
 
     public void setIsAddPreserve(boolean isAddPreserve) {
         this.isAddPreserve = isAddPreserve;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
