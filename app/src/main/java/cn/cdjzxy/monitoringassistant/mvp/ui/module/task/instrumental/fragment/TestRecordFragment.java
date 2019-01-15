@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +28,11 @@ import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +41,7 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UnitActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
@@ -63,8 +69,10 @@ public class TestRecordFragment extends BaseFragment {
     RelativeLayout btnPrintLabel;
 
     private InstrumentalTestRecordAdapter mInstrumentalTestRecordAdapter;
-    private SharedPreferences collectListSettings;
-    private SharedPreferences.Editor editor;
+//    private SharedPreferences collectListSettings;
+//    private SharedPreferences.Editor editor;
+
+    SamplingDetail currSelectDetails = null;
 
     public TestRecordFragment() {
     }
@@ -95,8 +103,8 @@ public class TestRecordFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        collectListSettings = getActivity().getSharedPreferences("setting", 0);
-        editor = collectListSettings.edit();
+//        collectListSettings = getActivity().getSharedPreferences("setting", 0);
+//        editor = collectListSettings.edit();
     }
 
     @Override
@@ -138,7 +146,8 @@ public class TestRecordFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_parallel:
-
+                //添加选中样品的平行数据
+                addPxItem();
                 break;
             case R.id.btn_add_blank:
                 if (TextUtils.isEmpty(InstrumentalActivity.mSampling.getMonitemId())) {
@@ -152,7 +161,9 @@ public class TestRecordFragment extends BaseFragment {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            mInstrumentalTestRecordAdapter.notifyDataSetChanged();
+                            if (mInstrumentalTestRecordAdapter != null) {
+                                mInstrumentalTestRecordAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 });
@@ -177,13 +188,45 @@ public class TestRecordFragment extends BaseFragment {
             }
         });
 
+        //检查平行数据，决定是否可选中
+        checkPxData(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
+
+        //排序
+        Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
+
         mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                EventBus.getDefault().post(2, EventBusTags.TAG_INSTRUMENTAL_RECORD);
-                editor.putInt("listPosition", position);
-                editor.commit();
+////                点击跳转到详情
+//                EventBus.getDefault().post(2, EventBusTags.TAG_INSTRUMENTAL_RECORD);
+//                editor.putInt("listPosition", position);
+//                editor.commit();
+
+                if (position < 0 || position >= InstrumentalActivity.mSampling.getSamplingDetailYQFs().size()) {
+                    return;
+                }
+
+                SamplingDetail item = InstrumentalActivity.mSampling.getSamplingDetailYQFs().get(position);
+                if (item == null) {
+                    return;
+                }
+
+                if (currSelectDetails == item) {
+                    currSelectDetails.setSelected(false);
+                    currSelectDetails = null;
+                } else if (item.isCanSelect()) {
+                    if (currSelectDetails != null) {
+                        currSelectDetails.setSelected(false);
+                    }
+
+                    //记录选中项
+                    currSelectDetails = item;
+                    currSelectDetails.setSelected(true);
+                }
+
+                //更新列表
+                mInstrumentalTestRecordAdapter.notifyDataSetChanged();
             }
         });
 
@@ -191,20 +234,67 @@ public class TestRecordFragment extends BaseFragment {
     }
 
     /**
-     * 计算仪器法数据
+     * 验证平行数据
      */
-    private void calcYQFData(List<SamplingDetail> details) {
-        if (details == null || details.size() == 0) {
+    private void checkPxData(List<SamplingDetail> details) {
+        for (SamplingDetail item : details) {
+            if (item.getPrivateDataBooleanValue("HasPX")) {
+                //平行数据，不能被选中
+                item.setCanSelect(false);
+                continue;
+            } else {
+                //样品数据，已添加平行数据时不能被选中
+                SamplingDetail pxItem = findPXItem(details, item);
+                if (pxItem != null) {
+                    item.setCanSelect(false);
+                    continue;
+                }
+            }
+
+            item.setCanSelect(true);
+        }
+    }
+
+    /**
+     * 添加平行数据
+     */
+    private void addPxItem() {
+        if (currSelectDetails == null) {
+            ArtUtils.makeText(getContext(), "请选择一个样品！");
             return;
         }
 
-        for (SamplingDetail detail : details) {
-            SamplingDetail pxItem = findPXItem(details, detail);
-            if (pxItem == null) {
-                continue;
-            }
-            //计算均值和相对偏差
-        }
+        //复制数据
+        SamplingDetail samplingDetail = new SamplingDetail();
+
+        samplingDetail.setId("LC-" + UUID.randomUUID().toString());
+        samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
+        samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
+        samplingDetail.setSamplingTime(currSelectDetails.getSamplingTime());
+        samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
+        samplingDetail.setAddressName(currSelectDetails.getAddressName());
+        samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
+        samplingDetail.setPrivateDataBooleanValue("HasPX", true);
+        samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
+        samplingDetail.setPrivateDataStringValue("CaleValue", "");
+        samplingDetail.setPrivateDataStringValue("RPDValue", "");
+        samplingDetail.setValue("");//均值
+
+        //保存到数据库
+        DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+
+        //添加到样品记录的下一行
+        InstrumentalActivity.mSampling.getSamplingDetailYQFs().add(samplingDetail);
+
+        currSelectDetails.setCanSelect(false);
+        currSelectDetails.setSelected(false);
+        currSelectDetails = null;
+
+        //排序
+        Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
+
+        //更新列表
+        mInstrumentalTestRecordAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -214,15 +304,9 @@ public class TestRecordFragment extends BaseFragment {
      * @param sourceItem
      * @return
      */
-    private SamplingDetail findPXItem(List<SamplingDetail> details, SamplingDetail sourceItem) {
-        try {
-            //原数据是平行数据，无须再查找
-            if (sourceItem.getPrivateJsonData().getBoolean("HasPX")) {
-                return null;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public static SamplingDetail findPXItem(List<SamplingDetail> details, SamplingDetail sourceItem) {
+        //平行数据找样品，样品数据找平行
+        boolean needHasPx = !sourceItem.getPrivateDataBooleanValue("HasPX");
 
         for (SamplingDetail item : details) {
             if (item == sourceItem) {
@@ -235,15 +319,30 @@ public class TestRecordFragment extends BaseFragment {
             }
 
             //解析私有数据
-            try {
-                if (item.getPrivateJsonData().getBoolean("HasPX")) {
-                    return item;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (item.getPrivateDataBooleanValue("HasPX") == needHasPx) {
+                return item;
             }
         }
 
         return null;
+    }
+
+    class DetailComparator implements Comparator<SamplingDetail> {
+
+        @Override
+        public int compare(SamplingDetail o1, SamplingDetail o2) {
+            if (o1.getFrequecyNo() < o2.getFrequecyNo()) {
+                return -1;
+            } else if (o1.getFrequecyNo() > o2.getFrequecyNo()) {
+                return 1;
+            } else {
+                if (!o1.getPrivateDataBooleanValue("HasPX")) {
+                    return -1;
+                }
+
+                return 0;
+            }
+
+        }
     }
 }

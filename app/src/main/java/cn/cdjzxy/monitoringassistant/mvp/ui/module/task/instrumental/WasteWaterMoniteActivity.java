@@ -22,6 +22,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterMoniteAdapter;
@@ -77,13 +78,27 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
         if (CheckUtil.isEmpty(samplings)) {
             return;
         }
+
         HashSet<String> monites = new HashSet<>();
         for (Sampling item : samplings) {
-            if (!CheckUtil.isEmpty(item.getSamplingDetailResults())) {
-                for (SamplingDetail detail : item.getSamplingDetailResults()) {
+            //获取样品数据
+            List<SamplingDetail> samplingDetails = item.getSamplingDetailResults();
+
+            //如果为空则尝试从数据库获取
+            if (CheckUtil.isEmpty(samplingDetails)) {
+                samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(item.getId())).list();
+            }
+
+            for (SamplingDetail detail : samplingDetails) {
+                String[] moniteIds = detail.getMonitemId().split(",");
+                String[] monitemNames = detail.getMonitemName().split(",");
+
+                for (int i = 0; i < moniteIds.length; i++) {
+                    String id = moniteIds[i];
+
                     //过滤重复项
-                    if (monites.add(detail.getMethodId())) {
-                        mMontes.add(new MonItems(detail.getMonitemId(), "", detail.getMonitemName()));
+                    if (monites.add(id)) {
+                        mMontes.add(new MonItems(id, "", monitemNames[i]));
                     }
                 }
             }

@@ -26,7 +26,7 @@ public class WasteWaterSamplingHolder extends BaseHolder<SamplingDetail> {
     @Override
     public void setData(SamplingDetail data, int position) {
         tvSamplingCode.setText(data.getSampingCode());
-        tvFrequency.setText(data.getFrequecyNo());
+        tvFrequency.setText(data.getFrequecyNo() + "");
         tvPoint.setText(data.getAddressName());
     }
 

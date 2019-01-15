@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
-import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
@@ -139,10 +138,13 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                         DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailYQFs());
                     }
 
-                    mSampling.setIsFinish(isSamplingFinish());
-                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                    mSampling.setIsFinish(IsSamplingFinish());
+                    mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
-                        DBHelper.get().getSamplingDao().insert(mSampling);
+                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                        if (CheckUtil.isNull(sampling)) {
+                            DBHelper.get().getSamplingDao().insert(mSampling);
+                        }
                         isNewCreate = false;
                     } else {
                         DBHelper.get().getSamplingDao().update(mSampling);
@@ -277,7 +279,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
      *
      * @return
      */
-    private boolean isSamplingFinish() {
+    public static boolean IsSamplingFinish() {
         if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
             return false;
         }
@@ -289,7 +291,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
             return false;
         }
 
-        if (CheckUtil.isEmpty(mSampling.getMonitemName())) {
+        if (CheckUtil.isEmpty(mSampling.getMonitemId())) {
             return false;
         }
 
@@ -303,6 +305,18 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
         if (CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs())) {
             return false;
+        }
+
+        for (SamplingDetail detail : mSampling.getSamplingDetailYQFs()) {
+            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("SamplingOnTime"))) {
+                return false;//没有填写分析时间
+            }
+            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
+                return false;//没有填写分析结果
+            }
+            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("ValueUnit"))) {
+                return false;//没有填写结果单位
+            }
         }
 
         return true;

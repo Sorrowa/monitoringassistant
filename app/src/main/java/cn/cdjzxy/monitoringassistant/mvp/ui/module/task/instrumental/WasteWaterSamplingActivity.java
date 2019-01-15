@@ -51,7 +51,6 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
     private List<SamplingDetail> mSamplingDetails = new ArrayList<>();
     private List<SamplingDetail> mSelectDetails = new ArrayList<>();
-    private HashMap<SamplingDetail, Sampling> samplingHashMap = new HashMap<SamplingDetail, Sampling>();
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -61,6 +60,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             @Override
             public void onClick(View v) {
                 if (addSelectSampling()) {
+                    setResult(Activity.RESULT_OK);
                     finish();
                 }
             }
@@ -136,13 +136,21 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
      */
     private void getSampling(String path) {
         List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(projectId), SamplingDao.Properties.FormPath.eq(path)).orderDesc(SamplingDao.Properties.SamplingNo).list();
-        if (!CheckUtil.isEmpty(samplings)) {
+        if (CheckUtil.isEmpty(samplings)) {
             return;
         }
 
         for (Sampling item : samplings) {
-            for (SamplingDetail detail : item.getSamplingDetailResults()) {
-                if (!monitemId.equals(detail.getMonitemId())) {
+            //获取样品数据
+            List<SamplingDetail> samplingDetails = item.getSamplingDetailResults();
+
+            //如果为空则尝试从数据库获取
+            if (CheckUtil.isEmpty(samplingDetails)) {
+                samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(item.getId())).list();
+            }
+
+            for (SamplingDetail detail : samplingDetails) {
+                if (!detail.getMonitemId().contains(monitemId)) {
                     continue;//过滤不同的项目名
                 }
 
@@ -151,8 +159,12 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
                     continue;//过滤已经存在的样品
                 }
 
+                //水和废水的样品，点位信息保存的现场检测信息，这里改为实际点位信息，用于显示
+                detail.setAddresssId(item.getAddressId());
+                detail.setAddressName(item.getAddressName());
+                detail.setSamplingTime(item.getSamplingTimeBegin());
+
                 mSamplingDetails.add(detail);
-                samplingHashMap.put(detail, item);
             }
         }
     }
@@ -182,27 +194,46 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             return false;
         }
 
+
         Sampling mSampling = InstrumentalActivity.mSampling;
+
+        //先保存采样单
+        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+        if (CheckUtil.isNull(sampling)) {
+            DBHelper.get().getSamplingDao().insert(mSampling);
+        }
+
         for (SamplingDetail item : mSelectDetails) {
             //频次唯一
             if (isExists(item.getFrequecyNo())) {
                 continue;//过滤已经存在的样品
             }
+
             SamplingDetail samplingDetail = new SamplingDetail();
 
             samplingDetail.setId("LC-" + UUID.randomUUID().toString());
             samplingDetail.setSamplingId(mSampling.getId());
             samplingDetail.setSampingCode(item.getSampingCode());
-
-            Sampling sampling = samplingHashMap.get(item);
-            samplingDetail.setAddressName(sampling.getAddressId());
-            samplingDetail.setAddressName(sampling.getAddressName());
+            samplingDetail.setSamplingTime(item.getSamplingTime());
+            samplingDetail.setAddresssId(item.getAddresssId());
+            samplingDetail.setAddressName(item.getAddressName());
             samplingDetail.setFrequecyNo(item.getFrequecyNo());
+            samplingDetail.setPrivateDataBooleanValue("HasPX", false);
+            samplingDetail.setPrivateDataStringValue("SamplingOnTime","");
+            samplingDetail.setPrivateDataStringValue("CaleValue","");
+            samplingDetail.setPrivateDataStringValue("RPDValue","");
+            samplingDetail.setValue("");//均值
 
-            List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailYQFs();
+            //新加样品都可选择
+            samplingDetail.setCanSelect(true);
 
             currSampling.add(samplingDetail);
-            samplingDetailResults.add(samplingDetail);
+
+            //保存到数据库
+            DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+
+            //添加到记录
+            mSampling.getSamplingDetailYQFs().add(samplingDetail);
         }
 
         mSelectDetails.clear();

@@ -27,6 +27,7 @@ import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
 import org.simple.eventbus.EventBus;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -164,6 +165,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         TestRecordDetailFragment.this.unitId = "";
+        mSampling = InstrumentalActivity.mSampling;
 
         if (isVisibleToUser) {
             tvAnalyseTime.setText("");
@@ -174,53 +176,22 @@ public class TestRecordDetailFragment extends BaseFragment {
     }
 
     private void creatSampleDetailNo() {
-        mSampling = InstrumentalActivity.mSampling;
-
         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailYQFs();
 
         SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
         listPosition = collectListSettings.getInt("listPosition", -1);
 
-        if (listPosition == -1) {
-            //添加 生成编码
+        btnDelete.setVisibility(View.VISIBLE);
 
-            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
-            String samplingNo;
-
-            String snDate = DateUtils.getDate().replace("-", "").substring(2);
-            String snPointPosition = "采样点位编号未填写";
-            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
-                snPointPosition = mSampling.getAddressNo();
-            }
-            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-            int snFrequency = 1;
-            if (samplingDetailResults != null
-                    && samplingDetailResults.size() > 0) {
-                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
-            }
-
-            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
-
-            tvSampleCode.setText(samplingNo);
-            tvFrequency.setText(snFrequency + "");
-        } else {
-            btnDelete.setVisibility(View.VISIBLE);
-
-            SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
-            tvSampleCode.setText(samplingDetail.getSampingCode());
-            tvFrequency.setText(samplingDetail.getFrequecyNo());
-//          TODO:tvPoint.setText();
-            tvTestTime.setText(samplingDetail.getSamplingTime());
-            try {
-                JSONObject jsonObject = new JSONObject(samplingDetail.getPrivateData());
-                tvControl.setText(jsonObject.getBoolean("HasPX") ? "平行" : "样品");
-                tvAnalyseTime.setText(jsonObject.getString("SamplingOnTime"));
-                etAnalyseResult.setText(jsonObject.getString("CaleValue"));
-//              TODO:tvTestUnit.setText(jsonObject.getString("CaleValue"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
+        tvSampleCode.setText(samplingDetail.getSampingCode());
+        tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
+        tvPoint.setText(samplingDetail.getAddressName());
+        tvTestTime.setText(samplingDetail.getSamplingTime());//检测日期
+        tvControl.setText(samplingDetail.getPrivateDataBooleanValue("HasPX") ? "平行" : "样品");
+        tvAnalyseTime.setText(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
+        etAnalyseResult.setText(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
+        tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
 
         if (!mSampling.getIsCanEdit()) {
             btnDelete.setVisibility(View.GONE);
@@ -280,57 +251,42 @@ public class TestRecordDetailFragment extends BaseFragment {
                 break;
 
             case R.id.btn_save:
-                if (saveCheck()) {
-                    SamplingDetail samplingDetail;
-                    if (listPosition == -1) {
-                        samplingDetail = new SamplingDetail();
-                    } else {
-                        samplingDetail = mSampling.getSamplingDetailYQFs().get(listPosition);
-                    }
+                if (!saveCheck()) {
+                    return;
+                }
 
-                    samplingDetail.setId("LC-" + UUID.randomUUID().toString());
-                    samplingDetail.setSamplingId(InstrumentalActivity.mSampling.getId());
-                    samplingDetail.setSampingCode(tvSampleCode.getText().toString());
-                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
+                //获取数据
+                SamplingDetail samplingDetail = mSampling.getSamplingDetailYQFs().get(listPosition);
 
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("SamplingOnTime", tvAnalyseTime.getText().toString());
-                    map.put("CaleValue", etAnalyseResult.getText().toString());
-                    map.put("ValueUnit", TestRecordDetailFragment.this.unitId);
-                    map.put("ValueUnitName", tvTestUnit.getText().toString());
-                    Boolean hasPx = "平行".equals(tvControl.getText().toString());
-                    map.put("HasPX", hasPx.toString());
+                //更新数据
+                samplingDetail.setPrivateDataStringValue("SamplingOnTime", tvAnalyseTime.getText().toString());
+                samplingDetail.setPrivateDataStringValue("CaleValue", etAnalyseResult.getText().toString());
+                samplingDetail.setPrivateDataStringValue("ValueUnit", TestRecordDetailFragment.this.unitId);
+                samplingDetail.setPrivateDataStringValue("ValueUnitName", tvTestUnit.getText().toString());
+//                    samplingDetail.setPrivateDataBooleanValue("HasPX", "平行".equals(tvControl.getText().toString()));
 
-                    samplingDetail.setPrivateData(new JSONObject(map).toString());
+                //计算均值和偏差值
+                calcPXData(samplingDetail, false);
 
-                    if (listPosition == -1) {
-                        if (mSampling.getSamplingDetailYQFs() == null) {
-                            mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
-                        }
-                        List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailYQFs();
-                        samplingDetailResults.add(samplingDetail);
-                        mSampling.setSamplingDetailYQFs(samplingDetailResults);
-                    }
-
-                    mSampling.setIsFinish(isSamplingFinish());
-                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
-                    Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
-                    if (CheckUtil.isNull(sampling)) {
-                        DBHelper.get().getSamplingDao().insert(mSampling);
-                    } else {
+                //未完成状态改变为已完成，则更新到数据库
+                if (!mSampling.getIsFinish()) {
+                    //是否完成
+                    mSampling.setIsFinish(InstrumentalActivity.IsSamplingFinish());
+                    mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
+                    if (mSampling.getIsFinish()) {
                         DBHelper.get().getSamplingDao().update(mSampling);
                     }
-
-                    SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getId())).unique();
-                    if (!CheckUtil.isNull(samplingDetails)) {
-                        DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
-                    }
-                    DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
-
-                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-                    EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
-                    ArtUtils.makeText(getContext(), "保存成功");
                 }
+
+                SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())).unique();
+                if (!CheckUtil.isNull(samplingDetails)) {
+                    DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
+                }
+                DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+
+                EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+                EventBus.getDefault().post(1, EventBusTags.TAG_INSTRUMENTAL_RECORD);
+                ArtUtils.makeText(getContext(), "保存成功");
 
                 break;
         }
@@ -338,21 +294,121 @@ public class TestRecordDetailFragment extends BaseFragment {
 
     private boolean saveCheck() {
         if (TextUtils.isEmpty(tvAnalyseTime.getText().toString())) {
-            ArtUtils.makeText(getContext(), "请选择分析时间");
+            ArtUtils.makeText(getContext(), "请选择分析时间！");
             return false;
         }
 
-        if (TextUtils.isEmpty(etAnalyseResult.getText().toString())) {
-            ArtUtils.makeText(getContext(), "请输入分析结果");
+        String result = etAnalyseResult.getText().toString();
+        if (TextUtils.isEmpty(result)) {
+            ArtUtils.makeText(getContext(), "请输入分析结果！");
+            return false;
+        }
+
+        try {
+            Double.parseDouble(result);
+        } catch (Exception e) {
+            ArtUtils.makeText(getContext(), "分析结果不是合法数字！");
             return false;
         }
 
         if (TextUtils.isEmpty(tvTestUnit.getText().toString())) {
-            ArtUtils.makeText(getContext(), "请选择结果单位");
+            ArtUtils.makeText(getContext(), "请选择结果单位！");
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * 计算平行均值、相对偏差数据
+     */
+    private void calcPXData(SamplingDetail detail, boolean isDelete) {
+        if (detail == null) {
+            return;
+        }
+
+        SamplingDetail targetItem = TestRecordFragment.findPXItem(mSampling.getSamplingDetailYQFs(), detail);
+        if (targetItem == null) {
+            //找不到对应数据，则删除计算的数据
+            detail.setPrivateDataStringValue("RPDValue", "");
+            detail.setValue("");
+            return;//还未添加平行数据
+        } else if (isDelete) {
+            //删除操作，重置对应的数据
+            targetItem.setPrivateDataStringValue("RPDValue", "");
+            targetItem.setValue("");
+            targetItem.setCanSelect(true);
+            //更新到数据库
+            DBHelper.get().getSamplingDetailDao().update(targetItem);
+            return;
+        }
+
+        //样品数据
+        double sourceValue = 0;
+        //平行数据
+        double pxValue = 0;
+
+        try {
+            if (detail.getPrivateDataBooleanValue("HasPX")) {
+                pxValue = getCaleValue(detail);
+                sourceValue = getCaleValue(targetItem);
+            } else if (targetItem.getPrivateDataBooleanValue("HasPX")) {
+                pxValue = getCaleValue(targetItem);
+                sourceValue = getCaleValue(detail);
+            }
+        } catch (Exception e) {
+            return;//数字异常
+        }
+
+        double avg = handleNumber((pxValue + sourceValue) / 2);
+        double rpdValue = handleNumber2((sourceValue - pxValue) / (sourceValue + pxValue), 4) * 100;
+
+        //TODO:四舍六入算法
+        detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
+        detail.setValue(avg + "");
+
+        targetItem.setPrivateDataStringValue("RPDValue", rpdValue + "");
+        targetItem.setValue(avg + "");
+    }
+
+    /**
+     * 获取分析结果
+     *
+     * @param detail
+     * @return
+     */
+    private double getCaleValue(SamplingDetail detail) {
+        return Double.parseDouble(detail.getPrivateDataStringValue("CaleValue"));
+    }
+
+    /**
+     * 处理数字
+     *
+     * @param value
+     * @return
+     */
+    public static double handleNumber(double value) {
+        NumberFormat nfFormat = NumberFormat.getInstance();
+        if (value > 0.5) {
+            nfFormat.setMaximumFractionDigits(0);
+        } else {
+            nfFormat.setMaximumFractionDigits(1);
+        }
+
+        return Double.parseDouble(nfFormat.format(value));
+    }
+
+    /**
+     * 处理数字
+     *
+     * @param value
+     * @return
+     */
+    public static double handleNumber2(double value, int save) {
+        NumberFormat nfFormat = NumberFormat.getInstance();
+        nfFormat.setMaximumFractionDigits(save);
+
+        return Double.parseDouble(nfFormat.format(value));
     }
 
     private void initTimePickerView(OnTimeSelectListener listener) {
@@ -373,25 +429,28 @@ public class TestRecordDetailFragment extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         SamplingDetail samplingDetail1 = mSampling.getSamplingDetailYQFs().get(listPosition);
 
-                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail1.getSamplingId())).unique();
+                        SamplingDetail samplingDetails1 = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail1.getId())).unique();
                         if (!CheckUtil.isNull(samplingDetails1)) {
                             DBHelper.get().getSamplingDetailDao().delete(samplingDetails1);
                         }
 
-                        mSampling.getSamplingDetailYQFs().remove(listPosition);
+                        mSampling.getSamplingDetailYQFs().remove(samplingDetail1);
 
-                        mSampling.setIsFinish(isSamplingFinish());
-                        mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
-                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
-                        if (CheckUtil.isNull(sampling)) {
-                            DBHelper.get().getSamplingDao().insert(mSampling);
+                        if (samplingDetail1.getPrivateDataBooleanValue("HasPX")) {
+                            //删除平行数据，重新计算样品计算均值和偏差值
+                            calcPXData(samplingDetail1, true);
                         } else {
-                            DBHelper.get().getSamplingDao().update(mSampling);
+                            //删除样品数据时删除平行数据
+                            SamplingDetail pxItem = TestRecordFragment.findPXItem(mSampling.getSamplingDetailYQFs(), samplingDetail1);
+                            if (pxItem != null) {
+                                DBHelper.get().getSamplingDetailDao().delete(pxItem);
+                                mSampling.getSamplingDetailYQFs().remove(pxItem);
+                            }
                         }
 
                         ArtUtils.makeText(getContext(), "删除成功");
                         EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-                        EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
+                        EventBus.getDefault().post(1, EventBusTags.TAG_INSTRUMENTAL_RECORD);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
 
@@ -401,36 +460,5 @@ public class TestRecordDetailFragment extends BaseFragment {
                     }
                 }).create();
         dialog.show();
-    }
-
-    /**
-     * 采样是否完成
-     *
-     * @return
-     */
-    private boolean isSamplingFinish() {
-        if (CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getTagName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
-            return false;
-        }
-        return true;
-
     }
 }
