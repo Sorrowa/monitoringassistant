@@ -1,18 +1,28 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
+import com.baidu.navisdk.adapter.IBaiduNaviManager;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +58,19 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
 
+
+    private static final int authBaseRequestCode = 1;
+    private static final String APP_FOLDER_NAME = "BNSDKSimpleDemo";
+    static final String ROUTE_PLAN_NODE = "routePlanNode";
+    private static final String[] authBaseArr = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+    private String mSDCardPath = null;
+
+    private LocationClient locationClient;
+    public BDLocation bdLocation;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("采样点位");
@@ -70,6 +93,13 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         initPointData();
         getData();
+
+        //初始化导航
+        if (initDirs()) {
+            initNavi();
+        }
+        //初始化定位
+        initLocation();
     }
 
     /**
@@ -130,5 +160,127 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
         }
         mPointAdapter.notifyDataSetChanged();
     }
+
+
+    private boolean initDirs() {
+        mSDCardPath = getSdcardDir();
+        if (mSDCardPath == null) {
+            return false;
+        }
+        File f = new File(mSDCardPath, APP_FOLDER_NAME);
+        if (!f.exists()) {
+            try {
+                f.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String getSdcardDir() {
+        if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
+            return Environment.getExternalStorageDirectory().toString();
+        }
+        return null;
+    }
+
+    private void initNavi() {
+        // 申请权限
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            if (!hasBasePhoneAuth()) {
+                this.requestPermissions(authBaseArr, authBaseRequestCode);
+                return;
+            }
+        }
+
+        BaiduNaviManagerFactory.getBaiduNaviManager().init(this,
+                mSDCardPath, APP_FOLDER_NAME, new IBaiduNaviManager.INaviInitListener() {
+
+                    @Override
+                    public void onAuthResult(int status, String msg) {
+                        String result;
+                        if (0 == status) {
+                            result = "key校验成功!";
+                        } else {
+                            result = "key校验失败, " + msg;
+                        }
+                        ArtUtils.makeText(PointActivity.this, result);
+                    }
+
+                    @Override
+                    public void initStart() {
+                        ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化开始");
+                    }
+
+                    @Override
+                    public void initSuccess() {
+                        ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化成功");
+                        //hasInitSuccess = true;
+                    }
+
+                    @Override
+                    public void initFailed() {
+                        ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化失败");
+                    }
+                });
+
+    }
+
+    private boolean hasBasePhoneAuth() {
+        PackageManager pm = this.getPackageManager();
+        for (String auth : authBaseArr) {
+            if (pm.checkPermission(auth, this.getPackageName()) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == authBaseRequestCode) {
+            for (int ret : grantResults) {
+                if (ret == 0) {
+                    continue;
+                } else {
+                    ArtUtils.makeText(this, "缺少导航基本的权限!");
+                    return;
+                }
+            }
+            initNavi();
+        }
+    }
+
+    private void initLocation() {
+        locationClient = new LocationClient(getApplicationContext());
+        locationClient.registerLocationListener(new MyLocationListener());
+        //设置option
+        LocationClientOption option = new LocationClientOption();
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        option.setCoorType("bd09ll");
+        //option.setCoorType("GCJ02");
+        option.setScanSpan(3000);
+        option.setOpenGps(true);
+        option.setLocationNotify(true);
+        option.setIgnoreKillProcess(false);
+        option.SetIgnoreCacheException(true);
+        locationClient.setLocOption(option);
+        locationClient.start();
+
+    }
+
+
+    public class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            double latitude = location.getLatitude();    //获取纬度信息
+            double longitude = location.getLongitude();    //获取经度信息
+            PointActivity.this.bdLocation = location;
+        }
+    }
+
 
 }
