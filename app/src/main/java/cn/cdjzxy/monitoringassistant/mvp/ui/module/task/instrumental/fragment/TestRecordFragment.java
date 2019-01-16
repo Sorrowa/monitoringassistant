@@ -259,7 +259,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setId("LC-" + UUID.randomUUID().toString());
         samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
         samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
-        samplingDetail.setSamplingTime(currSelectDetails.getSamplingTime());
+        samplingDetail.setSamplingOnTime(currSelectDetails.getSamplingOnTime());
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());

@@ -187,7 +187,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         tvSampleCode.setText(samplingDetail.getSampingCode());
         tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
         tvPoint.setText(samplingDetail.getAddressName());
-        tvTestTime.setText(samplingDetail.getSamplingTime());//检测日期
+        tvTestTime.setText(samplingDetail.getSamplingOnTime());//检测日期
         tvControl.setText(samplingDetail.getPrivateDataBooleanValue("HasPX") ? "平行" : "样品");
         tvAnalyseTime.setText(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
         etAnalyseResult.setText(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
@@ -361,7 +361,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         }
 
         double avg = handleNumber((pxValue + sourceValue) / 2);
-        double rpdValue = handleNumber2((sourceValue - pxValue) / (sourceValue + pxValue), 4) * 100;
+        double rpdValue = handleNumber((sourceValue - pxValue) / (sourceValue + pxValue)) * 100;
 
         //TODO:四舍六入算法
         detail.setPrivateDataStringValue("RPDValue", rpdValue + "");

@@ -294,14 +294,14 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                     if (!TextUtils.isEmpty(sampling.getAddressId())) {
                         sampling.setAddressId(sampling.getAddressId() + ",");
                     }
-                    sampling.setAddressId(sampling.getAddressId() + "," + projectDetial.getAddressId());
+                    sampling.setAddressId(sampling.getAddressId() + projectDetial.getAddressId());
                 }
 
                 if (!sampling.getAddressName().contains(projectDetial.getAddress())) {
                     if (!TextUtils.isEmpty(sampling.getAddressName())) {
                         sampling.setAddressName(sampling.getAddressName() + ",");
                     }
-                    sampling.setAddressName(sampling.getAddressName() + "," + projectDetial.getAddress());
+                    sampling.setAddressName(sampling.getAddressName() + projectDetial.getAddress());
                 }
             }
         }
