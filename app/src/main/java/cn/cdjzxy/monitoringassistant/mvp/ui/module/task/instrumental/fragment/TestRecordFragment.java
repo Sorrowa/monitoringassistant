@@ -23,12 +23,7 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.simple.eventbus.EventBus;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,11 +34,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UnitActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterSamplingActivity;
 
@@ -198,10 +191,6 @@ public class TestRecordFragment extends BaseFragment {
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-////                点击跳转到详情
-//                EventBus.getDefault().post(2, EventBusTags.TAG_INSTRUMENTAL_RECORD);
-//                editor.putInt("listPosition", position);
-//                editor.commit();
 
                 if (position < 0 || position >= InstrumentalActivity.mSampling.getSamplingDetailYQFs().size()) {
                     return;

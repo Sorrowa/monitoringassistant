@@ -189,7 +189,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         info1.setFrequecyNo("频次：" + 123);
         info1.setType("废水");
         info1.setSampingCode("FSL12344-123LLK-1");
-        info1.setMonitemName("监测项目123456789123456789123456789123456789123456789");
+        info1.setMonitemName("甲萘威,炔雌醇甲醚,2,3,3',4,4',5'-六氯联苯");
         info1.setRemark("容器、采样量、保存方法123");
         info1.setQrCode("12345");
         info1.setCb1("交接");
@@ -798,8 +798,19 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         }
 
         int[] size = getTextSize(text);
-        int width = (int) (size[0] * 1.8);
-        int height = (int) (size[1] * 1.7);
+        int width = 0;
+        int height = 0;
+
+        if (text.length() >= 40) {
+            width = (int) (size[0] * 2.5);
+            height = (int) (size[1] * 1.7);
+        } else if (text.length() >= 20) {
+            width = (int) (size[0] * 2.3);
+            height = (int) (size[1] * 1.7);
+        } else {
+            width = (int) (size[0] * 1.8);
+            height = (int) (size[1] * 1.7);
+        }
 
         if (fontmul.getValue() > 1) {
             width *= fontmul.getValue() * 1.13;
@@ -836,11 +847,10 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             ex += PrintCheckBoxSize + PrintCheckBoxOffset;
         }
 
-        int x = sx + (ex - sx) / 2 - width / 2;
-        int y = sy + (ey - sy) / 2 - height / 2;
+        int x = sx + Math.max((ex - sx) / 2 - width / 2, 0);
+        int y = sy + Math.max((ey - sy) / 2 - height / 2, 0);
 
         tsc.addText(x, y, LabelCommand.FONTTYPE.SIMPLIFIED_CHINESE, LabelCommand.ROTATION.ROTATION_0, fontmul, fontmul, text);
-        Log.e(TAG, text + " -> " + x + "," + y);
     }
 
     /**
@@ -911,9 +921,14 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * @return
      */
     public static int[] getTextSize(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return new int[]{0, 0};
+        }
+
         Rect rect = new Rect();
         new Paint().getTextBounds(text, 0, text.length(), rect);
-        return new int[]{rect.width(), rect.height()};
+
+        return new int[]{rect.left + rect.width(), rect.height()};
     }
 
     /**

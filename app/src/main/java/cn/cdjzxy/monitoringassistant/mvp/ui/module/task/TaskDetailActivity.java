@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
+import com.google.gson.JsonObject;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
@@ -30,6 +32,7 @@ import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
 import com.wonders.health.lib.base.widget.dialogplus.OnClickListener;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
+import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.lang.reflect.Field;
@@ -93,58 +96,58 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     @BindView(R.id.tab_layout)
-    TabLayout    tabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.tv_task_name)
-    TextView     tvTaskName;
+    TextView tvTaskName;
     @BindView(R.id.tv_task_time_range)
-    TextView     tvTaskTimeRange;
+    TextView tvTaskTimeRange;
     @BindView(R.id.tv_task_num)
-    TextView     tvTaskNum;
+    TextView tvTaskNum;
     @BindView(R.id.tv_task_point)
-    TextView     tvTaskPoint;
+    TextView tvTaskPoint;
     @BindView(R.id.tv_task_project_num)
-    TextView     tvTaskProjectNum;
+    TextView tvTaskProjectNum;
     @BindView(R.id.tv_task_type)
-    TextView     tvTaskType;
+    TextView tvTaskType;
     @BindView(R.id.tv_task_person)
-    TextView     tvTaskPerson;
+    TextView tvTaskPerson;
     @BindView(R.id.tv_task_start_time)
-    TextView     tvTaskStartTime;
+    TextView tvTaskStartTime;
     @BindView(R.id.tv_sampling_point_count)
-    TextView     tvSamplingPointCount;
+    TextView tvSamplingPointCount;
     @BindView(R.id.cb_all)
-    ImageView    cbAll;
+    ImageView cbAll;
 
     /**
      * 降水表单路径/路径
      */
-    public static final String PATH_PRECIPITATION="/FormTemplate/FILL_JS_GAS_XD";
+    public static final String PATH_PRECIPITATION = "/FormTemplate/FILL_JS_GAS_XD";
 
     /**
      * 废水表单路径/路径
      */
-    public static final String PATH_WASTEWATER="/FormTemplate/FILL_WATER_NEW_XD";
+    public static final String PATH_WASTEWATER = "/FormTemplate/FILL_WATER_NEW_XD";
 
     /**
      * 仪器法表单路径/路径
      */
-    public static final String PATH_INSTRUMENTAL="/FormTemplate/FILL_YQF_WATER";
+    public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
 
-    private TitleBarView      mTitleBarView;
+    private TitleBarView mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
 
-    private List<Tags>     mTags      = new ArrayList<>();
+    private List<Tags> mTags = new ArrayList<>();
     private List<Sampling> mSamplings = new ArrayList<>();
 
     private Project mProject;
 
-    private DialogPlus   mDialogPlus;
-    private CustomTab    mCustomTab;
+    private DialogPlus mDialogPlus;
+    private CustomTab mCustomTab;
     private RecyclerView mRecyclerView;
-    private ImageView    mBtnClose;
+    private ImageView mBtnClose;
 
     private List<Tags> mFirstTags = new ArrayList<>();
-    private List<Tab>  mTagNames  = new ArrayList<>();
+    private List<Tab> mTagNames = new ArrayList<>();
 
     private List<FormSelect> mDialogFormSelects = new ArrayList<>();
     private FormAdapter mFormAdapter;
@@ -161,7 +164,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private TextView mTvCancel;
     private TextView mTvOk;
 
-    private List<ProjectDetial>        mProjectDetials         = new ArrayList<>();
+    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
 
     @Override
@@ -449,23 +452,30 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onUpload(View view, int position) {
-                if ("//FormTemplate/FILL_JS_GAS_XD".equals(mSamplings.get(position).getFormPath())) {
+                Sampling sampling = mSamplings.get(position);
+                if ("//FormTemplate/FILL_JS_GAS_XD".equals(sampling.getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
                     uploadSamplingData(position);
-                }if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mSamplings.get(position).getFormPath())){
+                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(sampling.getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
                     uploadFsData(position);
+                } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
+                    if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
+                        uploadProjecteContentData();
+                    }
+                    uploadYQFData(position);
                 }
 
             }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
 
-        getSampling(mTags.get(0).getId());
+        mTagId = mTags.get(0).getId();
+        getSampling(mTagId);
     }
 
     @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit, R.id.cb_all})
@@ -941,17 +951,35 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     /**
      * 上传废水数据
+     *
      * @param position
      */
-    private void uploadFsData(int position){
+    private void uploadFsData(int position) {
         sampling = mSamplings.get(position);
         if (!sampling.getIsFinish()) {
             showMessage("请先完善采样单信息！");
             return;
         }
         showLoading();
-        PreciptationSampForm preciptationSampForm=SubmitDataUtil.setUpFSData(sampling);
+        PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
     }
 
+    /**
+     * 上传仪器法数据
+     *
+     * @param position
+     */
+    private void uploadYQFData(int position) {
+        sampling = mSamplings.get(position);
+        if (!sampling.getIsFinish()) {
+            showMessage("请先完善采样单信息！");
+            return;
+        }
+
+        showLoading();
+        PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
+        Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
+        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+    }
 }
