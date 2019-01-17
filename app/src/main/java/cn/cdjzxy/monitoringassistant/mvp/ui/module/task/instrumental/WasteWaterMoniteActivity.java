@@ -13,16 +13,19 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterMoniteAdapter;
@@ -79,8 +82,27 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
             return;
         }
 
+        HashMap<String, HashMap<String, MonItems>> monItemsMap = new HashMap<String, HashMap<String, MonItems>>();
+
         HashSet<String> monites = new HashSet<>();
         for (Sampling item : samplings) {
+            //从数据库加载项目，避免项目名称显示错误
+            HashMap<String, MonItems> monItemMap = null;
+            if (!monItemsMap.containsKey(item.getParentTagId())) {
+                monItemMap = new HashMap<String, MonItems>();
+                monItemsMap.put(item.getParentTagId(), monItemMap);
+
+                Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(item.getParentTagId())).unique();
+                List<MonItems> monItems = tags.getMMonItems();
+                if (!CheckUtil.isEmpty(monItems)) {
+                    for (MonItems monItem : monItems) {
+                        monItemMap.put(monItem.getId(), monItem);
+                    }
+                }
+            } else {
+                monItemMap = monItemsMap.get(item.getParentTagId());
+            }
+
             //获取样品数据
             List<SamplingDetail> samplingDetails = item.getSamplingDetailResults();
 
@@ -91,14 +113,14 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
             for (SamplingDetail detail : samplingDetails) {
                 String[] moniteIds = detail.getMonitemId().split(",");
-                String[] monitemNames = detail.getMonitemName().split(",");
+//                String[] monitemNames = detail.getMonitemName().split(",");//名称可能包含“,”
 
                 for (int i = 0; i < moniteIds.length; i++) {
                     String id = moniteIds[i];
 
                     //过滤重复项
                     if (monites.add(id)) {
-                        mMontes.add(new MonItems(id, "", monitemNames[i]));
+                        mMontes.add(new MonItems(id, "", monItemMap.get(id).getName()));
                     }
                 }
             }

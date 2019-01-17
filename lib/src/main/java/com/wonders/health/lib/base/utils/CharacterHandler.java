@@ -101,7 +101,7 @@ public class CharacterHandler {
             } else {
                 message = json;
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             message = json;
         }
         return message;

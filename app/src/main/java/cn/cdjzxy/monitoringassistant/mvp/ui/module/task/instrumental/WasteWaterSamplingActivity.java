@@ -194,7 +194,6 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             return false;
         }
 
-
         Sampling mSampling = InstrumentalActivity.mSampling;
 
         //先保存采样单
@@ -213,8 +212,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
             samplingDetail.setId("LC-" + UUID.randomUUID().toString());
             samplingDetail.setSamplingId(mSampling.getId());
+            samplingDetail.setMonitemId(mSampling.getMonitemId());
             samplingDetail.setSampingCode(item.getSampingCode());
-            samplingDetail.setSamplingTime(item.getSamplingTime());
+            samplingDetail.setSamplingOnTime(item.getSamplingTime());
             samplingDetail.setAddresssId(item.getAddresssId());
             samplingDetail.setAddressName(item.getAddressName());
             samplingDetail.setFrequecyNo(item.getFrequecyNo());
@@ -237,6 +237,8 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
         }
 
         mSelectDetails.clear();
+
+        EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
 
         return true;
     }

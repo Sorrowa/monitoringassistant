@@ -95,6 +95,7 @@ public class SamplingDetail {
     private String Description;
     private String PrivateData;
     private boolean isAddPreserve;
+    private String SamplingOnTime;
     @Transient
     private JSONObject PrivateJsonData;
     @Transient
@@ -102,17 +103,15 @@ public class SamplingDetail {
     @Transient
     private boolean isSelected;
 
-    @Generated(hash = 1844433884)
-    public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex,
-                          String SampingCode, int FrequecyNo, String SamplingTime, int SamplingType,
-                          String SampStandId, String MonitemId, String MonitemName, String AddresssId,
-                          String AddressName, int SamplingCount, String Preservative, String SampleCollection,
-                          String SampleAcceptance, boolean IsSenceAnalysis, boolean IsCompare, String AnasysTime,
-                          String Value1, String ValueUnit1, String valueUnit1Name, String Value2, String valueUnit2,
-                          String valueUnit2Name, String Value3, String ValueUnit3, String valueUnit3Name,
-                          String Value, String ValueUnit, String ValueUnitNname, String Value4, String Value5,
-                          String MethodName, String MethodId, String DeviceIdName, String DeviceId,
-                          String Description, String PrivateData, boolean isAddPreserve) {
+    @Generated(hash = 948661398)
+    public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex, String SampingCode,
+            int FrequecyNo, String SamplingTime, int SamplingType, String SampStandId, String MonitemId, String MonitemName,
+            String AddresssId, String AddressName, int SamplingCount, String Preservative, String SampleCollection,
+            String SampleAcceptance, boolean IsSenceAnalysis, boolean IsCompare, String AnasysTime, String Value1,
+            String ValueUnit1, String valueUnit1Name, String Value2, String valueUnit2, String valueUnit2Name,
+            String Value3, String ValueUnit3, String valueUnit3Name, String Value, String ValueUnit, String ValueUnitNname,
+            String Value4, String Value5, String MethodName, String MethodId, String DeviceIdName, String DeviceId,
+            String Description, String PrivateData, boolean isAddPreserve, String SamplingOnTime) {
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.ProjectId = ProjectId;
@@ -154,6 +153,7 @@ public class SamplingDetail {
         this.Description = Description;
         this.PrivateData = PrivateData;
         this.isAddPreserve = isAddPreserve;
+        this.SamplingOnTime = SamplingOnTime;
     }
 
     @Generated(hash = 735789381)
@@ -504,6 +504,14 @@ public class SamplingDetail {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getSamplingOnTime() {
+        return SamplingOnTime;
+    }
+
+    public void setSamplingOnTime(String samplingOnTime) {
+        SamplingOnTime = samplingOnTime;
     }
 
     /**

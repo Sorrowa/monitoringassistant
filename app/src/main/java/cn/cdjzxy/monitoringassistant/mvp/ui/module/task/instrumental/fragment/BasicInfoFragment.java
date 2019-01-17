@@ -156,6 +156,9 @@ public class BasicInfoFragment  extends BaseFragment {
                             if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
                                 InstrumentalActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
                                 InstrumentalActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
+
+                                InstrumentalActivity.mSampling.setMonitorPerson(InstrumentalActivity.mSampling.getSamplingUserName());
+
                                 tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
                             }
                         }
@@ -186,6 +189,7 @@ public class BasicInfoFragment  extends BaseFragment {
                     public void onTimeSelect(Date date, View v) {
                         String time = DateUtils.getDate(date);
                         tvTestStartDate.setText(time);
+                        InstrumentalActivity.mSampling.setSamplingTimeBegin(time);
                     }
                 });
                 break;
@@ -196,6 +200,7 @@ public class BasicInfoFragment  extends BaseFragment {
                     public void onTimeSelect(Date date, View v) {
                         String time = DateUtils.getDate(date);
                         tvTestEndDate.setText(time);
+                        InstrumentalActivity.mSampling.setSamplingTimeEnd(time);
                     }
                 });
                 break;

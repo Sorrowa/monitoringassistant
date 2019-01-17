@@ -13,8 +13,8 @@ public class PreciptationSampForm {
      * DelFiles : []
      */
 
-    private boolean      IsAdd;
-    private boolean      IsSubmit;
+    private boolean IsAdd;
+    private boolean IsSubmit;
 
     public boolean isDevceForm() {
         return isDevceForm;
@@ -24,7 +24,7 @@ public class PreciptationSampForm {
         isDevceForm = devceForm;
     }
 
-    private boolean      isDevceForm;
+    private boolean isDevceForm;
     private SampFormBean SampForm;
     private List<String> UploadFiles;
     private List<String> DelFiles;
@@ -135,40 +135,56 @@ public class PreciptationSampForm {
          * SamplingFormStands : [{"Id":"904b99e9-b5e4-c98c-e0fe-83b7f7ced00f","SamplingId":"00000000-0000-0000-0000-000000000000","MonitemIds":"7253950a-9daa-9d4f-bd9a-a84789279c2a","MonitemName":"降水量"}]
          */
 
-        private String                       ProjectId;
-        private String                       FormPath;
-        private String                       FormName;
-        private String                       ProjectName;
-        private String                       ProjectNo;
-        private String                       Montype;
-        private String                       ParentTagId;
-        private String                       FormType;
-        private String                       FormTypeName;
-        private String                       PrivateData;
-        private String                       SendSampTime;
-        private String                       SamplingNo;
-        private String                       SamplingTimeBegin;
-        private String                       TagName;
-        private String                       TagId;
-        private String                       AddressId;
-        private String                       AddressName;
-        private String                       AddressNo;
-        private String                       MonitemName;
-        private String                       MethodName;
-        private String                       MethodId;
-        private String                       DeviceId;
-        private String                       DeviceName;
-        private String                       Transfer;
-        private String                       ReciveTime;
-        private String                       file;
-        private String                       layTableCheckbox;
-        private String                       SamplingUserId;
-        private String                       SamplingUserName;
-        private String                       SamplingTimeEnd;
-        private String                       Comment;
-        private String                       FormFlows;
-        private List<SamplingDetailsBean>    SamplingDetails;
+        private String ProjectId;
+        private String FormPath;
+        private String FormName;
+        private String ProjectName;
+        private String ProjectNo;
+        private String Montype;
+        private String ParentTagId;
+        private String FormType;
+        private String FormTypeName;
+        private String PrivateData;
+        private String SendSampTime;
+        private String SamplingNo;
+        private String SamplingTimeBegin;
+        private String TagName;
+        private String TagId;
+        private String AddressId;
+        private String AddressName;
+        private String AddressNo;
+        private String MonitemId;
+        private String MonitemName;
+        private String MethodName;
+        private String MethodId;
+        private String DeviceId;
+        private String DeviceName;
+        private String Transfer;
+        private String ReciveTime;
+        private String file;
+        private String layTableCheckbox;
+        private String SamplingUserId;
+        private String SamplingUserName;
+        private String SamplingTimeEnd;
+        private String Comment;
+        private String FormFlows;
+        private String SubmitId;
+        private String SubmitName;
+        private String SubmitDate;
+        private String MonitorPerson;
+        private String MonitorTime;
+        private int Status;
+        private String StatusName;
+        private int TransStatus;
+        private String TransStatusName;
+        private String CurUserId;
+        private String CurUserName;
+        private String AddTime;
+        private String UpdateTime;
+        private int Version;
+        private List<SamplingDetailsBean> SamplingDetails;
         private List<SamplingFormStandsBean> SamplingFormStands;
+        private List<SamplingDetailsBean> SamplingDetailYQFs;
 
         public String getProjectId() {
             return ProjectId;
@@ -314,6 +330,14 @@ public class PreciptationSampForm {
             this.AddressNo = AddressNo;
         }
 
+        public String getMonitemId() {
+            return MonitemId;
+        }
+
+        public void setMonitemId(String monitemId) {
+            MonitemId = monitemId;
+        }
+
         public String getMonitemName() {
             return MonitemName;
         }
@@ -442,6 +466,126 @@ public class PreciptationSampForm {
             this.SamplingFormStands = SamplingFormStands;
         }
 
+        public List<SamplingDetailsBean> getSamplingDetailYQFs() {
+            return SamplingDetailYQFs;
+        }
+
+        public void setSamplingDetailYQFs(List<SamplingDetailsBean> samplingDetailYQFs) {
+            SamplingDetailYQFs = samplingDetailYQFs;
+        }
+
+        public String getSubmitId() {
+            return SubmitId;
+        }
+
+        public void setSubmitId(String submitId) {
+            SubmitId = submitId;
+        }
+
+        public String getSubmitName() {
+            return SubmitName;
+        }
+
+        public void setSubmitName(String submitName) {
+            SubmitName = submitName;
+        }
+
+        public String getSubmitDate() {
+            return SubmitDate;
+        }
+
+        public void setSubmitDate(String submitDate) {
+            SubmitDate = submitDate;
+        }
+
+        public String getMonitorPerson() {
+            return MonitorPerson;
+        }
+
+        public void setMonitorPerson(String monitorPerson) {
+            MonitorPerson = monitorPerson;
+        }
+
+        public String getMonitorTime() {
+            return MonitorTime;
+        }
+
+        public void setMonitorTime(String monitorTime) {
+            MonitorTime = monitorTime;
+        }
+
+        public int getStatus() {
+            return Status;
+        }
+
+        public void setStatus(int status) {
+            Status = status;
+        }
+
+        public String getStatusName() {
+            return StatusName;
+        }
+
+        public void setStatusName(String statusName) {
+            StatusName = statusName;
+        }
+
+        public int getTransStatus() {
+            return TransStatus;
+        }
+
+        public void setTransStatus(int transStatus) {
+            TransStatus = transStatus;
+        }
+
+        public String getTransStatusName() {
+            return TransStatusName;
+        }
+
+        public void setTransStatusName(String transStatusName) {
+            TransStatusName = transStatusName;
+        }
+
+        public String getCurUserId() {
+            return CurUserId;
+        }
+
+        public void setCurUserId(String curUserId) {
+            CurUserId = curUserId;
+        }
+
+        public String getCurUserName() {
+            return CurUserName;
+        }
+
+        public void setCurUserName(String curUserName) {
+            CurUserName = curUserName;
+        }
+
+        public String getAddTime() {
+            return AddTime;
+        }
+
+        public void setAddTime(String addTime) {
+            AddTime = addTime;
+        }
+
+        public String getUpdateTime() {
+            return UpdateTime;
+        }
+
+        public void setUpdateTime(String updateTime) {
+            UpdateTime = updateTime;
+        }
+
+        public int getVersion() {
+            return Version;
+        }
+
+        public void setVersion(int version) {
+            Version = version;
+        }
+
         public static class SamplingDetailsBean {
             public String getSampingCode() {
                 return SampingCode;
@@ -468,21 +612,21 @@ public class PreciptationSampForm {
              * Description : 备注
              */
 
-            private String  SampingCode;
-            private String  SamplingId;
-            private String  ProjectId;
+            private String SampingCode;
+            private String SamplingId;
+            private String ProjectId;
             private boolean IsSenceAnalysis;
-            private String  SampStandId;
-            private String  MonitemId;
-            private String  MonitemName;
-            private String  AddresssId;
-            private String  AddressName;
-            private String  PrivateData;
-            private String  Value;
-            private String  OrderIndex;
-            private String  FrequecyNo;
-            private String  Value1;
-            private String  Description;
+            private String SampStandId;
+            private String MonitemId;
+            private String MonitemName;
+            private String AddresssId;
+            private String AddressName;
+            private String PrivateData;
+            private String Value;
+            private String OrderIndex;
+            private String FrequecyNo;
+            private String Value1;
+            private String Description;
             //new
             private String SamplingTime;
             private String SamplingType;
@@ -491,6 +635,7 @@ public class PreciptationSampForm {
             private boolean IsCompare;
             private String SampleCollection;
             private String SampleAcceptance;
+            private String SamplingOnTime;
 
             public String getSamplingId() {
                 return SamplingId;
@@ -666,6 +811,14 @@ public class PreciptationSampForm {
 
             public void setSampleAcceptance(String sampleAcceptance) {
                 SampleAcceptance = sampleAcceptance;
+            }
+
+            public String getSamplingOnTime() {
+                return SamplingOnTime;
+            }
+
+            public void setSamplingOnTime(String samplingOnTime) {
+                SamplingOnTime = samplingOnTime;
             }
         }
 

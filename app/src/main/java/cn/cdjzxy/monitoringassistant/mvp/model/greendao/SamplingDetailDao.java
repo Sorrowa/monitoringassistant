@@ -65,6 +65,7 @@ public class SamplingDetailDao extends AbstractDao<SamplingDetail, String> {
         public final static Property Description = new Property(38, String.class, "Description", false, "DESCRIPTION");
         public final static Property PrivateData = new Property(39, String.class, "PrivateData", false, "PRIVATE_DATA");
         public final static Property IsAddPreserve = new Property(40, boolean.class, "isAddPreserve", false, "IS_ADD_PRESERVE");
+        public final static Property SamplingOnTime = new Property(41, String.class, "SamplingOnTime", false, "SAMPLING_ON_TIME");
     }
 
 
@@ -120,7 +121,8 @@ public class SamplingDetailDao extends AbstractDao<SamplingDetail, String> {
                 "\"DEVICE_ID\" TEXT," + // 37: DeviceId
                 "\"DESCRIPTION\" TEXT," + // 38: Description
                 "\"PRIVATE_DATA\" TEXT," + // 39: PrivateData
-                "\"IS_ADD_PRESERVE\" INTEGER NOT NULL );"); // 40: isAddPreserve
+                "\"IS_ADD_PRESERVE\" INTEGER NOT NULL ," + // 40: isAddPreserve
+                "\"SAMPLING_ON_TIME\" TEXT);"); // 41: SamplingOnTime
     }
 
     /** Drops the underlying database table. */
@@ -309,6 +311,11 @@ public class SamplingDetailDao extends AbstractDao<SamplingDetail, String> {
             stmt.bindString(40, PrivateData);
         }
         stmt.bindLong(41, entity.getIsAddPreserve() ? 1L: 0L);
+ 
+        String SamplingOnTime = entity.getSamplingOnTime();
+        if (SamplingOnTime != null) {
+            stmt.bindString(42, SamplingOnTime);
+        }
     }
 
     @Override
@@ -491,6 +498,11 @@ public class SamplingDetailDao extends AbstractDao<SamplingDetail, String> {
             stmt.bindString(40, PrivateData);
         }
         stmt.bindLong(41, entity.getIsAddPreserve() ? 1L: 0L);
+ 
+        String SamplingOnTime = entity.getSamplingOnTime();
+        if (SamplingOnTime != null) {
+            stmt.bindString(42, SamplingOnTime);
+        }
     }
 
     @Override
@@ -541,7 +553,8 @@ public class SamplingDetailDao extends AbstractDao<SamplingDetail, String> {
             cursor.isNull(offset + 37) ? null : cursor.getString(offset + 37), // DeviceId
             cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38), // Description
             cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39), // PrivateData
-            cursor.getShort(offset + 40) != 0 // isAddPreserve
+            cursor.getShort(offset + 40) != 0, // isAddPreserve
+            cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41) // SamplingOnTime
         );
         return entity;
     }
@@ -589,6 +602,7 @@ public class SamplingDetailDao extends AbstractDao<SamplingDetail, String> {
         entity.setDescription(cursor.isNull(offset + 38) ? null : cursor.getString(offset + 38));
         entity.setPrivateData(cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39));
         entity.setIsAddPreserve(cursor.getShort(offset + 40) != 0);
+        entity.setSamplingOnTime(cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41));
      }
     
     @Override
