@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
 import com.wonders.health.lib.base.widget.dialogplus.OnClickListener;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
+import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.lang.reflect.Field;
@@ -95,58 +97,58 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     @BindView(R.id.tab_layout)
-    TabLayout    tabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.tv_task_name)
-    TextView     tvTaskName;
+    TextView tvTaskName;
     @BindView(R.id.tv_task_time_range)
-    TextView     tvTaskTimeRange;
+    TextView tvTaskTimeRange;
     @BindView(R.id.tv_task_num)
-    TextView     tvTaskNum;
+    TextView tvTaskNum;
     @BindView(R.id.tv_task_point)
-    TextView     tvTaskPoint;
+    TextView tvTaskPoint;
     @BindView(R.id.tv_task_project_num)
-    TextView     tvTaskProjectNum;
+    TextView tvTaskProjectNum;
     @BindView(R.id.tv_task_type)
-    TextView     tvTaskType;
+    TextView tvTaskType;
     @BindView(R.id.tv_task_person)
-    TextView     tvTaskPerson;
+    TextView tvTaskPerson;
     @BindView(R.id.tv_task_start_time)
-    TextView     tvTaskStartTime;
+    TextView tvTaskStartTime;
     @BindView(R.id.tv_sampling_point_count)
-    TextView     tvSamplingPointCount;
+    TextView tvSamplingPointCount;
     @BindView(R.id.cb_all)
-    ImageView    cbAll;
+    ImageView cbAll;
 
     /**
      * 降水表单路径/路径
      */
-    public static final String PATH_PRECIPITATION="/FormTemplate/FILL_JS_GAS_XD";
+    public static final String PATH_PRECIPITATION = "/FormTemplate/FILL_JS_GAS_XD";
 
     /**
      * 废水表单路径/路径
      */
-    public static final String PATH_WASTEWATER="/FormTemplate/FILL_WATER_NEW_XD";
+    public static final String PATH_WASTEWATER = "/FormTemplate/FILL_WATER_NEW_XD";
 
     /**
      * 仪器法表单路径/路径
      */
-    public static final String PATH_INSTRUMENTAL="/FormTemplate/FILL_YQF_WATER";
+    public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
 
-    private TitleBarView      mTitleBarView;
+    private TitleBarView mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
 
-    private List<Tags>     mTags      = new ArrayList<>();
+    private List<Tags> mTags = new ArrayList<>();
     private List<Sampling> mSamplings = new ArrayList<>();
 
     private Project mProject;
 
-    private DialogPlus   mDialogPlus;
-    private CustomTab    mCustomTab;
+    private DialogPlus mDialogPlus;
+    private CustomTab mCustomTab;
     private RecyclerView mRecyclerView;
-    private ImageView    mBtnClose;
+    private ImageView mBtnClose;
 
     private List<Tags> mFirstTags = new ArrayList<>();
-    private List<Tab>  mTagNames  = new ArrayList<>();
+    private List<Tab> mTagNames = new ArrayList<>();
 
     private List<FormSelect> mDialogFormSelects = new ArrayList<>();
     private FormAdapter mFormAdapter;
@@ -163,7 +165,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private TextView mTvCancel;
     private TextView mTvOk;
 
-    private List<ProjectDetial>        mProjectDetials         = new ArrayList<>();
+    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
     //提交采样单时候使用
     private int samplingIndex;
@@ -480,7 +482,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
-                    uploadFsData(position);
+                    uploadFsData(position, false);
                 } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
