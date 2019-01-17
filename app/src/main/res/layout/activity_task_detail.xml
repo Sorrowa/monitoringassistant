@@ -56,6 +56,7 @@
                 android:id="@+id/cb_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/dp_16"
                 android:src="@mipmap/ic_cb_nor" />
 
             <android.support.design.widget.TabLayout

@@ -10,7 +10,6 @@ import android.view.View;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
-import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import java.util.List;
 
@@ -29,6 +28,9 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
  */
 
 public class TaskActivity extends BaseTitileActivity<ApiPresenter> {
+
+    public static final int TASK_REQUEST_CODE = 10;
+    public static final int TASK_RESULT_CODE = 11;
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
@@ -76,10 +78,19 @@ public class TaskActivity extends BaseTitileActivity<ApiPresenter> {
                 public void onItemClick(View view, int viewType, Object data, int position) {
                     Intent intent = new Intent(TaskActivity.this, TaskDetailActivity.class);
                     intent.putExtra("taskId", projects.get(position).getId());
-                    ArtUtils.startActivity(intent);
+                    startActivityForResult(intent, TASK_REQUEST_CODE);
                 }
             });
             recyclerview.setAdapter(mTaskAdapter);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TASK_REQUEST_CODE && resultCode == TASK_RESULT_CODE) {
+            final List<Project> projects = DBHelper.get().getProjectDao().queryBuilder().orderAsc(ProjectDao.Properties.PlanEndTime).list();
+            mTaskAdapter.refreshInfos(projects);
         }
     }
 

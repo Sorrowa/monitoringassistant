@@ -162,6 +162,37 @@ public class SubmitDataUtil {
 
     }
 
+    /**
+     * 设置提交的降水数据
+     * @param sampling
+     * @return
+     */
+    public static PreciptationSampForm setUpJSData(Sampling sampling){
+        PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
+        //设置外面数据
+        preciptationSampForm.setIsAdd(true);
+        preciptationSampForm.setIsSubmit(true);
+        preciptationSampForm.setDevceForm(true);
+        preciptationSampForm.setCompelSubmit(false);
+        preciptationSampForm.setAddTime(sampling.getAddTime());
+        preciptationSampForm.setUpdateTime(sampling.getUpdateTime());
+        /*
+        //设置SampFormBean数据
+        PreciptationSampForm.SampFormBean sampFormBean = setUpSampFormBean(sampling);
+        //setSamplingDetails
+        List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList=setUpSamplingDetailDataList(sampling);
+        if (!CheckUtil.isEmpty(detailsBeanList)){
+            sampFormBean.setSamplingDetails(detailsBeanList);
+        }
+        //setUpBottleSplitDataList
+        List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList=setUpBottleSplitDataList(sampling);
+        if (!CheckUtil.isEmpty(bottleSplitDataList)){
+            sampFormBean.setSamplingFormStands(bottleSplitDataList);
+        }
+        preciptationSampForm.setSampForm(sampFormBean);
+        */
+        return preciptationSampForm;
+    }
 
 
 

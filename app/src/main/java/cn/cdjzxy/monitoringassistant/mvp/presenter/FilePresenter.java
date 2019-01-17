@@ -77,7 +77,7 @@ public class FilePresenter extends BasePresenter<FileRepository> {
                         }
 
                         @Override
-                        public void onFailure(int Type, String message) {
+                        public void onFailure(int Type, String message, int responseCode) {
 
                         }
                     }));
@@ -114,7 +114,7 @@ public class FilePresenter extends BasePresenter<FileRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                     }
                 }));
     }
@@ -149,7 +149,7 @@ public class FilePresenter extends BasePresenter<FileRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
 
                     }
                 }));
@@ -186,7 +186,7 @@ public class FilePresenter extends BasePresenter<FileRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
 
                     }
                 }));

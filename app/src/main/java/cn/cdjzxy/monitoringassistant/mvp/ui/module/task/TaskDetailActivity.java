@@ -30,6 +30,7 @@ import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
 import com.wonders.health.lib.base.widget.dialogplus.OnClickListener;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
+import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.lang.reflect.Field;
@@ -71,16 +72,18 @@ import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
+import cn.cdjzxy.monitoringassistant.widgets.IosDialog;
+import cn.cdjzxy.monitoringassistant.widgets.OperateTipsDialog;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -93,58 +96,58 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     @BindView(R.id.tab_layout)
-    TabLayout    tabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.tv_task_name)
-    TextView     tvTaskName;
+    TextView tvTaskName;
     @BindView(R.id.tv_task_time_range)
-    TextView     tvTaskTimeRange;
+    TextView tvTaskTimeRange;
     @BindView(R.id.tv_task_num)
-    TextView     tvTaskNum;
+    TextView tvTaskNum;
     @BindView(R.id.tv_task_point)
-    TextView     tvTaskPoint;
+    TextView tvTaskPoint;
     @BindView(R.id.tv_task_project_num)
-    TextView     tvTaskProjectNum;
+    TextView tvTaskProjectNum;
     @BindView(R.id.tv_task_type)
-    TextView     tvTaskType;
+    TextView tvTaskType;
     @BindView(R.id.tv_task_person)
-    TextView     tvTaskPerson;
+    TextView tvTaskPerson;
     @BindView(R.id.tv_task_start_time)
-    TextView     tvTaskStartTime;
+    TextView tvTaskStartTime;
     @BindView(R.id.tv_sampling_point_count)
-    TextView     tvSamplingPointCount;
+    TextView tvSamplingPointCount;
     @BindView(R.id.cb_all)
-    ImageView    cbAll;
+    ImageView cbAll;
 
     /**
      * 降水表单路径/路径
      */
-    public static final String PATH_PRECIPITATION="/FormTemplate/FILL_JS_GAS_XD";
+    public static final String PATH_PRECIPITATION = "/FormTemplate/FILL_JS_GAS_XD";
 
     /**
      * 废水表单路径/路径
      */
-    public static final String PATH_WASTEWATER="/FormTemplate/FILL_WATER_NEW_XD";
+    public static final String PATH_WASTEWATER = "/FormTemplate/FILL_WATER_NEW_XD";
 
     /**
      * 仪器法表单路径/路径
      */
-    public static final String PATH_INSTRUMENTAL="/FormTemplate/FILL_YQF_WATER";
+    public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
 
-    private TitleBarView      mTitleBarView;
+    private TitleBarView mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
 
-    private List<Tags>     mTags      = new ArrayList<>();
+    private List<Tags> mTags = new ArrayList<>();
     private List<Sampling> mSamplings = new ArrayList<>();
 
     private Project mProject;
 
-    private DialogPlus   mDialogPlus;
-    private CustomTab    mCustomTab;
+    private DialogPlus mDialogPlus;
+    private CustomTab mCustomTab;
     private RecyclerView mRecyclerView;
-    private ImageView    mBtnClose;
+    private ImageView mBtnClose;
 
     private List<Tags> mFirstTags = new ArrayList<>();
-    private List<Tab>  mTagNames  = new ArrayList<>();
+    private List<Tab> mTagNames = new ArrayList<>();
 
     private List<FormSelect> mDialogFormSelects = new ArrayList<>();
     private FormAdapter mFormAdapter;
@@ -161,8 +164,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private TextView mTvCancel;
     private TextView mTvOk;
 
-    private List<ProjectDetial>        mProjectDetials         = new ArrayList<>();
+    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
+    //提交采样单时候使用
+    private int samplingIndex;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -173,7 +178,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(View v) {
                 showFinishDialog();
-                //                putSamplingFinish("测试");
             }
         });
     }
@@ -216,12 +220,20 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
-
+                showMessage("操作失败！");
                 break;
             case Message.RESULT_OK:
-                showMessage("数据提交成功");
+                showMessage("采样完结！");
+                //更改Project状态
+                if (!CheckUtil.isNull(mProject)) {
+
+                }
+                Intent intent = new Intent();
+                setResult(TaskActivity.TASK_RESULT_CODE, intent);
+                EventBus.getDefault().post(true, EventBusTags.TAG_PROJECT_FINISH);
+                finish();
                 break;
-            case 259:
+            case Constants.NET_RESPONSE_CODE_259:
                 showMessage("数据提交成功");
                 sampling.setIsCanEdit(false);
                 sampling.setIsUpload(true);
@@ -230,6 +242,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 sampling.setSubmitDate(DateUtils.getDate());
                 DBHelper.get().getSamplingDao().update(sampling);
                 getSampling(mTagId);
+                break;
+            case Constants.NET_RESPONSE_SAMPLING_DIFFER:
+                commitSamplingDataConflictOperate();
+                break;
+            default:
                 break;
         }
     }
@@ -331,6 +348,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                if (isSelecteAll) {
+                    cbAll.setImageResource(R.mipmap.ic_cb_nor);
+                    //updateSamplingAllStatus(false);
+                    isSelecteAll = false;
+                }
                 mTagId = mTags.get(tab.getPosition()).getId();
                 getSampling(mTagId);
             }
@@ -454,11 +476,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         uploadProjecteContentData();
                     }
                     uploadSamplingData(position);
-                }if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mSamplings.get(position).getFormPath())){
+                }
+                if ("/FormTemplate/FILL_WATER_NEW_XD".equals(mSamplings.get(position).getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
-                    uploadFsData(position);
+                    uploadFsData(position, false);
                 }
 
             }
@@ -481,6 +504,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case R.id.btn_submit:
                 showMessage("功能开发中");
+
                 break;
 
             case R.id.cb_all:
@@ -642,7 +666,15 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void updateSamplingAllStatus(boolean isSelecteAll) {
         for (Sampling sampling : mSamplings) {
-            sampling.setSelected(isSelecteAll);
+            if (isSelecteAll) {
+                if (sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9) {
+                    sampling.setSelected(isSelecteAll);
+                } else {
+                    sampling.setSelected(!isSelecteAll);
+                }
+            } else {
+                sampling.setSelected(isSelecteAll);
+            }
         }
         mTaskDetailAdapter.notifyDataSetChanged();
     }
@@ -665,6 +697,20 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param comment
      */
     private void putSamplingFinish(String comment) {
+        if (!NetworkUtil.isNetworkAvailable(mContext)) {
+            ArtUtils.makeText(mContext, "请检查网络，该操作需在有网络情况下使用！");
+            return;
+        }
+        if (CheckUtil.isEmpty(comment)) {
+            ArtUtils.makeText(mContext, "请输入完结说明！");
+            return;
+        }
+        //判断是否有未提交的采样单
+        if (hasUncommittedSampling()) {
+            ArtUtils.makeText(mContext, "有未提交的采样单，请先提交！");
+            return;
+        }
+
         showLoading();
         //接口提交数据
         mPresenter.putSamplingFinish(Message.obtain(this, new Object()), mProject.getId(), CheckUtil.isEmpty(comment) ? "" : comment);
@@ -941,17 +987,137 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     /**
      * 上传废水数据
+     *
      * @param position
      */
-    private void uploadFsData(int position){
+    private void uploadFsData(int position, boolean isCompelSubmit) {
+        samplingIndex = position;
         sampling = mSamplings.get(position);
         if (!sampling.getIsFinish()) {
             showMessage("请先完善采样单信息！");
             return;
         }
         showLoading();
-        PreciptationSampForm preciptationSampForm=SubmitDataUtil.setUpFSData(sampling);
+        PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
+        if (sampling.getStatus() == 0) {
+            preciptationSampForm.setIsAdd(true);
+            preciptationSampForm.setCompelSubmit(false);
+        } else {
+            preciptationSampForm.setIsAdd(false);
+            preciptationSampForm.setCompelSubmit(false);
+        }
+        if (isCompelSubmit) {
+            preciptationSampForm.setCompelSubmit(isCompelSubmit);
+        }
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+    }
+
+    /**
+     * 判断是否有未提交的单子
+     *
+     * @return
+     */
+    private boolean hasUncommittedSampling() {
+        boolean flag = false;
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(mProject.getId())).list();
+        if (!CheckUtil.isEmpty(samplings)) {
+            for (Sampling sampling : samplings) {
+                if (sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9) {
+                    flag = true;
+                    break;
+                }
+            }
+        } else {
+            flag = true;
+        }
+        return flag;
+    }
+
+    /**
+     * 提交采样单数据冲突处理
+     */
+    private void commitSamplingDataConflictOperate() {
+        String title = "数据选择";
+        String msg = "采样单数据同步中止，服务器存在数据不一致，请选择数据标准";
+        String pBtnStr = "移动端数据";
+        String nBtnStr = "服务端数据";
+
+        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                serverDataChooseOperate();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                appDataChooseOperate();
+            }
+        });
+    }
+
+    /**
+     * 使用移动端数据覆盖服务端数据提示
+     */
+    private void appDataChooseOperate() {
+        String title = "确认选择";
+        String msg = "您确定使用当前移动端表单数据覆盖服务端表单数据吗？";
+        String pBtnStr = "确认";
+        String nBtnStr = "取消";
+
+        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                uploadFsData(samplingIndex, true);
+            }
+        });
+    }
+
+    /**
+     * 使用服务端数据覆盖移动端数据提示
+     */
+    private void serverDataChooseOperate() {
+        String title = "确认选择";
+        String msg = "您确定使用服务端表单数据覆盖当前移动端表单数据吗？移动端表单数据将丢失";
+        String pBtnStr = "确认";
+        String nBtnStr = "取消";
+
+        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                //需要从服务端拉去数据
+            }
+        });
+    }
+
+    /**
+     * 批量提交采样单，不能直接上传的采样单的提示
+     */
+    private void multiCommitTipsOperate() {
+        String title = "数据未同步";
+        String msg = "部分表单数据未同步，请单独上传表单后再次提交";
+        String pBtnStr = "确认";
+        ;
+
+        OperateTipsDialog.showDialog(mContext, title, msg, pBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
     }
 
 }
