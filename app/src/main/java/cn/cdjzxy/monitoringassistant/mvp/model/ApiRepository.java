@@ -11,6 +11,7 @@ import java.util.Map;
 import cn.cdjzxy.monitoringassistant.mvp.model.api.cache.ApiCache;
 import cn.cdjzxy.monitoringassistant.mvp.model.api.service.ApiService;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
@@ -39,6 +40,9 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.http.PartMap;
 
 /**
  * App相关的数据操作
@@ -47,8 +51,8 @@ import io.reactivex.functions.Function;
 public class ApiRepository implements IModel {
 
     private IRepositoryManager mManager;
-    private ApiService         mApiService;
-    private ApiCache           mApiCache;
+    private ApiService mApiService;
+    private ApiCache mApiCache;
 
     /**
      * 必须含有一个接收IRepositoryManager接口的构造函数,否则会报错
@@ -739,6 +743,28 @@ public class ApiRepository implements IModel {
                         return baseResponseObservable.map(new Function<BaseResponse, BaseResponse>() {
                             @Override
                             public BaseResponse apply(BaseResponse baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+
+    /**
+     * 上传文件
+     *
+     * @return
+     */
+    public Observable<UploadFileResponse> uploadFile(MultipartBody.Part part, Map<String, RequestBody> params) {
+        return Observable.just(mApiService.uploadFile(part, params))
+                .flatMap(new Function<Observable<UploadFileResponse>, ObservableSource<UploadFileResponse>>() {
+                    @Override
+                    public ObservableSource<UploadFileResponse> apply(Observable<UploadFileResponse> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<UploadFileResponse, UploadFileResponse>() {
+                            @Override
+                            public UploadFileResponse apply(UploadFileResponse baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });
