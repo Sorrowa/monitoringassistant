@@ -42,6 +42,8 @@ import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
+import org.simple.eventbus.Subscriber;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +52,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 
 /**
  * 任务
@@ -405,5 +408,13 @@ public class TaskFragment extends BaseFragment {
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannableString;
+    }
+
+    @Subscriber(tag = EventBusTags.TAG_PROJECT_FINISH)
+    private void updateTaskData(int position) {
+        initSamplingView();
+        initPendingSamplingView();
+        initReceivedView();
+        initWaitReceivedView();
     }
 }

@@ -52,6 +52,8 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
 
     private Dialog dialog;
 
+    protected Context mContext;
+
     @NonNull
     @Override
     public synchronized Cache<String, Object> provideCache() {
@@ -70,6 +72,7 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext=this;
         try {
             int layoutResID = initView(savedInstanceState);
             //如果 initView 返回 0, 框架则不会调用 setContentView(), 当然也不会 Bind ButterKnife

@@ -69,5 +69,9 @@
     <color name="text_color_2b99ff">#2b99ff</color>
     <color name="text_color_41a5ff">#41a5ff</color>
 
+    <!-- ios dialog -->
+    <color name="ios_dialog_ll_backgroud">#D1D1D1</color>
+    <color name="ios_dialog_btn_textcolor">#FF1E90FF</color>
+
 
 </resources>

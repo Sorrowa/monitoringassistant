@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.app.rx.RxObserver;
 import cn.cdjzxy.monitoringassistant.app.rx.RxUtils;
 import cn.cdjzxy.monitoringassistant.mvp.model.ApiRepository;
@@ -54,6 +53,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
@@ -111,7 +111,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -136,7 +136,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -179,7 +179,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -238,7 +238,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -266,7 +266,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -293,7 +293,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -320,7 +320,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -347,7 +347,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -374,7 +374,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -401,7 +401,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -428,7 +428,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -455,7 +455,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -483,7 +483,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -511,7 +511,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -538,7 +538,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -565,7 +565,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -592,7 +592,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -622,7 +622,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -650,7 +650,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -677,7 +677,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -705,7 +705,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -725,7 +725,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -753,7 +753,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -797,7 +797,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -825,7 +825,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -867,7 +867,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -921,7 +921,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -945,7 +945,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -965,7 +965,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -979,15 +979,20 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
                     @Override
                     public void onSuccess(BaseResponse baseResponse) {
-                        msg.what = 259;
+                        msg.what = Constants.NET_RESPONSE_CODE_259;
                         msg.obj = baseResponse.getMessage();
                         msg.handleMessageToTarget();
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
-                        msg.what = Message.RESULT_FAILURE;
+                        if (responseCode == Constants.NET_RESPONSE_SAMPLING_DIFFER) {
+                            msg.what = Constants.NET_RESPONSE_SAMPLING_DIFFER;
+                        } else {
+                            msg.what = Message.RESULT_FAILURE;
+                        }
+
                         msg.handleMessageToTarget();
                     }
                 }));
@@ -1005,7 +1010,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -1025,7 +1030,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int responseCode) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
@@ -1045,7 +1050,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
 
                     @Override
-                    public void onFailure(int Type, String message) {
+                    public void onFailure(int Type, String message, int code) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();

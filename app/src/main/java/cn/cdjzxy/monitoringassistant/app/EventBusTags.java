@@ -14,5 +14,6 @@ public interface EventBusTags {
     String TAG_PROGRAM_MODIFY           = "PROGRAM_MODIFY  ";//方案修改
     String TAG_TOKEN_EXPIRE             = "TOKEN_EXPIRE  ";//token过期
     String TAG_SAMPLING_UPDATE          = "SAMPLING_UPDATE  ";//表单数据更新
+    String TAG_PROJECT_FINISH           = "TAG_PROJECT_FINISH  ";//采样完结操作
 
 }

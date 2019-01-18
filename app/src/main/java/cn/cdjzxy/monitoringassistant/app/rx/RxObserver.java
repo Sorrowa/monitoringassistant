@@ -28,11 +28,12 @@ import timber.log.Timber;
 
 public class RxObserver<T> implements Observer<T> {
 
-    public static final int TYPE_TIME_OUT      = 0;//请求超时
-    public static final int TYPE_NO_NETWORK    = 1;//网络错误
+    public static final int TYPE_TIME_OUT = 0;//请求超时
+    public static final int TYPE_NO_NETWORK = 1;//网络错误
     public static final int TYPE_TOKEN_EXPIRED = 2;//Token错误
-    public static final int TYPE_ERROR         = 3;//错误
-    public static final int TYPE_EMPTY         = 4;//数据为空
+    public static final int TYPE_ERROR = 3;//错误
+    public static final int TYPE_EMPTY = 4;//数据为空
+    public static final int CODE_DEFAULT = 100000;//默认的code值
 
 
     private RxCallBack<T> mRxCallBack;
@@ -56,9 +57,9 @@ public class RxObserver<T> implements Observer<T> {
                 if ("已拒绝为此请求授权".equals(response.getMessage())) {
                     EventBus.getDefault().post(true, EventBusTags.TAG_TOKEN_EXPIRE);
                 }
-                mRxCallBack.onFailure(TYPE_ERROR, response.getMessage());
+                mRxCallBack.onFailure(TYPE_ERROR, response.getMessage(), response.getCode());
             }
-        }else if (t instanceof UploadFileResponse) {
+        } else if (t instanceof UploadFileResponse) {
             UploadFileResponse response = ((UploadFileResponse) t);
             if (response.getCode() > 0) {
                 mRxCallBack.onSuccess(t);
@@ -66,7 +67,7 @@ public class RxObserver<T> implements Observer<T> {
                 if ("已拒绝为此请求授权".equals(response.getMessage())) {
                     EventBus.getDefault().post(true, EventBusTags.TAG_TOKEN_EXPIRE);
                 }
-                mRxCallBack.onFailure(TYPE_ERROR, response.getMessage());
+                mRxCallBack.onFailure(TYPE_ERROR, response.getMessage(), response.getCode());
             }
         } else {
             mRxCallBack.onSuccess(t);
@@ -98,7 +99,7 @@ public class RxObserver<T> implements Observer<T> {
         } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException) {
             msg = "数据解析错误";
         }
-        mRxCallBack.onFailure(type, msg);
+        mRxCallBack.onFailure(type, msg, CODE_DEFAULT);
     }
 
     private String convertCompositeExceptionStatusCode(CompositeException compositeException) {
@@ -136,7 +137,8 @@ public class RxObserver<T> implements Observer<T> {
 
         void onSuccess(T t);
 
-        void onFailure(int Type, String message);
+        //void onFailure(int Type, String message);
+        void onFailure(int Type, String message, int code);
 
     }
 
