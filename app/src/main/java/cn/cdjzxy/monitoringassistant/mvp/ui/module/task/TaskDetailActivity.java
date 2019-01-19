@@ -158,8 +158,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
 
     private boolean isSelecteAll = false;
+    //提交采样单时候使用
     private Sampling sampling;
-
 
     private EditText mEtComment;
     private TextView mTvCancel;
@@ -167,8 +167,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
-    //提交采样单时候使用
-    private int samplingIndex;
+
+    private boolean isMultiCommit=false;//是否批量提交
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -246,7 +246,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 getSampling(mTagId);
                 break;
             case Constants.NET_RESPONSE_SAMPLING_DIFFER:
-                commitSamplingDataConflictOperate();
+                if (isMultiCommit){
+                    multiCommitTipsOperate();
+                }else {
+                    commitSamplingDataConflictOperate();
+                }
                 break;
             default:
                 break;
@@ -473,21 +477,22 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onUpload(View view, int position) {
-                if ("//FormTemplate/FILL_JS_GAS_XD".equals(mSamplings.get(position).getFormPath())) {
+                isMultiCommit=false;
+                if (PATH_PRECIPITATION.equals(mSamplings.get(position).getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
-                    uploadSamplingData(position);
-                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(sampling.getFormPath())) {
+                    uploadSamplingData(mSamplings.get(position));
+                } else if (PATH_WASTEWATER.equals(mSamplings.get(position).getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
-                    uploadFsData(position, false);
-                } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
+                    uploadFsData(mSamplings.get(position), false);
+                } else if (PATH_INSTRUMENTAL.equals(mSamplings.get(position).getFormPath())) {
                     if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                         uploadProjecteContentData();
                     }
-                    uploadYQFData(position);
+                    uploadYQFData(mSamplings.get(position));
                 }
 
             }
@@ -510,7 +515,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 showAddDialog();
                 break;
             case R.id.btn_submit:
-                showMessage("功能开发中");
+                isMultiCommit=true;
+                multiCommitDatas();
                 break;
 
             case R.id.cb_all:
@@ -847,8 +853,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     /**
      * 提交采样单数据
      */
-    private void uploadSamplingData(int position) {
-        sampling = mSamplings.get(position);
+    private void uploadSamplingData(Sampling itemSampling) {
+        sampling = itemSampling;
         if (!sampling.getIsFinish()) {
             showMessage("请先完善采样单信息！");
             return;
@@ -994,11 +1000,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     /**
      * 上传废水数据
      *
-     * @param position
+     * @param itemSampling
      */
-    private void uploadFsData(int position, boolean isCompelSubmit) {
-        samplingIndex = position;
-        sampling = mSamplings.get(position);
+    private void uploadFsData(Sampling itemSampling, boolean isCompelSubmit) {
+        //samplingIndex = position;
+        sampling = itemSampling;
         if (!sampling.getIsFinish()) {
             showMessage("请先完善采样单信息！");
             return;
@@ -1081,7 +1087,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                uploadFsData(samplingIndex, true);
+                uploadFsData(sampling, true);
             }
         });
     }
@@ -1116,7 +1122,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         String title = "数据未同步";
         String msg = "部分表单数据未同步，请单独上传表单后再次提交";
         String pBtnStr = "确认";
-        ;
 
         OperateTipsDialog.showDialog(mContext, title, msg, pBtnStr, new DialogInterface.OnClickListener() {
             @Override
@@ -1129,10 +1134,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     /**
      * 上传仪器法数据
      *
-     * @param position
+     * @param itemSampling
      */
-    private void uploadYQFData(int position) {
-        sampling = mSamplings.get(position);
+    private void uploadYQFData(Sampling itemSampling) {
+        sampling = itemSampling;
         if (!sampling.getIsFinish()) {
             showMessage("请先完善采样单信息！");
             return;
@@ -1142,5 +1147,42 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
         Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+    }
+
+    /**
+     * 批量提交采样单
+     */
+    private void multiCommitDatas(){
+        if (!isSelecteAll){
+            showMessage("请先勾选需要提交的采样单！");
+            return;
+        }
+
+        if (mSamplings!=null && mSamplings.size()>0){
+            List<Sampling> selectedSamplings = new ArrayList<>();
+            for (Sampling itemSampling:mSamplings){
+                if (itemSampling.isSelected()){
+                    selectedSamplings.add(itemSampling);
+                }
+            }
+
+            if (!CheckUtil.isEmpty(selectedSamplings)){
+                for (Sampling itemSampl:selectedSamplings){
+                    if (PATH_PRECIPITATION.equals(itemSampl.getFormPath())) {
+                        uploadSamplingData(itemSampl);
+                    } else if (PATH_WASTEWATER.equals(itemSampl.getFormPath())) {
+                        uploadFsData(itemSampl, false);
+                    } else if (PATH_INSTRUMENTAL.equals(itemSampl.getFormPath())) {
+                        uploadYQFData(itemSampl);
+                    }
+                }
+
+            }else {
+                showMessage("无采样单需要提交！");
+            }
+
+        }else {
+            showMessage("请先勾选需要提交的采样单！");
+        }
     }
 }
