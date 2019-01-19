@@ -246,6 +246,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case Constants.NET_RESPONSE_SAMPLING_DIFFER:
                 if (isBatchUpload) {
+                    isBatchUpload = false;
                     multiCommitTipsOperate();
                 } else {
                     commitSamplingDataConflictOperate();
@@ -483,11 +484,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
 
                 Sampling sampling = mSamplings.get(position);
-                if (!sampling.getIsFinish()) {
+                if (sampling == null || !sampling.getIsFinish()) {
                     showMessage("请先完善采样单信息！");
                     return;
                 }
 
+                //上传数据
                 uploadSampFormData(sampling, false, false);
             }
         });
@@ -890,7 +892,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             //更新上传索引
             samplingIndex = Math.max(0, ++samplingIndex);
 
-            //到达结尾
+            //是否到达结尾
             if (samplingIndex >= mSamplings.size()) {
                 isBatchUpload = false;
                 return false;
@@ -905,9 +907,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             }
 
             //上传采样单
-            if (uploadSampFormData(sampling, isBatchUpload, false)) {
-                break;
-            }
+            uploadSampFormData(sampling, true, false);
+            break;
         } while (true);
 
         return true;
@@ -920,14 +921,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param isBatch        是否批量上传
      * @param isCompelSubmit 是否强制提交
      */
-    private boolean uploadSampFormData(Sampling itemSampling, boolean isBatch, boolean isCompelSubmit) {
+    private void uploadSampFormData(Sampling itemSampling, boolean isBatch, boolean isCompelSubmit) {
         sampling = itemSampling;
 
         //上传采样单对应的文件，文件上传成功后上传采样单
         uploadFiles(sampling, new FileUploadHandler() {
             @Override
             public void onSuccess() {
-                //组装采样单数据
+                //文件上传完成后，组装采样单数据。文件ID已更改
                 PreciptationSampForm preciptationSampForm = null;
                 if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
                     preciptationSampForm = SubmitDataUtil.setUpJSData(sampling);
@@ -966,8 +967,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 ArtUtils.makeText(TaskDetailActivity.this, msg);
             }
         });
-
-        return true;
     }
 
 //    /**
