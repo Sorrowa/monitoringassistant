@@ -51,6 +51,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.NumberUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
 import org.json.JSONException;
@@ -360,10 +361,12 @@ public class TestRecordDetailFragment extends BaseFragment {
             return;//数字异常
         }
 
-        double avg = handleNumber((pxValue + sourceValue) / 2);
-        double rpdValue = handleNumber((sourceValue - pxValue) / (sourceValue + pxValue)) * 100;
+        //四舍六入，奇进偶退
+        //均值计算公式：（样品含量+平行样含量）/2
+        double avg = NumberUtil.roundingNumber((pxValue + sourceValue) / 2);
+        //(样品含量-平行含量)/(样品含量+平行含量)
+        double rpdValue = NumberUtil.roundingNumber((sourceValue - pxValue) / (sourceValue + pxValue) * 100);
 
-        //TODO:四舍六入算法
         detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
         detail.setValue(avg + "");
 
@@ -379,36 +382,6 @@ public class TestRecordDetailFragment extends BaseFragment {
      */
     private double getCaleValue(SamplingDetail detail) {
         return Double.parseDouble(detail.getPrivateDataStringValue("CaleValue"));
-    }
-
-    /**
-     * 处理数字
-     *
-     * @param value
-     * @return
-     */
-    public static double handleNumber(double value) {
-        NumberFormat nfFormat = NumberFormat.getInstance();
-        if (value > 0.5) {
-            nfFormat.setMaximumFractionDigits(0);
-        } else {
-            nfFormat.setMaximumFractionDigits(1);
-        }
-
-        return Double.parseDouble(nfFormat.format(value));
-    }
-
-    /**
-     * 处理数字
-     *
-     * @param value
-     * @return
-     */
-    public static double handleNumber2(double value, int save) {
-        NumberFormat nfFormat = NumberFormat.getInstance();
-        nfFormat.setMaximumFractionDigits(save);
-
-        return Double.parseDouble(nfFormat.format(value));
     }
 
     private void initTimePickerView(OnTimeSelectListener listener) {

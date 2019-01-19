@@ -167,6 +167,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     private List<ProjectDetial> mProjectDetials = new ArrayList<>();
     private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
+    private boolean isBatchUpload = false;
     //提交采样单时候使用
     private int samplingIndex;
 
@@ -222,6 +223,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
+                //重置批量上传
+                resetBatchUpload();
                 showMessage("操作失败！");
                 break;
             case Message.RESULT_OK:
@@ -236,14 +239,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 finish();
                 break;
             case Constants.NET_RESPONSE_CODE_259:
-                showMessage("数据提交成功");
                 sampling.setIsCanEdit(false);
                 sampling.setIsUpload(true);
                 sampling.setStatusName("已提交");
                 sampling.setStatus(7);
                 sampling.setSubmitDate(DateUtils.getDate());
                 DBHelper.get().getSamplingDao().update(sampling);
-                getSampling(mTagId);
+
+                //上传下一个采样单
+                if (!uploadNextSampling()) {
+                    showMessage("数据提交成功");
+                    //刷新列表
+                    getSampling(mTagId);
+                }
                 break;
             case Constants.NET_RESPONSE_SAMPLING_DIFFER:
                 commitSamplingDataConflictOperate();
@@ -473,23 +481,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onUpload(View view, int position) {
-                if ("//FormTemplate/FILL_JS_GAS_XD".equals(mSamplings.get(position).getFormPath())) {
-                    if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
-                        uploadProjecteContentData();
-                    }
-                    uploadSamplingData(position);
-                } else if ("/FormTemplate/FILL_WATER_NEW_XD".equals(sampling.getFormPath())) {
-                    if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
-                        uploadProjecteContentData();
-                    }
-                    uploadFsData(position, false);
-                } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
-                    if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
-                        uploadProjecteContentData();
-                    }
-                    uploadYQFData(position);
+                Sampling sampling = mSamplings.get(position);
+                if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
+                    uploadProjecteContentData();
                 }
 
+                uploadSampling(sampling, false, false);
             }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
@@ -510,7 +507,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 showAddDialog();
                 break;
             case R.id.btn_submit:
-                showMessage("功能开发中");
+//                showMessage("功能开发中");
+                batchUploadSampling();
                 break;
 
             case R.id.cb_all:
@@ -526,7 +524,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
         }
     }
-
 
     private void showFinishDialog() {
         DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
@@ -722,6 +719,209 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mPresenter.putSamplingFinish(Message.obtain(this, new Object()), mProject.getId(), CheckUtil.isEmpty(comment) ? "" : comment);
     }
 
+    private void showDeleteDialog(int position) {
+
+        final Sampling sampling = mSamplings.get(position);
+
+        final Dialog dialog = new AlertDialog.Builder(this)
+                .setMessage("确定删除采样单？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DBHelper.get().getSamplingDao().delete(sampling);
+                        getSampling(mTagId);
+                        showMessage("删除采样单成功");
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    /**
+     * 判断是否有未提交的单子
+     *
+     * @return
+     */
+    private boolean hasUncommittedSampling() {
+        boolean flag = false;
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(mProject.getId())).list();
+        if (!CheckUtil.isEmpty(samplings)) {
+            for (Sampling sampling : samplings) {
+                if (sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9) {
+                    flag = true;
+                    break;
+                }
+            }
+        } else {
+            flag = true;
+        }
+        return flag;
+    }
+
+    /**
+     * 提交采样单数据冲突处理
+     */
+    private void commitSamplingDataConflictOperate() {
+        String title = "数据选择";
+        String msg = "采样单数据同步中止，服务器存在数据不一致，请选择数据标准";
+        String pBtnStr = "移动端数据";
+        String nBtnStr = "服务端数据";
+
+        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                serverDataChooseOperate();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                appDataChooseOperate();
+            }
+        });
+    }
+
+    /**
+     * 使用移动端数据覆盖服务端数据提示
+     */
+    private void appDataChooseOperate() {
+        String title = "确认选择";
+        String msg = "您确定使用当前移动端表单数据覆盖服务端表单数据吗？";
+        String pBtnStr = "确认";
+        String nBtnStr = "取消";
+
+        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                //重新强制提交
+                uploadSampling(sampling, isBatchUpload, true);
+            }
+        });
+    }
+
+    /**
+     * 使用服务端数据覆盖移动端数据提示
+     */
+    private void serverDataChooseOperate() {
+        String title = "确认选择";
+        String msg = "您确定使用服务端表单数据覆盖当前移动端表单数据吗？移动端表单数据将丢失";
+        String pBtnStr = "确认";
+        String nBtnStr = "取消";
+
+        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                //需要从服务端拉去数据
+            }
+        });
+    }
+
+    /**
+     * 批量提交采样单，不能直接上传的采样单的提示
+     */
+    private void multiCommitTipsOperate() {
+        String title = "数据未同步";
+        String msg = "部分表单数据未同步，请单独上传表单后再次提交";
+        String pBtnStr = "确认";
+
+        OperateTipsDialog.showDialog(mContext, title, msg, pBtnStr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * 重置批量上传
+     */
+    private void resetBatchUpload(){
+        isBatchUpload = false;
+        hideLoading();
+    }
+
+    /**
+     * 批量上传采样单
+     */
+    private void batchUploadSampling() {
+        //重置上传索引
+        samplingIndex = -1;
+        isBatchUpload = true;
+
+        showLoading();
+
+        if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
+            uploadProjecteContentData();
+        }
+
+        uploadNextSampling();
+    }
+
+    /**
+     * 上传下一个采样单
+     */
+    private boolean uploadNextSampling() {
+        if (!isBatchUpload) {
+            return false;
+        }
+
+        samplingIndex = Math.max(0, ++samplingIndex);
+        if (samplingIndex >= mSamplings.size()) {
+            resetBatchUpload();
+            return false;
+        }
+
+        //获取采样单
+        sampling = mSamplings.get(samplingIndex);
+
+        //如果未选中或已经提交，则跳过
+        if (!sampling.isSelected() || sampling.getIsUpload()) {
+            return uploadNextSampling();
+        }
+
+        //上传采样单
+        uploadSampling(sampling, isBatchUpload, false);
+
+        return true;
+    }
+
+    /**
+     * 上传采样单
+     */
+    private void uploadSampling(Sampling sampling, boolean isBatch, boolean isCompelSubmit) {
+        if (sampling == null) {
+            return;
+        }
+
+        if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
+            uploadSamplingData(sampling, isBatch, isCompelSubmit);
+        } else if (PATH_WASTEWATER.equals(sampling.getFormPath())) {
+            uploadFsData(sampling, isBatch, isCompelSubmit);
+        } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
+            uploadYQFData(sampling, isBatch, isCompelSubmit);
+        }
+    }
+
     /**
      * 提交方案数据
      */
@@ -847,14 +1047,17 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     /**
      * 提交采样单数据
      */
-    private void uploadSamplingData(int position) {
-        sampling = mSamplings.get(position);
+    private void uploadSamplingData(Sampling sampling, boolean isBatch, boolean isCompelSubmit) {
         if (!sampling.getIsFinish()) {
-            showMessage("请先完善采样单信息！");
+            if (!isBatch) {
+                showMessage("请先完善采样单信息！");
+            }
             return;
         }
 
-        showLoading();
+        if (!isBatch) {
+            showLoading();
+        }
 
         //采样单 图片文件
         List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
@@ -862,11 +1065,18 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
 
         PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
-        //开始组装数据
-        preciptationSampForm.setIsAdd(true);
-        preciptationSampForm.setIsSubmit(true);
-        preciptationSampForm.setDevceForm(true);
 
+        if (sampling.getStatus() == 0) {
+            preciptationSampForm.setIsAdd(true);
+            preciptationSampForm.setCompelSubmit(false);
+        } else {
+            preciptationSampForm.setIsAdd(false);
+            preciptationSampForm.setCompelSubmit(false);
+        }
+
+        if (isCompelSubmit) {
+            preciptationSampForm.setCompelSubmit(isCompelSubmit);
+        }
 
         PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
 
@@ -966,44 +1176,22 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
     }
 
-    private void showDeleteDialog(int position) {
-
-        final Sampling sampling = mSamplings.get(position);
-
-        final Dialog dialog = new AlertDialog.Builder(this)
-                .setMessage("确定删除采样单？")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        DBHelper.get().getSamplingDao().delete(sampling);
-                        getSampling(mTagId);
-                        showMessage("删除采样单成功");
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        dialog.show();
-    }
-
-
     /**
      * 上传废水数据
-     *
-     * @param position
      */
-    private void uploadFsData(int position, boolean isCompelSubmit) {
-        samplingIndex = position;
-        sampling = mSamplings.get(position);
+    private void uploadFsData(Sampling sampling, boolean isBatch, boolean isCompelSubmit) {
         if (!sampling.getIsFinish()) {
-            showMessage("请先完善采样单信息！");
+            if (!isBatch) {
+                showMessage("请先完善采样单信息！");
+            }
+
             return;
         }
-        showLoading();
+
+        if (!isBatch) {
+            showLoading();
+        }
+
         PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
         if (sampling.getStatus() == 0) {
             preciptationSampForm.setIsAdd(true);
@@ -1012,134 +1200,42 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             preciptationSampForm.setIsAdd(false);
             preciptationSampForm.setCompelSubmit(false);
         }
+
         if (isCompelSubmit) {
             preciptationSampForm.setCompelSubmit(isCompelSubmit);
         }
+
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
     }
 
     /**
-     * 判断是否有未提交的单子
-     *
-     * @return
-     */
-    private boolean hasUncommittedSampling() {
-        boolean flag = false;
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(mProject.getId())).list();
-        if (!CheckUtil.isEmpty(samplings)) {
-            for (Sampling sampling : samplings) {
-                if (sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9) {
-                    flag = true;
-                    break;
-                }
-            }
-        } else {
-            flag = true;
-        }
-        return flag;
-    }
-
-    /**
-     * 提交采样单数据冲突处理
-     */
-    private void commitSamplingDataConflictOperate() {
-        String title = "数据选择";
-        String msg = "采样单数据同步中止，服务器存在数据不一致，请选择数据标准";
-        String pBtnStr = "移动端数据";
-        String nBtnStr = "服务端数据";
-
-        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                serverDataChooseOperate();
-            }
-        }, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                appDataChooseOperate();
-            }
-        });
-    }
-
-    /**
-     * 使用移动端数据覆盖服务端数据提示
-     */
-    private void appDataChooseOperate() {
-        String title = "确认选择";
-        String msg = "您确定使用当前移动端表单数据覆盖服务端表单数据吗？";
-        String pBtnStr = "确认";
-        String nBtnStr = "取消";
-
-        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                uploadFsData(samplingIndex, true);
-            }
-        });
-    }
-
-    /**
-     * 使用服务端数据覆盖移动端数据提示
-     */
-    private void serverDataChooseOperate() {
-        String title = "确认选择";
-        String msg = "您确定使用服务端表单数据覆盖当前移动端表单数据吗？移动端表单数据将丢失";
-        String pBtnStr = "确认";
-        String nBtnStr = "取消";
-
-        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                //需要从服务端拉去数据
-            }
-        });
-    }
-
-    /**
-     * 批量提交采样单，不能直接上传的采样单的提示
-     */
-    private void multiCommitTipsOperate() {
-        String title = "数据未同步";
-        String msg = "部分表单数据未同步，请单独上传表单后再次提交";
-        String pBtnStr = "确认";
-        ;
-
-        OperateTipsDialog.showDialog(mContext, title, msg, pBtnStr, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-    }
-
-    /**
      * 上传仪器法数据
-     *
-     * @param position
      */
-    private void uploadYQFData(int position) {
-        sampling = mSamplings.get(position);
+    private void uploadYQFData(Sampling sampling, boolean isBatch, boolean isCompelSubmit) {
         if (!sampling.getIsFinish()) {
-            showMessage("请先完善采样单信息！");
+            if (!isBatch) {
+                showMessage("请先完善采样单信息！");
+            }
             return;
         }
 
-        showLoading();
+        if (!isBatch) {
+            showLoading();
+        }
+
         PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
+        if (sampling.getStatus() == 0) {
+            preciptationSampForm.setIsAdd(true);
+            preciptationSampForm.setCompelSubmit(false);
+        } else {
+            preciptationSampForm.setIsAdd(false);
+            preciptationSampForm.setCompelSubmit(false);
+        }
+
+        if (isCompelSubmit) {
+            preciptationSampForm.setCompelSubmit(isCompelSubmit);
+        }
+
         Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
     }
