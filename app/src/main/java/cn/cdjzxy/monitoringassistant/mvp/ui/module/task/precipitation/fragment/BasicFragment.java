@@ -329,6 +329,7 @@ public class BasicFragment extends BaseFragment {
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(PrecipitationActivity.mSampling.getId());
+                samplingFile.setUpdateTime(DateUtils.getTime(new Date().getTime()));
                 mSamplingFiles.add(samplingFile);
             }
 

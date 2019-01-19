@@ -2,14 +2,25 @@ package cn.cdjzxy.monitoringassistant.utils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
@@ -112,7 +123,6 @@ public class SubmitDataUtil {
         sampFormBean.setVersion(sampling.getVersion());
         sampFormBean.setTagId(sampling.getTagId());
         sampFormBean.setTagName(sampling.getTagName());
-
         return sampFormBean;
     }
 
@@ -134,7 +144,6 @@ public class SubmitDataUtil {
                 samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
                 samplingDetailsBean.setProjectId(sampling.getProjectId());
                 samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
-                //samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
                 samplingDetailsBean.setMonitemId(samplingDetail.getMonitemId());
                 samplingDetailsBean.setMonitemName(samplingDetail.getMonitemName());
                 samplingDetailsBean.setAddresssId(sampling.getAddressId());
@@ -152,6 +161,11 @@ public class SubmitDataUtil {
                 samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
                 samplingDetailsBean.setSamplingOnTime(samplingDetail.getSamplingOnTime());
                 samplingDetailsBean.setValue(samplingDetail.getValue());
+                //降水
+                //samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
+                //samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
+                //samplingDetailsBean.setMonitemName("降水量");
+                samplingDetailsBean.setValue1(samplingDetail.getValue1());
 
                 samplingDetailsBeansList.add(samplingDetailsBean);
                 count++;
@@ -217,7 +231,7 @@ public class SubmitDataUtil {
             PreciptationSampForm.SampFormBean.SamplingFileBean bean = new PreciptationSampForm.SampFormBean.SamplingFileBean();
             bean.setId(item.getId());
             bean.setFileName(item.getFileName());
-            bean.setUpdateTime(DateUtils.getTime(new Date().getTime()));
+            bean.setUpdateTime(item.getUpdateTime());
 
             result.add(bean);
         }
@@ -282,7 +296,6 @@ public class SubmitDataUtil {
         preciptationSampForm.setCompelSubmit(false);
         preciptationSampForm.setAddTime(sampling.getAddTime());
         preciptationSampForm.setUpdateTime(sampling.getUpdateTime());
-        /*
         //设置SampFormBean数据
         PreciptationSampForm.SampFormBean sampFormBean = setUpSampFormBean(sampling);
         //setSamplingDetails
@@ -296,7 +309,133 @@ public class SubmitDataUtil {
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
         }
         preciptationSampForm.setSampForm(sampFormBean);
-        */
+        //文件信息组装
+        List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = setUpSamplingFileDataList(sampling);
+        if (!CheckUtil.isEmpty(fileBeanList)) {
+            sampFormBean.setUploadFiles(fileBeanList);
+        }
+
         return preciptationSampForm;
+    }
+
+    /**
+     * 设置采样方案数据
+     * @return
+     */
+    public static ProjectPlan setUpProjectPlan(Project project){
+        List<ProjectDetial> mProjectDetials = new ArrayList<>();
+        Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
+        if (!CheckUtil.isEmpty(projectDetials)) {
+            for (ProjectDetial projectDetial : projectDetials) {
+                if (CheckUtil.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
+                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
+                } else {
+                    ProjectDetial projectDetialOld = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
+
+                    if (!projectDetialOld.getAddressId().contains(projectDetial.getAddressId())) {
+                        projectDetialOld.setAddressId(projectDetialOld.getAddressId() + "," + projectDetial.getAddressId());
+                        projectDetialOld.setAddress(projectDetialOld.getAddress() + "," + projectDetial.getAddress());
+                    }
+
+                    if (!projectDetialOld.getMonItemId().contains(projectDetial.getMonItemId())) {
+                        projectDetialOld.setMonItemId(projectDetialOld.getMonItemId() + "," + projectDetial.getMonItemId());
+                        projectDetialOld.setMonItemName(projectDetialOld.getMonItemName() + "," + projectDetial.getMonItemName());
+                    }
+
+                    mStringProjectDetialMap.put(projectDetialOld.getProjectContentId(), projectDetialOld);
+                }
+            }
+
+            for (String key : mStringProjectDetialMap.keySet()) {
+                mProjectDetials.add(mStringProjectDetialMap.get(key));
+            }
+
+        }
+
+        List<ProjectContent> projectContents = new ArrayList<>();
+        if (!CheckUtil.isEmpty(mProjectDetials)) {//开始组装数据
+            for (ProjectDetial projectDetial : mProjectDetials) {
+                ProjectContent projectContent = new ProjectContent();
+                projectContent.setId(projectDetial.getProjectContentId());
+                projectContent.setIsChecked(false);
+                projectContent.setMonItemsName(projectDetial.getMonItemName());
+                projectContent.setTagId(projectDetial.getTagId());
+                projectContent.setTagName(projectDetial.getTagName());
+                projectContent.setAddress(projectDetial.getAddress());
+                projectContent.setAddressIds(projectDetial.getAddressId());
+                projectContent.setDays(projectDetial.getDays());
+                projectContent.setPeriod(projectDetial.getPeriod());
+                projectContent.setComment(projectDetial.getComment());
+                projectContent.setPeriodShow(false);
+                projectContent.setTagParentId(projectDetial.getTagParentId());
+                projectContent.setTagParentName(projectDetial.getTagParentName());
+                projectContent.setGuid("");
+                List<MonItems> monItemsList = new ArrayList<>();
+                List<EnvirPoint> envirPoints = new ArrayList<>();
+                if (!CheckUtil.isEmpty(projectDetial.getMethodId())) {
+                    if (projectDetial.getMethodId().contains(",")) {
+                        monItemsList = DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties.Id.in(projectDetial.getMonItemId().split(","))).list();
+                    } else {
+                        monItemsList = DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties.Id.eq(projectDetial.getMonItemId())).list();
+                    }
+                }
+
+                if (!CheckUtil.isEmpty(projectDetial.getAddressId())) {
+                    if (projectDetial.getAddressId().contains(",")) {
+                        envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.in(projectDetial.getAddressId().split(","))).list();
+                    } else {
+                        envirPoints = DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.Id.eq(projectDetial.getAddressId())).list();
+                    }
+                }
+
+                List<ProjectContent.MonItemsBean> monItems = new ArrayList<>();
+                List<ProjectContent.AddressArrBean> addressArrs = new ArrayList<>();
+
+                if (!CheckUtil.isEmpty(monItemsList)) {
+                    for (MonItems items : monItemsList) {
+                        ProjectContent.MonItemsBean monItemsBean = new ProjectContent.MonItemsBean();
+                        monItemsBean.setId(items.getId());
+                        monItemsBean.setName(items.getName());
+                        monItemsBean.setMethodId(projectDetial.getMethodId());
+                        monItemsBean.setMethodName(projectDetial.getMethodName());
+                        monItemsBean.setHaveCert("");
+                        monItemsBean.setTagId(projectDetial.getTagId());
+                        monItemsBean.setTagName(projectDetial.getTagName());
+                        monItemsBean.setIsOutsourcing(false);
+                        monItemsBean.setIsOutsourcingtext("");
+                        monItems.add(monItemsBean);
+                    }
+                }
+
+                if (!CheckUtil.isEmpty(envirPoints)) {
+                    for (EnvirPoint envirPoint : envirPoints) {
+                        ProjectContent.AddressArrBean addressArrBean = new ProjectContent.AddressArrBean();
+                        addressArrBean.setId(envirPoint.getId());
+                        addressArrBean.setName(envirPoint.getName());
+                        addressArrBean.setType(0);
+                        addressArrBean.setIstemp(false);
+                        addressArrBean.setPoint("");
+                        addressArrBean.setLevel("");
+                        addressArrBean.setESLimt(new ArrayList<>());
+                        addressArrs.add(addressArrBean);
+                    }
+                }
+
+                projectContent.setMonItems(monItems);
+                projectContent.setMonItemCount(monItems.size());
+                projectContent.setAddressArr(addressArrs);
+                projectContent.setAddressCount(addressArrs.size());
+                projectContent.setProjectDetials(new ArrayList<>());
+                projectContents.add(projectContent);
+            }
+        }
+
+
+        ProjectPlan projectPlan = new ProjectPlan();
+        projectPlan.setId(project.getId());
+        //projectPlan.setIsCompelSubmit(true);
+        projectPlan.setProjectContents(projectContents);
+        return projectPlan;
     }
 }

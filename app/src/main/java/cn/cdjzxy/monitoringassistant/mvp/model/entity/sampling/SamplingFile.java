@@ -13,14 +13,16 @@ public class SamplingFile {
     private String SamplingId;
     private String FileName;
     private String FilePath;
-    @Generated(hash = 1652308663)
+    private String UpdateTime;
+    @Generated(hash = 79382865)
     public SamplingFile(String LocalId, String Id, String SamplingId,
-            String FileName, String FilePath) {
+            String FileName, String FilePath, String UpdateTime) {
         this.LocalId = LocalId;
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.FileName = FileName;
         this.FilePath = FilePath;
+        this.UpdateTime = UpdateTime;
     }
     @Generated(hash = 863733679)
     public SamplingFile() {
@@ -54,6 +56,12 @@ public class SamplingFile {
     }
     public void setLocalId(String LocalId) {
         this.LocalId = LocalId;
+    }
+    public String getUpdateTime() {
+        return this.UpdateTime;
+    }
+    public void setUpdateTime(String UpdateTime) {
+        this.UpdateTime = UpdateTime;
     }
 
 

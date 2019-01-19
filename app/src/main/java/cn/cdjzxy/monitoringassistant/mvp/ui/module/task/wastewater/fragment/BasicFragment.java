@@ -263,6 +263,7 @@ public class BasicFragment extends BaseFragment {
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(WastewaterActivity.mSample.getId());
+                samplingFile.setUpdateTime(DateUtils.getTime(new Date().getTime()));
                 sampleFiles.add(samplingFile);
             }
 

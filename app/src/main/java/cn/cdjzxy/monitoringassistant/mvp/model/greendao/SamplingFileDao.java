@@ -29,6 +29,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         public final static Property SamplingId = new Property(2, String.class, "SamplingId", false, "SAMPLING_ID");
         public final static Property FileName = new Property(3, String.class, "FileName", false, "FILE_NAME");
         public final static Property FilePath = new Property(4, String.class, "FilePath", false, "FILE_PATH");
+        public final static Property UpdateTime = new Property(5, String.class, "UpdateTime", false, "UPDATE_TIME");
     }
 
 
@@ -48,7 +49,8 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
                 "\"ID\" TEXT," + // 1: Id
                 "\"SAMPLING_ID\" TEXT," + // 2: SamplingId
                 "\"FILE_NAME\" TEXT," + // 3: FileName
-                "\"FILE_PATH\" TEXT);"); // 4: FilePath
+                "\"FILE_PATH\" TEXT," + // 4: FilePath
+                "\"UPDATE_TIME\" TEXT);"); // 5: UpdateTime
     }
 
     /** Drops the underlying database table. */
@@ -85,6 +87,11 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         if (FilePath != null) {
             stmt.bindString(5, FilePath);
         }
+ 
+        String UpdateTime = entity.getUpdateTime();
+        if (UpdateTime != null) {
+            stmt.bindString(6, UpdateTime);
+        }
     }
 
     @Override
@@ -115,6 +122,11 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         if (FilePath != null) {
             stmt.bindString(5, FilePath);
         }
+ 
+        String UpdateTime = entity.getUpdateTime();
+        if (UpdateTime != null) {
+            stmt.bindString(6, UpdateTime);
+        }
     }
 
     @Override
@@ -129,7 +141,8 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // Id
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // SamplingId
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // FileName
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // FilePath
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // FilePath
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // UpdateTime
         );
         return entity;
     }
@@ -141,6 +154,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         entity.setSamplingId(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setFileName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setFilePath(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setUpdateTime(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
     
     @Override
