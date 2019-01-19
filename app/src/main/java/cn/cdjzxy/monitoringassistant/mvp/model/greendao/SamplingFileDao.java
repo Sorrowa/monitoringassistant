@@ -24,10 +24,11 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "Id", true, "ID");
-        public final static Property SamplingId = new Property(1, String.class, "SamplingId", false, "SAMPLING_ID");
-        public final static Property FileName = new Property(2, String.class, "FileName", false, "FILE_NAME");
-        public final static Property FilePath = new Property(3, String.class, "FilePath", false, "FILE_PATH");
+        public final static Property LocalId = new Property(0, String.class, "LocalId", true, "LOCAL_ID");
+        public final static Property Id = new Property(1, String.class, "Id", false, "ID");
+        public final static Property SamplingId = new Property(2, String.class, "SamplingId", false, "SAMPLING_ID");
+        public final static Property FileName = new Property(3, String.class, "FileName", false, "FILE_NAME");
+        public final static Property FilePath = new Property(4, String.class, "FilePath", false, "FILE_PATH");
     }
 
 
@@ -43,10 +44,11 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"SAMPLING_FILE\" (" + //
-                "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: Id
-                "\"SAMPLING_ID\" TEXT," + // 1: SamplingId
-                "\"FILE_NAME\" TEXT," + // 2: FileName
-                "\"FILE_PATH\" TEXT);"); // 3: FilePath
+                "\"LOCAL_ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: LocalId
+                "\"ID\" TEXT," + // 1: Id
+                "\"SAMPLING_ID\" TEXT," + // 2: SamplingId
+                "\"FILE_NAME\" TEXT," + // 3: FileName
+                "\"FILE_PATH\" TEXT);"); // 4: FilePath
     }
 
     /** Drops the underlying database table. */
@@ -59,24 +61,29 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
     protected final void bindValues(DatabaseStatement stmt, SamplingFile entity) {
         stmt.clearBindings();
  
+        String LocalId = entity.getLocalId();
+        if (LocalId != null) {
+            stmt.bindString(1, LocalId);
+        }
+ 
         String Id = entity.getId();
         if (Id != null) {
-            stmt.bindString(1, Id);
+            stmt.bindString(2, Id);
         }
  
         String SamplingId = entity.getSamplingId();
         if (SamplingId != null) {
-            stmt.bindString(2, SamplingId);
+            stmt.bindString(3, SamplingId);
         }
  
         String FileName = entity.getFileName();
         if (FileName != null) {
-            stmt.bindString(3, FileName);
+            stmt.bindString(4, FileName);
         }
  
         String FilePath = entity.getFilePath();
         if (FilePath != null) {
-            stmt.bindString(4, FilePath);
+            stmt.bindString(5, FilePath);
         }
     }
 
@@ -84,24 +91,29 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
     protected final void bindValues(SQLiteStatement stmt, SamplingFile entity) {
         stmt.clearBindings();
  
+        String LocalId = entity.getLocalId();
+        if (LocalId != null) {
+            stmt.bindString(1, LocalId);
+        }
+ 
         String Id = entity.getId();
         if (Id != null) {
-            stmt.bindString(1, Id);
+            stmt.bindString(2, Id);
         }
  
         String SamplingId = entity.getSamplingId();
         if (SamplingId != null) {
-            stmt.bindString(2, SamplingId);
+            stmt.bindString(3, SamplingId);
         }
  
         String FileName = entity.getFileName();
         if (FileName != null) {
-            stmt.bindString(3, FileName);
+            stmt.bindString(4, FileName);
         }
  
         String FilePath = entity.getFilePath();
         if (FilePath != null) {
-            stmt.bindString(4, FilePath);
+            stmt.bindString(5, FilePath);
         }
     }
 
@@ -113,31 +125,33 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
     @Override
     public SamplingFile readEntity(Cursor cursor, int offset) {
         SamplingFile entity = new SamplingFile( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // Id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // SamplingId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // FileName
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // FilePath
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // LocalId
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // Id
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // SamplingId
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // FileName
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // FilePath
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, SamplingFile entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setSamplingId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setFileName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setFilePath(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setLocalId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setSamplingId(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setFileName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setFilePath(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     @Override
     protected final String updateKeyAfterInsert(SamplingFile entity, long rowId) {
-        return entity.getId();
+        return entity.getLocalId();
     }
     
     @Override
     public String getKey(SamplingFile entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getLocalId();
         } else {
             return null;
         }
@@ -145,7 +159,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
 
     @Override
     public boolean hasKey(SamplingFile entity) {
-        return entity.getId() != null;
+        return entity.getLocalId() != null;
     }
 
     @Override

@@ -2,15 +2,18 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
+import com.just.agentweb.IEventHandler;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
@@ -34,6 +38,7 @@ import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +61,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
@@ -69,6 +75,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
@@ -85,6 +92,9 @@ import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.IosDialog;
 import cn.cdjzxy.monitoringassistant.widgets.OperateTipsDialog;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -1077,121 +1087,136 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             showLoading();
         }
 
-        //采样单 图片文件
-        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
-        //采样单 样品采集
-        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
+        //上传文件，文件上传成功后上传采样单
+        uploadFiles(sampling, new FileUploadHandler() {
+            @Override
+            public void onSuccess() {
+                //采样单 样品采集
+                List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
 
-        PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
+                PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
 
-        if (sampling.getStatus() == 0) {
-            preciptationSampForm.setIsAdd(true);
-            preciptationSampForm.setCompelSubmit(false);
-        } else {
-            preciptationSampForm.setIsAdd(false);
-            preciptationSampForm.setCompelSubmit(false);
-        }
+                if (sampling.getStatus() == 0) {
+                    preciptationSampForm.setIsAdd(true);
+                    preciptationSampForm.setCompelSubmit(false);
+                } else {
+                    preciptationSampForm.setIsAdd(false);
+                    preciptationSampForm.setCompelSubmit(false);
+                }
 
-        if (isCompelSubmit) {
-            preciptationSampForm.setCompelSubmit(isCompelSubmit);
-        }
+                if (isCompelSubmit) {
+                    preciptationSampForm.setCompelSubmit(isCompelSubmit);
+                }
 
-        PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
+                PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
 
-        sampFormBean.setProjectId(sampling.getProjectId());
-        sampFormBean.setFormPath(sampling.getFormPath());
-        sampFormBean.setFormName(sampling.getFormName());
-        sampFormBean.setProjectName(sampling.getProjectName());
-        sampFormBean.setProjectNo(sampling.getProjectNo());
-        sampFormBean.setMontype(sampling.getMontype());
-        sampFormBean.setParentTagId(sampling.getParentTagId());
-        sampFormBean.setFormType(sampling.getFormType());
-        sampFormBean.setFormTypeName(sampling.getFormTypeName());
-        sampFormBean.setPrivateData(sampling.getPrivateData());
-        sampFormBean.setSendSampTime(sampling.getSendSampTime());
-        sampFormBean.setSamplingNo(sampling.getSamplingNo());
-        sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
-        sampFormBean.setTagName(sampling.getTagName());
-        sampFormBean.setTagId(sampling.getTagId());
-        sampFormBean.setAddressId(sampling.getAddressId());
-        sampFormBean.setAddressName(sampling.getAddressName());
-        sampFormBean.setAddressNo(sampling.getAddressNo());
-        sampFormBean.setMonitemName(sampling.getMonitemName());
-        sampFormBean.setMethodName(sampling.getMethodName());
-        sampFormBean.setMethodId(sampling.getMethodId());
-        sampFormBean.setDeviceId(sampling.getDeviceId());
-        sampFormBean.setDeviceName(sampling.getDeviceName());
-        sampFormBean.setTransfer(sampling.getTransfer());
-        sampFormBean.setReciveTime(sampling.getReciveTime());
-        sampFormBean.setFile(sampling.getFile());
-        //        sampFormBean.setLayTableCheckbox(sampling.get());
-        sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
-        sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
-        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeBegin());
-        sampFormBean.setComment(sampling.getComment());
-        sampFormBean.setFormFlows(sampling.getFormFlows());
+                sampFormBean.setProjectId(sampling.getProjectId());
+                sampFormBean.setFormPath(sampling.getFormPath());
+                sampFormBean.setFormName(sampling.getFormName());
+                sampFormBean.setProjectName(sampling.getProjectName());
+                sampFormBean.setProjectNo(sampling.getProjectNo());
+                sampFormBean.setMontype(sampling.getMontype());
+                sampFormBean.setParentTagId(sampling.getParentTagId());
+                sampFormBean.setFormType(sampling.getFormType());
+                sampFormBean.setFormTypeName(sampling.getFormTypeName());
+                sampFormBean.setPrivateData(sampling.getPrivateData());
+                sampFormBean.setSendSampTime(sampling.getSendSampTime());
+                sampFormBean.setSamplingNo(sampling.getSamplingNo());
+                sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
+                sampFormBean.setTagName(sampling.getTagName());
+                sampFormBean.setTagId(sampling.getTagId());
+                sampFormBean.setAddressId(sampling.getAddressId());
+                sampFormBean.setAddressName(sampling.getAddressName());
+                sampFormBean.setAddressNo(sampling.getAddressNo());
+                sampFormBean.setMonitemName(sampling.getMonitemName());
+                sampFormBean.setMethodName(sampling.getMethodName());
+                sampFormBean.setMethodId(sampling.getMethodId());
+                sampFormBean.setDeviceId(sampling.getDeviceId());
+                sampFormBean.setDeviceName(sampling.getDeviceName());
+                sampFormBean.setTransfer(sampling.getTransfer());
+                sampFormBean.setReciveTime(sampling.getReciveTime());
+                sampFormBean.setFile(sampling.getFile());
+                //        sampFormBean.setLayTableCheckbox(sampling.get());
+                sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
+                sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
+                sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeBegin());
+                sampFormBean.setComment(sampling.getComment());
+                sampFormBean.setFormFlows(sampling.getFormFlows());
 
-        if (sampling.getSamplingFormStandResults() != null && sampling.getSamplingFormStandResults().size() > 0) {
+                if (sampling.getSamplingFormStandResults() != null && sampling.getSamplingFormStandResults().size() > 0) {
 
-            ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
-            for (SamplingFormStand samplingFormStand : sampling.getSamplingFormStandResults()) {
+                    ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
+                    for (SamplingFormStand samplingFormStand : sampling.getSamplingFormStandResults()) {
+                        PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
+
+                        samplingFormStandsBean.setId(samplingFormStand.getId());
+                        samplingFormStandsBean.setSamplingId(samplingFormStand.getSamplingId());
+                        samplingFormStandsBean.setMonitemIds(samplingFormStand.getMonitemIds());
+                        samplingFormStandsBean.setMonitemName(samplingFormStand.getMonitemName());
+
+                        samplingFormStandsBeans.add(samplingFormStandsBean);
+                    }
+
+                    sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
+                }
+
+                // TODO: 2018/12/23 测试添加 需调采样规范接口
+                ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
                 PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
-
-                samplingFormStandsBean.setId(samplingFormStand.getId());
-                samplingFormStandsBean.setSamplingId(samplingFormStand.getSamplingId());
-                samplingFormStandsBean.setMonitemIds(samplingFormStand.getMonitemIds());
-                samplingFormStandsBean.setMonitemName(samplingFormStand.getMonitemName());
-
+                samplingFormStandsBean.setSamplingId("00000000-0000-0000-0000-000000000000");
+                samplingFormStandsBean.setMonitemIds("7253950a-9daa-9d4f-bd9a-a84789279c2a");
+                samplingFormStandsBean.setMonitemName("降水量");
                 samplingFormStandsBeans.add(samplingFormStandsBean);
+
+                sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
+
+                if (!CheckUtil.isEmpty(samplingDetails)) {
+
+                    ArrayList<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeans = new ArrayList<>();
+                    int count = 1;
+                    for (SamplingDetail samplingDetail : samplingDetails) {
+                        PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
+
+                        samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
+                        samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
+                        samplingDetailsBean.setProjectId(sampFormBean.getProjectId());
+                        samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
+                        samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
+                        samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
+                        samplingDetailsBean.setMonitemName("降水量");
+                        samplingDetailsBean.setAddresssId(sampFormBean.getAddressId());
+                        samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
+                        samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
+                        samplingDetailsBean.setValue(samplingDetail.getValue());
+                        samplingDetailsBean.setOrderIndex(count + "");
+                        samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
+                        samplingDetailsBean.setValue1(samplingDetail.getValue1());
+                        samplingDetailsBean.setDescription(samplingDetail.getDescription());
+                        samplingDetailsBeans.add(samplingDetailsBean);
+                        count++;
+                    }
+                    sampFormBean.setSamplingDetails(samplingDetailsBeans);
+                }
+
+                preciptationSampForm.setSampForm(sampFormBean);
+
+                //文件信息组装
+                List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = SubmitDataUtil.setUpSamplingFileDataList(sampling);
+                if (!CheckUtil.isEmpty(fileBeanList)) {
+                    sampFormBean.setUploadFiles(fileBeanList);
+                }
+
+//        String json = JSONObject.toJSONString(preciptationSampForm);
+
+                //接口提交数据
+                mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);
             }
 
-            sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
-        }
-
-        // TODO: 2018/12/23 测试添加 需调采样规范接口
-        ArrayList<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> samplingFormStandsBeans = new ArrayList<>();
-        PreciptationSampForm.SampFormBean.SamplingFormStandsBean samplingFormStandsBean = new PreciptationSampForm.SampFormBean.SamplingFormStandsBean();
-        samplingFormStandsBean.setSamplingId("00000000-0000-0000-0000-000000000000");
-        samplingFormStandsBean.setMonitemIds("7253950a-9daa-9d4f-bd9a-a84789279c2a");
-        samplingFormStandsBean.setMonitemName("降水量");
-        samplingFormStandsBeans.add(samplingFormStandsBean);
-
-        sampFormBean.setSamplingFormStands(samplingFormStandsBeans);
-
-        if (!CheckUtil.isEmpty(samplingDetails)) {
-
-            ArrayList<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeans = new ArrayList<>();
-            int count = 1;
-            for (SamplingDetail samplingDetail : samplingDetails) {
-                PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
-
-                samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
-                samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
-                samplingDetailsBean.setProjectId(sampFormBean.getProjectId());
-                samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
-                samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
-                samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
-                samplingDetailsBean.setMonitemName("降水量");
-                samplingDetailsBean.setAddresssId(sampFormBean.getAddressId());
-                samplingDetailsBean.setAddressName(sampFormBean.getAddressName());
-                samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
-                samplingDetailsBean.setValue(samplingDetail.getValue());
-                samplingDetailsBean.setOrderIndex(count + "");
-                samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
-                samplingDetailsBean.setValue1(samplingDetail.getValue1());
-                samplingDetailsBean.setDescription(samplingDetail.getDescription());
-                samplingDetailsBeans.add(samplingDetailsBean);
-                count++;
+            @Override
+            public void onFailed(String msg) {
+                ArtUtils.makeText(TaskDetailActivity.this, msg);
             }
-            sampFormBean.setSamplingDetails(samplingDetailsBeans);
-        }
-
-        preciptationSampForm.setSampForm(sampFormBean);
-
-        String json = JSONObject.toJSONString(preciptationSampForm);
-
-        //接口提交数据
-        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+        });
     }
 
     /**
@@ -1214,20 +1239,31 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             showLoading();
         }
 
-        PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
-        if (sampling.getStatus() == 0) {
-            preciptationSampForm.setIsAdd(true);
-            preciptationSampForm.setCompelSubmit(false);
-        } else {
-            preciptationSampForm.setIsAdd(false);
-            preciptationSampForm.setCompelSubmit(false);
-        }
+        //上传文件，文件上传成功后上传采样单
+        uploadFiles(sampling, new FileUploadHandler() {
+            @Override
+            public void onSuccess() {
+                PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
+                if (sampling.getStatus() == 0) {
+                    preciptationSampForm.setIsAdd(true);
+                    preciptationSampForm.setCompelSubmit(false);
+                } else {
+                    preciptationSampForm.setIsAdd(false);
+                    preciptationSampForm.setCompelSubmit(false);
+                }
 
-        if (isCompelSubmit) {
-            preciptationSampForm.setCompelSubmit(isCompelSubmit);
-        }
+                if (isCompelSubmit) {
+                    preciptationSampForm.setCompelSubmit(isCompelSubmit);
+                }
 
-        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+                mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);
+            }
+
+            @Override
+            public void onFailed(String msg) {
+                ArtUtils.makeText(TaskDetailActivity.this, msg);
+            }
+        });
     }
 
     /**
@@ -1262,8 +1298,110 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             preciptationSampForm.setCompelSubmit(isCompelSubmit);
         }
 
-        Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
+//        Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
         mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+    }
+
+    /**
+     * 上传文件，重新设置文件ID
+     * @param sampling
+     * @param handler
+     */
+    private void uploadFiles(Sampling sampling, FileUploadHandler handler) {
+        //从数据库加载数据
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq("")).list();
+        if (CheckUtil.isEmpty(samplingFiles)) {
+            if (handler != null) {
+                handler.onSuccess();
+            }
+            return;
+        }
+
+        //文件集合
+        List<MultipartBody.Part> parts = new ArrayList<>();
+        HashMap<String, SamplingFile> fileSet = new HashMap<>();
+
+        for (SamplingFile sf : samplingFiles) {
+            File file = new File(sf.getFilePath());
+            if (!file.exists()) {
+                if (handler != null) {
+                    handler.onFailed(String.format("文件上传失败，文件不存在[%s]！", sf.getFilePath()));
+                }
+                return;//文件不存在
+            }
+
+            //文件上传Body
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            //添加文件数据
+            parts.add(MultipartBody.Part.createFormData("File", file.getName(), requestBody));
+
+            //记录文件
+            fileSet.put(sf.getFileName(), sf);
+        }
+
+        HashMap<String, RequestBody> map = new HashMap<>();
+        map.put("token", RequestBody.create(MediaType.parse("text/plain"), UserInfoHelper.get().getUser().getToken()));
+
+        //上传文件
+        mPresenter.uploadFile(Message.obtain(new IView() {
+            @Override
+            public void showMessage(@NonNull String message) {
+                if (TextUtils.isEmpty(message)) {
+                    return;
+                }
+
+                ArtUtils.makeText(TaskDetailActivity.this, message);
+            }
+
+            @Override
+            public void handleMessage(@NonNull Message message) {
+                switch (message.what) {
+                    case Message.RESULT_OK:
+                        //上传成功
+                        if (message.obj == null || !(message.obj instanceof List)) {
+                            if (handler != null) {
+                                handler.onFailed("文件上传失败，数据错误！");
+                            }
+                            return;
+                        }
+
+                        List<FileInfoData> fileInfoData = (List<FileInfoData>) message.obj;
+                        if (fileInfoData == null || fileInfoData.size() == 0) {
+                            if (handler != null) {
+                                handler.onFailed("文件上传失败，未返回文件信息！");
+                            }
+                            return;
+                        }
+
+                        //重新设置文件ID
+                        for (FileInfoData item : fileInfoData) {
+                            if (!fileSet.containsKey(item.getFileName())) {
+                                continue;
+                            }
+
+                            //获取文件信息
+                            SamplingFile samplingFile = fileSet.get(item.getFileName());
+                            //更新文件ID
+                            samplingFile.setId(item.getId());
+
+                            //更新到数据库
+                            DBHelper.get().getSamplingFileDao().update(samplingFile);
+                        }
+
+                        if (handler != null) {
+                            handler.onSuccess();
+                        }
+                        break;
+
+                    case Message.RESULT_FAILURE:
+                        //上传失败
+                        if (handler != null) {
+                            handler.onFailed("文件上传失败！");
+                        }
+                        break;
+                }
+            }
+        }), parts, map);
     }
 
 //    /**
@@ -1329,7 +1467,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 //        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
 //    }
 
-//    /**
+    //    /**
 //     * 批量提交采样单
 //     */
 //    private void multiCommitDatas(){
@@ -1365,4 +1503,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 //            showMessage("请先勾选需要提交的采样单！");
 //        }
 //    }
+    interface FileUploadHandler {
+        void onSuccess();
+
+        void onFailed(String message);
+    }
 }

@@ -185,6 +185,8 @@ public class PreciptationSampForm {
         private List<SamplingDetailsBean> SamplingDetails;
         private List<SamplingFormStandsBean> SamplingFormStands;
         private List<SamplingDetailsBean> SamplingDetailYQFs;
+        private List<SamplingFileBean> UploadFiles;
+        private List DelFiles;
 
         public String getProjectId() {
             return ProjectId;
@@ -586,6 +588,22 @@ public class PreciptationSampForm {
             Version = version;
         }
 
+        public List<SamplingFileBean> getUploadFiles() {
+            return UploadFiles;
+        }
+
+        public void setUploadFiles(List<SamplingFileBean> uploadFiles) {
+            UploadFiles = uploadFiles;
+        }
+
+        public List getDelFiles() {
+            return DelFiles;
+        }
+
+        public void setDelFiles(List delFiles) {
+            DelFiles = delFiles;
+        }
+
         public static class SamplingDetailsBean {
             public String getSampingCode() {
                 return SampingCode;
@@ -965,6 +983,36 @@ public class PreciptationSampForm {
 
             public void setMonItems(List<String> monItems) {
                 MonItems = monItems;
+            }
+        }
+
+        public static class SamplingFileBean {
+            private String Id;
+            private String FileName;
+            private String UpdateTime;
+
+            public String getId() {
+                return Id;
+            }
+
+            public void setId(String id) {
+                Id = id;
+            }
+
+            public String getFileName() {
+                return FileName;
+            }
+
+            public void setFileName(String fileName) {
+                FileName = fileName;
+            }
+
+            public String getUpdateTime() {
+                return UpdateTime;
+            }
+
+            public void setUpdateTime(String updateTime) {
+                UpdateTime = updateTime;
             }
         }
     }

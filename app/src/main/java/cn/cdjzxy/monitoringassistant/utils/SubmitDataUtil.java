@@ -1,14 +1,17 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -42,6 +45,11 @@ public class SubmitDataUtil {
         List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList = setUpBottleSplitDataList(sampling);
         if (!CheckUtil.isEmpty(bottleSplitDataList)) {
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
+        }
+        //文件信息组装
+        List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = setUpSamplingFileDataList(sampling);
+        if (!CheckUtil.isEmpty(fileBeanList)) {
+            sampFormBean.setUploadFiles(fileBeanList);
         }
         preciptationSampForm.setSampForm(sampFormBean);
         return preciptationSampForm;
@@ -191,6 +199,33 @@ public class SubmitDataUtil {
     }
 
     /**
+     * 组装上传文件
+     *
+     * @param sampling
+     * @return
+     */
+    public static List<PreciptationSampForm.SampFormBean.SamplingFileBean> setUpSamplingFileDataList(Sampling sampling) {
+        List<PreciptationSampForm.SampFormBean.SamplingFileBean> result = new ArrayList<>();
+
+        //从数据库加载数据
+        List<SamplingFile> dataList = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
+        if (CheckUtil.isEmpty(dataList)) {
+            return result;
+        }
+
+        for (SamplingFile item : dataList) {
+            PreciptationSampForm.SampFormBean.SamplingFileBean bean = new PreciptationSampForm.SampFormBean.SamplingFileBean();
+            bean.setId(item.getId());
+            bean.setFileName(item.getFileName());
+            bean.setUpdateTime(DateUtils.getTime(new Date().getTime()));
+
+            result.add(bean);
+        }
+
+        return result;
+    }
+
+    /**
      * 组装仪器法提交数据
      *
      * @param sampling
@@ -234,10 +269,11 @@ public class SubmitDataUtil {
 
     /**
      * 设置提交的降水数据
+     *
      * @param sampling
      * @return
      */
-    public static PreciptationSampForm setUpJSData(Sampling sampling){
+    public static PreciptationSampForm setUpJSData(Sampling sampling) {
         PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
         //设置外面数据
         preciptationSampForm.setIsAdd(true);

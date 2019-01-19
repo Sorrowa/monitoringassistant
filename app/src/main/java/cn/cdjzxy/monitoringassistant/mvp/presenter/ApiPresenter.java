@@ -46,6 +46,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
@@ -1038,14 +1039,15 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
-    public void uploadFile(final Message msg, MultipartBody.Part part, Map<String, RequestBody> params) {
-        mModel.uploadFile(part, params)
+    public void uploadFile(final Message msg, List<MultipartBody.Part> parts, Map<String, RequestBody> params) {
+        mModel.uploadFile(parts, params)
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
-                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<UploadFileResponse>() {
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<UploadFileResponse<List<FileInfoData>>>() {
                     @Override
-                    public void onSuccess(UploadFileResponse baseResponse) {
+                    public void onSuccess(UploadFileResponse<List<FileInfoData>> baseResponse) {
                         msg.what = Message.RESULT_OK;
-                        msg.obj = baseResponse.getMessage();
+//                        msg.obj = baseResponse.getMessage();
+                        msg.obj = baseResponse.getData();
                         msg.handleMessageToTarget();
                     }
 

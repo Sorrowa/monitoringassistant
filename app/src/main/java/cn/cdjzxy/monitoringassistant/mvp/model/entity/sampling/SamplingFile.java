@@ -8,13 +8,15 @@ import org.greenrobot.greendao.annotation.Id;
 public class SamplingFile {
 
     @Id
+    private String LocalId;
     private String Id;
     private String SamplingId;
     private String FileName;
     private String FilePath;
-    @Generated(hash = 895474054)
-    public SamplingFile(String Id, String SamplingId, String FileName,
-            String FilePath) {
+    @Generated(hash = 1652308663)
+    public SamplingFile(String LocalId, String Id, String SamplingId,
+            String FileName, String FilePath) {
+        this.LocalId = LocalId;
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.FileName = FileName;
@@ -46,6 +48,12 @@ public class SamplingFile {
     }
     public void setFilePath(String FilePath) {
         this.FilePath = FilePath;
+    }
+    public String getLocalId() {
+        return this.LocalId;
+    }
+    public void setLocalId(String LocalId) {
+        this.LocalId = LocalId;
     }
 
 

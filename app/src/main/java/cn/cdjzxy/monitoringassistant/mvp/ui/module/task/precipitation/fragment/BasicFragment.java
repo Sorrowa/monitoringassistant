@@ -324,7 +324,8 @@ public class BasicFragment extends BaseFragment {
             for (String path : paths) {
                 SamplingFile samplingFile = new SamplingFile();
                 File file = new File(path);
-                samplingFile.setId("LC-" + UUID.randomUUID().toString());
+                samplingFile.setLocalId("LC-" + UUID.randomUUID().toString());
+                samplingFile.setId("");
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(PrecipitationActivity.mSampling.getId());
