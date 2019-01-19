@@ -15,6 +15,7 @@ import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.CompositeException;
@@ -50,6 +51,16 @@ public class RxObserver<T> implements Observer<T> {
     public void onNext(T t) {
         if (t instanceof BaseResponse) {
             BaseResponse response = ((BaseResponse) t);
+            if (response.getCode() > 0) {
+                mRxCallBack.onSuccess(t);
+            } else {
+                if ("已拒绝为此请求授权".equals(response.getMessage())) {
+                    EventBus.getDefault().post(true, EventBusTags.TAG_TOKEN_EXPIRE);
+                }
+                mRxCallBack.onFailure(TYPE_ERROR, response.getMessage(), response.getCode());
+            }
+        } else if (t instanceof UploadFileResponse) {
+            UploadFileResponse response = ((UploadFileResponse) t);
             if (response.getCode() > 0) {
                 mRxCallBack.onSuccess(t);
             } else {

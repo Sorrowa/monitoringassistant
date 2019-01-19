@@ -1,7 +1,9 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,7 +32,14 @@ import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.Subscriber;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,6 +69,9 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -217,7 +230,9 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
-                mDialogPlus.dismiss();
+                if (mDialogPlus != null) {
+                    mDialogPlus.dismiss();
+                }
                 break;
             case Message.RESULT_OK:
                 updateProgress((int) message.obj);
@@ -231,6 +246,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
     /**
      * 更新进度
+     *
      * @param addValue
      */
     private void updateProgress(int addValue) {
@@ -414,6 +430,18 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
             case 6://设置
                 ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());
+
+//                String path = getSystemFilePath(this) + "/test4.jpeg";
+//                Log.e("Path", path);
+//                File file = new File(path);
+//                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+//
+//                MultipartBody.Part fileData = MultipartBody.Part.createFormData("File", file.getName(), requestBody);
+//
+//                HashMap<String, RequestBody> map = new HashMap<>();
+//                map.put("token", RequestBody.create(MediaType.parse("text/plain"), UserInfoHelper.get().getUser().getToken()));
+//
+//                mPresenter.uploadFile(Message.obtain(this, new Object()), fileData, map);
                 break;
             case 7://修改密码
                 ft.replace(R.id.layout_container, new PwdModifyFragment(), PwdModifyFragment.class.getName());
@@ -422,6 +450,24 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 break;
         }
         ft.commit();
+    }
+
+    private static String getSystemFilePath(Context context) {
+        String cachePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            Log.e("getSystemFilePath1", cachePath);
+//            cachePath = context.getExternalCacheDir().getPath();//也可以这么写，只是返回的路径不一样，具体打log看
+//            Log.e("getSystemFilePath2",cachePath);
+        } else {
+            cachePath = context.getFilesDir().getAbsolutePath();
+//            Log.e("getSystemFilePath3",cachePath);
+            cachePath = context.getCacheDir().getPath();//也可以这么写，只是返回的路径不一样，具体打log看
+//            Log.e("getSystemFilePath4",cachePath);
+        }
+
+        return cachePath;
     }
 
 

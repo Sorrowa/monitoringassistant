@@ -7,6 +7,7 @@ import java.util.Map;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
@@ -36,15 +37,21 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 import static me.jessyan.retrofiturlmanager.RetrofitUrlManager.DOMAIN_NAME_HEADER;
 
@@ -188,8 +195,9 @@ public interface ApiService {
     Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") List<String> projectIds);
 
     //*******************文件******************
+    @Multipart
     @POST(Api.UPLOAD_FILE)
-    Observable<BaseResponse> uploadFile();
+    Observable<UploadFileResponse> uploadFile(@Part MultipartBody.Part part, @PartMap Map<String,RequestBody> params);
 
     @DELETE(Api.DELETE_FILE)
     Observable<BaseResponse> deleteFile();

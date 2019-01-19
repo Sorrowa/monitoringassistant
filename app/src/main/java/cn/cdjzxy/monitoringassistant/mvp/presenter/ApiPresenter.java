@@ -18,6 +18,7 @@ import cn.cdjzxy.monitoringassistant.app.rx.RxUtils;
 import cn.cdjzxy.monitoringassistant.mvp.model.ApiRepository;
 import cn.cdjzxy.monitoringassistant.mvp.model.api.Api;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Dic;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
@@ -56,6 +57,8 @@ import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import timber.log.Timber;
 
 /**
@@ -1028,6 +1031,26 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                     @Override
                     public void onFailure(int Type, String message, int responseCode) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    public void uploadFile(final Message msg, MultipartBody.Part part, Map<String, RequestBody> params) {
+        mModel.uploadFile(part, params)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<UploadFileResponse>() {
+                    @Override
+                    public void onSuccess(UploadFileResponse baseResponse) {
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = baseResponse.getMessage();
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int code) {
                         msg.getTarget().showMessage(message);
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
