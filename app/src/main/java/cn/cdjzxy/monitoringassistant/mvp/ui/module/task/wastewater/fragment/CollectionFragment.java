@@ -43,12 +43,15 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 
 /**
  * 样品收集
@@ -71,6 +74,8 @@ public class CollectionFragment extends BaseFragment {
     TextView tvPrintLabel;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
+    @BindView(R.id.btn_add_new)
+    RelativeLayout btn_add_new;
 
     private WasteWaterCollectAdapter mWasteWaterCollectAdapter;
     private SharedPreferences collectListSettings;
@@ -134,29 +139,26 @@ public class CollectionFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label})
+    @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label,R.id.btn_add_new})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_add_parallel:
-                if (CheckUtil.isNull(selectSamplingDetail)) {
+            case R.id.btn_add_parallel://添加平行(需要选择普通样)
+                if (CheckUtil.isNull(selectSamplingDetail)){
                     ArtUtils.makeText(getContext(), "请先选择一项样品");
                     return;
                 }
-                if (selectSamplingDetail.getSamplingType() != 0) {
-                    ArtUtils.makeText(getContext(), "请选择非平行样");
+                if (selectSamplingDetail.getSamplingType()!=0){
+                    ArtUtils.makeText(getContext(), "请选择普通样品");
+                    return;
+                }
+                if (isPxSampleAdded(selectSamplingDetail)){
+                    ArtUtils.makeText(getContext(), "该普通样下面已经添加平行样，请另外选择");
                     return;
                 }
                 addTheSameSample();
                 break;
-            case R.id.btn_add_blank:
-                //添加空白
-                if (TextUtils.isEmpty(WastewaterActivity.mSample.getAddressId())) {
-                    ArtUtils.makeText(getContext(), "请先选择采样点位");
-                    return;
-                }
-                editor.putInt("fsListPosition", -1);
-                editor.commit();
-                EventBus.getDefault().post(3, EventBusTags.TAG_WASTEWATER_COLLECTION);
+            case R.id.btn_add_blank://添加空白(不用选择普通样品)
+                addBlankSample();
                 break;
             case R.id.btn_print_label:
                 Gson gson = new Gson();
@@ -169,6 +171,17 @@ public class CollectionFragment extends BaseFragment {
                 intent.putExtra(LabelPrintActivity.LABEL_JSON_DATA, labelStr);
                 intent.putExtra(LabelPrintActivity.SEAL_JSON_DATA, sealStr);
                 ArtUtils.startActivity(intent);
+                break;
+            case R.id.btn_add_new://添加样品
+                if (TextUtils.isEmpty(WastewaterActivity.mSample.getAddressId())) {
+                    ArtUtils.makeText(getContext(), "请先选择采样点位");
+                    return;
+                }
+                editor.putInt("fsListPosition", -1);
+                editor.commit();
+                EventBus.getDefault().post(3, EventBusTags.TAG_WASTEWATER_COLLECTION);
+                break;
+            default:
                 break;
         }
     }
@@ -184,10 +197,10 @@ public class CollectionFragment extends BaseFragment {
             }
         });
 
-        mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingDetailResults(), new WasteWaterCollectAdapter.OnWasteWaterCollectListener() {
+        mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingDetailResults(),new WasteWaterCollectAdapter.OnWasteWaterCollectListener(){
             @Override
             public void onSelected(View view, int position, boolean isSelected) {
-                changSelectState(position, isSelected);
+                changSelectState(position,isSelected);
             }
         });
         mWasteWaterCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
@@ -288,23 +301,22 @@ public class CollectionFragment extends BaseFragment {
 
     /**
      * 设置选中状态
-     *
      * @param position
      * @param isSelected
      */
-    private void changSelectState(int position, boolean isSelected) {
-        List<SamplingDetail> detailList = WastewaterActivity.mSample.getSamplingDetailResults();
-        if (!CheckUtil.isEmpty(detailList)) {
-            for (SamplingDetail detail : detailList) {
+    private void changSelectState(int position, boolean isSelected){
+        List<SamplingDetail> detailList= WastewaterActivity.mSample.getSamplingDetailResults();
+        if (!CheckUtil.isEmpty(detailList)){
+            for (SamplingDetail detail:detailList){
                 detail.setSelected(false);
             }
             detailList.get(position).setSelected(isSelected);
             mWasteWaterCollectAdapter.notifyDataSetChanged();
 
-            if (isSelected) {
-                selectSamplingDetail = detailList.get(position);
-            } else {
-                selectSamplingDetail = null;
+            if (isSelected){
+                selectSamplingDetail=detailList.get(position);
+            }else {
+                selectSamplingDetail=null;
             }
         }
     }
@@ -312,8 +324,8 @@ public class CollectionFragment extends BaseFragment {
     /**
      * 添加平行样品
      */
-    private void addTheSameSample() {
-        SamplingDetail detail = new SamplingDetail();
+    private void addTheSameSample(){
+        SamplingDetail detail=new SamplingDetail();
         detail.setProjectId(selectSamplingDetail.getProjectId());
         detail.setId("FS-" + UUID.randomUUID().toString());
         detail.setSamplingId(selectSamplingDetail.getSamplingId());
@@ -327,10 +339,50 @@ public class CollectionFragment extends BaseFragment {
         detail.setMonitemId(selectSamplingDetail.getMonitemId());
         detail.setAddressName(selectSamplingDetail.getAddressName());
         detail.setAddresssId(selectSamplingDetail.getAddresssId());
+
         //数据处理
         WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
         DBHelper.get().getSamplingDetailDao().insert(detail);
         //刷新界面
         mWasteWaterCollectAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * 添加空白样
+     */
+    private void addBlankSample(){
+        SamplingDetail detail=new SamplingDetail();
+        detail.setProjectId(WastewaterActivity.mSample.getProjectId());
+        detail.setSamplingType(2);
+        detail.setId("FS-" + UUID.randomUUID().toString());
+        detail.setSamplingId(WastewaterActivity.mSample.getId());
+        detail.setSampingCode(HelpUtil.createSamplingCode(WastewaterActivity.mSample));
+        detail.setFrequecyNo(HelpUtil.createFrequency(WastewaterActivity.mSample));
+
+        //数据处理
+        WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+        DBHelper.get().getSamplingDetailDao().insert(detail);
+        //刷新界面
+        mWasteWaterCollectAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 判断某个普通样是否添加平行样
+     * @param selectSamplingDetail
+     * @return
+     */
+    private boolean isPxSampleAdded(SamplingDetail selectSamplingDetail){
+        boolean flag=false;
+        List<SamplingDetail> samplingList= WastewaterActivity.mSample.getSamplingDetailResults();
+        if (!CheckUtil.isEmpty(samplingList)){
+            for (SamplingDetail detail:samplingList){
+                if (selectSamplingDetail.getSampingCode().equals(detail.getSampingCode())){
+                    flag=true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+
 }

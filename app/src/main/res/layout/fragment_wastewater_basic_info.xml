@@ -9,6 +9,67 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="采样单编号" />
+
+            <TextView
+                android:id="@+id/base_sample_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测目的" />
+
+            <TextView
+                android:id="@+id/base_sample_md"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测性质" />
+
+            <TextView
+                android:id="@+id/base_sample_xz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textColor="#333333"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+
+
+
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
 
@@ -72,22 +133,6 @@
             <TextView
                 android:id="@+id/base_sample_point"
                 style="@style/BasicInfoItemTextViewStyle" />
-
-        </RelativeLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样频次" />
-
-            <EditText
-                android:id="@+id/base_sample_frequency"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:inputType="number"
-                android:maxLength="5" />
 
         </RelativeLayout>
 

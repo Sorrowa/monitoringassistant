@@ -89,11 +89,11 @@ public class Sampling {
     @Id
     private String Id;
     private String ProjectId;
-    private String SamplingNo;
+    private String SamplingNo;//采样单编号
     private String FormPath;
     private String FormName;
-    private String ProjectName;
-    private String Montype;
+    private String ProjectName;//监测目的（任务名称）
+    private String Montype;//监测性质（类别）
     private String SamplingTimeBegin;
     private String SamplingTimeEnd;
     private String ParentTagId;

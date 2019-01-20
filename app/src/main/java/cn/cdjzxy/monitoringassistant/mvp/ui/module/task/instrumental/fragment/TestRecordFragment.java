@@ -60,6 +60,8 @@ public class TestRecordFragment extends BaseFragment {
     TextView tvPrintLabel;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
+    @BindView(R.id.btn_add_new)
+    RelativeLayout btn_add_new;
 
     private InstrumentalTestRecordAdapter mInstrumentalTestRecordAdapter;
 //    private SharedPreferences collectListSettings;
@@ -79,6 +81,7 @@ public class TestRecordFragment extends BaseFragment {
     public void initData(@Nullable Bundle savedInstanceState) {
         btnPrintLabel.setVisibility(View.GONE);
         tvAddBlank.setText("添加样品");
+        btn_add_new.setVisibility(View.GONE);
         initRecyclerViewData();
     }
 

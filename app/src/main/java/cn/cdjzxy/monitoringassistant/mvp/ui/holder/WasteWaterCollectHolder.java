@@ -11,6 +11,7 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.Constants;
 
 public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
 
@@ -53,7 +54,9 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
         if (detail.getSamplingType()==0){
             collect_operate.setText("");
         }else if (detail.getSamplingType()==1){
-            collect_operate.setText("添加平行");
+            collect_operate.setText(Constants.SAMPLING_TYPE_PX);
+        }else if (detail.getSamplingType()==2){
+            collect_operate.setText(Constants.SAMPLING_TYPE_KB);
         }
 
         if (detail.isSelected()){

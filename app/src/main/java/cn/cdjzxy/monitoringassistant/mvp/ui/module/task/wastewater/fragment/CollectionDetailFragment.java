@@ -18,6 +18,7 @@ import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -37,6 +38,7 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
@@ -52,8 +54,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
 /**
@@ -64,9 +68,9 @@ public class CollectionDetailFragment extends BaseFragment {
     @BindView(R.id.sample_code)
     TextView sample_code;
     @BindView(R.id.sample_frequency)
-    EditText sample_frequency;
+    TextView sample_frequency;
     @BindView(R.id.sample_quality)
-    EditText sample_quality;
+    TextView sample_quality;
     @BindView(R.id.sample_monitor_items)
     TextView sample_monitor_items;
     @BindView(R.id.sample_monitor)
@@ -157,7 +161,7 @@ public class CollectionDetailFragment extends BaseFragment {
         fsListPosition = collectListSettings.getInt("fsListPosition", -1);
         if (fsListPosition == -1) {
             samplingDetail = new SamplingDetail();
-
+            /*
             String samplingNo;
 
             String snDate = DateUtils.getDate().replace("-", "").substring(2);
@@ -166,20 +170,22 @@ public class CollectionDetailFragment extends BaseFragment {
                 snPointPosition = mSample.getAddressNo();
             }
             String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
+
             int snFrequency = 1;
             if (samplingDetailResults != null && samplingDetailResults.size() > 0) {
                 snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
             }
 
             samplingNo = "FS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
+            */
 
-            sample_code.setText(samplingNo);
-            sample_frequency.setText(snFrequency + "");
+            sample_code.setText(HelpUtil.createSamplingCode(mSample));
+            sample_frequency.setText(HelpUtil.createFrequency(mSample));
+            sample_quality.setText(Constants.SAMPLING_TYPE_PT);
 
         } else {
             samplingDetail = samplingDetailResults.get(fsListPosition);
             sample_code.setText(samplingDetail.getSampingCode());
-            sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
             sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
 
             sample_monitor_items.setText(samplingDetail.getMonitemName());
@@ -188,6 +194,14 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_add_preserve.setChecked(samplingDetail.getIsAddPreserve());
             sample_compare_monitor.setChecked(samplingDetail.getIsCompare());
             sample_mark.setText(samplingDetail.getDescription());
+
+            if (samplingDetail.getSamplingType()==0){
+                sample_quality.setText(Constants.SAMPLING_TYPE_PT);
+            }else if (samplingDetail.getSamplingType()==1){
+                sample_quality.setText(Constants.SAMPLING_TYPE_PX);
+            }else if (samplingDetail.getSamplingType()==2){
+                sample_quality.setText(Constants.SAMPLING_TYPE_KB);
+            }
         }
     }
 

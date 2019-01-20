@@ -7,6 +7,38 @@
     android:orientation="horizontal">
 
     <RelativeLayout
+        android:id="@+id/btn_add_new"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_add_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@mipmap/ic_add_blank"
+            android:drawablePadding="@dimen/dp_12"
+            android:text="添加"
+            android:textColor="@color/text_color_2b99ff"
+            android:textSize="@dimen/text_size_14" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/division_line"
+            android:layout_alignParentTop="true"
+            android:background="@color/dc1" />
+
+
+        <View
+            android:layout_width="@dimen/division_line"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@color/dc1" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/btn_add_parallel"
         android:layout_width="0dp"
         android:layout_height="match_parent"
