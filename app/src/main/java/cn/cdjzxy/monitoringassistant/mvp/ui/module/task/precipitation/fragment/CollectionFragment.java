@@ -27,6 +27,7 @@ import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,15 +35,20 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PrecipitationCollectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
@@ -151,7 +157,7 @@ public class CollectionFragment extends BaseFragment {
                 //构建标签数据
                 String labelStr = gson.toJson(buildPrintLabelList(PrecipitationActivity.mSampling));
                 //构建封条数据
-                String sealStr = gson.toJson(buildSealInfo(PrecipitationActivity.mSampling));
+                String sealStr = gson.toJson(buildSealInfo(PrecipitationActivity.mProject));
 
                 Intent intent = new Intent(getContext(), LabelPrintActivity.class);
                 intent.putExtra(LabelPrintActivity.LABEL_JSON_DATA, labelStr);
@@ -225,12 +231,27 @@ public class CollectionFragment extends BaseFragment {
      *
      * @return
      */
-    private SealInfo buildSealInfo(Sampling sampling) {
+    private SealInfo buildSealInfo(Project project) {
+
+        StringBuilder points = new StringBuilder("");
+
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
+        if (!CheckUtil.isEmpty(projectDetials)) {
+            for (ProjectDetial projectDetial : projectDetials) {
+                if (!points.toString().contains(projectDetial.getAddress())) {
+                    if (points.length() > 0) {
+                        points.append(",");
+                    }
+                    points.append(projectDetial.getAddress());
+                }
+            }
+        }
+
         SealInfo result = new SealInfo();
         result.setTitle("新都区环境监测站");
-        result.setTaskName(sampling.getProjectName());
-        result.setSampingAddr(sampling.getAddressName());
-        result.setType(sampling.getSampProperty());//样品性质
+        result.setTaskName(project.getName());
+        result.setSampingAddr(points.toString());
+        result.setType(project.getMonType());//样品性质
         result.setTime(DateUtils.getTime(new Date().getTime()));
 
         return result;

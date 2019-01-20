@@ -16,6 +16,7 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -27,6 +28,8 @@ import com.gprinter.io.PortParameters;
 import com.gprinter.service.GpPrintService;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +126,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
         // Make sure we're not doing discovery anymore
         if (mBluetoothAdapter != null) {
-            isStart=false;
+            isStart = false;
             mBluetoothAdapter.cancelDiscovery();
         }
 
@@ -223,7 +226,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(isStart){
+                if (isStart) {
                     isStart = false;
                     titleBar.setRightText("刷新");
                     mBluetoothAdapter.cancelDiscovery();
@@ -247,14 +250,20 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed
                 // already
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    if (!devices.contains(device)) {
-                        devices.add(device);
-
-                        mDeviceList.add(new DeviceInfo(device.getName(), device.getAddress(), getDevieStatus(device.getAddress())));
-                        mDeviceAdapter.notifyDataSetChanged();
+//                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                if (!devices.contains(device)) {
+                    devices.add(device);
+                    mDeviceList.add(new DeviceInfo(device.getName(), device.getAddress(), getDevieStatus(device.getAddress())));
+                } else {
+                    DeviceInfo info = findDevice(device.getAddress());
+                    if (info != null) {
+                        info.setName(device.getName());
+                        info.setAddress(device.getAddress());
+                        info.setStatus(getDevieStatus(device.getAddress()));
                     }
                 }
+                mDeviceAdapter.notifyDataSetChanged();
+//                }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.i("tag", "finish discovery " + mDeviceList.size());
@@ -264,6 +273,16 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
     };
+
+    private DeviceInfo findDevice(String address) {
+        for (DeviceInfo deviceInfo : mDeviceList) {
+            if (deviceInfo.getAddress().equals(address)) {
+                return deviceInfo;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * 注册广播
@@ -370,6 +389,10 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         private int status;
 
         public String getName() {
+            if (TextUtils.isEmpty(name)) {
+                return "";
+            }
+
             return name;
         }
 

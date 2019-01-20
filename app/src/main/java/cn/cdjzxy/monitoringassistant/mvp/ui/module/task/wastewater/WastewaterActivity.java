@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -69,6 +68,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     private String samplingId;//采样单id
     private boolean isNewCreate;//是否是新增采样单
     public static Sampling mSample;
+    public static Project mProject;
 
     private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
@@ -120,6 +120,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         formSelectId = getIntent().getStringExtra("formSelectId");
         samplingId = getIntent().getStringExtra("samplingId");
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         if (isNewCreate) {
             mSample = createSample();
         } else {
@@ -266,16 +267,15 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * @return
      */
     private Sampling createSample() {
-        Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
         Sampling sampling = new Sampling();
         sampling.setId("FS-" + UUID.randomUUID().toString());//唯一标志
         sampling.setSamplingNo(createSamplingNo());
-        sampling.setProjectId(project.getId());
-        sampling.setProjectName(project.getName());
-        sampling.setProjectNo(project.getProjectNo());
+        sampling.setProjectId(mProject.getId());
+        sampling.setProjectName(mProject.getName());
+        sampling.setProjectNo(mProject.getProjectNo());
         //sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(project.getTypeCode() + "");
+        sampling.setMontype(mProject.getTypeCode() + "");
         //sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
         sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());

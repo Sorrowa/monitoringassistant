@@ -73,6 +73,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     private CollectionDetailFragment mCollectionDetailFragment;
 
     public static Sampling mSampling;
+    public static Project mProject;
 
     private TitleBarView mTitleBarView;
 
@@ -112,6 +113,8 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         formSelectId = getIntent().getStringExtra("formSelectId");
         samplingId = getIntent().getStringExtra("samplingId");
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
+
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
 
         if (isNewCreate) {
             mSampling = createSampling();
@@ -225,16 +228,15 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private Sampling createSampling() {
-        Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
         Sampling sampling = new Sampling();
         sampling.setId("LC-" + UUID.randomUUID().toString());
         sampling.setSamplingNo(createSamplingNo());
-        sampling.setProjectId(project.getId());
-        sampling.setProjectName(project.getName());
-        sampling.setProjectNo(project.getProjectNo());
+        sampling.setProjectId(mProject.getId());
+        sampling.setProjectName(mProject.getName());
+        sampling.setProjectNo(mProject.getProjectNo());
         sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(project.getTypeCode() + "");
+        sampling.setMontype(mProject.getTypeCode() + "");
         sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
         sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
