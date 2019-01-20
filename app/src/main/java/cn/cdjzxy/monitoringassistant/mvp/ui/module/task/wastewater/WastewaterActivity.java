@@ -68,6 +68,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     private String samplingId;//采样单id
     private boolean isNewCreate;//是否是新增采样单
     public static Sampling mSample;
+    public static Project mProject;
 
     private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
@@ -118,7 +119,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         formSelectId = getIntent().getStringExtra("formSelectId");
         samplingId = getIntent().getStringExtra("samplingId");
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
-
+        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         if (isNewCreate) {
             mSample = createSample();
         } else {
@@ -297,10 +298,9 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private String createSamplingNo() {
         StringBuilder samplingNo = new StringBuilder("");
-        String dateStr = DateUtils.getWholeDateStr();
-        samplingNo.append(dateStr);
+        //String dateStr = DateUtils.getWholeDateStr();
+        //samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
-        /*
         List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {
@@ -314,7 +314,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                 samplingNo.append(StringUtil.autoGenericCode(1, 2));
             }
         }
-        */
         return samplingNo.toString();
     }
 
