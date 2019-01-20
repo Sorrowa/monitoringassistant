@@ -189,7 +189,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
         tvPoint.setText(samplingDetail.getAddressName());
         tvTestTime.setText(samplingDetail.getSamplingOnTime());//检测日期
-        tvControl.setText(samplingDetail.getPrivateDataBooleanValue("HasPX") ? "平行" : "样品");
+        tvControl.setText(samplingDetail.getPrivateDataBooleanValue("HasPX") ? "平行" : "");
         tvAnalyseTime.setText(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
         etAnalyseResult.setText(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
         tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位

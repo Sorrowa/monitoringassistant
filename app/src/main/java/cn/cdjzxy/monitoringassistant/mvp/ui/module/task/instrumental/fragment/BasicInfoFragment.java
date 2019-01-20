@@ -176,6 +176,8 @@ public class BasicInfoFragment  extends BaseFragment {
                             if (!CheckUtil.isEmpty(data.getStringExtra("MonitemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonitemName"))) {
                                 InstrumentalActivity.mSampling.setMonitemId(data.getStringExtra("MonitemId"));
                                 InstrumentalActivity.mSampling.setMonitemName(data.getStringExtra("MonitemName"));
+                                InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
+                                InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
                                 tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
                             }
                         }

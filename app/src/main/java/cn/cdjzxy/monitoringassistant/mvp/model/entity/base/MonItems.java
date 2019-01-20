@@ -23,6 +23,10 @@ public class MonItems {
     private String  Name;
     @Transient
     private boolean isSelected;
+    @Transient
+    private String addressId;
+    @Transient
+    private String addressName;
 
     @Generated(hash = 1403264955)
     public MonItems(String Id, String Code, String Name) {
@@ -65,5 +69,21 @@ public class MonItems {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
+    }
+
+    public String getAddressName() {
+        return addressName;
+    }
+
+    public void setAddressName(String addressName) {
+        this.addressName = addressName;
     }
 }

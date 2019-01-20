@@ -290,19 +290,19 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                     sampling.setTagName(sampling.getTagName() + projectDetial.getMonItemName());
                 }
 
-                if (!sampling.getAddressId().contains(projectDetial.getAddressId())) {
-                    if (!TextUtils.isEmpty(sampling.getAddressId())) {
-                        sampling.setAddressId(sampling.getAddressId() + ",");
-                    }
-                    sampling.setAddressId(sampling.getAddressId() + projectDetial.getAddressId());
-                }
-
-                if (!sampling.getAddressName().contains(projectDetial.getAddress())) {
-                    if (!TextUtils.isEmpty(sampling.getAddressName())) {
-                        sampling.setAddressName(sampling.getAddressName() + ",");
-                    }
-                    sampling.setAddressName(sampling.getAddressName() + projectDetial.getAddress());
-                }
+//                if (!sampling.getAddressId().contains(projectDetial.getAddressId())) {
+//                    if (!TextUtils.isEmpty(sampling.getAddressId())) {
+//                        sampling.setAddressId(sampling.getAddressId() + ",");
+//                    }
+//                    sampling.setAddressId(sampling.getAddressId() + projectDetial.getAddressId());
+//                }
+//
+//                if (!sampling.getAddressName().contains(projectDetial.getAddress())) {
+//                    if (!TextUtils.isEmpty(sampling.getAddressName())) {
+//                        sampling.setAddressName(sampling.getAddressName() + ",");
+//                    }
+//                    sampling.setAddressName(sampling.getAddressName() + projectDetial.getAddress());
+//                }
             }
         }
 
