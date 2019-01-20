@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -19,6 +21,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -320,6 +323,20 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         if (conn != null) {
             unbindService(conn); // unBindService
             unregisterReceiver(mBroadcastReceiver);
+        }
+
+        //由于gprinter会读取/proc/stat来获取cpu信息，所以再次获取一次文件读写权限，android6.0后会不会在xml里面自动获取权限
+        //也可在android应用设置中授权文件读写权限
+        int REQUEST_EXTERNAL_STORAGE = 1;
+        String[] PERMISSIONS_STORAGE = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+        int permission1 = ActivityCompat.checkSelfPermission(LabelPrintActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permission2 = ActivityCompat.checkSelfPermission(LabelPrintActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission1 != PackageManager.PERMISSION_GRANTED || permission2 != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(LabelPrintActivity.this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
         }
 
         conn = new PrinterServiceConnection();
