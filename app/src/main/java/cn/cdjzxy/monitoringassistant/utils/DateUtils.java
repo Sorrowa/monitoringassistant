@@ -420,4 +420,8 @@ public class DateUtils {
         return reStr;
     }
 
+    public static String getWholeDateStr() {
+        return new SimpleDateFormat("yyyyMMddHHMMss").format(new Date()).toString();
+    }
+
 }

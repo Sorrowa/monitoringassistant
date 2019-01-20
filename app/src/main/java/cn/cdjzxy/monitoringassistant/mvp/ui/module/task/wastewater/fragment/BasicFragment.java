@@ -63,6 +63,13 @@ public class BasicFragment extends BaseFragment {
 
     private static final int REQUEST_CODE = 23;
 
+    @BindView(R.id.base_sample_no)
+    TextView base_sample_no;
+    @BindView(R.id.base_sample_md)
+    TextView base_sample_md;
+    @BindView(R.id.base_sample_xz)
+    TextView base_sample_xz;
+
     @BindView(R.id.base_sample_date)
     TextView base_sample_date;
     @BindView(R.id.base_sample_user)
@@ -71,8 +78,6 @@ public class BasicFragment extends BaseFragment {
     TextView base_sample_property;
     @BindView(R.id.base_sample_point)
     TextView base_sample_point;
-    @BindView(R.id.base_sample_frequency)
-    EditText base_sample_frequency;
     @BindView(R.id.base_sample_method)
     TextView base_sample_method;
     @BindView(R.id.base_sample_handle)
@@ -119,6 +124,8 @@ public class BasicFragment extends BaseFragment {
     EditText tv_flow_method;
     @BindView(R.id.tv_flow_date)
     TextView tv_flow_date;
+    @BindView(R.id.tv_receive_date)
+    TextView tv_receive_date;
     @BindView(R.id.base_sample_comment)
     TextView base_sample_comment;
     @BindView(R.id.iv_add_photo)
@@ -146,55 +153,59 @@ public class BasicFragment extends BaseFragment {
         //设置文件选择
         sampleFiles.add(new SamplingFile());
         if (!CheckUtil.isNull(WastewaterActivity.mSample)) {
-            Gson gson=new Gson();
-            fsExtends=gson.fromJson(WastewaterActivity.mSample.getPrivateData(),FsExtends.class);
-            if (fsExtends==null){
-                fsExtends=new FsExtends();
+            Gson gson = new Gson();
+            fsExtends = gson.fromJson(WastewaterActivity.mSample.getPrivateData(), FsExtends.class);
+            if (fsExtends == null) {
+                fsExtends = new FsExtends();
             }
+            base_sample_no.setText(WastewaterActivity.mSample.getSamplingNo());
+            base_sample_md.setText(WastewaterActivity.mSample.getProjectName());
+            base_sample_xz.setText(WastewaterActivity.mSample.getMontype());
+
             base_sample_date.setText(WastewaterActivity.mSample.getSamplingTimeBegin());
             base_sample_user.setText(WastewaterActivity.mSample.getSamplingUserName());
             base_sample_property.setText(WastewaterActivity.mSample.getTagName());
             base_sample_point.setText(WastewaterActivity.mSample.getAddressName());
-            base_sample_frequency.setText(fsExtends==null?"":fsExtends.getFrequencyNo());
             base_sample_method.setText(WastewaterActivity.mSample.getMethodName());
-            boolean sewageDisposal=false;
-            if (fsExtends!=null && !TextUtils.isEmpty(fsExtends.getSewageDisposal()) && fsExtends.getSewageDisposal().equals("是")){
-                sewageDisposal=true;
+            boolean sewageDisposal = false;
+            if (fsExtends != null && !TextUtils.isEmpty(fsExtends.getSewageDisposal()) && fsExtends.getSewageDisposal().equals("是")) {
+                sewageDisposal = true;
             }
             base_sample_handle.setChecked(sewageDisposal);
             base_sample_comment.setText(WastewaterActivity.mSample.getComment());
             //水体信息
-            water_temp.setText(fsExtends==null?"":fsExtends.getWaterWD());
-            water_speed.setText(fsExtends==null?"":fsExtends.getWaterLS());
-            water_flow.setText(fsExtends==null?"":fsExtends.getWaterLL());
+            water_temp.setText(fsExtends == null ? "" : fsExtends.getWaterWD());
+            water_speed.setText(fsExtends == null ? "" : fsExtends.getWaterLS());
+            water_flow.setText(fsExtends == null ? "" : fsExtends.getWaterLL());
             //气象信息
             weather_state.setText(WastewaterActivity.mSample.getWeather());
             weather_temp.setText(WastewaterActivity.mSample.getTemprature());
             weather_pressure.setText(WastewaterActivity.mSample.getPressure());
             //更多信息
-            more_name.setText(fsExtends==null?"":fsExtends.getClientName());
-            more_address.setText(fsExtends==null?"":fsExtends.getClientAdd());
-            more_device.setText(fsExtends==null?"":fsExtends.getHandleDevice());
-            more_waterbody.setText(fsExtends==null?"":fsExtends.getReceiving());
+            more_name.setText(fsExtends == null ? "" : fsExtends.getClientName());
+            more_address.setText(fsExtends == null ? "" : fsExtends.getClientAdd());
+            more_device.setText(fsExtends == null ? "" : fsExtends.getHandleDevice());
+            more_waterbody.setText(fsExtends == null ? "" : fsExtends.getReceiving());
             //流转信息
             tv_flow_method.setText(WastewaterActivity.mSample.getTransfer());
             tv_flow_date.setText(WastewaterActivity.mSample.getSendSampTime());
+            tv_receive_date.setText(WastewaterActivity.mSample.getReciveTime());
             //图片信息
-            if (WastewaterActivity.mSample.getSamplingFiless()!=null && WastewaterActivity.mSample.getSamplingFiless().size()>0){
+            if (WastewaterActivity.mSample.getSamplingFiless() != null && WastewaterActivity.mSample.getSamplingFiless().size() > 0) {
                 sampleFiles.addAll(WastewaterActivity.mSample.getSamplingFiless());
             }
 
-        }else {
-            fsExtends=new FsExtends();
+        } else {
+            fsExtends = new FsExtends();
         }
 
         base_sample_handle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 base_sample_handle.setChecked(!base_sample_handle.isChecked());
-                if (!base_sample_handle.isChecked()){
+                if (!base_sample_handle.isChecked()) {
                     fsExtends.setSewageDisposal("否");
-                }else{
+                } else {
                     fsExtends.setSewageDisposal("是");
                 }
             }
@@ -276,7 +287,7 @@ public class BasicFragment extends BaseFragment {
                 .capture(true)
                 .captureStrategy(new CaptureStrategy(true, "cn.cdjzxy.monitoringassistant.android7.fileprovider", "MonitoringAssistant"))
                 .maxSelectable(5)
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                 .showSingleMediaType(true)
                 .thumbnailScale(0.85f)
                 .imageEngine(new Glide4Engine())
@@ -286,7 +297,7 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.water_info_layout, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date})
+    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.water_info_layout, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date,R.id.tv_receive_date})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_photo:
@@ -308,46 +319,25 @@ public class BasicFragment extends BaseFragment {
                 showSamplingMethods();
                 break;
             case R.id.water_info_layout:
-                if (water_arrow.getRotation() == 90f) {
-                    water_arrow.animate().rotation(0f);
-                    layout_water_information_container.setVisibility(View.GONE);
-                } else {
-                    water_arrow.animate().rotation(90f);
-                    layout_water_information_container.setVisibility(View.VISIBLE);
-                }
+                setArrowAnimate(water_arrow, layout_water_information_container);
                 break;
             case R.id.weather_info_layout:
-                if (weather_arrow.getRotation() == 90f) {
-                    weather_arrow.animate().rotation(0f);
-                    layout_weather_information_container.setVisibility(View.GONE);
-                } else {
-                    weather_arrow.animate().rotation(90f);
-                    layout_weather_information_container.setVisibility(View.VISIBLE);
-                }
+                setArrowAnimate(weather_arrow, layout_weather_information_container);
                 break;
             case R.id.more_info_layout:
-                if (more_arrow.getRotation() == 90f) {
-                    more_arrow.animate().rotation(0f);
-                    layout_more_information.setVisibility(View.GONE);
-                } else {
-                    more_arrow.animate().rotation(90f);
-                    layout_more_information.setVisibility(View.VISIBLE);
-                }
+                setArrowAnimate(more_arrow, layout_more_information);
                 break;
             case R.id.layout_flow_information:
-                if (tv_arrow.getRotation() == 90f) {
-                    tv_arrow.animate().rotation(0f);
-                    layout_flow_information_container.setVisibility(View.GONE);
-                } else {
-                    tv_arrow.animate().rotation(90f);
-                    layout_flow_information_container.setVisibility(View.VISIBLE);
-                }
+                setArrowAnimate(tv_arrow, layout_flow_information_container);
                 break;
             case R.id.weather_state:
                 showWeatherChoose();
                 break;
             case R.id.tv_flow_date:
-                showDateSelectDialog(tv_flow_date);
+                showSendDateSelectDialog(tv_flow_date);
+                break;
+            case R.id.tv_receive_date:
+                showReceiveDateSelectDialog(tv_receive_date);
                 break;
             default:
                 break;
@@ -356,7 +346,7 @@ public class BasicFragment extends BaseFragment {
     }
 
     /**
-     * 时间选择器
+     * 时间选择器(采样日期)
      * data picker
      */
     private void showDateSelectDialog(TextView dateTextView) {
@@ -367,6 +357,38 @@ public class BasicFragment extends BaseFragment {
                 dateTextView.setText(DateUtils.getDate(date));
             }
         }).build();
+        pvTime.setDate(Calendar.getInstance());
+        pvTime.show();
+    }
+
+    /**
+     * 设置送样时间
+     * @param dateTextView
+     */
+    private void showSendDateSelectDialog(TextView dateTextView) {
+        TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                WastewaterActivity.mSample.setSendSampTime(DateUtils.getTime(date.getTime()));
+                dateTextView.setText(DateUtils.getTime(date.getTime()));
+            }
+        }).setType(new boolean[]{true, true, true, true, true, true}).isCyclic(true).build();
+        pvTime.setDate(Calendar.getInstance());
+        pvTime.show();
+    }
+
+    /**
+     * 选择收样时间
+     * @param dateTextView
+     */
+    private void showReceiveDateSelectDialog(TextView dateTextView) {
+        TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                WastewaterActivity.mSample.setReciveTime(DateUtils.getTime(date.getTime()));
+                dateTextView.setText(DateUtils.getTime(date.getTime()));
+            }
+        }).setType(new boolean[]{true, true, true, true, true, true}).isCyclic(true).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
@@ -472,14 +494,30 @@ public class BasicFragment extends BaseFragment {
         });
     }
 
+    /**
+     * 设置箭头的动画效果
+     *
+     * @param arrow
+     * @param container
+     */
+    private void setArrowAnimate(View arrow, View container) {
+        if (arrow.getRotation() == 90f) {
+            arrow.animate().rotation(0f);
+            container.setVisibility(View.GONE);
+        } else {
+            arrow.animate().rotation(90f);
+            container.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     /**
      * 保存扩展信息
+     *
      * @return
      */
-    public void saveFsExtends(){
-        if (fsExtends!=null && WastewaterActivity.mSample!=null){
-            fsExtends.setFrequencyNo(base_sample_frequency.getText().toString());
+    private void saveFsExtends() {
+        if (fsExtends != null && WastewaterActivity.mSample != null) {
             fsExtends.setWaterWD(water_temp.getText().toString());
             fsExtends.setWaterLL(water_flow.getText().toString());
             fsExtends.setWaterLS(water_speed.getText().toString());
@@ -488,10 +526,22 @@ public class BasicFragment extends BaseFragment {
             fsExtends.setHandleDevice(more_device.getText().toString());
             fsExtends.setReceiving(more_waterbody.getText().toString());
 
-            Gson gson=new Gson();
-            String jsonStr=gson.toJson(fsExtends);
+            Gson gson = new Gson();
+            String jsonStr = gson.toJson(fsExtends);
             WastewaterActivity.mSample.setPrivateData(jsonStr);
         }
+    }
+
+    /**
+     * 保存设置采样基本信息
+     */
+    public void saveSamplingData() {
+        WastewaterActivity.mSample.setWeather(weather_state.getText().toString());
+        WastewaterActivity.mSample.setTemprature(weather_temp.getText().toString());
+        WastewaterActivity.mSample.setPressure(weather_pressure.getText().toString());
+        WastewaterActivity.mSample.setTransfer(tv_flow_method.getText().toString());
+        WastewaterActivity.mSample.setSendSampTime(tv_flow_date.getText().toString());
+        saveFsExtends();
     }
 
 }

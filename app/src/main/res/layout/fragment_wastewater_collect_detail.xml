@@ -55,10 +55,9 @@
         <TextView
             style="@style/BasicInfoItemNameStyle"
             android:text="频次" />
-
-        <EditText
+        <TextView
             android:id="@+id/sample_frequency"
-            style="@style/BasicInfoItemEditTextStyle" />
+            style="@style/BasicInfoItemTextViewNoRightDrawableStyle" />
 
     </RelativeLayout>
 
@@ -70,9 +69,9 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="质控" />
 
-        <EditText
+        <TextView
             android:id="@+id/sample_quality"
-            style="@style/BasicInfoItemEditTextStyle" />
+            style="@style/BasicInfoItemTextViewNoRightDrawableStyle" />
 
     </RelativeLayout>
 

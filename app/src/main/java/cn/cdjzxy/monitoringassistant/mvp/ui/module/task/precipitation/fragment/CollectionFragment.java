@@ -66,6 +66,8 @@ public class CollectionFragment extends BaseFragment {
     TextView tvPrintLabel;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
+    @BindView(R.id.btn_add_new)
+    RelativeLayout btn_add_new;
 
     private PrecipitationCollectAdapter mPrecipitationCollectAdapter;
     private SharedPreferences collectListSettings;
@@ -82,6 +84,7 @@ public class CollectionFragment extends BaseFragment {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         btnAddParallel.setVisibility(View.GONE);
+        btn_add_new.setVisibility(View.GONE);
         tvAddBlank.setText("添加");
         initRecyclerViewData();
     }

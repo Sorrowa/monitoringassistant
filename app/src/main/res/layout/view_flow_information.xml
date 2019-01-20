@@ -37,7 +37,7 @@
 
             <TextView
                 style="@style/BasicInfoNextItemNameStyle"
-                android:text="流转方式" />
+                android:text="运输方式" />
 
             <EditText
                 android:id="@+id/tv_flow_method"
@@ -56,6 +56,19 @@
 
             <TextView
                 android:id="@+id/tv_flow_date"
+                style="@style/BasicInfoItemEditTextStyle" />
+
+        </RelativeLayout>
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoNextItemNameStyle"
+                android:text="收样时间" />
+
+            <TextView
+                android:id="@+id/tv_receive_date"
                 style="@style/BasicInfoItemEditTextStyle" />
 
         </RelativeLayout>

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -74,7 +73,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     private FragmentAdapter mFragmentAdapter;
 
     private BasicFragment mBasicFragment;
-    //private SiteMonitoringFragment    mSiteMonitoringFragment;
     private BottleSplitFragment mBottleSplitFragment;
     private BottleSplitDetailFragment mBottleSplitDetailFragment;
     private CollectionFragment mCollectionFragment;
@@ -120,6 +118,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         formSelectId = getIntent().getStringExtra("formSelectId");
         samplingId = getIntent().getStringExtra("samplingId");
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
+
         if (isNewCreate) {
             mSample = createSample();
         } else {
@@ -129,7 +128,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
             mSample.setSamplingDetailResults(samplingDetails);
             List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
-            if (!CheckUtil.isEmpty(formStantdsList)){
+            if (!CheckUtil.isEmpty(formStantdsList)) {
                 WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
             }
         }
@@ -144,7 +143,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!checkBaseInfo()){
+                    if (!checkBaseInfo()) {
                         return;
                     }
                     //保存文件
@@ -191,7 +190,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化Tab数据
      */
     private void initTabData() {
-        //tabview.setTabs("基本信息", "样品采集", "现场检测", "分瓶信息");
         tabview.setTabs("基本信息", "样品采集", "分瓶信息");
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
@@ -201,7 +199,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         });
 
         mBasicFragment = new BasicFragment();
-        //mSiteMonitoringFragment = new SiteMonitoringFragment();
         mBottleSplitFragment = new BottleSplitFragment();
         mBottleSplitDetailFragment = new BottleSplitDetailFragment();
         mCollectionFragment = new CollectionFragment();
@@ -209,7 +206,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
         mFragments = new ArrayList<>();
         mFragments.add(mBasicFragment);
-        //mFragments.add(mSiteMonitoringFragment);
         mFragments.add(mCollectionFragment);
         mFragments.add(mBottleSplitFragment);
         mFragments.add(mCollectionDetailFragment);
@@ -217,7 +213,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
-        //viewPager.setOffscreenPageLimit(6);
         viewPager.setOffscreenPageLimit(5);
     }
 
@@ -275,7 +270,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setProjectName(project.getName());
         sampling.setProjectNo(project.getProjectNo());
         //sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(project.getTypeCode() + "");
+        sampling.setMontype(project.getMonType() + "");
         //sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
         sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
@@ -302,10 +297,10 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private String createSamplingNo() {
         StringBuilder samplingNo = new StringBuilder("");
-        String dateStr = DateUtils.getDate().replace("-", "").substring(2);
+        String dateStr = DateUtils.getWholeDateStr();
         samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
-
+        /*
         List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {
@@ -319,6 +314,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                 samplingNo.append(StringUtil.autoGenericCode(1, 2));
             }
         }
+        */
         return samplingNo.toString();
     }
 
@@ -340,8 +336,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         if (CheckUtil.isEmpty(mSample.getAddressId())) {
             return false;
         }
-        Gson gson=new Gson();
-        FsExtends fsExtends=gson.fromJson(WastewaterActivity.mSample.getPrivateData(),FsExtends.class);
+        Gson gson = new Gson();
+        FsExtends fsExtends = gson.fromJson(WastewaterActivity.mSample.getPrivateData(), FsExtends.class);
         if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getFrequencyNo())) {
             return false;
         }
@@ -349,7 +345,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             return false;
         }
 
-        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())){
+        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
             return false;
         }
         return true;
@@ -357,19 +353,28 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
     /**
      * 基本信息校验
+     *
      * @return
      */
-    private boolean checkBaseInfo(){
-        if (CheckUtil.isEmpty(mSample.getSamplingTimeBegin())){
+    private boolean checkBaseInfo() {
+        if (CheckUtil.isEmpty(mSample.getSamplingTimeBegin())) {
             ArtUtils.makeText(getApplicationContext(), "请选择采样日期");
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getTagId())){
+        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
+            ArtUtils.makeText(getApplicationContext(), "请选择采样人");
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getTagId())) {
             ArtUtils.makeText(getApplicationContext(), "请选择样品性质");
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getAddressId())){
+        if (CheckUtil.isEmpty(mSample.getAddressId())) {
             ArtUtils.makeText(getApplicationContext(), "请选择样监测点位");
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getMethodId())) {
+            ArtUtils.makeText(getApplicationContext(), "请选择样采样方法");
             return false;
         }
         return true;
@@ -378,9 +383,9 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     /**
      * 保存基本信息
      */
-    private void saveBaseInfo(){
-        if (mBasicFragment!=null){
-            mBasicFragment.saveFsExtends();
+    private void saveBaseInfo() {
+        if (mBasicFragment != null) {
+            mBasicFragment.saveSamplingData();
         }
         if (isNewCreate) {
             DBHelper.get().getSamplingDao().insert(mSample);
