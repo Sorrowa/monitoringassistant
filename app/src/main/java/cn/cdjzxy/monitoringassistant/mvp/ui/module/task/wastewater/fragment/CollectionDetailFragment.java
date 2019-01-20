@@ -180,7 +180,7 @@ public class CollectionDetailFragment extends BaseFragment {
             */
 
             sample_code.setText(HelpUtil.createSamplingCode(mSample));
-            sample_frequency.setText(HelpUtil.createFrequency(mSample));
+            sample_frequency.setText(HelpUtil.createFrequency(mSample)+"");
             sample_quality.setText(Constants.SAMPLING_TYPE_PT);
 
         } else {
