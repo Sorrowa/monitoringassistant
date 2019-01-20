@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
@@ -34,6 +33,7 @@ import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,14 +51,18 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
@@ -75,6 +79,9 @@ import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.IosDialog;
 import cn.cdjzxy.monitoringassistant.widgets.OperateTipsDialog;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -155,7 +162,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private TextView mTvCancel;
     private TextView mTvOk;
     //是否批量提交
-    private boolean isMultiCommit = false;
+    private boolean isBatchUpload = false;
+    private int samplingIndex;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -209,6 +217,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
+                isBatchUpload = false;
                 showMessage("操作失败！");
                 break;
             case Message.RESULT_OK:
@@ -223,17 +232,21 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 finish();
                 break;
             case Constants.NET_RESPONSE_CODE_259:
-                showMessage("数据提交成功");
                 sampling.setIsCanEdit(false);
                 sampling.setIsUpload(true);
                 sampling.setStatusName("已提交");
                 sampling.setStatus(7);
                 sampling.setSubmitDate(DateUtils.getDate());
                 DBHelper.get().getSamplingDao().update(sampling);
-                getSampling(mTagId);
+
+                if (!uploadNextSampling()) {
+                    showMessage("数据提交成功");
+                    getSampling(mTagId);
+                }
                 break;
             case Constants.NET_RESPONSE_SAMPLING_DIFFER:
-                if (isMultiCommit) {
+                if (isBatchUpload) {
+                    isBatchUpload = false;
                     multiCommitTipsOperate();
                 } else {
                     commitSamplingDataConflictOperate();
@@ -464,12 +477,20 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onUpload(View view, int position) {
-                isMultiCommit = false;
+                isBatchUpload = false;
+
                 if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                     uploadProjecteContentData(true);
                 }
-                uploadSampFormData(mSamplings.get(position), false);
 
+                Sampling sampling = mSamplings.get(position);
+                if (sampling == null || !sampling.getIsFinish()) {
+                    showMessage("请先完善采样单信息！");
+                    return;
+                }
+
+                //上传数据
+                uploadSampFormData(sampling, false, false);
             }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
@@ -490,8 +511,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 showAddDialog();
                 break;
             case R.id.btn_submit:
-                isMultiCommit = true;
-                multiCommitDatas();
+                batchUploadSampling();
                 break;
 
             case R.id.cb_all:
@@ -677,7 +697,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         getSampling(mTagId);
     }
 
-
     /**
      * 采样完结
      *
@@ -801,7 +820,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                uploadSampFormData(sampling, true);
+                uploadSampFormData(sampling, isBatchUpload, true);
             }
         });
     }
@@ -846,75 +865,387 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     }
 
     /**
-     * 上传采样单数据
-     *
-     * @param itemSampling
-     * @param isCompelSubmit
+     * 批量上传采样单
      */
-    private void uploadSampFormData(Sampling itemSampling, boolean isCompelSubmit) {
-        sampling = itemSampling;
-        if (!sampling.getIsFinish()) {
-            showMessage("请先完善采样单信息！");
-            return;
+    private void batchUploadSampling() {
+        //重置上传索引
+        samplingIndex = -1;
+        isBatchUpload = true;
+
+        if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
+            uploadProjecteContentData(true);
         }
 
-        showLoading();
-        PreciptationSampForm preciptationSampForm = null;
-        if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
-            preciptationSampForm = SubmitDataUtil.setUpJSData(sampling);
-        } else if (PATH_WASTEWATER.equals(sampling.getFormPath())) {
-            preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
-        } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
-            preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
-        }
-
-        //错误处理
-        if (preciptationSampForm == null) {
-            return;
-        }
-
-        if (sampling.getStatus() == 0) {
-            preciptationSampForm.setIsAdd(true);
-            preciptationSampForm.setCompelSubmit(false);
-        } else {
-            preciptationSampForm.setIsAdd(false);
-            preciptationSampForm.setCompelSubmit(false);
-        }
-        if (isCompelSubmit) {
-            preciptationSampForm.setCompelSubmit(isCompelSubmit);
-        }
-        Log.e("SampFormData", JSONObject.toJSONString(preciptationSampForm));
-        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+        //开始批量上传
+        uploadNextSampling();
     }
 
     /**
-     * 批量提交采样单
+     * 上传下一个采样单
      */
-    private void multiCommitDatas() {
-        if (!isSelecteAll) {
-            showMessage("请先勾选需要提交的采样单！");
+    private boolean uploadNextSampling() {
+        if (!isBatchUpload) {
+            return false;
+        }
+
+        do {
+            //更新上传索引
+            samplingIndex = Math.max(0, ++samplingIndex);
+
+            //是否到达结尾
+            if (samplingIndex >= mSamplings.size()) {
+                isBatchUpload = false;
+                return false;
+            }
+
+            //获取采样单
+            sampling = mSamplings.get(samplingIndex);
+
+            //如果未选中、已经提交、未完成，则跳过
+            if (!sampling.isSelected() || sampling.getIsUpload() || !sampling.getIsFinish()) {
+                continue;
+            }
+
+            //上传采样单
+            uploadSampFormData(sampling, true, false);
+            break;
+        } while (true);
+
+        return true;
+    }
+
+    /**
+     * 上传采样单数据
+     *
+     * @param itemSampling   采样单
+     * @param isBatch        是否批量上传
+     * @param isCompelSubmit 是否强制提交
+     */
+    private void uploadSampFormData(Sampling itemSampling, boolean isBatch, boolean isCompelSubmit) {
+        sampling = itemSampling;
+
+        //上传采样单对应的文件，文件上传成功后上传采样单
+        uploadFiles(sampling, new FileUploadHandler() {
+            @Override
+            public void onSuccess() {
+                //文件上传完成后，组装采样单数据。文件ID已更改
+                PreciptationSampForm preciptationSampForm = null;
+                if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
+                    preciptationSampForm = SubmitDataUtil.setUpJSData(sampling);
+                } else if (PATH_WASTEWATER.equals(sampling.getFormPath())) {
+                    preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
+                } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
+                    preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
+                }
+
+                //错误处理
+                if (preciptationSampForm == null) {
+                    isBatchUpload = false;
+                    showMessage(String.format("未实现提交功能的采样单！[%s]", sampling.getSamplingNo()));
+                    return;
+                }
+
+                if (sampling.getStatus() == 0) {
+                    preciptationSampForm.setIsAdd(true);
+                    preciptationSampForm.setCompelSubmit(false);
+                } else {
+                    preciptationSampForm.setIsAdd(false);
+                    preciptationSampForm.setCompelSubmit(false);
+                }
+
+                if (isCompelSubmit) {
+                    preciptationSampForm.setCompelSubmit(isCompelSubmit);
+                }
+
+//                Log.e("SampFormData", JSONObject.toJSONString(preciptationSampForm));
+                //文件上传成功，上传采样单
+                mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);
+            }
+
+            @Override
+            public void onFailed(String msg) {
+                ArtUtils.makeText(TaskDetailActivity.this, msg);
+            }
+        });
+    }
+
+//    /**
+//     * 批量提交采样单
+//     */
+//    private void multiCommitDatas() {
+//        if (!isSelecteAll) {
+//            showMessage("请先勾选需要提交的采样单！");
+//            return;
+//        }
+//
+//<<<<<<< HEAD
+//        if (!isBatch) {
+//            showLoading();
+//        }
+//
+//        //上传文件，文件上传成功后上传采样单
+//        uploadFiles(sampling, new FileUploadHandler() {
+//            @Override
+//            public void onSuccess() {
+//                PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
+//                if (sampling.getStatus() == 0) {
+//                    preciptationSampForm.setIsAdd(true);
+//                    preciptationSampForm.setCompelSubmit(false);
+//                } else {
+//                    preciptationSampForm.setIsAdd(false);
+//                    preciptationSampForm.setCompelSubmit(false);
+//                }
+//
+//                if (isCompelSubmit) {
+//                    preciptationSampForm.setCompelSubmit(isCompelSubmit);
+//                }
+//
+//                mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);
+//            }
+//
+//            @Override
+//            public void onFailed(String msg) {
+//                ArtUtils.makeText(TaskDetailActivity.this, msg);
+//            }
+//        });
+//    }
+//=======
+//        if (mSamplings != null && mSamplings.size() > 0) {
+//            List<Sampling> selectedSamplings = new ArrayList<>();
+//            for (Sampling itemSampling : mSamplings) {
+//                if (itemSampling.isSelected()) {
+//                    selectedSamplings.add(itemSampling);
+//                }
+//            }
+//
+//            if (!CheckUtil.isEmpty(selectedSamplings)) {
+//                for (Sampling itemSampl : selectedSamplings) {
+//                    uploadSampFormData(itemSampl, false);
+//                }
+//>>>>>>> 6347eb7cd97320fc1635fb837ef9058b73770b66
+//
+//            } else {
+//                showMessage("无采样单需要提交！");
+//            }
+//
+//        } else {
+//            showMessage("请先勾选需要提交的采样单！");
+//        }
+//<<<<<<< HEAD
+//
+//        if (isCompelSubmit) {
+//            preciptationSampForm.setCompelSubmit(isCompelSubmit);
+//        }
+//
+////        Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
+//        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+//    }
+
+    /**
+     * 上传文件，重新设置文件ID
+     *
+     * @param sampling
+     * @param handler
+     */
+    private void uploadFiles(Sampling sampling, FileUploadHandler handler) {
+        //从数据库加载数据
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq("")).list();
+        if (CheckUtil.isEmpty(samplingFiles)) {
+            if (handler != null) {
+                handler.onSuccess();
+            }
             return;
         }
 
-        if (mSamplings != null && mSamplings.size() > 0) {
-            List<Sampling> selectedSamplings = new ArrayList<>();
-            for (Sampling itemSampling : mSamplings) {
-                if (itemSampling.isSelected()) {
-                    selectedSamplings.add(itemSampling);
+        //文件集合
+        List<MultipartBody.Part> parts = new ArrayList<>();
+        HashMap<String, SamplingFile> fileSet = new HashMap<>();
+
+        for (SamplingFile sf : samplingFiles) {
+            File file = new File(sf.getFilePath());
+            if (!file.exists()) {
+                if (handler != null) {
+                    handler.onFailed(String.format("文件上传失败，文件不存在[%s]！", sf.getFilePath()));
                 }
+                return;//文件不存在
             }
 
-            if (!CheckUtil.isEmpty(selectedSamplings)) {
-                for (Sampling itemSampl : selectedSamplings) {
-                    uploadSampFormData(itemSampl, false);
-                }
+            //文件上传Body
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            //添加文件数据
+            parts.add(MultipartBody.Part.createFormData("File", file.getName(), requestBody));
 
-            } else {
-                showMessage("无采样单需要提交！");
-            }
-
-        } else {
-            showMessage("请先勾选需要提交的采样单！");
+            //记录文件
+            fileSet.put(sf.getFileName(), sf);
         }
+
+        HashMap<String, RequestBody> map = new HashMap<>();
+        map.put("token", RequestBody.create(MediaType.parse("text/plain"), UserInfoHelper.get().getUser().getToken()));
+
+        //上传文件
+        mPresenter.uploadFile(Message.obtain(new IView() {
+            @Override
+            public void showMessage(@NonNull String message) {
+                if (TextUtils.isEmpty(message)) {
+                    return;
+                }
+
+                ArtUtils.makeText(TaskDetailActivity.this, message);
+            }
+
+            @Override
+            public void handleMessage(@NonNull Message message) {
+                switch (message.what) {
+                    case Message.RESULT_OK:
+                        //上传成功
+                        if (message.obj == null || !(message.obj instanceof List)) {
+                            if (handler != null) {
+                                handler.onFailed("文件上传失败，数据错误！");
+                            }
+                            return;
+                        }
+
+                        List<FileInfoData> fileInfoData = (List<FileInfoData>) message.obj;
+                        if (fileInfoData == null || fileInfoData.size() == 0) {
+                            if (handler != null) {
+                                handler.onFailed("文件上传失败，未返回文件信息！");
+                            }
+                            return;
+                        }
+
+                        //重新设置文件ID
+                        for (FileInfoData item : fileInfoData) {
+                            if (!fileSet.containsKey(item.getFileName())) {
+                                continue;
+                            }
+
+                            //获取文件信息
+                            SamplingFile samplingFile = fileSet.get(item.getFileName());
+                            //更新文件ID
+                            samplingFile.setId(item.getId());
+
+                            //更新到数据库
+                            DBHelper.get().getSamplingFileDao().update(samplingFile);
+                        }
+
+                        if (handler != null) {
+                            handler.onSuccess();
+                        }
+                        break;
+
+                    case Message.RESULT_FAILURE:
+                        //上传失败
+                        if (handler != null) {
+                            handler.onFailed("文件上传失败！");
+                        }
+                        break;
+                }
+            }
+        }), parts, map);
+    }
+
+//    /**
+//     * 提交采样单数据冲突处理
+//     */
+//    private void commitSamplingDataConflictOperate() {
+//        String title = "数据选择";
+//        String msg = "采样单数据同步中止，服务器存在数据不一致，请选择数据标准";
+//        String pBtnStr = "移动端数据";
+//        String nBtnStr = "服务端数据";
+//
+//        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                serverDataChooseOperate();
+//            }
+//        }, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                appDataChooseOperate();
+//            }
+//        });
+//    }
+
+//    /**
+//     * 批量提交采样单，不能直接上传的采样单的提示
+//     */
+//    private void multiCommitTipsOperate() {
+//        String title = "数据未同步";
+//        String msg = "部分表单数据未同步，请单独上传表单后再次提交";
+//        String pBtnStr = "确认";
+//>>>>>>> 18e9179154ea6bd565943ca3ce6670ca80e4a5d3
+//
+//        PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
+//        if (sampling.getStatus() == 0) {
+//            preciptationSampForm.setIsAdd(true);
+//            preciptationSampForm.setCompelSubmit(false);
+//        } else {
+//            preciptationSampForm.setIsAdd(false);
+//            preciptationSampForm.setCompelSubmit(false);
+//        }
+//
+//<<<<<<< HEAD
+//        if (isCompelSubmit) {
+//            preciptationSampForm.setCompelSubmit(isCompelSubmit);
+//=======
+//    /**
+//     * 上传仪器法数据
+//     *
+//     * @param itemSampling
+//     */
+//    private void uploadYQFData(Sampling itemSampling) {
+//        sampling = itemSampling;
+//        if (!sampling.getIsFinish()) {
+//            showMessage("请先完善采样单信息！");
+//            return;
+//>>>>>>> 18e9179154ea6bd565943ca3ce6670ca80e4a5d3
+//        }
+//
+//        Log.e("uploadYQFData", JSONObject.toJSONString(preciptationSampForm));
+//        mPresenter.createTable(Message.obtain(this, new Object()), preciptationSampForm);
+//    }
+
+    //    /**
+//     * 批量提交采样单
+//     */
+//    private void multiCommitDatas(){
+//        if (!isSelecteAll){
+//            showMessage("请先勾选需要提交的采样单！");
+//            return;
+//        }
+//
+//        if (mSamplings!=null && mSamplings.size()>0){
+//            List<Sampling> selectedSamplings = new ArrayList<>();
+//            for (Sampling itemSampling:mSamplings){
+//                if (itemSampling.isSelected()){
+//                    selectedSamplings.add(itemSampling);
+//                }
+//            }
+//
+//            if (!CheckUtil.isEmpty(selectedSamplings)){
+//                for (Sampling itemSampl:selectedSamplings){
+//                    if (PATH_PRECIPITATION.equals(itemSampl.getFormPath())) {
+//                        uploadSamplingData(itemSampl);
+//                    } else if (PATH_WASTEWATER.equals(itemSampl.getFormPath())) {
+//                        uploadFsData(itemSampl, false);
+//                    } else if (PATH_INSTRUMENTAL.equals(itemSampl.getFormPath())) {
+//                        uploadYQFData(itemSampl);
+//                    }
+//                }
+//
+//            }else {
+//                showMessage("无采样单需要提交！");
+//            }
+//
+//        }else {
+//            showMessage("请先勾选需要提交的采样单！");
+//        }
+//    }
+    interface FileUploadHandler {
+        void onSuccess();
+
+        void onFailed(String message);
     }
 }

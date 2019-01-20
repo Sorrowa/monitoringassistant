@@ -33,6 +33,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
@@ -757,14 +758,14 @@ public class ApiRepository implements IModel {
      *
      * @return
      */
-    public Observable<UploadFileResponse> uploadFile(MultipartBody.Part part, Map<String, RequestBody> params) {
-        return Observable.just(mApiService.uploadFile(part, params))
-                .flatMap(new Function<Observable<UploadFileResponse>, ObservableSource<UploadFileResponse>>() {
+    public Observable<UploadFileResponse<List<FileInfoData>>> uploadFile(List<MultipartBody.Part> parts, Map<String, RequestBody> params) {
+        return Observable.just(mApiService.uploadFile(parts, params))
+                .flatMap(new Function<Observable<UploadFileResponse<List<FileInfoData>>>, ObservableSource<UploadFileResponse<List<FileInfoData>>>>() {
                     @Override
-                    public ObservableSource<UploadFileResponse> apply(Observable<UploadFileResponse> baseResponseObservable) throws Exception {
-                        return baseResponseObservable.map(new Function<UploadFileResponse, UploadFileResponse>() {
+                    public ObservableSource<UploadFileResponse<List<FileInfoData>>> apply(Observable<UploadFileResponse<List<FileInfoData>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<UploadFileResponse<List<FileInfoData>>, UploadFileResponse<List<FileInfoData>>>() {
                             @Override
-                            public UploadFileResponse apply(UploadFileResponse baseResponse) throws Exception {
+                            public UploadFileResponse<List<FileInfoData>> apply(UploadFileResponse<List<FileInfoData>> baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });

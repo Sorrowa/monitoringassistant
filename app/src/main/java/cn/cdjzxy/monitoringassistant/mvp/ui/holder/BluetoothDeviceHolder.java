@@ -23,7 +23,7 @@ public class BluetoothDeviceHolder extends BaseHolder<LabelPrintDeviceActivity.D
 
     @Override
     public void setData(LabelPrintDeviceActivity.DeviceInfo data, int position) {
-        mTvName.setText(data.getName());
+        mTvName.setText(data.getName()+String.format(" [%s]",data.getAddress()));
         mTvConnect.setText(data.getStatusName());
     }
 

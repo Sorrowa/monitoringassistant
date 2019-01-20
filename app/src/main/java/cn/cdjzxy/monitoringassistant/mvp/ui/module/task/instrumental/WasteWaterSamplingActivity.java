@@ -150,7 +150,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             }
 
             for (SamplingDetail detail : samplingDetails) {
-                if (!detail.getMonitemId().contains(monitemId)) {
+                //水和废水中，现场监测项目，存到AddressId和AddressName中的
+//                if (!detail.getMonitemId().contains(monitemId)) {
+                if (!detail.getAddresssId().contains(monitemId)) {
                     continue;//过滤不同的项目名
                 }
 
@@ -219,9 +221,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             samplingDetail.setAddressName(item.getAddressName());
             samplingDetail.setFrequecyNo(item.getFrequecyNo());
             samplingDetail.setPrivateDataBooleanValue("HasPX", false);
-            samplingDetail.setPrivateDataStringValue("SamplingOnTime","");
-            samplingDetail.setPrivateDataStringValue("CaleValue","");
-            samplingDetail.setPrivateDataStringValue("RPDValue","");
+            samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
+            samplingDetail.setPrivateDataStringValue("CaleValue", "");
+            samplingDetail.setPrivateDataStringValue("RPDValue", "");
             samplingDetail.setValue("");//均值
 
             //新加样品都可选择

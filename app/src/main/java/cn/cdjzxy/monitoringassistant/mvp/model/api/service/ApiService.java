@@ -18,6 +18,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingUser;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
@@ -197,7 +198,7 @@ public interface ApiService {
     //*******************文件******************
     @Multipart
     @POST(Api.UPLOAD_FILE)
-    Observable<UploadFileResponse> uploadFile(@Part MultipartBody.Part part, @PartMap Map<String,RequestBody> params);
+    Observable<UploadFileResponse<List<FileInfoData>>> uploadFile(@Part() List<MultipartBody.Part> parts, @PartMap Map<String,RequestBody> params);
 
     @DELETE(Api.DELETE_FILE)
     Observable<BaseResponse> deleteFile();

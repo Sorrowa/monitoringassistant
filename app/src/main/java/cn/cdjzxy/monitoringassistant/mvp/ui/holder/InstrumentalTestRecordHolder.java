@@ -80,11 +80,14 @@ public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
         tvFrequency.setText("频次：" + data.getFrequecyNo());
         tvTime.setText(data.getSamplingTime());
         tvPoint.setText(data.getAddressName());
-        tvHasPX.setText(data.getPrivateDataBooleanValue("HasPX") ? "平行" : "样品");
+        tvHasPX.setText(data.getPrivateDataBooleanValue("HasPX") ? "平行" : "");
+
+
+        String unitName = " " + data.getPrivateDataStringValue("ValueUnitName");
 
         tvAnalyseTime.setText("分析时间：" + data.getPrivateDataStringValue("SamplingOnTime"));
-        tvAnalyseResult.setText("分析结果：" + data.getPrivateDataStringValue("CaleValue"));
-        tvAveValue.setText("均值：" + data.getValue());//均值
+        tvAnalyseResult.setText("分析结果：" + data.getPrivateDataStringValue("CaleValue") + unitName);
+        tvAveValue.setText("均值：" + (TextUtils.isEmpty(data.getValue()) ? data.getValue() : data.getValue() + unitName));//均值
         String rpdValue = data.getPrivateDataStringValue("RPDValue");
         tvRelaOffset.setText("相对偏差：" + (TextUtils.isEmpty(rpdValue) ? "" : rpdValue + "%"));//相对偏差
     }

@@ -269,10 +269,12 @@ public class BasicFragment extends BaseFragment {
             for (String path : paths) {
                 SamplingFile samplingFile = new SamplingFile();
                 File file = new File(path);
-                samplingFile.setId("FS-" + UUID.randomUUID().toString());
+                samplingFile.setLocalId("FS-" + UUID.randomUUID().toString());
+                samplingFile.setId("");
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(WastewaterActivity.mSample.getId());
+                samplingFile.setUpdateTime(DateUtils.getTime(new Date().getTime()));
                 sampleFiles.add(samplingFile);
             }
 

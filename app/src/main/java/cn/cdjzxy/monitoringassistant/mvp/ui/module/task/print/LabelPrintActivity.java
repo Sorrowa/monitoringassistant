@@ -275,15 +275,18 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 continue;
             }
 
-//            mPrintList.add(item);
-            printLabelInfo(item);
+            mPrintList.add(item);
         }
 
         //如果有选中，则开始打印
         if (mPrintList.size() > 0) {
 //            printNextLabel();
+            for (LabelInfo item : mPrintList) {
+                printLabelInfo(item);
+            }
+            mPrintList.clear();
         } else {
-//            ArtUtils.makeText(this, "请选择要打印的标签！");
+            ArtUtils.makeText(this, "请选择要打印的标f签！");
         }
     }
 
@@ -495,7 +498,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         //最大X坐标
         int maxX = 560;
         //最大Y坐标
-        int maxY = 370;
+        int maxY = 380;
         //普通高度
         int normalHeight = 50;
         //开始X坐标
@@ -545,7 +548,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
 
         //边框-监测项目
         sy = ey;
-        ey += (int) (normalHeight * 1.8);
+        ey += (int) (normalHeight * 2);
         tsc.addBox(minX, sy, maxX, ey, thickness);
 
         // 绘制-监测项目
@@ -653,7 +656,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         //结束X坐标
         int ex = maxX;
         //结束Y坐标
-        int ey = sy + normalHeight * 3;
+        int ey = sy + (int)(normalHeight * 3.8);
         int offsetX = 1;
         int offsetY = 5;
 
@@ -802,13 +805,13 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         int height = 0;
 
         if (text.length() >= 40) {
-            width = (int) (size[0] * 2.5);
+            width = (int) (size[0] * 2.6);
             height = (int) (size[1] * 1.7);
         } else if (text.length() >= 20) {
-            width = (int) (size[0] * 2.3);
+            width = (int) (size[0] * 2.4);
             height = (int) (size[1] * 1.7);
         } else {
-            width = (int) (size[0] * 1.8);
+            width = (int) (size[0] * 1.9);
             height = (int) (size[1] * 1.7);
         }
 

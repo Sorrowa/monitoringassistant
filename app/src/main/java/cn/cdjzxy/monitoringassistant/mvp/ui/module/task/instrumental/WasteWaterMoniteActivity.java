@@ -84,7 +84,7 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
         HashMap<String, HashMap<String, MonItems>> monItemsMap = new HashMap<String, HashMap<String, MonItems>>();
 
-        HashSet<String> monites = new HashSet<>();
+        HashMap<String, MonItems> monites = new HashMap<>();
         for (Sampling item : samplings) {
             //从数据库加载项目，避免项目名称显示错误
             HashMap<String, MonItems> monItemMap = null;
@@ -112,15 +112,27 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
             }
 
             for (SamplingDetail detail : samplingDetails) {
-                String[] moniteIds = detail.getMonitemId().split(",");
+                //水和废水中，现场监测项目，存到AddressId和AddressName中的
+                String[] moniteIds = detail.getAddresssId().split(",");
+//                String[] moniteIds = detail.getMonitemId().split(",");
 //                String[] monitemNames = detail.getMonitemName().split(",");//名称可能包含“,”
 
                 for (int i = 0; i < moniteIds.length; i++) {
                     String id = moniteIds[i];
 
                     //过滤重复项
-                    if (monites.add(id)) {
-                        mMontes.add(new MonItems(id, "", monItemMap.get(id).getName()));
+                    if (!monites.containsKey(id)) {
+                        MonItems monItem = new MonItems(id, "", monItemMap.get(id).getName());
+                        monItem.setAddressId(item.getAddressId());
+                        monItem.setAddressName(item.getAddressName());
+                        monites.put(id, monItem);
+                        mMontes.add(monItem);
+                    } else {
+                        MonItems monItem = monites.get(id);
+                        if (!monItem.getAddressId().contains(item.getAddressId())) {
+                            monItem.setAddressId("," + item.getAddressId());
+                            monItem.setAddressName("," + item.getAddressName());
+                        }
                     }
                 }
             }
@@ -154,6 +166,8 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
                 Intent intent = new Intent();
                 intent.putExtra("MonitemId", item.getId());
                 intent.putExtra("MonitemName", item.getName());
+                intent.putExtra("AddressId", item.getAddressId());
+                intent.putExtra("AddressName", item.getAddressName());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
