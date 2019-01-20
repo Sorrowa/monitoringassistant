@@ -90,7 +90,9 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         public final static Property IsCanEdit = new Property(60, boolean.class, "isCanEdit", false, "IS_CAN_EDIT");
         public final static Property IsFinish = new Property(61, boolean.class, "isFinish", false, "IS_FINISH");
         public final static Property LayTableCheckbox = new Property(62, String.class, "layTableCheckbox", false, "LAY_TABLE_CHECKBOX");
-        public final static Property SamplingUserResults = new Property(63, String.class, "SamplingUserResults", false, "SAMPLING_USER_RESULTS");
+        public final static Property AllMonitemId = new Property(63, String.class, "AllMonitemId", false, "ALL_MONITEM_ID");
+        public final static Property AllMonitemName = new Property(64, String.class, "AllMonitemName", false, "ALL_MONITEM_NAME");
+        public final static Property SamplingUserResults = new Property(65, String.class, "SamplingUserResults", false, "SAMPLING_USER_RESULTS");
     }
 
     private final StringConverter SamplingUserResultsConverter = new StringConverter();
@@ -170,7 +172,9 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
                 "\"IS_CAN_EDIT\" INTEGER NOT NULL ," + // 60: isCanEdit
                 "\"IS_FINISH\" INTEGER NOT NULL ," + // 61: isFinish
                 "\"LAY_TABLE_CHECKBOX\" TEXT," + // 62: layTableCheckbox
-                "\"SAMPLING_USER_RESULTS\" TEXT);"); // 63: SamplingUserResults
+                "\"ALL_MONITEM_ID\" TEXT," + // 63: AllMonitemId
+                "\"ALL_MONITEM_NAME\" TEXT," + // 64: AllMonitemName
+                "\"SAMPLING_USER_RESULTS\" TEXT);"); // 65: SamplingUserResults
     }
 
     /** Drops the underlying database table. */
@@ -470,9 +474,19 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
             stmt.bindString(63, layTableCheckbox);
         }
  
+        String AllMonitemId = entity.getAllMonitemId();
+        if (AllMonitemId != null) {
+            stmt.bindString(64, AllMonitemId);
+        }
+ 
+        String AllMonitemName = entity.getAllMonitemName();
+        if (AllMonitemName != null) {
+            stmt.bindString(65, AllMonitemName);
+        }
+ 
         List SamplingUserResults = entity.getSamplingUserResults();
         if (SamplingUserResults != null) {
-            stmt.bindString(64, SamplingUserResultsConverter.convertToDatabaseValue(SamplingUserResults));
+            stmt.bindString(66, SamplingUserResultsConverter.convertToDatabaseValue(SamplingUserResults));
         }
     }
 
@@ -767,9 +781,19 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
             stmt.bindString(63, layTableCheckbox);
         }
  
+        String AllMonitemId = entity.getAllMonitemId();
+        if (AllMonitemId != null) {
+            stmt.bindString(64, AllMonitemId);
+        }
+ 
+        String AllMonitemName = entity.getAllMonitemName();
+        if (AllMonitemName != null) {
+            stmt.bindString(65, AllMonitemName);
+        }
+ 
         List SamplingUserResults = entity.getSamplingUserResults();
         if (SamplingUserResults != null) {
-            stmt.bindString(64, SamplingUserResultsConverter.convertToDatabaseValue(SamplingUserResults));
+            stmt.bindString(66, SamplingUserResultsConverter.convertToDatabaseValue(SamplingUserResults));
         }
     }
 
@@ -844,7 +868,9 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
             cursor.getShort(offset + 60) != 0, // isCanEdit
             cursor.getShort(offset + 61) != 0, // isFinish
             cursor.isNull(offset + 62) ? null : cursor.getString(offset + 62), // layTableCheckbox
-            cursor.isNull(offset + 63) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 63)) // SamplingUserResults
+            cursor.isNull(offset + 63) ? null : cursor.getString(offset + 63), // AllMonitemId
+            cursor.isNull(offset + 64) ? null : cursor.getString(offset + 64), // AllMonitemName
+            cursor.isNull(offset + 65) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 65)) // SamplingUserResults
         );
         return entity;
     }
@@ -914,7 +940,9 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         entity.setIsCanEdit(cursor.getShort(offset + 60) != 0);
         entity.setIsFinish(cursor.getShort(offset + 61) != 0);
         entity.setLayTableCheckbox(cursor.isNull(offset + 62) ? null : cursor.getString(offset + 62));
-        entity.setSamplingUserResults(cursor.isNull(offset + 63) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 63)));
+        entity.setAllMonitemId(cursor.isNull(offset + 63) ? null : cursor.getString(offset + 63));
+        entity.setAllMonitemName(cursor.isNull(offset + 64) ? null : cursor.getString(offset + 64));
+        entity.setSamplingUserResults(cursor.isNull(offset + 65) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 65)));
      }
     
     @Override

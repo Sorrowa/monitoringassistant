@@ -156,15 +156,15 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
                     continue;//过滤不同的项目名
                 }
 
-                //频次唯一
-                if (isExists(detail.getFrequecyNo())) {
+                //样品唯一
+                if (isExists(detail)) {
                     continue;//过滤已经存在的样品
                 }
 
                 //水和废水的样品，点位信息保存的现场检测信息，这里改为实际点位信息，用于显示
-                detail.setAddresssId(item.getAddressId());
-                detail.setAddressName(item.getAddressName());
-                detail.setSamplingTime(item.getSamplingTimeBegin());
+                detail.setTempValue1(item.getSamplingTimeBegin());
+                detail.setTempValue2(item.getAddressId());
+                detail.setTempValue3(item.getAddressName());
 
                 mSamplingDetails.add(detail);
             }
@@ -174,12 +174,13 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
     /**
      * 是否是已经存在的记录
      *
-     * @param frequecyNo
+     * @param detail
      * @return
      */
-    private boolean isExists(int frequecyNo) {
+    private boolean isExists(SamplingDetail detail) {
         for (SamplingDetail item : currSampling) {
-            if (item.getFrequecyNo() == frequecyNo) {
+            //重复项：样品类型一致（样品、平行），样品编码一致
+            if (item.getSamplingType() == detail.getSamplingType() && item.getSampingCode().equals(detail.getSampingCode())) {
                 return true;
             }
         }
@@ -206,19 +207,20 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
         for (SamplingDetail item : mSelectDetails) {
             //频次唯一
-            if (isExists(item.getFrequecyNo())) {
+            if (isExists(item)) {
                 continue;//过滤已经存在的样品
             }
 
             SamplingDetail samplingDetail = new SamplingDetail();
 
             samplingDetail.setId("LC-" + UUID.randomUUID().toString());
-            samplingDetail.setSamplingId(mSampling.getId());
             samplingDetail.setMonitemId(mSampling.getMonitemId());
-            samplingDetail.setSampingCode(item.getSampingCode());
-            samplingDetail.setSamplingOnTime(item.getSamplingTime());
-            samplingDetail.setAddresssId(item.getAddresssId());
-            samplingDetail.setAddressName(item.getAddressName());
+            samplingDetail.setSamplingId(mSampling.getId());//对应到当前采样单
+            samplingDetail.setSampingCode(item.getSampingCode());//样品编码
+            samplingDetail.setSamplingType(item.getSamplingType());//样品类型（样品、平行）
+            samplingDetail.setSamplingOnTime(item.getTempValue1());//监测日期
+            samplingDetail.setAddresssId(item.getTempValue2());
+            samplingDetail.setAddressName(item.getTempValue3());
             samplingDetail.setFrequecyNo(item.getFrequecyNo());
             samplingDetail.setPrivateDataBooleanValue("HasPX", false);
             samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");

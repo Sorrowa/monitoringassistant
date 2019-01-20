@@ -259,6 +259,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setId("LC-" + UUID.randomUUID().toString());
         samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
         samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
+        samplingDetail.setSamplingType(currSelectDetails.getSamplingType());
         samplingDetail.setSamplingOnTime(currSelectDetails.getSamplingOnTime());
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
@@ -302,8 +303,8 @@ public class TestRecordFragment extends BaseFragment {
                 continue;//过滤原数据
             }
 
-            //平行数据，频次相等
-            if (item.getFrequecyNo() != sourceItem.getFrequecyNo()) {
+            //平行数据，样品类型（样品、平行）和样品编码相等
+            if (item.getSamplingType() != sourceItem.getSamplingType() || !item.getSampingCode().equals(sourceItem.getSampingCode())) {
                 continue;
             }
 
@@ -320,6 +321,10 @@ public class TestRecordFragment extends BaseFragment {
 
         @Override
         public int compare(SamplingDetail o1, SamplingDetail o2) {
+            if (!o1.getSampingCode().equals(o2.getSampingCode())) {
+                return o1.getSampingCode().compareTo(o2.getSampingCode());
+            }
+
             if (o1.getFrequecyNo() < o2.getFrequecyNo()) {
                 return -1;
             } else if (o1.getFrequecyNo() > o2.getFrequecyNo()) {

@@ -656,7 +656,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         //结束X坐标
         int ex = maxX;
         //结束Y坐标
-        int ey = sy + (int)(normalHeight * 3.8);
+        int ey = sy + (int) (normalHeight * 3.8);
         int offsetX = 1;
         int offsetY = 5;
 
@@ -800,25 +800,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             return;
         }
 
-        int[] size = getTextSize(text);
-        int width = 0;
-        int height = 0;
-
-        if (text.length() >= 40) {
-            width = (int) (size[0] * 2.6);
-            height = (int) (size[1] * 1.7);
-        } else if (text.length() >= 20) {
-            width = (int) (size[0] * 2.4);
-            height = (int) (size[1] * 1.7);
-        } else {
-            width = (int) (size[0] * 1.9);
-            height = (int) (size[1] * 1.7);
-        }
-
-        if (fontmul.getValue() > 1) {
-            width *= fontmul.getValue() * 1.13;
-            height *= fontmul.getValue() * 1.13;
-        }
+        int[] size = getTextSize(text, fontmul.getValue());
+        int width = size[0];
+        int height = size[1];
 
         //如果超框，则换行
         int maxWidth = ex - sx - 10;
@@ -838,9 +822,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             ey += height + 3;
 
             //重新计算字符尺寸
-            size = getTextSize(text);
-            width = (int) (size[0] * 1.8);
-            height = (int) (size[1] * 1.7);
+            size = getTextSize(text, fontmul.getValue());
+            width = size[0];
+            height = size[1];
         }
 
         if (addCheckBox) {
@@ -923,7 +907,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * @param text
      * @return
      */
-    public static int[] getTextSize(String text) {
+    public static int[] getTextSize(String text, int mul) {
         if (TextUtils.isEmpty(text)) {
             return new int[]{0, 0};
         }
@@ -931,7 +915,26 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         Rect rect = new Rect();
         new Paint().getTextBounds(text, 0, text.length(), rect);
 
-        return new int[]{rect.left + rect.width(), rect.height()};
+        int width = rect.left + rect.width();
+        int height = rect.height();
+
+        if (text.length() >= 40) {
+            width = (int) (width * 2.6);
+            height = (int) (height * 1.7);
+        } else if (text.length() >= 20) {
+            width = (int) (width * 2.4);
+            height = (int) (height * 1.7);
+        } else {
+            width = (int) (width * 1.9);
+            height = (int) (height * 1.7);
+        }
+
+        if (mul > 1) {
+            width *= mul * 1.13;
+            height *= mul * 1.13;
+        }
+
+        return new int[]{width, height};
     }
 
     /**

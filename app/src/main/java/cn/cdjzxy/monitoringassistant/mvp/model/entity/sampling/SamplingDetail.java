@@ -102,6 +102,12 @@ public class SamplingDetail {
     private boolean isCanSelect;
     @Transient
     private boolean isSelected;
+    @Transient
+    private String TempValue1;
+    @Transient
+    private String TempValue2;
+    @Transient
+    private String TempValue3;
 
     @Generated(hash = 948661398)
     public SamplingDetail(String Id, String SamplingId, String ProjectId, int OrderIndex, String SampingCode,
@@ -512,6 +518,30 @@ public class SamplingDetail {
 
     public void setSamplingOnTime(String samplingOnTime) {
         SamplingOnTime = samplingOnTime;
+    }
+
+    public String getTempValue1() {
+        return TempValue1;
+    }
+
+    public void setTempValue1(String tempValue1) {
+        TempValue1 = tempValue1;
+    }
+
+    public String getTempValue2() {
+        return TempValue2;
+    }
+
+    public void setTempValue2(String tempValue2) {
+        TempValue2 = tempValue2;
+    }
+
+    public String getTempValue3() {
+        return TempValue3;
+    }
+
+    public void setTempValue3(String tempValue3) {
+        TempValue3 = tempValue3;
     }
 
     /**
