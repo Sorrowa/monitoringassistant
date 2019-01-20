@@ -27,6 +27,15 @@ public class MonItems {
     private String addressId;
     @Transient
     private String addressName;
+    @Transient
+    private String tagId;
+    @Transient
+    private String tagName;
+    @Transient
+    private String allMonitemId;
+    @Transient
+    private String allMonitemName;
+
 
     @Generated(hash = 1403264955)
     public MonItems(String Id, String Code, String Name) {
@@ -85,5 +94,37 @@ public class MonItems {
 
     public void setAddressName(String addressName) {
         this.addressName = addressName;
+    }
+
+    public String getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+
+    public String getAllMonitemId() {
+        return allMonitemId;
+    }
+
+    public void setAllMonitemId(String allMonitemId) {
+        this.allMonitemId = allMonitemId;
+    }
+
+    public String getAllMonitemName() {
+        return allMonitemName;
+    }
+
+    public void setAllMonitemName(String allMonitemName) {
+        this.allMonitemName = allMonitemName;
     }
 }

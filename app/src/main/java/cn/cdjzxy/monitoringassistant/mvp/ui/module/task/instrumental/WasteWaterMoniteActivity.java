@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -119,21 +120,60 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
                 for (int i = 0; i < moniteIds.length; i++) {
                     String id = moniteIds[i];
+                    String name = monItemMap.get(id).getName();
+
+                    MonItems monItem = null;
 
                     //过滤重复项
                     if (!monites.containsKey(id)) {
-                        MonItems monItem = new MonItems(id, "", monItemMap.get(id).getName());
-                        monItem.setAddressId(item.getAddressId());
-                        monItem.setAddressName(item.getAddressName());
+                        monItem = new MonItems(id, "", name);
+                        monItem.setAddressId(item.getAddressId());//点位ID
+                        monItem.setAddressName(item.getAddressName());//点位名称
+                        monItem.setTagId(item.getTagId());//样品性质ID
+                        monItem.setTagName(item.getTagName());//样品性质
+
                         monites.put(id, monItem);
+
                         mMontes.add(monItem);
                     } else {
-                        MonItems monItem = monites.get(id);
+                        monItem = monites.get(id);
+                        //记录所有采样单点位
                         if (!monItem.getAddressId().contains(item.getAddressId())) {
-                            monItem.setAddressId("," + item.getAddressId());
-                            monItem.setAddressName("," + item.getAddressName());
+                            monItem.setAddressId(monItem.getAddressId() + "," + item.getAddressId());
+                            monItem.setAddressName(monItem.getAddressName() + "," + item.getAddressName());
+                        }
+
+                        //记录所有样品性质
+                        if (!monItem.getTagId().contains(item.getTagId())) {
+                            monItem.setTagId(monItem.getTagId() + "," + item.getTagId());
+                            monItem.setTagName(monItem.getTagName() + "," + item.getTagName());
                         }
                     }
+
+                    //组装所有现场监测项目，去重
+                    String allMonitemId = monItem.getAllMonitemId();
+                    String allMonitemName = monItem.getAllMonitemName();
+                    if (TextUtils.isEmpty(allMonitemId)) {
+                        allMonitemId = "";
+                    }
+                    if (TextUtils.isEmpty(allMonitemName)) {
+                        allMonitemName = "";
+                    }
+                    for (String mid : moniteIds) {
+                        if (allMonitemId.contains(mid)) {
+                            continue;
+                        }
+
+                        if (allMonitemId.length() > 0) {
+                            allMonitemId += ",";
+                            allMonitemName += ",";
+                        }
+                        allMonitemId += mid;
+                        allMonitemName += monItemMap.get(mid).getName();
+                    }
+
+                    monItem.setAllMonitemId(allMonitemId);
+                    monItem.setAllMonitemName(allMonitemName);
                 }
             }
         }
@@ -164,10 +204,23 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
                 }
 
                 Intent intent = new Intent();
+
+                //现场监测项目信息
                 intent.putExtra("MonitemId", item.getId());
                 intent.putExtra("MonitemName", item.getName());
+
+                //所有点位集合
                 intent.putExtra("AddressId", item.getAddressId());
                 intent.putExtra("AddressName", item.getAddressName());
+
+                //所有样品性质集合
+                intent.putExtra("TagId", item.getTagId());
+                intent.putExtra("TagName", item.getTagName());
+
+                //所有现场监测项目信息
+                intent.putExtra("AllMonitemId", item.getAllMonitemId());
+                intent.putExtra("AllMonitemName", item.getAllMonitemName());
+
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }

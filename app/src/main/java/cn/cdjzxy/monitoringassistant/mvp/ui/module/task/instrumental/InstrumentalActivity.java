@@ -138,20 +138,14 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs())) {
-                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(InstrumentalActivity.mSampling.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingDetails)) {
-                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
-                        }
-                        DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailYQFs());
-                    }
-
                     mSampling.setIsFinish(IsSamplingFinish());
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
                         if (CheckUtil.isNull(sampling)) {
                             DBHelper.get().getSamplingDao().insert(mSampling);
+                        } else {
+                            DBHelper.get().getSamplingDao().update(mSampling);
                         }
                         isNewCreate = false;
                     } else {
@@ -274,22 +268,21 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setAddressName("");
         sampling.setComment("");
 
-        if (!CheckUtil.isEmpty(projectDetials)) {
-            for (ProjectDetial projectDetial : projectDetials) {
-                if (!sampling.getTagId().contains(projectDetial.getMonItemId())) {
-                    if (!TextUtils.isEmpty(sampling.getTagId())) {
-                        sampling.setTagId(sampling.getTagId() + ",");
-                    }
-                    sampling.setTagId(sampling.getTagId() + projectDetial.getMonItemId());
-                }
-
-                if (!sampling.getTagName().contains(projectDetial.getMonItemName())) {
-                    if (!TextUtils.isEmpty(sampling.getTagName())) {
-                        sampling.setTagName(sampling.getTagName() + ",");
-                    }
-                    sampling.setTagName(sampling.getTagName() + projectDetial.getMonItemName());
-                }
-
+//        if (!CheckUtil.isEmpty(projectDetials)) {
+//            for (ProjectDetial projectDetial : projectDetials) {
+//                if (!sampling.getTagId().contains(projectDetial.getMonItemId())) {
+//                    if (!TextUtils.isEmpty(sampling.getTagId())) {
+//                        sampling.setTagId(sampling.getTagId() + ",");
+//                    }
+//                    sampling.setTagId(sampling.getTagId() + projectDetial.getMonItemId());
+//                }
+//
+//                if (!sampling.getTagName().contains(projectDetial.getMonItemName())) {
+//                    if (!TextUtils.isEmpty(sampling.getTagName())) {
+//                        sampling.setTagName(sampling.getTagName() + ",");
+//                    }
+//                    sampling.setTagName(sampling.getTagName() + projectDetial.getMonItemName());
+//                }
 //                if (!sampling.getAddressId().contains(projectDetial.getAddressId())) {
 //                    if (!TextUtils.isEmpty(sampling.getAddressId())) {
 //                        sampling.setAddressId(sampling.getAddressId() + ",");
@@ -303,8 +296,8 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 //                    }
 //                    sampling.setAddressName(sampling.getAddressName() + projectDetial.getAddress());
 //                }
-            }
-        }
+//            }
+//        }
 
         HashMap<String, String> privateData = new HashMap<>();
         privateData.put("CaleValue", "");

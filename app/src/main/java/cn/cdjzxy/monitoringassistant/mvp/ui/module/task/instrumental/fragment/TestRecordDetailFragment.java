@@ -279,11 +279,7 @@ public class TestRecordDetailFragment extends BaseFragment {
                     }
                 }
 
-                SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())).unique();
-                if (!CheckUtil.isNull(samplingDetails)) {
-                    DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
-                }
-                DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+                DBHelper.get().getSamplingDetailDao().update(samplingDetail);
 
                 EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                 EventBus.getDefault().post(1, EventBusTags.TAG_INSTRUMENTAL_RECORD);
@@ -329,49 +325,54 @@ public class TestRecordDetailFragment extends BaseFragment {
         }
 
         SamplingDetail targetItem = TestRecordFragment.findPXItem(mSampling.getSamplingDetailYQFs(), detail);
-        if (targetItem == null) {
-            //找不到对应数据，则删除计算的数据
-            detail.setPrivateDataStringValue("RPDValue", "");
-            detail.setValue("");
-            return;//还未添加平行数据
-        } else if (isDelete) {
-            //删除操作，重置对应的数据
-            targetItem.setPrivateDataStringValue("RPDValue", "");
-            targetItem.setValue("");
-            targetItem.setCanSelect(true);
-            //更新到数据库
-            DBHelper.get().getSamplingDetailDao().update(targetItem);
-            return;
-        }
-
-        //样品数据
-        double sourceValue = 0;
-        //平行数据
-        double pxValue = 0;
-
         try {
-            if (detail.getPrivateDataBooleanValue("HasPX")) {
-                pxValue = getCaleValue(detail);
-                sourceValue = getCaleValue(targetItem);
-            } else if (targetItem.getPrivateDataBooleanValue("HasPX")) {
-                pxValue = getCaleValue(targetItem);
-                sourceValue = getCaleValue(detail);
+            if (targetItem == null) {
+                //找不到对应数据，则删除计算的数据
+                detail.setPrivateDataStringValue("RPDValue", "");
+                detail.setValue("");
+                return;//还未添加平行数据
+            } else if (isDelete) {
+                //删除操作，重置对应的数据
+                targetItem.setPrivateDataStringValue("RPDValue", "");
+                targetItem.setValue("");
+                targetItem.setCanSelect(true);
+                return;
             }
-        } catch (Exception e) {
-            return;//数字异常
+
+            //样品数据
+            double sourceValue = 0;
+            //平行数据
+            double pxValue = 0;
+
+            try {
+                if (detail.getPrivateDataBooleanValue("HasPX")) {
+                    pxValue = getCaleValue(detail);
+                    sourceValue = getCaleValue(targetItem);
+                } else if (targetItem.getPrivateDataBooleanValue("HasPX")) {
+                    pxValue = getCaleValue(targetItem);
+                    sourceValue = getCaleValue(detail);
+                }
+            } catch (Exception e) {
+                return;//数字异常
+            }
+
+            //四舍六入，奇进偶退
+            //均值计算公式：（样品含量+平行样含量）/2
+            double avg = NumberUtil.roundingNumber((pxValue + sourceValue) / 2);
+            //(样品含量-平行含量)/(样品含量+平行含量)
+            double rpdValue = NumberUtil.roundingNumber((sourceValue - pxValue) / (sourceValue + pxValue) * 100);
+
+            detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
+            detail.setValue(avg + "");
+
+            targetItem.setPrivateDataStringValue("RPDValue", rpdValue + "");
+            targetItem.setValue(avg + "");
+        } finally {
+            //保存一次对应数据
+            if (targetItem != null) {
+                DBHelper.get().getSamplingDetailDao().update(targetItem);
+            }
         }
-
-        //四舍六入，奇进偶退
-        //均值计算公式：（样品含量+平行样含量）/2
-        double avg = NumberUtil.roundingNumber((pxValue + sourceValue) / 2);
-        //(样品含量-平行含量)/(样品含量+平行含量)
-        double rpdValue = NumberUtil.roundingNumber((sourceValue - pxValue) / (sourceValue + pxValue) * 100);
-
-        detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
-        detail.setValue(avg + "");
-
-        targetItem.setPrivateDataStringValue("RPDValue", rpdValue + "");
-        targetItem.setValue(avg + "");
     }
 
     /**

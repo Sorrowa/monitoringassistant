@@ -45,11 +45,23 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 public class BasicInfoFragment  extends BaseFragment {
 
-    @BindView(R.id.tv_test_user)
-    TextView tvTestUser;
-
     @BindView(R.id.tv_choose_project)
     TextView tvChooseProject;
+
+    @BindView(R.id.tv_sampling_no)
+    TextView tvSamplingNo;
+
+    @BindView(R.id.tv_project_name)
+    TextView tvProjectName;
+
+    @BindView(R.id.tv_monitem_name)
+    TextView tvMonitemName;
+
+    @BindView(R.id.tv_sampling_property)
+    TextView tvSamplingProperty;
+
+    @BindView(R.id.tv_test_user)
+    TextView tvTestUser;
 
     @BindView(R.id.tv_test_start_date)
     TextView       tvTestStartDate;
@@ -79,16 +91,20 @@ public class BasicInfoFragment  extends BaseFragment {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         if (!CheckUtil.isNull(InstrumentalActivity.mSampling)) {
-            tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
             tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
+            tvSamplingNo.setText(InstrumentalActivity.mSampling.getSamplingNo());
+            tvProjectName.setText(InstrumentalActivity.mSampling.getProjectName());
+            tvMonitemName.setText(InstrumentalActivity.mSampling.getAllMonitemName());
+            tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+            tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
             tvTestStartDate.setText(InstrumentalActivity.mSampling.getSamplingTimeBegin());
             tvTestEndDate.setText(InstrumentalActivity.mSampling.getSamplingTimeEnd());
             tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
             tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
             tvComment.setText(InstrumentalActivity.mSampling.getComment());
 
-            tvTestUser.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
             tvChooseProject.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
+            tvTestUser.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
             tvTestStartDate.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
             tvTestEndDate.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
             tvTestMethod.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
@@ -176,9 +192,19 @@ public class BasicInfoFragment  extends BaseFragment {
                             if (!CheckUtil.isEmpty(data.getStringExtra("MonitemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonitemName"))) {
                                 InstrumentalActivity.mSampling.setMonitemId(data.getStringExtra("MonitemId"));
                                 InstrumentalActivity.mSampling.setMonitemName(data.getStringExtra("MonitemName"));
+
                                 InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
                                 InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
+
+                                InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
+                                InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+
+                                InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
+                                InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
+
                                 tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
+                                tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+                                tvMonitemName.setText(InstrumentalActivity.mSampling.getAllMonitemName());
                             }
                         }
                     }

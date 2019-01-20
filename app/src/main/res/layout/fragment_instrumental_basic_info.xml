@@ -10,20 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测人" />
-
-            <TextView
-                android:id="@+id/tv_test_user"
-                style="@style/BasicInfoItemTextViewStyle"
-                android:ellipsize="end"
-                android:maxLines="1" />
-
-        </RelativeLayout>
-
         <include layout="@layout/view_line_basic_info" />
 
         <RelativeLayout style="@style/BasicInfoItemStyle">
@@ -35,7 +21,91 @@
 
             <TextView
                 android:id="@+id/tv_choose_project"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
                 style="@style/BasicInfoItemTextViewStyle" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="采样单编号" />
+
+            <TextView
+                android:id="@+id/tv_sampling_no"
+                style="@style/BasicInfoItemTextViewStyle"
+                android:drawableRight="@null"
+                android:hint="" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测目的" />
+
+            <TextView
+                android:id="@+id/tv_project_name"
+                style="@style/BasicInfoItemTextViewStyle"
+                android:drawableRight="@null"
+                android:hint="" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测项目" />
+
+            <TextView
+                android:id="@+id/tv_monitem_name"
+                style="@style/BasicInfoItemTextViewStyle"
+                android:drawableRight="@null"
+                android:hint="" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="样品性质" />
+
+            <TextView
+                android:id="@+id/tv_sampling_property"
+                style="@style/BasicInfoItemTextViewStyle"
+                android:drawableRight="@null"
+                android:hint="" />
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测人" />
+
+            <TextView
+                android:id="@+id/tv_test_user"
+                style="@style/BasicInfoItemTextViewStyle"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
+                android:ellipsize="end"
+                android:maxLines="1" />
 
         </RelativeLayout>
 
@@ -49,6 +119,8 @@
 
             <TextView
                 android:id="@+id/tv_test_start_date"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
                 style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
@@ -63,6 +135,8 @@
 
             <TextView
                 android:id="@+id/tv_test_end_date"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
                 style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
@@ -77,6 +151,8 @@
 
             <TextView
                 android:id="@+id/tv_test_method"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
                 style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
@@ -91,6 +167,8 @@
 
             <TextView
                 android:id="@+id/tv_test_device"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
                 style="@style/BasicInfoItemTextViewStyle" />
 
         </RelativeLayout>
@@ -105,6 +183,8 @@
 
             <EditText
                 android:id="@+id/tv_comment"
+                android:layout_height="match_parent"
+                android:gravity="right|center"
                 style="@style/BasicInfoItemEditTextStyle"
                 android:maxLength="100" />
 

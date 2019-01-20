@@ -47,8 +47,7 @@
             android:id="@+id/tv_sample_code"
             style="@style/BasicInfoItemTextViewStyle"
             android:drawableRight="@null"
-            android:hint=""
-            />
+            android:hint="" />
 
     </RelativeLayout>
 
@@ -130,6 +129,8 @@
 
         <TextView
             android:id="@+id/tv_analyse_time"
+            android:layout_height="match_parent"
+            android:gravity="right|center"
             style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
@@ -144,9 +145,11 @@
 
         <EditText
             android:id="@+id/et_analyse_result"
-            android:inputType="number"
-            android:maxLength="100"
-            style="@style/BasicInfoItemEditTextStyle" />
+            style="@style/BasicInfoItemEditTextStyle"
+            android:layout_height="match_parent"
+            android:gravity="right|center"
+            android:inputType="numberDecimal"
+            android:maxLength="64" />
 
     </RelativeLayout>
 
@@ -160,6 +163,8 @@
 
         <TextView
             android:id="@+id/tv_test_unit"
+            android:layout_height="match_parent"
+            android:gravity="right|center"
             style="@style/BasicInfoItemTextViewStyle" />
 
     </RelativeLayout>
