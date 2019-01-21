@@ -36,6 +36,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MonItemMethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
@@ -234,18 +235,19 @@ public class BasicInfoFragment  extends BaseFragment {
                 break;
 
             case R.id.tv_test_method:
-                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getParentTagId())) {
-                    ArtUtils.makeText(getContext(), "需要父要素ID");
+                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getMonitemId())) {
+                    ArtUtils.makeText(getContext(), "请选择项目！");
                     return;
                 }
-                Intent intent3 = new Intent(getContext(), MethodActivity.class);
-                intent3.putExtra("tagId", InstrumentalActivity.mSampling.getParentTagId());
+
+                Intent intent3 = new Intent(getContext(), MonItemMethodActivity.class);
+                intent3.putExtra("MonitemId", InstrumentalActivity.mSampling.getMonitemId());
                 new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
                             InstrumentalActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
+                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
                             tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
                         }
                     }

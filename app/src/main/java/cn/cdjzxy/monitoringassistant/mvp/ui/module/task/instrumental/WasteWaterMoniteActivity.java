@@ -13,6 +13,8 @@ import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,6 +89,10 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
         HashMap<String, MonItems> monites = new HashMap<>();
         for (Sampling item : samplings) {
+            if (TextUtils.isEmpty(item.getParentTagId())) {
+                continue;
+            }
+
             //从数据库加载项目，避免项目名称显示错误
             HashMap<String, MonItems> monItemMap = null;
             if (!monItemsMap.containsKey(item.getParentTagId())) {
@@ -114,6 +120,10 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
             for (SamplingDetail detail : samplingDetails) {
                 //水和废水中，现场监测项目，存到AddressId和AddressName中的
+                if (TextUtils.isEmpty(detail.getAddresssId())) {
+                    continue;
+                }
+
                 String[] moniteIds = detail.getAddresssId().split(",");
 //                String[] moniteIds = detail.getMonitemId().split(",");
 //                String[] monitemNames = detail.getMonitemName().split(",");//名称可能包含“,”
