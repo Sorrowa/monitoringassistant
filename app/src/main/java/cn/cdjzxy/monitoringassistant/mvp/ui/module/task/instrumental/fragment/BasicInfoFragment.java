@@ -36,6 +36,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MonItemMethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
@@ -188,25 +189,39 @@ public class BasicInfoFragment  extends BaseFragment {
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
-                        if (resultCode == Activity.RESULT_OK) {
-                            if (!CheckUtil.isEmpty(data.getStringExtra("MonitemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonitemName"))) {
-                                InstrumentalActivity.mSampling.setMonitemId(data.getStringExtra("MonitemId"));
-                                InstrumentalActivity.mSampling.setMonitemName(data.getStringExtra("MonitemName"));
-
-                                InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
-                                InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
-
-                                InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
-                                InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
-
-                                InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
-                                InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
-
-                                tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
-                                tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
-                                tvMonitemName.setText(InstrumentalActivity.mSampling.getAllMonitemName());
-                            }
+                        if (resultCode != Activity.RESULT_OK) {
+                            return;
                         }
+
+                        if (CheckUtil.isEmpty(data.getStringExtra("MonitemId")) || CheckUtil.isEmpty(data.getStringExtra("MonitemName"))) {
+                            return;
+                        }
+
+                        InstrumentalActivity.mSampling.setMonitemId(data.getStringExtra("MonitemId"));
+                        InstrumentalActivity.mSampling.setMonitemName(data.getStringExtra("MonitemName"));
+
+                        InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
+                        InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
+
+                        InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
+                        InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+
+                        InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
+                        InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
+
+                        tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
+                        tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+                        tvMonitemName.setText(InstrumentalActivity.mSampling.getAllMonitemName());
+
+                        //重置监测方法
+                        InstrumentalActivity.mSampling.setMethodId("");
+                        InstrumentalActivity.mSampling.setMethodName("");
+                        tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
+
+                        //重置监测仪器
+                        InstrumentalActivity.mSampling.setDeviceName("");
+                        InstrumentalActivity.mSampling.setDeviceId("");
+                        tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
                     }
                 });
                 break;
@@ -234,19 +249,25 @@ public class BasicInfoFragment  extends BaseFragment {
                 break;
 
             case R.id.tv_test_method:
-                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getParentTagId())) {
-                    ArtUtils.makeText(getContext(), "需要父要素ID");
+                if (CheckUtil.isEmpty(InstrumentalActivity.mSampling.getMonitemId())) {
+                    ArtUtils.makeText(getContext(), "请选择项目！");
                     return;
                 }
-                Intent intent3 = new Intent(getContext(), MethodActivity.class);
-                intent3.putExtra("tagId", InstrumentalActivity.mSampling.getParentTagId());
+
+                Intent intent3 = new Intent(getContext(), MonItemMethodActivity.class);
+                intent3.putExtra("MonItemId", InstrumentalActivity.mSampling.getMonitemId());
                 new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
                             InstrumentalActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
+                            InstrumentalActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
                             tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
+
+                            //重置监测仪器
+                            InstrumentalActivity.mSampling.setDeviceName("");
+                            InstrumentalActivity.mSampling.setDeviceId("");
+                            tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
                         }
                     }
                 });

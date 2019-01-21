@@ -197,6 +197,11 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".mvp.ui.module.task.MonItemMethodActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
+        <activity
             android:name=".mvp.ui.module.task.TypeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
