@@ -15,6 +15,8 @@ public class FsExtends {
     private String waterWD;//水温
     private String waterLS;//流速
     private String waterLL;//流量
+    private String BuildTime;//建设时间
+    private String AccessPipeNetwork;//是否进入管网
 
     public String getClientName() {
         return ClientName;
@@ -102,5 +104,21 @@ public class FsExtends {
 
     public void setWaterLL(String waterLL) {
         this.waterLL = waterLL;
+    }
+
+    public String getBuildTime() {
+        return BuildTime;
+    }
+
+    public void setBuildTime(String buildTime) {
+        BuildTime = buildTime;
+    }
+
+    public String getAccessPipeNetwork() {
+        return AccessPipeNetwork;
+    }
+
+    public void setAccessPipeNetwork(String accessPipeNetwork) {
+        AccessPipeNetwork = accessPipeNetwork;
     }
 }

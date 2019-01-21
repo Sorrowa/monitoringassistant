@@ -292,15 +292,15 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     /**
-     * 创建采样单编号
+     * 创建采样单编号:年月日+账号+流水号
      *
      * @return
      */
     private String createSamplingNo() {
         StringBuilder samplingNo = new StringBuilder("");
-        String dateStr = DateUtils.getDate().replace("-","").substring(2);
+        String dateStr = DateUtils.getDate().replace("-","");
         samplingNo.append(dateStr);
-        //samplingNo.append(UserInfoHelper.get().getUser().getIntId());
+        samplingNo.append(UserInfoHelper.get().getUser().getIntId());
         List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {

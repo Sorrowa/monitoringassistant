@@ -69,7 +69,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
     @BindView(R.id.sample_method)
     EditText sample_method;
     @BindView(R.id.sample_date)
-    TextView sample_date;
+    EditText sample_date;
     @BindView(R.id.sample_place)
     TextView sample_place;
 
@@ -168,7 +168,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
     }
 
-    @OnClick({R.id.btn_back, R.id.sample_date, R.id.sample_place, R.id.sample_project, R.id.btn_save, R.id.btn_delete})
+    @OnClick({R.id.btn_back, R.id.sample_place, R.id.sample_project, R.id.btn_save, R.id.btn_delete})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_back:
@@ -176,9 +176,6 @@ public class BottleSplitDetailFragment extends BaseFragment {
                 break;
             case R.id.sample_project:
                 showMonitorItems();
-                break;
-            case R.id.sample_date:
-                showDateSelectDialog(sample_date);
                 break;
             case R.id.sample_place:
                 showAnalysisPlace();
@@ -195,20 +192,6 @@ public class BottleSplitDetailFragment extends BaseFragment {
         }
     }
 
-    /**
-     * data picker
-     */
-    private void showDateSelectDialog(TextView dateTextView) {
-        TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date, View v) {
-                bottleSplit.setSaveTimes(DateUtils.getDate(date));
-                sample_date.setText(bottleSplit.getSaveTimes());
-            }
-        }).build();
-        pvTime.setDate(Calendar.getInstance());
-        pvTime.show();
-    }
 
     /**
      * delete operate
@@ -315,6 +298,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
             bottleSplit.setAnalysisSite(sample_place.getText().toString());
             bottleSplit.setSamplingAmount(sample_quantity.getText().toString());
 
+            /*
             if (bottleListPosition == -1) {
                 if (mSample.getSamplingFormStandResults() == null) {
                     mSample.setSamplingFormStandResults(new ArrayList<>());
@@ -323,6 +307,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
                 samplingDetailResults.add(bottleSplit);
                 mSample.setSamplingFormStandResults(samplingDetailResults);
             }
+            */
 
 
             mSample.setIsFinish(isSamplingFinish());
@@ -335,12 +320,14 @@ public class BottleSplitDetailFragment extends BaseFragment {
             }
 
             //SamplingFormStand samplingBottleSplit = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.Id.eq(bottleSplit.getId())).unique();
-            if (bottleListPosition == -1) {
-                bottleSplit.setId("FS-" + UUID.randomUUID().toString());
-                DBHelper.get().getSamplingFormStandDao().insert(bottleSplit);
-            }else {
-                DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
-            }
+//            if (bottleListPosition == -1) {
+//                bottleSplit.setId(UUID.randomUUID().toString());
+//                DBHelper.get().getSamplingFormStandDao().insert(bottleSplit);
+//            }else {
+//                DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
+//            }
+
+            DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
             //设置分瓶信息
             List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
             if (!CheckUtil.isEmpty(formStantdsList)){

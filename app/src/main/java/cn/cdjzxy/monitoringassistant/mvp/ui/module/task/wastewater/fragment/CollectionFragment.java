@@ -327,7 +327,7 @@ public class CollectionFragment extends BaseFragment {
     private void addTheSameSample(){
         SamplingDetail detail=new SamplingDetail();
         detail.setProjectId(selectSamplingDetail.getProjectId());
-        detail.setId("FS-" + UUID.randomUUID().toString());
+        detail.setId( UUID.randomUUID().toString());
         detail.setSamplingId(selectSamplingDetail.getSamplingId());
         detail.setSampingCode(selectSamplingDetail.getSampingCode());
         detail.setFrequecyNo(selectSamplingDetail.getFrequecyNo());
@@ -354,7 +354,7 @@ public class CollectionFragment extends BaseFragment {
         SamplingDetail detail=new SamplingDetail();
         detail.setProjectId(WastewaterActivity.mSample.getProjectId());
         detail.setSamplingType(2);
-        detail.setId("FS-" + UUID.randomUUID().toString());
+        detail.setId( UUID.randomUUID().toString());
         detail.setSamplingId(WastewaterActivity.mSample.getId());
         detail.setSampingCode(HelpUtil.createSamplingCode(WastewaterActivity.mSample));
         detail.setFrequecyNo(HelpUtil.createFrequency(WastewaterActivity.mSample));
@@ -376,7 +376,7 @@ public class CollectionFragment extends BaseFragment {
         List<SamplingDetail> samplingList= WastewaterActivity.mSample.getSamplingDetailResults();
         if (!CheckUtil.isEmpty(samplingList)){
             for (SamplingDetail detail:samplingList){
-                if (selectSamplingDetail.getSampingCode().equals(detail.getSampingCode())){
+                if (selectSamplingDetail.getSampingCode().equals(detail.getSampingCode()) && detail.getSamplingType()==1){
                     flag=true;
                     break;
                 }

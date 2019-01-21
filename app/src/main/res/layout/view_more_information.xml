@@ -95,6 +95,43 @@
 
         </RelativeLayout>
 
+        <include layout="@layout/view_line_basic_info" />
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoNextItemNameStyle"
+                android:text="建设时间" />
+
+            <TextView
+                android:id="@+id/more_build_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textColor="#333333"
+                android:hint="请点击选择"
+                android:textSize="@dimen/text_size_13" />
+
+        </RelativeLayout>
+        <include layout="@layout/view_line_basic_info" />
+        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoNextItemNameStyle"
+                android:text="是否进入管网" />
+
+            <CheckedTextView
+                android:id="@+id/more_gw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/icon_switch_button"
+                android:checked="false" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 
 </merge>

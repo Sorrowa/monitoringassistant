@@ -132,6 +132,12 @@ public class BasicFragment extends BaseFragment {
     ImageView iv_add_photo;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
+    @BindView(R.id.more_build_date)
+    TextView more_build_date;
+    @BindView(R.id.more_gw)
+    CheckedTextView more_gw;
+
+
 
     private List<SamplingFile> sampleFiles = new ArrayList<>();
     private SamplingFileAdapter sampleFileAdapter;
@@ -170,6 +176,9 @@ public class BasicFragment extends BaseFragment {
             boolean sewageDisposal = false;
             if (fsExtends != null && !TextUtils.isEmpty(fsExtends.getSewageDisposal()) && fsExtends.getSewageDisposal().equals("是")) {
                 sewageDisposal = true;
+                fsExtends.setSewageDisposal("是");
+            }else {
+                fsExtends.setSewageDisposal("否");
             }
             base_sample_handle.setChecked(sewageDisposal);
             base_sample_comment.setText(WastewaterActivity.mSample.getComment());
@@ -195,6 +204,16 @@ public class BasicFragment extends BaseFragment {
                 sampleFiles.addAll(WastewaterActivity.mSample.getSamplingFiless());
             }
 
+            more_build_date.setText(fsExtends == null ? "" : fsExtends.getBuildTime());
+            boolean gw = false;
+            if (fsExtends != null && !TextUtils.isEmpty(fsExtends.getAccessPipeNetwork()) && fsExtends.getAccessPipeNetwork().equals("是")) {
+                gw = true;
+                fsExtends.setAccessPipeNetwork("是");
+            }else {
+                fsExtends.setAccessPipeNetwork("否");
+            }
+            more_gw.setChecked(gw);
+
         } else {
             fsExtends = new FsExtends();
         }
@@ -207,6 +226,18 @@ public class BasicFragment extends BaseFragment {
                     fsExtends.setSewageDisposal("否");
                 } else {
                     fsExtends.setSewageDisposal("是");
+                }
+            }
+        });
+
+        more_gw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                more_gw.setChecked(!more_gw.isChecked());
+                if (!more_gw.isChecked()) {
+                    fsExtends.setAccessPipeNetwork("否");
+                } else {
+                    fsExtends.setAccessPipeNetwork("是");
                 }
             }
         });
@@ -299,7 +330,7 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.water_info_layout, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date,R.id.tv_receive_date})
+    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.water_info_layout, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date,R.id.tv_receive_date,R.id.more_build_date})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_photo:
@@ -340,6 +371,9 @@ public class BasicFragment extends BaseFragment {
                 break;
             case R.id.tv_receive_date:
                 showReceiveDateSelectDialog(tv_receive_date);
+                break;
+            case R.id.more_build_date:
+                showBuildTimeSelectDialog(more_build_date);
                 break;
             default:
                 break;
@@ -391,6 +425,22 @@ public class BasicFragment extends BaseFragment {
                 dateTextView.setText(DateUtils.getTime(date.getTime()));
             }
         }).setType(new boolean[]{true, true, true, true, true, true}).isCyclic(true).build();
+        pvTime.setDate(Calendar.getInstance());
+        pvTime.show();
+    }
+
+    /**
+     * 建设时间
+     * @param dateTextView
+     */
+    private void showBuildTimeSelectDialog(TextView dateTextView) {
+        TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                fsExtends.setBuildTime(DateUtils.getDate(date));
+                dateTextView.setText(DateUtils.getDate(date));
+            }
+        }).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }

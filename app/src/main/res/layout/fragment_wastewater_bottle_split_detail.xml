@@ -117,9 +117,10 @@
             style="@style/BasicInfoItemNameStyle"
             android:text="保存时间" />
 
-        <TextView
+        <EditText
             android:id="@+id/sample_date"
-            style="@style/BasicInfoItemTextViewStyle" />
+            style="@style/BasicInfoItemEditTextStyle"
+            android:maxLength="20"/>
 
     </RelativeLayout>
 

@@ -78,7 +78,7 @@ public class HelpUtil {
         String snDate = DateUtils.getDate().replace("-", "").substring(2);
         String snSampling = "";
         if (!CheckUtil.isEmpty(sampling.getSamplingNo())) {
-            snSampling = sampling.getSamplingNo().substring(6);
+            snSampling = sampling.getSamplingNo().substring(sampling.getSamplingNo().length()-2);
         }
         String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
 
