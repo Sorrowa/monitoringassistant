@@ -65,14 +65,14 @@ public class MonItemMethodActivity extends BaseTitileActivity<ApiPresenter> {
         //获取监测项目ID
         String monItemId = getIntent().getStringExtra("MonItemId");
 
-        if(!TextUtils.isEmpty((monItemId))){
+        if (!TextUtils.isEmpty((monItemId))) {
             //获取监测项目和监测方法的关系列表
             List<MonItemMethodRelation> methodRelaList = DBHelper.get().getMonItemMethodRelationDao().queryBuilder().where(MonItemMethodRelationDao.Properties.MonItemId.eq(monItemId)).list();
 
             //获取方法ID列表
             List<String> methodIdList = new ArrayList<>();
             for (MonItemMethodRelation rela : methodRelaList) {
-                methodIdList.add(rela.getId());
+                methodIdList.add(rela.getMethodId());
             }
 
             //查询方法

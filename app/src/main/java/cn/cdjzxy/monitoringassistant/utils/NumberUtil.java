@@ -28,6 +28,10 @@ public class NumberUtil {
      * @return
      */
     public static double fourHomesSixEntries(double value, int keepNum) {
+        if (value == 0) {
+            return value;
+        }
+
         int pow = 1;
 
         if (keepNum > 0) {
