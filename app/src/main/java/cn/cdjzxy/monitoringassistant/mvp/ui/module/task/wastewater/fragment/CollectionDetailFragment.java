@@ -42,6 +42,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
@@ -93,7 +94,7 @@ public class CollectionDetailFragment extends BaseFragment {
 
     private int fsListPosition;
     private Sampling mSample;
-    SamplingDetail samplingDetail;
+    SamplingContent samplingDetail;
 
 
     public CollectionDetailFragment() {
@@ -159,33 +160,18 @@ public class CollectionDetailFragment extends BaseFragment {
 
     private void setSamplingDetail() {
         mSample = WastewaterActivity.mSample;
-        List<SamplingDetail> samplingDetailResults = mSample.getSamplingDetailResults();
+        List<SamplingContent> samplingDetailResults = mSample.getSamplingContentResults();
         SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
         fsListPosition = collectListSettings.getInt("fsListPosition", -1);
         if (fsListPosition == -1) {
-            samplingDetail = new SamplingDetail();
-            /*
-            String samplingNo;
-
-            String snDate = DateUtils.getDate().replace("-", "").substring(2);
-            String snPointPosition = "";
-            if (!CheckUtil.isEmpty(mSample.getAddressNo())) {
-                snPointPosition = mSample.getAddressNo();
-            }
-            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-
-            int snFrequency = 1;
-            if (samplingDetailResults != null && samplingDetailResults.size() > 0) {
-                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
-            }
-
-            samplingNo = "FS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
-            */
-
+            samplingDetail = new SamplingContent();
+            samplingDetail.setId(UUID.randomUUID().toString());
             sample_code.setText(HelpUtil.createSamplingCode(mSample));
             sample_frequency.setText(HelpUtil.createFrequency(mSample)+"");
             sample_quality.setText(Constants.SAMPLING_TYPE_PT);
             samplingDetail.setSamplingType(0);
+            samplingDetail.setOrderIndex(HelpUtil.createOrderIndex(mSample));
+            samplingDetail.setFrequecyNo(HelpUtil.createFrequency(mSample));
             //新增时要将监测项目和现场监测项目带过来
             setDefaultMonitor();
         } else {
@@ -344,12 +330,12 @@ public class CollectionDetailFragment extends BaseFragment {
 
             //新增样品采集到采样单中
             if (fsListPosition == -1) {
-                if (mSample.getSamplingDetailResults() == null) {
-                    mSample.setSamplingDetailResults(new ArrayList<SamplingDetail>());
+                if (mSample.getSamplingContentResults() == null) {
+                    mSample.setSamplingContentResults(new ArrayList<SamplingContent>());
                 }
-                List<SamplingDetail> samplingDetailResults = mSample.getSamplingDetailResults();
+                List<SamplingContent> samplingDetailResults = mSample.getSamplingContentResults();
                 samplingDetailResults.add(samplingDetail);
-                mSample.setSamplingDetailResults(samplingDetailResults);
+                mSample.setSamplingContentResults(samplingDetailResults);
             }
 
             //设置采样单完结状态以及更新采样单
@@ -363,13 +349,14 @@ public class CollectionDetailFragment extends BaseFragment {
                 DBHelper.get().getSamplingDao().update(mSample);
             }
 
+            generateSamplingDetails();
             //SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())).unique();
             if (fsListPosition == -1) {
                 samplingDetail.setId(UUID.randomUUID().toString());
                 samplingDetail.setSamplingType(0);
-                DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+                DBHelper.get().getSamplingContentDao().insert(samplingDetail);
             }else {
-                DBHelper.get().getSamplingDetailDao().update(samplingDetail);
+                DBHelper.get().getSamplingContentDao().update(samplingDetail);
             }
             //生成分瓶信息
             generateBottleSplit();
@@ -435,9 +422,9 @@ public class CollectionDetailFragment extends BaseFragment {
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
                     if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                        samplingDetail.setAddressName(data.getStringExtra("MonItemName"));
-                        samplingDetail.setAddresssId(data.getStringExtra("MonItemId"));
-                        sample_monitor.setText(samplingDetail.getAddressName());
+                        samplingDetail.setSenceMonitemName(data.getStringExtra("MonItemName"));
+                        samplingDetail.setSenceMonitemId(data.getStringExtra("MonItemId"));
+                        sample_monitor.setText(samplingDetail.getSenceMonitemName());
                         if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
                             sample_monitor_title.setText("现场监测("+data.getStringExtra("MonItemId").split(",").length+")");
                         }
@@ -452,40 +439,20 @@ public class CollectionDetailFragment extends BaseFragment {
      * @return
      */
     private void generateBottleSplit(){
-        //MonItems
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mSample.getParentTagId())).unique();
-        List<MonItems> monItems = tags.getMMonItems();
         String currentMonitemIds=samplingDetail.getMonitemId();
         String[] monitemIds=currentMonitemIds.split(",");
         if (monitemIds!=null && monitemIds.length>0){
             for (String itemId:monitemIds){
-                String itemName=getMonItemNameById(itemId);
-                if (!CheckUtil.isEmpty(itemName)){
-                    SamplingStantd samplingStantd=getRelateSamplingStantd(itemId);//获取规则
-                    if (CheckUtil.isNull(samplingStantd)){
-                        SamplingFormStand bottleSplit = new SamplingFormStand();
-                        bottleSplit.setCount(1);
-                        bottleSplit.setContainer("");
-                        bottleSplit.setAnalysisSite("");
-                        bottleSplit.setSaveTimes("");
-                        bottleSplit.setMonitemIds(itemId);
-                        bottleSplit.setId(UUID.randomUUID().toString());
-                        bottleSplit.setMonitemName(itemName);
-                        List<String> items=new ArrayList<>();
-                        items.add(itemId);
-                        bottleSplit.setMonItems(items);
-                        bottleSplit.setSamplingAmount("");
-                        bottleSplit.setIndex(generateNewIndex());
-                        bottleSplit.setSamplingId(mSample.getId());
-                        bottleSplit.setStandNo(generateNewIndex());
-                        bottleSplit.setUpdateTime(DateUtils.getWholeDate());
-                        DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
-                    }else {
-                        //存在则判断是否一样不管，不存在则新增
-                        SamplingFormStand samplingFormStand=bottleIsExists(itemId);
-                        if (CheckUtil.isNull(samplingFormStand)){
+                SamplingFormStand samplingFormStand=bottleIsExists(itemId);
+                //如果已经存在，则不操作
+                if (CheckUtil.isNull(samplingFormStand)){
+                    String itemName=getMonItemNameById(itemId);
+                    //如果itemName为空则不操作
+                    if (!CheckUtil.isEmpty(itemName)){
+                        //获取规则
+                        SamplingStantd samplingStantd=getRelateSamplingStantd(itemId);
+                        if (!CheckUtil.isNull(samplingStantd)){
                             SamplingFormStand bottleSplit = new SamplingFormStand();
-                            //bottleSplit.setCount(1);
                             bottleSplit.setContainer(samplingStantd.getContaner());
                             bottleSplit.setAnalysisSite("");
                             bottleSplit.setSaveTimes("");
@@ -501,27 +468,91 @@ public class CollectionDetailFragment extends BaseFragment {
                             bottleSplit.setSamplingId(mSample.getId());
                             bottleSplit.setUpdateTime(DateUtils.getWholeDate());
                             DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+
                         }else {
-                            /*
-                            if (!CheckUtil.isEmpty(samplingFormStand.getMonitemName()) && !samplingFormStand.getMonitemName().contains(itemName)){
-                                samplingFormStand.setUpdateTime(DateUtils.getWholeDate());
-                                samplingFormStand.setMonitemIds(samplingFormStand.getMonitemIds()+","+itemId);
-                                samplingFormStand.setMonitemName(samplingFormStand.getMonitemName()+","+itemName);
-                                samplingFormStand.setSamplingId(mSample.getId());
-                                List<String> items=samplingFormStand.getMonItems();
-                                if (CheckUtil.isEmpty(items)){
-                                    items=new ArrayList<>();
-                                }else {
-                                    items=new ArrayList<>(items);
-                                }
-                                items.add(CheckUtil.isEmpty(itemName)?"":itemName);
-                                samplingFormStand.setMonItems(items);
-                                DBHelper.get().getSamplingFormStandDao().updateInTx(samplingFormStand);
-                            }
-                            */
+                            SamplingFormStand bottleSplit = new SamplingFormStand();
+                            bottleSplit.setContainer("");
+                            bottleSplit.setAnalysisSite("");
+                            bottleSplit.setSaveTimes("");
+                            bottleSplit.setMonitemIds(itemId);
+                            bottleSplit.setId(UUID.randomUUID().toString());
+                            bottleSplit.setMonitemName(itemName);
+                            List<String> items=new ArrayList<>();
+                            items.add(itemId);
+                            bottleSplit.setMonItems(items);
+                            bottleSplit.setSamplingAmount("");
+                            bottleSplit.setStandNo(generateNewIndex());
+                            bottleSplit.setIndex(generateNewIndex());
+                            bottleSplit.setSamplingId(mSample.getId());
+                            bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                            DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
                         }
                     }
                 }
+//                /*
+//                if (!CheckUtil.isEmpty(itemName)){
+//                    SamplingStantd samplingStantd=getRelateSamplingStantd(itemId);//获取规则
+//                    if (CheckUtil.isNull(samplingStantd)){
+//                        SamplingFormStand bottleSplit = new SamplingFormStand();
+//                        bottleSplit.setCount(1);
+//                        bottleSplit.setContainer("");
+//                        bottleSplit.setAnalysisSite("");
+//                        bottleSplit.setSaveTimes("");
+//                        bottleSplit.setMonitemIds(itemId);
+//                        bottleSplit.setId(UUID.randomUUID().toString());
+//                        bottleSplit.setMonitemName(itemName);
+//                        List<String> items=new ArrayList<>();
+//                        items.add(itemId);
+//                        bottleSplit.setMonItems(items);
+//                        bottleSplit.setSamplingAmount("");
+//                        bottleSplit.setIndex(generateNewIndex());
+//                        bottleSplit.setSamplingId(mSample.getId());
+//                        bottleSplit.setStandNo(generateNewIndex());
+//                        bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+//                        DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+//                    }else {
+//                        //存在则判断是否一样不管，不存在则新增
+//                        SamplingFormStand samplingFormStand=bottleIsExists(itemId);
+//                        if (CheckUtil.isNull(samplingFormStand)){
+//                            SamplingFormStand bottleSplit = new SamplingFormStand();
+//                            //bottleSplit.setCount(1);
+//                            bottleSplit.setContainer(samplingStantd.getContaner());
+//                            bottleSplit.setAnalysisSite("");
+//                            bottleSplit.setSaveTimes("");
+//                            bottleSplit.setMonitemIds(itemId);
+//                            bottleSplit.setId(UUID.randomUUID().toString());
+//                            bottleSplit.setMonitemName(itemName);
+//                            List<String> items=new ArrayList<>();
+//                            items.add(itemId);
+//                            bottleSplit.setMonItems(items);
+//                            bottleSplit.setSamplingAmount(samplingStantd.getCapacity());
+//                            bottleSplit.setStandNo(generateNewIndex());
+//                            bottleSplit.setIndex(generateNewIndex());
+//                            bottleSplit.setSamplingId(mSample.getId());
+//                            bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+//                            DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+//                        }else {
+//                            /*
+//                            if (!CheckUtil.isEmpty(samplingFormStand.getMonitemName()) && !samplingFormStand.getMonitemName().contains(itemName)){
+//                                samplingFormStand.setUpdateTime(DateUtils.getWholeDate());
+//                                samplingFormStand.setMonitemIds(samplingFormStand.getMonitemIds()+","+itemId);
+//                                samplingFormStand.setMonitemName(samplingFormStand.getMonitemName()+","+itemName);
+//                                samplingFormStand.setSamplingId(mSample.getId());
+//                                List<String> items=samplingFormStand.getMonItems();
+//                                if (CheckUtil.isEmpty(items)){
+//                                    items=new ArrayList<>();
+//                                }else {
+//                                    items=new ArrayList<>(items);
+//                                }
+//                                items.add(CheckUtil.isEmpty(itemName)?"":itemName);
+//                                samplingFormStand.setMonItems(items);
+//                                DBHelper.get().getSamplingFormStandDao().updateInTx(samplingFormStand);
+//                            }
+//                            */
+//                        }
+//                    }
+//                }
+//                */
 
             }
 
@@ -535,7 +566,7 @@ public class CollectionDetailFragment extends BaseFragment {
      */
     private SamplingStantd getRelateSamplingStantd(String monItem){
         String tagId=mSample.getTagId();
-        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().build().list();
+        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().where(SamplingStantdDao.Properties.TagId.eq(mSample.getTagId())).build().list();
         if (!CheckUtil.isEmpty(stantdsList)){
             for (SamplingStantd samplingStantd:stantdsList){
                 List<String> monItems=samplingStantd.getMonItems();
@@ -643,10 +674,11 @@ public class CollectionDetailFragment extends BaseFragment {
                                                 MonItemId.append(itemName + ",");
                                             }
                                         }else {
-                                            String itemName=getMonItemNameById(id);
-                                            if (!CheckUtil.isEmpty(itemName)){
-                                                MonItemNameList.remove(itemName);
-                                            }
+//                                            String itemName=getMonItemNameById(id);
+//                                            if (!CheckUtil.isEmpty(itemName)){
+//                                                MonItemNameList.remove(itemName);
+//                                            }
+                                            MonItemNameList.remove(id);
                                         }
 
                                     }
@@ -718,11 +750,24 @@ public class CollectionDetailFragment extends BaseFragment {
         }
         samplingDetail.setMonitemName(monNameItems.toString());
         samplingDetail.setMonitemId(monIdItems.toString());
-        samplingDetail.setAddressName(xcMonNameItems.toString());
-        samplingDetail.setAddresssId(xcMonIdItems.toString());
+        samplingDetail.setSenceMonitemName(xcMonNameItems.toString());
+        samplingDetail.setSenceMonitemId(xcMonIdItems.toString());
 
         sample_monitor_items.setText(samplingDetail.getMonitemName());
-        sample_monitor.setText(samplingDetail.getAddressName());
+        sample_monitor.setText(samplingDetail.getSenceMonitemName());
+
+        samplingDetail.setSamplingTime(DateUtils.getWholeDate());
+        int count=0;
+        if (!CheckUtil.isEmpty(samplingDetail.getMethodId())){
+            count+=samplingDetail.getMethodId().split(",").length;
+            sample_monitor_items_title.setText("监测项目（"+count+"）");
+        }
+
+        if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())){
+            count+=samplingDetail.getSenceMonitemId().split(",").length;
+            sample_monitor_title.setText("现场监测（"+samplingDetail.getSenceMonitemId().split(",").length+"）");
+        }
+        samplingDetail.setSamplingCount(count);
 
     }
 
@@ -751,6 +796,66 @@ public class CollectionDetailFragment extends BaseFragment {
             monItemsBuilder.deleteCharAt(monItemsBuilder.lastIndexOf(","));
         }
         return monItemsBuilder.toString();
+    }
+
+    /**
+     * 产生SamplingDetails
+     */
+    private void generateSamplingDetails(){
+        //包括监测项目和现场监测项目
+        int count=0;
+        String[] monitemIds=samplingDetail.getMonitemId().split(",");
+        if (!CheckUtil.isEmpty(monitemIds)){
+            count+=monitemIds.length;
+            for (String itemId:monitemIds){
+                SamplingDetail detail = new SamplingDetail();
+                detail.setProjectId(samplingDetail.getProjectId());
+                detail.setId(UUID.randomUUID().toString());
+                detail.setSamplingId(samplingDetail.getSamplingId());
+                detail.setSampingCode(samplingDetail.getSampingCode());
+                detail.setFrequecyNo(samplingDetail.getFrequecyNo());
+                detail.setDescription(samplingDetail.getDescription());
+                detail.setSamplingType(0);
+                detail.setIsCompare(samplingDetail.getIsCompare());
+                detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
+                detail.setMonitemName(getMonItemNameById(itemId));
+                detail.setMonitemId(itemId);
+                detail.setAddressName(samplingDetail.getAddressName());
+                detail.setAddresssId(samplingDetail.getAddresssId());
+                detail.setIsSenceAnalysis(false);
+                detail.setSamplingTime(samplingDetail.getSamplingTime());
+                detail.setOrderIndex(samplingDetail.getOrderIndex());
+                DBHelper.get().getSamplingDetailDao().insert(detail);
+                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+            }
+        }
+
+        String[] sendMonitemIds=samplingDetail.getSenceMonitemId().split(",");
+        if (!CheckUtil.isEmpty(sendMonitemIds)){
+            count+=sendMonitemIds.length;
+            for (String itemId:sendMonitemIds){
+                SamplingDetail detail = new SamplingDetail();
+                detail.setProjectId(samplingDetail.getProjectId());
+                detail.setId(UUID.randomUUID().toString());
+                detail.setSamplingId(samplingDetail.getSamplingId());
+                detail.setSampingCode(samplingDetail.getSampingCode());
+                detail.setFrequecyNo(samplingDetail.getFrequecyNo());
+                detail.setDescription(samplingDetail.getDescription());
+                detail.setSamplingType(0);
+                detail.setIsCompare(samplingDetail.getIsCompare());
+                detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
+                detail.setMonitemName(getMonItemNameById(itemId));
+                detail.setMonitemId(itemId);
+                detail.setAddressName(samplingDetail.getAddressName());
+                detail.setAddresssId(samplingDetail.getAddresssId());
+                detail.setIsSenceAnalysis(true);
+                detail.setSamplingTime(samplingDetail.getSamplingTime());
+                detail.setOrderIndex(samplingDetail.getOrderIndex());
+                DBHelper.get().getSamplingDetailDao().insert(detail);
+                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+            }
+        }
+        samplingDetail.setSamplingCount(count);
     }
 
 }

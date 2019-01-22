@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import cn.cdjzxy.monitoringassistant.app.rx.RxObserver;
 import cn.cdjzxy.monitoringassistant.app.rx.RxUtils;
@@ -43,6 +44,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
@@ -909,6 +911,16 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         }
                                         DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
                                     }
+
+                                    List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
+                                    if (!CheckUtil.isEmpty(samplingContents)) {
+                                        for (SamplingContent samplingContent : samplingContents) {
+                                            samplingContent.setId(UUID.randomUUID().toString());
+                                            DBHelper.get().getSamplingContentDao().delete(samplingContent);
+                                        }
+                                        DBHelper.get().getSamplingContentDao().insertInTx(samplingContents);
+                                    }
+
                                     sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
                                             && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
                                     sampling.setIsLocal(false);

@@ -35,18 +35,20 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
@@ -80,7 +82,7 @@ public class CollectionFragment extends BaseFragment {
     private WasteWaterCollectAdapter mWasteWaterCollectAdapter;
     private SharedPreferences collectListSettings;
     private SharedPreferences.Editor editor;
-    private SamplingDetail selectSamplingDetail;
+    private SamplingContent selectSamplingDetail;
 
     public CollectionFragment() {
     }
@@ -139,19 +141,19 @@ public class CollectionFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label,R.id.btn_add_new})
+    @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label, R.id.btn_add_new})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_parallel://添加平行(需要选择普通样)
-                if (CheckUtil.isNull(selectSamplingDetail)){
+                if (CheckUtil.isNull(selectSamplingDetail)) {
                     ArtUtils.makeText(getContext(), "请先选择一项样品");
                     return;
                 }
-                if (selectSamplingDetail.getSamplingType()!=0){
+                if (selectSamplingDetail.getSamplingType() != 0) {
                     ArtUtils.makeText(getContext(), "请选择普通样品");
                     return;
                 }
-                if (isPxSampleAdded(selectSamplingDetail)){
+                if (isPxSampleAdded(selectSamplingDetail)) {
                     ArtUtils.makeText(getContext(), "该普通样下面已经添加平行样，请另外选择");
                     return;
                 }
@@ -187,7 +189,7 @@ public class CollectionFragment extends BaseFragment {
     }
 
     private void initRecyclerViewData() {
-        if (WastewaterActivity.mSample.getSamplingDetailResults() == null) {
+        if (WastewaterActivity.mSample.getSamplingContentResults() == null) {
             return;
         }
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
@@ -197,10 +199,10 @@ public class CollectionFragment extends BaseFragment {
             }
         });
 
-        mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingDetailResults(),new WasteWaterCollectAdapter.OnWasteWaterCollectListener(){
+        mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingContentResults(), new WasteWaterCollectAdapter.OnWasteWaterCollectListener() {
             @Override
             public void onSelected(View view, int position, boolean isSelected) {
-                changSelectState(position,isSelected);
+                changSelectState(position, isSelected);
             }
         });
         mWasteWaterCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
@@ -223,7 +225,7 @@ public class CollectionFragment extends BaseFragment {
         ArrayList<LabelInfo> result = new ArrayList<>();
 
         //组装标签信息\
-        for (SamplingDetail item : sampling.getSamplingDetailResults()) {
+        for (SamplingContent item : sampling.getSamplingContentResults()) {
             LabelInfo info = new LabelInfo();
             info.setTaskName(sampling.getProjectName());
             info.setNumber(sampling.getSamplingNo());
@@ -301,33 +303,111 @@ public class CollectionFragment extends BaseFragment {
 
     /**
      * 设置选中状态
+     *
      * @param position
      * @param isSelected
      */
-    private void changSelectState(int position, boolean isSelected){
-        List<SamplingDetail> detailList= WastewaterActivity.mSample.getSamplingDetailResults();
-        if (!CheckUtil.isEmpty(detailList)){
-            for (SamplingDetail detail:detailList){
+    private void changSelectState(int position, boolean isSelected) {
+        List<SamplingContent> detailList = WastewaterActivity.mSample.getSamplingContentResults();
+        if (!CheckUtil.isEmpty(detailList)) {
+            for (SamplingContent detail : detailList) {
                 detail.setSelected(false);
             }
             detailList.get(position).setSelected(isSelected);
             mWasteWaterCollectAdapter.notifyDataSetChanged();
 
-            if (isSelected){
-                selectSamplingDetail=detailList.get(position);
-            }else {
-                selectSamplingDetail=null;
+            if (isSelected) {
+                selectSamplingDetail = detailList.get(position);
+            } else {
+                selectSamplingDetail = null;
             }
         }
     }
 
     /**
-     * 添加平行样品
+     * 添加平行样品:频次相同，但是SamplingCode不同
      */
-    private void addTheSameSample(){
-        SamplingDetail detail=new SamplingDetail();
+    private void addTheSameSample() {
+        SamplingContent samplingContent=new SamplingContent();
+        samplingContent.setId(UUID.randomUUID().toString());
+        samplingContent.setProjectId(selectSamplingDetail.getProjectId());
+        samplingContent.setSamplingId(selectSamplingDetail.getSamplingId());
+        samplingContent.setSampingCode(HelpUtil.createSamplingCode(WastewaterActivity.mSample));
+        samplingContent.setFrequecyNo(selectSamplingDetail.getFrequecyNo());
+        samplingContent.setDescription(selectSamplingDetail.getDescription());
+        samplingContent.setSamplingType(1);
+        samplingContent.setIsCompare(selectSamplingDetail.getIsCompare());
+        samplingContent.setIsAddPreserve(selectSamplingDetail.getIsAddPreserve());
+        samplingContent.setMonitemName(selectSamplingDetail.getMonitemName());
+        samplingContent.setMonitemId(selectSamplingDetail.getMonitemId());
+        samplingContent.setAddressName(selectSamplingDetail.getAddressName());
+        samplingContent.setAddresssId(selectSamplingDetail.getAddresssId());
+        samplingContent.setSamplingTime(selectSamplingDetail.getSamplingTime());
+        samplingContent.setOrderIndex(HelpUtil.createOrderIndex(WastewaterActivity.mSample));
+        //包括监测项目和现场监测项目
+        int count=0;
+        String[] monitemIds=selectSamplingDetail.getMonitemId().split(",");
+        if (!CheckUtil.isEmpty(monitemIds)){
+            count+=monitemIds.length;
+            for (String itemId:monitemIds){
+                SamplingDetail detail = new SamplingDetail();
+                detail.setProjectId(samplingContent.getProjectId());
+                detail.setId(UUID.randomUUID().toString());
+                detail.setSamplingId(samplingContent.getSamplingId());
+                detail.setSampingCode(samplingContent.getSampingCode());
+                detail.setFrequecyNo(samplingContent.getFrequecyNo());
+                detail.setDescription(samplingContent.getDescription());
+                detail.setSamplingType(1);
+                detail.setIsCompare(samplingContent.getIsCompare());
+                detail.setIsAddPreserve(samplingContent.getIsAddPreserve());
+                detail.setMonitemName(getMonItemNameById(itemId));
+                detail.setMonitemId(itemId);
+                detail.setAddressName(samplingContent.getAddressName());
+                detail.setAddresssId(samplingContent.getAddresssId());
+                detail.setIsSenceAnalysis(false);
+                detail.setSamplingTime(selectSamplingDetail.getSamplingTime());
+                detail.setOrderIndex(samplingContent.getOrderIndex());
+                DBHelper.get().getSamplingDetailDao().insert(detail);
+                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+            }
+        }
+
+        String[] sendMonitemIds=selectSamplingDetail.getSenceMonitemId().split(",");
+        if (!CheckUtil.isEmpty(sendMonitemIds)){
+            count+=sendMonitemIds.length;
+            for (String itemId:sendMonitemIds){
+                SamplingDetail detail = new SamplingDetail();
+                detail.setProjectId(samplingContent.getProjectId());
+                detail.setId(UUID.randomUUID().toString());
+                detail.setSamplingId(samplingContent.getSamplingId());
+                detail.setSampingCode(samplingContent.getSampingCode());
+                detail.setFrequecyNo(samplingContent.getFrequecyNo());
+                detail.setDescription(samplingContent.getDescription());
+                detail.setSamplingType(1);
+                detail.setIsCompare(samplingContent.getIsCompare());
+                detail.setIsAddPreserve(samplingContent.getIsAddPreserve());
+                detail.setMonitemName(getMonItemNameById(itemId));
+                detail.setMonitemId(itemId);
+                detail.setAddressName(samplingContent.getAddressName());
+                detail.setAddresssId(samplingContent.getAddresssId());
+                detail.setIsSenceAnalysis(true);
+                detail.setSamplingTime(selectSamplingDetail.getSamplingTime());
+                detail.setOrderIndex(samplingContent.getOrderIndex());
+                DBHelper.get().getSamplingDetailDao().insert(detail);
+                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+            }
+        }
+
+        samplingContent.setSamplingCount(count);
+        DBHelper.get().getSamplingContentDao().insert(samplingContent);
+        WastewaterActivity.mSample.getSamplingContentResults().add(samplingContent);
+        mWasteWaterCollectAdapter.notifyDataSetChanged();
+
+
+        /*
+        SamplingDetail detail = new SamplingDetail();
         detail.setProjectId(selectSamplingDetail.getProjectId());
-        detail.setId( UUID.randomUUID().toString());
+        detail.setId(UUID.randomUUID().toString());
         detail.setSamplingId(selectSamplingDetail.getSamplingId());
         detail.setSampingCode(selectSamplingDetail.getSampingCode());
         detail.setFrequecyNo(selectSamplingDetail.getFrequecyNo());
@@ -339,50 +419,93 @@ public class CollectionFragment extends BaseFragment {
         detail.setMonitemId(selectSamplingDetail.getMonitemId());
         detail.setAddressName(selectSamplingDetail.getAddressName());
         detail.setAddresssId(selectSamplingDetail.getAddresssId());
-
         //数据处理
         WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
         DBHelper.get().getSamplingDetailDao().insert(detail);
         //刷新界面
         mWasteWaterCollectAdapter.notifyDataSetChanged();
+        */
     }
+
 
     /**
      * 添加空白样
      */
-    private void addBlankSample(){
-        SamplingDetail detail=new SamplingDetail();
-        detail.setProjectId(WastewaterActivity.mSample.getProjectId());
-        detail.setSamplingType(2);
-        detail.setId( UUID.randomUUID().toString());
+    private void addBlankSample() {
+        //创建SamplingContent
+        SamplingContent samplingContent=new SamplingContent();
+        samplingContent.setId(UUID.randomUUID().toString());
+        samplingContent.setProjectId(WastewaterActivity.mSample.getProjectId());
+        samplingContent.setSamplingType(2);
+        samplingContent.setSamplingId(WastewaterActivity.mSample.getId());
+        //添加空白默认频次为0
+        samplingContent.setSampingCode(HelpUtil.createSamplingCode(WastewaterActivity.mSample));
+        samplingContent.setFrequecyNo(0);
+        samplingContent.setOrderIndex(HelpUtil.createOrderIndex(WastewaterActivity.mSample));
+        samplingContent.setMonitemId("");
+        samplingContent.setMonitemName("");
+        samplingContent.setSenceMonitemId("");
+        samplingContent.setSenceMonitemName("");
+
+        //创建SamplingDetail
+        SamplingDetail detail = new SamplingDetail();
+        detail.setProjectId(samplingContent.getProjectId());
+        detail.setSamplingType(samplingContent.getSamplingType());
+        detail.setId(UUID.randomUUID().toString());
         detail.setSamplingId(WastewaterActivity.mSample.getId());
-        detail.setSampingCode(HelpUtil.createSamplingCode(WastewaterActivity.mSample));
-        detail.setFrequecyNo(HelpUtil.createFrequency(WastewaterActivity.mSample));
+        //添加空白默认频次为0
+        detail.setSampingCode(samplingContent.getSampingCode());
+        detail.setFrequecyNo(0);
+        detail.setOrderIndex(samplingContent.getOrderIndex());
+        DBHelper.get().getSamplingDetailDao().insert(detail);
+        detail.setMonitemId("");
+        detail.setMonitemName("");
+        WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
 
         //数据处理
-        WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
-        DBHelper.get().getSamplingDetailDao().insert(detail);
+        WastewaterActivity.mSample.getSamplingContentResults().add(samplingContent);
+        DBHelper.get().getSamplingContentDao().insert(samplingContent);
         //刷新界面
         mWasteWaterCollectAdapter.notifyDataSetChanged();
     }
 
     /**
      * 判断某个普通样是否添加平行样
+     *
      * @param selectSamplingDetail
      * @return
      */
-    private boolean isPxSampleAdded(SamplingDetail selectSamplingDetail){
-        boolean flag=false;
-        List<SamplingDetail> samplingList= WastewaterActivity.mSample.getSamplingDetailResults();
-        if (!CheckUtil.isEmpty(samplingList)){
-            for (SamplingDetail detail:samplingList){
-                if (selectSamplingDetail.getSampingCode().equals(detail.getSampingCode()) && detail.getSamplingType()==1){
-                    flag=true;
+    private boolean isPxSampleAdded(SamplingContent selectSamplingDetail) {
+        boolean flag = false;
+        List<SamplingContent> samplingList = WastewaterActivity.mSample.getSamplingContentResults();
+        if (!CheckUtil.isEmpty(samplingList)) {
+            for (SamplingContent detail : samplingList) {
+                if (selectSamplingDetail.getSampingCode().equals(detail.getSampingCode()) && detail.getSamplingType() == 1) {
+                    flag = true;
                     break;
                 }
             }
         }
         return flag;
+    }
+
+
+    /**
+     * 根据itemId获取name
+     * @param itemId
+     * @return
+     */
+    private String getMonItemNameById(String itemId){
+        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(WastewaterActivity.mSample.getParentTagId())).unique();
+        List<MonItems> monItems = tags.getMMonItems();
+        if (!CheckUtil.isEmpty(monItems)){
+            for (MonItems monItem:monItems){
+                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
+                    return monItem.getName();
+                }
+            }
+        }
+        return "";
     }
 
 }

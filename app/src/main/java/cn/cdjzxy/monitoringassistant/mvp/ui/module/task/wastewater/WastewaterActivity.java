@@ -27,11 +27,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
@@ -50,6 +52,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.Coll
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -132,6 +135,11 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             if (!CheckUtil.isEmpty(formStantdsList)) {
                 WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
             }
+            List<SamplingContent> samplingContentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingContentDao.Properties.OrderIndex).list();
+            if (!CheckUtil.isEmpty(samplingContentList)) {
+                WastewaterActivity.mSample.setSamplingContentResults(samplingContentList);
+            }
+
         }
 
         if (mSample.getIsCanEdit()) {
@@ -173,8 +181,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                         DBHelper.get().getSamplingFormStandDao().insertInTx(mSample.getSamplingFormStandResults());
                     }
 
-                    mSample.setIsFinish(isSamplingFinish());
-                    mSample.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                    mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
+                    mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
                     //保存基本信息
                     saveBaseInfo();
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
@@ -265,7 +273,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
         Sampling sampling = new Sampling();
-        sampling.setId("FS-" + UUID.randomUUID().toString());//唯一标志
+        sampling.setId(UUID.randomUUID().toString());//唯一标志
         sampling.setSamplingNo(createSamplingNo());
         sampling.setProjectId(project.getId());
         sampling.setProjectName(project.getName());
@@ -285,6 +293,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
         sampling.setSamplingTimeBegin(DateUtils.getDate());
         sampling.setSamplingDetailResults(new ArrayList<>());
+        sampling.setSamplingContentResults(new ArrayList<>());
         sampling.setIsLocal(true);
         sampling.setIsUpload(false);
         sampling.setIsCanEdit(true);
@@ -315,39 +324,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
         return samplingNo.toString();
-    }
-
-    /**
-     * 采样是否完成
-     *
-     * @return
-     */
-    private boolean isSamplingFinish() {
-        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getTagId())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getAddressId())) {
-            return false;
-        }
-        Gson gson = new Gson();
-        FsExtends fsExtends = gson.fromJson(WastewaterActivity.mSample.getPrivateData(), FsExtends.class);
-        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getFrequencyNo())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getMethodId())) {
-            return false;
-        }
-
-        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
-            return false;
-        }
-        return true;
     }
 
     /**

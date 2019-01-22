@@ -51,17 +51,25 @@ public class SubmitDataUtil {
         List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList = setUpSamplingDetailDataList(sampling);
         if (!CheckUtil.isEmpty(detailsBeanList)) {
             sampFormBean.setSamplingDetails(detailsBeanList);
+        }else {
+            sampFormBean.setSamplingDetails(new ArrayList<>());
         }
         //setUpBottleSplitDataList
         List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList = setUpBottleSplitDataList(sampling);
         if (!CheckUtil.isEmpty(bottleSplitDataList)) {
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
+        }else {
+            sampFormBean.setSamplingFormStands(new ArrayList<>());
         }
         //文件信息组装
         List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = setUpSamplingFileDataList(sampling);
         if (!CheckUtil.isEmpty(fileBeanList)) {
             sampFormBean.setUploadFiles(fileBeanList);
+        }else {
+            sampFormBean.setUploadFiles(new ArrayList<>());
         }
+
+        sampFormBean.setSamplingDetailYQFs(new ArrayList<>());
         preciptationSampForm.setSampForm(sampFormBean);
         return preciptationSampForm;
     }
@@ -138,6 +146,9 @@ public class SubmitDataUtil {
             List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeansList = new ArrayList<>();
             int count = 1;
             for (SamplingDetail samplingDetail : samplingDetailsList) {
+                if (CheckUtil.isEmpty(samplingDetail.getMonitemId())){
+                   continue;
+                }
                 PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
 
                 samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
@@ -278,6 +289,9 @@ public class SubmitDataUtil {
             sampFormBean.setSamplingDetailYQFs(detailsBeanList);
         }
 
+        sampFormBean.setUploadFiles(new ArrayList<>());
+
+
         return preciptationSampForm;
     }
 
@@ -313,7 +327,10 @@ public class SubmitDataUtil {
         List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = setUpSamplingFileDataList(sampling);
         if (!CheckUtil.isEmpty(fileBeanList)) {
             sampFormBean.setUploadFiles(fileBeanList);
+        }else {
+            sampFormBean.setUploadFiles(new ArrayList<>());
         }
+        sampFormBean.setSamplingDetailYQFs(new ArrayList<>());
 
         return preciptationSampForm;
     }

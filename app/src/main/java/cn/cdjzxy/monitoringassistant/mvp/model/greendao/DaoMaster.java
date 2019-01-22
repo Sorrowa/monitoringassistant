@@ -24,6 +24,7 @@ public class DaoMaster extends AbstractDaoMaster {
         MsgDao.createTable(db, ifNotExists);
         FormDao.createTable(db, ifNotExists);
         SamplingFormStandDao.createTable(db, ifNotExists);
+        SamplingContentDao.createTable(db, ifNotExists);
         SamplingDao.createTable(db, ifNotExists);
         TableDao.createTable(db, ifNotExists);
         SamplingFileDao.createTable(db, ifNotExists);
@@ -58,6 +59,7 @@ public class DaoMaster extends AbstractDaoMaster {
         MsgDao.dropTable(db, ifExists);
         FormDao.dropTable(db, ifExists);
         SamplingFormStandDao.dropTable(db, ifExists);
+        SamplingContentDao.dropTable(db, ifExists);
         SamplingDao.dropTable(db, ifExists);
         TableDao.dropTable(db, ifExists);
         SamplingFileDao.dropTable(db, ifExists);
@@ -106,6 +108,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(MsgDao.class);
         registerDaoClass(FormDao.class);
         registerDaoClass(SamplingFormStandDao.class);
+        registerDaoClass(SamplingContentDao.class);
         registerDaoClass(SamplingDao.class);
         registerDaoClass(TableDao.class);
         registerDaoClass(SamplingFileDao.class);

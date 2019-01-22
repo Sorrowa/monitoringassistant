@@ -8,7 +8,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterCollectHolder;
 
 
@@ -16,13 +16,13 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterCollectHolder;
  * 水和废水采样
  */
 
-public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingDetail> {
+public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingContent> {
 
     private OnWasteWaterCollectListener collectListener;
 
-    public WasteWaterCollectAdapter(List<SamplingDetail> details,OnWasteWaterCollectListener collectListener) {
+    public WasteWaterCollectAdapter(List<SamplingContent> details, OnWasteWaterCollectListener collectListener) {
         super(details);
-        this.collectListener=collectListener;
+        this.collectListener = collectListener;
     }
 
     @Override
@@ -31,11 +31,11 @@ public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingDetail> {
     }
 
     @Override
-    public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
-        return new WasteWaterCollectHolder(v,collectListener);
+    public BaseHolder<SamplingContent> getHolder(View v, int viewType) {
+        return new WasteWaterCollectHolder(v, collectListener);
     }
 
     public interface OnWasteWaterCollectListener {
-        void onSelected(View view, int position,boolean isSelected);
+        void onSelected(View view, int position, boolean isSelected);
     }
 }

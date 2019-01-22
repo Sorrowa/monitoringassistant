@@ -4,15 +4,22 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 
 
 public class HelpUtil {
@@ -82,23 +89,38 @@ public class HelpUtil {
         }
         String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
 
-        int snFrequency = createFrequency(sampling);
-        samplingNo = getYpxzCode(sampling.getTagName()) + snDate + "-" + snSampling + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
+        int snIndex = HelpUtil.createOrderIndex(sampling);
+        samplingNo = getYpxzCode(sampling.getTagName()) + snDate + "-" + snSampling + snUserId + "-" + StringUtil.autoGenericCode(snIndex, 2);
         return samplingNo;
     }
 
     /**
-     * 创建频次
+     * 创建orderIndex
+     * @param sampling
+     * @return
+     */
+    public static int createOrderIndex(Sampling sampling){
+        int snIndex = 1;
+        List<SamplingContent> samplingDetailResults = sampling.getSamplingContentResults();
+        if (!CheckUtil.isEmpty(samplingDetailResults)){
+            SamplingContent lastContent=samplingDetailResults.get(samplingDetailResults.size()-1);
+            snIndex=lastContent.getOrderIndex()+1;//OrderOndex:表示前面的序号
+        }
+        return snIndex;
+    }
+
+    /**
+     * 创建频次(普通样)
      * @param sampling
      * @return
      */
     public static int createFrequency(Sampling sampling){
         int snFrequency = 1;
-        List<SamplingDetail> samplingDetailResults = sampling.getSamplingDetailResults();
+        List<SamplingContent> samplingDetailResults = sampling.getSamplingContentResults();
         if (samplingDetailResults != null && samplingDetailResults.size() > 0) {
             List<Integer> tempList=new ArrayList<>();
-            for (SamplingDetail detail:samplingDetailResults){
-                if (detail.getSamplingType()==0 || detail.getSamplingType()==2){
+            for (SamplingContent detail:samplingDetailResults){
+                if (detail.getSamplingType()==0){
                     tempList.add(detail.getFrequecyNo());
                 }
             }
@@ -128,6 +150,48 @@ public class HelpUtil {
             nameStr="DBS";
         }
         return nameStr;
+    }
+
+    /**
+     * 判断采样单是否完成
+     * @param mSample
+     * @return
+     */
+    public  static boolean isSamplingFinish(Sampling mSample) {
+        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getTagId())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getAddressId())) {
+            return false;
+        }
+        Gson gson = new Gson();
+        FsExtends fsExtends = gson.fromJson(WastewaterActivity.mSample.getPrivateData(), FsExtends.class);
+        if (CheckUtil.isEmpty(mSample.getMethodId())) {
+            return false;
+        }
+
+        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 产生新的分瓶信息index
+     * @return
+     */
+    public static int generateNewSplitBottleIndex(Sampling mSample){
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+        if (!CheckUtil.isEmpty(formStantdsList)){
+            return formStantdsList.get(formStantdsList.size()-1).getIndex()+1;
+        }
+        return 1;
     }
 
 }

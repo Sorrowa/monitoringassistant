@@ -8,12 +8,12 @@ import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 
-public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
+public class WasteWaterCollectHolder extends BaseHolder<SamplingContent> {
 
     @BindView(R.id.collect_frequency)
     TextView collect_frequency;
@@ -34,41 +34,41 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingDetail> {
 
     public WasteWaterCollectHolder(View itemView, WasteWaterCollectAdapter.OnWasteWaterCollectListener collectListener) {
         super(itemView);
-        this.collectListener=collectListener;
+        this.collectListener = collectListener;
     }
 
     @Override
-    public void setData(SamplingDetail detail, int position) {
+    public void setData(SamplingContent detail, int position) {
         collect_frequency.setText("频次：" + detail.getFrequecyNo());
         collect_date.setText(detail.getSamplingTime());
         collect_sample_count.setText("样品数量：" + detail.getSamplingCount());
-        String monitorIdsStr=detail.getMonitemId();
-        if (!CheckUtil.isEmpty(monitorIdsStr) && monitorIdsStr.length()>0){
-            collect_monitor_project.setText("监测项目（"+ monitorIdsStr.split(",").length+"）：" + detail.getMonitemName());
+        String monitorIdsStr = detail.getMonitemId();
+        if (!CheckUtil.isEmpty(monitorIdsStr) && monitorIdsStr.length() > 0) {
+            collect_monitor_project.setText("监测项目（" + monitorIdsStr.split(",").length + "）：" + detail.getMonitemName());
         }
-        String monitorStr=detail.getAddresssId();
-        if (!CheckUtil.isEmpty(monitorStr) && monitorStr.length()>0){
-            collect_live_measure.setText("现场监测（"+monitorStr.split(",").length+"）：" + detail.getAddressName());
+        String monitorStr = detail.getAddresssId();
+        if (!CheckUtil.isEmpty(monitorStr) && monitorStr.length() > 0) {
+            collect_live_measure.setText("现场监测（" + monitorStr.split(",").length + "）：" + detail.getAddressName());
         }
 
-        if (detail.getSamplingType()==0){
+        if (detail.getSamplingType() == 0) {
             collect_operate.setText("");
-        }else if (detail.getSamplingType()==1){
+        } else if (detail.getSamplingType() == 1) {
             collect_operate.setText(Constants.SAMPLING_TYPE_PX);
-        }else if (detail.getSamplingType()==2){
+        } else if (detail.getSamplingType() == 2) {
             collect_operate.setText(Constants.SAMPLING_TYPE_KB);
         }
 
-        if (detail.isSelected()){
+        if (detail.isSelected()) {
             choose_img.setImageResource(R.mipmap.radio_select);
-        }else {
+        } else {
             choose_img.setImageResource(R.mipmap.radio);
         }
         choose_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (collectListener!=null){
-                    collectListener.onSelected(v,position,!detail.isSelected());
+                if (collectListener != null) {
+                    collectListener.onSelected(v, position, !detail.isSelected());
                 }
             }
         });

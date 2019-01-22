@@ -14,7 +14,11 @@ public class StringUtil {
         // 0 代表前面补充0
         // num 代表长度为4
         // d 代表参数为正数型
-        result = String.format("%0" + num + "d", number);
+        if (number>100){
+            result=number+"";
+        }else {
+            result = String.format("%0" + num + "d", number);
+        }
         return result;
     }
 }

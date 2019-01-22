@@ -165,6 +165,8 @@ public class Sampling {
     private boolean isSelected;
     @Transient
     private List<SamplingDetail> SamplingDetailYQFs;
+    @Transient
+    private List<SamplingContent> SamplingContentResults;
 
     @Generated(hash = 2113547962)
     public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String AllMonitemId, String AllMonitemName, List<String> SamplingUserResults) {
@@ -808,5 +810,13 @@ public class Sampling {
 
     public void setLayTableCheckbox(String layTableCheckbox) {
         this.layTableCheckbox = layTableCheckbox;
+    }
+
+    public List<SamplingContent> getSamplingContentResults() {
+        return SamplingContentResults;
+    }
+
+    public void setSamplingContentResults(List<SamplingContent> samplingContentResults) {
+        SamplingContentResults = samplingContentResults;
     }
 }

@@ -12,6 +12,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
@@ -957,7 +959,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     preciptationSampForm.setCompelSubmit(isCompelSubmit);
                 }
 
-//                Log.e("SampFormData", JSONObject.toJSONString(preciptationSampForm));
+                Log.e("SampFormData", JSONObject.toJSONString(preciptationSampForm));
                 //文件上传成功，上传采样单
                 mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);
             }

@@ -11,6 +11,7 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Table;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
@@ -42,6 +43,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemTagRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TableDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
@@ -82,6 +84,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig msgDaoConfig;
     private final DaoConfig formDaoConfig;
     private final DaoConfig samplingFormStandDaoConfig;
+    private final DaoConfig samplingContentDaoConfig;
     private final DaoConfig samplingDaoConfig;
     private final DaoConfig tableDaoConfig;
     private final DaoConfig samplingFileDaoConfig;
@@ -113,6 +116,7 @@ public class DaoSession extends AbstractDaoSession {
     private final MsgDao msgDao;
     private final FormDao formDao;
     private final SamplingFormStandDao samplingFormStandDao;
+    private final SamplingContentDao samplingContentDao;
     private final SamplingDao samplingDao;
     private final TableDao tableDao;
     private final SamplingFileDao samplingFileDao;
@@ -153,6 +157,9 @@ public class DaoSession extends AbstractDaoSession {
 
         samplingFormStandDaoConfig = daoConfigMap.get(SamplingFormStandDao.class).clone();
         samplingFormStandDaoConfig.initIdentityScope(type);
+
+        samplingContentDaoConfig = daoConfigMap.get(SamplingContentDao.class).clone();
+        samplingContentDaoConfig.initIdentityScope(type);
 
         samplingDaoConfig = daoConfigMap.get(SamplingDao.class).clone();
         samplingDaoConfig.initIdentityScope(type);
@@ -238,6 +245,7 @@ public class DaoSession extends AbstractDaoSession {
         msgDao = new MsgDao(msgDaoConfig, this);
         formDao = new FormDao(formDaoConfig, this);
         samplingFormStandDao = new SamplingFormStandDao(samplingFormStandDaoConfig, this);
+        samplingContentDao = new SamplingContentDao(samplingContentDaoConfig, this);
         samplingDao = new SamplingDao(samplingDaoConfig, this);
         tableDao = new TableDao(tableDaoConfig, this);
         samplingFileDao = new SamplingFileDao(samplingFileDaoConfig, this);
@@ -269,6 +277,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Msg.class, msgDao);
         registerDao(Form.class, formDao);
         registerDao(SamplingFormStand.class, samplingFormStandDao);
+        registerDao(SamplingContent.class, samplingContentDao);
         registerDao(Sampling.class, samplingDao);
         registerDao(Table.class, tableDao);
         registerDao(SamplingFile.class, samplingFileDao);
@@ -302,6 +311,7 @@ public class DaoSession extends AbstractDaoSession {
         msgDaoConfig.clearIdentityScope();
         formDaoConfig.clearIdentityScope();
         samplingFormStandDaoConfig.clearIdentityScope();
+        samplingContentDaoConfig.clearIdentityScope();
         samplingDaoConfig.clearIdentityScope();
         tableDaoConfig.clearIdentityScope();
         samplingFileDaoConfig.clearIdentityScope();
@@ -341,6 +351,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public SamplingFormStandDao getSamplingFormStandDao() {
         return samplingFormStandDao;
+    }
+
+    public SamplingContentDao getSamplingContentDao() {
+        return samplingContentDao;
     }
 
     public SamplingDao getSamplingDao() {
