@@ -14,6 +14,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -176,6 +177,23 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     private void addMonItems() {
+        List<User> tempList= new ArrayList<>();
+        for (User user : mUsers) {
+            if (user.isSelected()) {
+                user.setSelected(false);
+                mUsersSelected.add(user);
+                tempList.add(user);
+                //mUsers.remove(user);
+            }
+        }
+
+        if (!CheckUtil.isEmpty(tempList)){
+            for (User user : tempList){
+                mUsers.remove(user);
+            }
+        }
+        
+        /*
         for (User user : mUsers) {
             if (user.isSelected()) {
                 user.setSelected(false);
@@ -183,11 +201,27 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
                 mUsers.remove(user);
             }
         }
+        */
         mUserAdapter.notifyDataSetChanged();
         mUserSelectedAdapter.notifyDataSetChanged();
     }
 
     private void deleteMonItems() {
+        List<User> tempList= new ArrayList<>();
+        for (User user : mUsersSelected) {
+            if (user.isSelected()) {
+                user.setSelected(false);
+                mUsers.add(user);
+                tempList.add(user);
+            }
+        }
+
+        if (!CheckUtil.isEmpty(tempList)){
+            for (User user : tempList){
+                mUsersSelected.remove(user);
+            }
+        }
+        /*
         for (User user : mUsersSelected) {
             if (user.isSelected()) {
                 user.setSelected(false);
@@ -195,6 +229,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
                 mUsersSelected.remove(user);
             }
         }
+        */
         mUserAdapter.notifyDataSetChanged();
         mUserSelectedAdapter.notifyDataSetChanged();
     }
