@@ -440,10 +440,18 @@ public class CollectionFragment extends BaseFragment {
         WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
 
         //数据处理
+        if (CheckUtil.isEmpty(WastewaterActivity.mSample.getSamplingContentResults())){
+            WastewaterActivity.mSample.setSamplingContentResults(new ArrayList<>());
+        }
         WastewaterActivity.mSample.getSamplingContentResults().add(samplingContent);
         DBHelper.get().getSamplingContentDao().insert(samplingContent);
         //刷新界面
-        mWasteWaterCollectAdapter.notifyDataSetChanged();
+        if (mWasteWaterCollectAdapter!=null){
+            mWasteWaterCollectAdapter.notifyDataSetChanged();
+        }else {
+            initRecyclerViewData();
+        }
+
     }
 
     /**

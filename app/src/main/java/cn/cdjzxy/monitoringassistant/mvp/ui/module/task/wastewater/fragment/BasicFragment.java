@@ -320,7 +320,7 @@ public class BasicFragment extends BaseFragment {
                 .capture(true)
                 .captureStrategy(new CaptureStrategy(true, "cn.cdjzxy.monitoringassistant.android7.fileprovider", "MonitoringAssistant"))
                 .maxSelectable(5)
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 .showSingleMediaType(true)
                 .thumbnailScale(0.85f)
                 .imageEngine(new Glide4Engine())
