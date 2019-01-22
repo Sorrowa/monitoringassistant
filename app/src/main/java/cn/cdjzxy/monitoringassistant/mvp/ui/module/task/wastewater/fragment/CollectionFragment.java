@@ -455,7 +455,7 @@ public class CollectionFragment extends BaseFragment {
     }
 
     /**
-     * 判断某个普通样是否添加平行样
+     * 判断某个普通样是否添加平行样:频次相同， code不同
      *
      * @param selectSamplingDetail
      * @return
@@ -465,7 +465,7 @@ public class CollectionFragment extends BaseFragment {
         List<SamplingContent> samplingList = WastewaterActivity.mSample.getSamplingContentResults();
         if (!CheckUtil.isEmpty(samplingList)) {
             for (SamplingContent detail : samplingList) {
-                if (selectSamplingDetail.getSampingCode().equals(detail.getSampingCode()) && detail.getSamplingType() == 1) {
+                if (selectSamplingDetail.getFrequecyNo()==detail.getFrequecyNo() && detail.getSamplingType() == 1) {
                     flag = true;
                     break;
                 }

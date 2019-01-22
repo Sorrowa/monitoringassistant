@@ -192,7 +192,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
                 mUsers.remove(user);
             }
         }
-        
+
         /*
         for (User user : mUsers) {
             if (user.isSelected()) {
