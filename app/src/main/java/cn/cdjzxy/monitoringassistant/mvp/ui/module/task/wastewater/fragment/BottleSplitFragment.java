@@ -72,7 +72,6 @@ public class BottleSplitFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (mWasteWaterBottleAdapter != null) {
-                //mWasteWaterBottleAdapter.notifyDataSetChanged();
                 mWasteWaterBottleAdapter.refreshInfos(WastewaterActivity.mSample.getSamplingFormStandResults());
             } else {
                 initRecyclerViewData();

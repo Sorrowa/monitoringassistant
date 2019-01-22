@@ -261,9 +261,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
                     }
                 }
             }
-            //bottleSplit.setIndex(HelpUtil.generateNewSplitBottleIndex(mSample));
             DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
-
 
             mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
             mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");

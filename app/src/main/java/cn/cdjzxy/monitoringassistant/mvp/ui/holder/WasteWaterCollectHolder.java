@@ -46,9 +46,9 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingContent> {
         if (!CheckUtil.isEmpty(monitorIdsStr) && monitorIdsStr.length() > 0) {
             collect_monitor_project.setText("监测项目（" + monitorIdsStr.split(",").length + "）：" + detail.getMonitemName());
         }
-        String monitorStr = detail.getAddresssId();
+        String monitorStr = detail.getSenceMonitemId();
         if (!CheckUtil.isEmpty(monitorStr) && monitorStr.length() > 0) {
-            collect_live_measure.setText("现场监测（" + monitorStr.split(",").length + "）：" + detail.getAddressName());
+            collect_live_measure.setText("现场监测（" + monitorStr.split(",").length + "）：" + detail.getSenceMonitemName());
         }
 
         if (detail.getSamplingType() == 0) {

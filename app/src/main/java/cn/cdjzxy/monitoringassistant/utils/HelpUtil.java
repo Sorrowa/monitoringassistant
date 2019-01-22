@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
@@ -17,6 +19,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -192,6 +195,25 @@ public class HelpUtil {
             return formStantdsList.get(formStantdsList.size()-1).getIndex()+1;
         }
         return 1;
+    }
+
+    /**
+     * 根据itemId获取对应的name
+     * @param itemId
+     * @param mSample
+     * @return
+     */
+    public static String getMonItemNameById(String itemId,Sampling mSample){
+        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mSample.getParentTagId())).unique();
+        List<MonItems> monItems = tags.getMMonItems();
+        if (!CheckUtil.isEmpty(monItems)){
+            for (MonItems monItem:monItems){
+                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
+                    return monItem.getName();
+                }
+            }
+        }
+        return null;
     }
 
 }

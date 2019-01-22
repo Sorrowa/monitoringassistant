@@ -47,6 +47,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
@@ -180,11 +181,19 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
 
             sample_monitor_items.setText(samplingDetail.getMonitemName());
-            sample_monitor.setText(samplingDetail.getAddressName());
+            sample_monitor.setText(samplingDetail.getSenceMonitemName());
 
             sample_add_preserve.setChecked(samplingDetail.getIsAddPreserve());
             sample_compare_monitor.setChecked(samplingDetail.getIsCompare());
             sample_mark.setText(samplingDetail.getDescription());
+
+            if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())){
+                sample_monitor_items_title.setText("监测项目（"+samplingDetail.getMonitemId().split(",").length+"）");
+            }
+
+            if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())){
+                sample_monitor_title.setText("现场监测（"+samplingDetail.getSenceMonitemId().split(",").length+"）");
+            }
 
             if (samplingDetail.getSamplingType()==0){
                 sample_quality.setText(Constants.SAMPLING_TYPE_PT);
@@ -247,14 +256,18 @@ public class CollectionDetailFragment extends BaseFragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SamplingDetail currentDetail = mSample.getSamplingDetailResults().get(fsListPosition);
-
-                        SamplingDetail samplingDetail = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(currentDetail.getId())).unique();
+                        //删除SamplingContent
+                        SamplingContent currentDetail = mSample.getSamplingContentResults().get(fsListPosition);
+                        SamplingContent samplingDetail = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.Id.eq(currentDetail.getId())).unique();
                         if (!CheckUtil.isNull(samplingDetail)) {
-                            DBHelper.get().getSamplingDetailDao().delete(samplingDetail);
+                            DBHelper.get().getSamplingContentDao().delete(samplingDetail);
                         }
-
-                        mSample.getSamplingDetailResults().remove(fsListPosition);
+                        mSample.getSamplingContentResults().remove(fsListPosition);
+                        //删除对应的SamplingDetail
+                        List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(currentDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(currentDetail.getSampingCode())).build().list();
+                        if (!CheckUtil.isEmpty(samplingDetailList)){
+                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+                        }
                         //删除分瓶信息
                         deleteRelateBottle();
                         List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
@@ -262,8 +275,8 @@ public class CollectionDetailFragment extends BaseFragment {
                             WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
                         }
 
-                        mSample.setIsFinish(isSamplingFinish());
-                        mSample.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                        mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
+                        mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
                         if (CheckUtil.isNull(sampling)) {
                             DBHelper.get().getSamplingDao().insert(mSample);
@@ -283,37 +296,6 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
                 }).create();
         dialog.show();
-    }
-
-    /**
-     * 采样是否完成
-     *
-     * @return
-     */
-    private boolean isSamplingFinish() {
-        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getSamplingUserName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getTagName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getAddressName())) {
-            return false;
-        }
-//        if (CheckUtil.isEmpty(mSample.getPrivateData())) {
-//            return false;
-//        }
-//        if (CheckUtil.isEmpty(mSample.getMethodName())) {
-//            return false;
-//        }
-//        if (CheckUtil.isEmpty(mSample.getDeviceName())) {
-//            return false;
-//        }
-        return true;
-
     }
 
     /**
@@ -339,21 +321,25 @@ public class CollectionDetailFragment extends BaseFragment {
             }
 
             //设置采样单完结状态以及更新采样单
-            mSample.setIsFinish(isSamplingFinish());
-            mSample.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+            mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
+            mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
             Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
             if (CheckUtil.isNull(sampling)) {
-                samplingDetail.setId( UUID.randomUUID().toString());
+                mSample.setId( UUID.randomUUID().toString());
                 DBHelper.get().getSamplingDao().insert(mSample);
             } else {
                 DBHelper.get().getSamplingDao().update(mSample);
             }
 
+            //删除之前生成的SamplingDetail
+            List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).build().list();
+            if (!CheckUtil.isEmpty(samplingDetailList)){
+                DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+            }
             generateSamplingDetails();
-            //SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())).unique();
             if (fsListPosition == -1) {
-                samplingDetail.setId(UUID.randomUUID().toString());
-                samplingDetail.setSamplingType(0);
+                //samplingDetail.setId(UUID.randomUUID().toString());
+                //samplingDetail.setSamplingType(0);
                 DBHelper.get().getSamplingContentDao().insert(samplingDetail);
             }else {
                 DBHelper.get().getSamplingContentDao().update(samplingDetail);
@@ -361,7 +347,7 @@ public class CollectionDetailFragment extends BaseFragment {
             //生成分瓶信息
             generateBottleSplit();
             //设置信息
-            setBottleAndDetail();
+            setBottleAndContent();
 
             EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
             EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
@@ -435,7 +421,7 @@ public class CollectionDetailFragment extends BaseFragment {
     }
 
     /**
-     * 生成分瓶信息
+     * 生成分瓶信息:只有监测项目才生成分瓶信息
      * @return
      */
     private void generateBottleSplit(){
@@ -446,7 +432,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 SamplingFormStand samplingFormStand=bottleIsExists(itemId);
                 //如果已经存在，则不操作
                 if (CheckUtil.isNull(samplingFormStand)){
-                    String itemName=getMonItemNameById(itemId);
+                    String itemName=HelpUtil.getMonItemNameById(itemId,mSample);
                     //如果itemName为空则不操作
                     if (!CheckUtil.isEmpty(itemName)){
                         //获取规则
@@ -467,6 +453,7 @@ public class CollectionDetailFragment extends BaseFragment {
                             bottleSplit.setIndex(generateNewIndex());
                             bottleSplit.setSamplingId(mSample.getId());
                             bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                            bottleSplit.setSaveMehtod(samplingStantd.getSaveDescription());
                             DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
 
                         }else {
@@ -485,75 +472,11 @@ public class CollectionDetailFragment extends BaseFragment {
                             bottleSplit.setIndex(generateNewIndex());
                             bottleSplit.setSamplingId(mSample.getId());
                             bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                            bottleSplit.setSaveMehtod("");
                             DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
                         }
                     }
                 }
-//                /*
-//                if (!CheckUtil.isEmpty(itemName)){
-//                    SamplingStantd samplingStantd=getRelateSamplingStantd(itemId);//获取规则
-//                    if (CheckUtil.isNull(samplingStantd)){
-//                        SamplingFormStand bottleSplit = new SamplingFormStand();
-//                        bottleSplit.setCount(1);
-//                        bottleSplit.setContainer("");
-//                        bottleSplit.setAnalysisSite("");
-//                        bottleSplit.setSaveTimes("");
-//                        bottleSplit.setMonitemIds(itemId);
-//                        bottleSplit.setId(UUID.randomUUID().toString());
-//                        bottleSplit.setMonitemName(itemName);
-//                        List<String> items=new ArrayList<>();
-//                        items.add(itemId);
-//                        bottleSplit.setMonItems(items);
-//                        bottleSplit.setSamplingAmount("");
-//                        bottleSplit.setIndex(generateNewIndex());
-//                        bottleSplit.setSamplingId(mSample.getId());
-//                        bottleSplit.setStandNo(generateNewIndex());
-//                        bottleSplit.setUpdateTime(DateUtils.getWholeDate());
-//                        DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
-//                    }else {
-//                        //存在则判断是否一样不管，不存在则新增
-//                        SamplingFormStand samplingFormStand=bottleIsExists(itemId);
-//                        if (CheckUtil.isNull(samplingFormStand)){
-//                            SamplingFormStand bottleSplit = new SamplingFormStand();
-//                            //bottleSplit.setCount(1);
-//                            bottleSplit.setContainer(samplingStantd.getContaner());
-//                            bottleSplit.setAnalysisSite("");
-//                            bottleSplit.setSaveTimes("");
-//                            bottleSplit.setMonitemIds(itemId);
-//                            bottleSplit.setId(UUID.randomUUID().toString());
-//                            bottleSplit.setMonitemName(itemName);
-//                            List<String> items=new ArrayList<>();
-//                            items.add(itemId);
-//                            bottleSplit.setMonItems(items);
-//                            bottleSplit.setSamplingAmount(samplingStantd.getCapacity());
-//                            bottleSplit.setStandNo(generateNewIndex());
-//                            bottleSplit.setIndex(generateNewIndex());
-//                            bottleSplit.setSamplingId(mSample.getId());
-//                            bottleSplit.setUpdateTime(DateUtils.getWholeDate());
-//                            DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
-//                        }else {
-//                            /*
-//                            if (!CheckUtil.isEmpty(samplingFormStand.getMonitemName()) && !samplingFormStand.getMonitemName().contains(itemName)){
-//                                samplingFormStand.setUpdateTime(DateUtils.getWholeDate());
-//                                samplingFormStand.setMonitemIds(samplingFormStand.getMonitemIds()+","+itemId);
-//                                samplingFormStand.setMonitemName(samplingFormStand.getMonitemName()+","+itemName);
-//                                samplingFormStand.setSamplingId(mSample.getId());
-//                                List<String> items=samplingFormStand.getMonItems();
-//                                if (CheckUtil.isEmpty(items)){
-//                                    items=new ArrayList<>();
-//                                }else {
-//                                    items=new ArrayList<>(items);
-//                                }
-//                                items.add(CheckUtil.isEmpty(itemName)?"":itemName);
-//                                samplingFormStand.setMonItems(items);
-//                                DBHelper.get().getSamplingFormStandDao().updateInTx(samplingFormStand);
-//                            }
-//                            */
-//                        }
-//                    }
-//                }
-//                */
-
             }
 
         }
@@ -578,23 +501,6 @@ public class CollectionDetailFragment extends BaseFragment {
         return null;
     }
 
-    /**
-     * 根据itemId获取name
-     * @param itemId
-     * @return
-     */
-    private String getMonItemNameById(String itemId){
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mSample.getParentTagId())).unique();
-        List<MonItems> monItems = tags.getMMonItems();
-        if (!CheckUtil.isEmpty(monItems)){
-            for (MonItems monItem:monItems){
-                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
-                    return monItem.getName();
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * 判断分瓶信息是否存在
@@ -625,15 +531,19 @@ public class CollectionDetailFragment extends BaseFragment {
         return 1;
     }
 
-    private void setBottleAndDetail(){
+    private void setBottleAndContent(){
         List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
         if (!CheckUtil.isEmpty(formStantdsList)){
             WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
+        }else {
+            WastewaterActivity.mSample.setSamplingFormStandResults(new ArrayList<>());
         }
 
-        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
+        List<SamplingContent> samplingDetails = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(mSample.getId())).list();
         if (!CheckUtil.isEmpty(samplingDetails)) {
-            WastewaterActivity.mSample.setSamplingDetailResults(samplingDetails);
+            WastewaterActivity.mSample.setSamplingContentResults(samplingDetails);
+        }else {
+            WastewaterActivity.mSample.setSamplingContentResults(new ArrayList<>());
         }
 
     }
@@ -667,17 +577,13 @@ public class CollectionDetailFragment extends BaseFragment {
                                     for (String id:ids){
                                         if (!id.equals(itemId)){
                                             MonItemId.append(id + ",");
-                                            String itemName=getMonItemNameById(id);
+                                            String itemName=HelpUtil.getMonItemNameById(id,mSample);;
                                             if (CheckUtil.isEmpty(itemName)){
                                                 MonItemId.append(" " + ",");
                                             }else {
                                                 MonItemId.append(itemName + ",");
                                             }
                                         }else {
-//                                            String itemName=getMonItemNameById(id);
-//                                            if (!CheckUtil.isEmpty(itemName)){
-//                                                MonItemNameList.remove(itemName);
-//                                            }
                                             MonItemNameList.remove(id);
                                         }
 
@@ -758,8 +664,8 @@ public class CollectionDetailFragment extends BaseFragment {
 
         samplingDetail.setSamplingTime(DateUtils.getWholeDate());
         int count=0;
-        if (!CheckUtil.isEmpty(samplingDetail.getMethodId())){
-            count+=samplingDetail.getMethodId().split(",").length;
+        if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())){
+            count+=samplingDetail.getMonitemId().split(",").length;
             sample_monitor_items_title.setText("监测项目（"+count+"）");
         }
 
@@ -818,7 +724,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 detail.setSamplingType(0);
                 detail.setIsCompare(samplingDetail.getIsCompare());
                 detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
-                detail.setMonitemName(getMonItemNameById(itemId));
+                detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
                 detail.setMonitemId(itemId);
                 detail.setAddressName(samplingDetail.getAddressName());
                 detail.setAddresssId(samplingDetail.getAddresssId());
@@ -844,7 +750,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 detail.setSamplingType(0);
                 detail.setIsCompare(samplingDetail.getIsCompare());
                 detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
-                detail.setMonitemName(getMonItemNameById(itemId));
+                detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
                 detail.setMonitemId(itemId);
                 detail.setAddressName(samplingDetail.getAddressName());
                 detail.setAddresssId(samplingDetail.getAddresssId());

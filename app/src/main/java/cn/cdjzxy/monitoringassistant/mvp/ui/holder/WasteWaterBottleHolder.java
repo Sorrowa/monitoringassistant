@@ -8,6 +8,7 @@ import com.wonders.health.lib.base.base.BaseHolder;
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 public class WasteWaterBottleHolder extends BaseHolder<SamplingFormStand> {
 
@@ -37,8 +38,10 @@ public class WasteWaterBottleHolder extends BaseHolder<SamplingFormStand> {
         bottle_desc.setText(data.getCount()+"");
         bottle_hold_time.setText(data.getSaveTimes());
         bottle_order.setText("排序："+data.getIndex());
-        bottle_preserve_method.setText("保存方法："+data.getSaveMehtod());
-        bottle_analyse_address.setText("分析地点："+data.getAnalysisSite());
+        String saveMethod=CheckUtil.isEmpty(data.getSaveMehtod())?"":data.getSaveMehtod();
+        bottle_preserve_method.setText("保存方法："+saveMethod);
+        String place=CheckUtil.isEmpty(data.getAnalysisSite())?"":data.getAnalysisSite();
+        bottle_analyse_address.setText("分析地点："+place);
     }
 
     @Override

@@ -127,7 +127,7 @@ public class CollectionFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (mWasteWaterCollectAdapter != null) {
-                mWasteWaterCollectAdapter.notifyDataSetChanged();
+                mWasteWaterCollectAdapter.refreshInfos(WastewaterActivity.mSample.getSamplingContentResults());
             } else {
                 initRecyclerViewData();
             }
@@ -402,29 +402,6 @@ public class CollectionFragment extends BaseFragment {
         DBHelper.get().getSamplingContentDao().insert(samplingContent);
         WastewaterActivity.mSample.getSamplingContentResults().add(samplingContent);
         mWasteWaterCollectAdapter.notifyDataSetChanged();
-
-
-        /*
-        SamplingDetail detail = new SamplingDetail();
-        detail.setProjectId(selectSamplingDetail.getProjectId());
-        detail.setId(UUID.randomUUID().toString());
-        detail.setSamplingId(selectSamplingDetail.getSamplingId());
-        detail.setSampingCode(selectSamplingDetail.getSampingCode());
-        detail.setFrequecyNo(selectSamplingDetail.getFrequecyNo());
-        detail.setDescription(selectSamplingDetail.getDescription());
-        detail.setSamplingType(1);
-        detail.setIsCompare(selectSamplingDetail.getIsCompare());
-        detail.setIsAddPreserve(selectSamplingDetail.getIsAddPreserve());
-        detail.setMonitemName(selectSamplingDetail.getMonitemName());
-        detail.setMonitemId(selectSamplingDetail.getMonitemId());
-        detail.setAddressName(selectSamplingDetail.getAddressName());
-        detail.setAddresssId(selectSamplingDetail.getAddresssId());
-        //数据处理
-        WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
-        DBHelper.get().getSamplingDetailDao().insert(detail);
-        //刷新界面
-        mWasteWaterCollectAdapter.notifyDataSetChanged();
-        */
     }
 
 
