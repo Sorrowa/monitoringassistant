@@ -513,6 +513,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 showAddDialog();
                 break;
             case R.id.btn_submit:
+                if (!isSelecteAll) {
+                    showMessage("请先勾选需要提交的采样单！");
+                    return;
+                }
                 batchUploadSampling();
                 break;
 
