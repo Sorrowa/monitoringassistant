@@ -7,10 +7,11 @@ import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 
 
-public class WasteWaterSamplingHolder extends BaseHolder<SamplingDetail> {
+public class WasteWaterSamplingHolder extends BaseHolder<SamplingContent> {
 
     @BindView(R.id.tvSamplingCode)
     TextView tvSamplingCode;
@@ -24,7 +25,7 @@ public class WasteWaterSamplingHolder extends BaseHolder<SamplingDetail> {
     }
 
     @Override
-    public void setData(SamplingDetail data, int position) {
+    public void setData(SamplingContent data, int position) {
         tvSamplingCode.setText(data.getSampingCode());
         tvFrequency.setText(data.getFrequecyNo() + "");
         tvPoint.setText(data.getTempValue3());

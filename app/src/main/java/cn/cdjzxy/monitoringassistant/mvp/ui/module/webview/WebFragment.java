@@ -63,6 +63,7 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
         return inflater.inflate(R.layout.fragment_web, container, false);
     }
 
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -76,6 +77,13 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
                 .setReceivedTitleCallback(mCallback)
                 .setPermissionInterceptor(mPermissionInterceptor)
                 .setNotifyIcon(R.mipmap.download)
+                .addJavascriptInterface("Android", new WebViewJavaScriptFunction() {
+                    @Override
+                    public void onBack() {
+                        //返回
+                        WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK,null);
+                    }
+                })
                 .useMiddleWareWebChrome(getMiddleWareWebChrome())
                 .useMiddleWareWebClient(getMiddleWareWebClient())
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
@@ -142,7 +150,6 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
     protected ChromeClientCallbackManager.ReceivedTitleCallback mCallback = new ChromeClientCallbackManager.ReceivedTitleCallback() {
         @Override
         public void onReceivedTitle(WebView view, String title) {
-
 
         }
     };

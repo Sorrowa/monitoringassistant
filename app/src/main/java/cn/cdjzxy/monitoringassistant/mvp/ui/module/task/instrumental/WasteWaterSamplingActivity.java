@@ -27,7 +27,9 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
@@ -50,8 +52,8 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
     private ArrayList<SamplingDetail> currSampling = new ArrayList<>();
     private WasteWaterSamplingAdapter mWasteWaterSamplingAdapter;
 
-    private List<SamplingDetail> mSamplingDetails = new ArrayList<>();
-    private List<SamplingDetail> mSelectDetails = new ArrayList<>();
+    private List<SamplingContent> mSamplingDetails = new ArrayList<>();
+    private List<SamplingContent> mSelectDetails = new ArrayList<>();
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -111,7 +113,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
                     return;
                 }
 
-                SamplingDetail item = mSamplingDetails.get(position);
+                SamplingContent item = mSamplingDetails.get(position);
                 if (item == null) {
                     return;
                 }
@@ -143,35 +145,34 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
         for (Sampling item : samplings) {
             //获取样品数据
-            List<SamplingDetail> samplingDetails = item.getSamplingDetailResults();
+            List<SamplingContent> contentList = item.getSamplingContentResults();
 
             //如果为空则尝试从数据库获取
-            if (CheckUtil.isEmpty(samplingDetails)) {
-                samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(item.getId())).list();
+            if (CheckUtil.isEmpty(contentList)) {
+                contentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(item.getId())).list();
             }
 
-            for (SamplingDetail detail : samplingDetails) {
-                if (TextUtils.isEmpty(detail.getAddresssId())) {
+            for (SamplingContent content : contentList) {
+                if (TextUtils.isEmpty(content.getSenceMonitemId())) {
                     continue;
                 }
 
-                //水和废水中，现场监测项目，存到AddressId和AddressName中的
-//                if (!detail.getMonitemId().contains(monitemId)) {
-                if (!detail.getAddresssId().contains(monitemId)) {
+                //水和废水中，现场监测项目
+                if (!content.getSenceMonitemId().contains(monitemId)) {
                     continue;//过滤不同的项目名
                 }
 
                 //样品唯一
-                if (isExists(detail)) {
+                if (isExists(content)) {
                     continue;//过滤已经存在的样品
                 }
 
                 //水和废水的样品，点位信息保存的现场检测信息，这里改为实际点位信息，用于显示
-                detail.setTempValue1(item.getSamplingTimeBegin());
-                detail.setTempValue2(item.getAddressId());
-                detail.setTempValue3(item.getAddressName());
+                content.setTempValue1(item.getSamplingTimeBegin());
+                content.setTempValue2(item.getAddressId());
+                content.setTempValue3(item.getAddressName());
 
-                mSamplingDetails.add(detail);
+                mSamplingDetails.add(content);
             }
         }
     }
@@ -182,7 +183,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
      * @param detail
      * @return
      */
-    private boolean isExists(SamplingDetail detail) {
+    private boolean isExists(SamplingContent detail) {
         for (SamplingDetail item : currSampling) {
             //重复项：样品类型一致（样品、平行），样品编码一致
             if (item.getSamplingType() == detail.getSamplingType() && item.getSampingCode().equals(detail.getSampingCode())) {
@@ -210,7 +211,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             DBHelper.get().getSamplingDao().insert(mSampling);
         }
 
-        for (SamplingDetail item : mSelectDetails) {
+        for (SamplingContent item : mSelectDetails) {
             //频次唯一
             if (isExists(item)) {
                 continue;//过滤已经存在的样品

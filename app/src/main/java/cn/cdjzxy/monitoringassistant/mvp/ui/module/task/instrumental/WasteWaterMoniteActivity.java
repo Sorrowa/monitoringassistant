@@ -25,7 +25,9 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
@@ -111,22 +113,20 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
             }
 
             //获取样品数据
-            List<SamplingDetail> samplingDetails = item.getSamplingDetailResults();
+            List<SamplingContent> contentList = item.getSamplingContentResults();
 
             //如果为空则尝试从数据库获取
-            if (CheckUtil.isEmpty(samplingDetails)) {
-                samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(item.getId())).list();
+            if (CheckUtil.isEmpty(contentList)) {
+                contentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(item.getId())).list();
             }
 
-            for (SamplingDetail detail : samplingDetails) {
-                //水和废水中，现场监测项目，存到AddressId和AddressName中的
-                if (TextUtils.isEmpty(detail.getAddresssId())) {
+            for (SamplingContent content : contentList) {
+                //水和废水中，现场监测项目
+                if (TextUtils.isEmpty(content.getSenceMonitemId())) {
                     continue;
                 }
 
-                String[] moniteIds = detail.getAddresssId().split(",");
-//                String[] moniteIds = detail.getMonitemId().split(",");
-//                String[] monitemNames = detail.getMonitemName().split(",");//名称可能包含“,”
+                String[] moniteIds = content.getSenceMonitemId().split(",");
 
                 for (int i = 0; i < moniteIds.length; i++) {
                     String id = moniteIds[i];
@@ -160,30 +160,30 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
                         }
                     }
 
-                    //组装所有现场监测项目，去重
-                    String allMonitemId = monItem.getAllMonitemId();
-                    String allMonitemName = monItem.getAllMonitemName();
-                    if (TextUtils.isEmpty(allMonitemId)) {
-                        allMonitemId = "";
-                    }
-                    if (TextUtils.isEmpty(allMonitemName)) {
-                        allMonitemName = "";
-                    }
-                    for (String mid : moniteIds) {
-                        if (allMonitemId.contains(mid)) {
-                            continue;
-                        }
-
-                        if (allMonitemId.length() > 0) {
-                            allMonitemId += ",";
-                            allMonitemName += ",";
-                        }
-                        allMonitemId += mid;
-                        allMonitemName += monItemMap.get(mid).getName();
-                    }
-
-                    monItem.setAllMonitemId(allMonitemId);
-                    monItem.setAllMonitemName(allMonitemName);
+//                    //组装所有现场监测项目，去重
+//                    String allMonitemId = monItem.getAllMonitemId();
+//                    String allMonitemName = monItem.getAllMonitemName();
+//                    if (TextUtils.isEmpty(allMonitemId)) {
+//                        allMonitemId = "";
+//                    }
+//                    if (TextUtils.isEmpty(allMonitemName)) {
+//                        allMonitemName = "";
+//                    }
+//                    for (String mid : moniteIds) {
+//                        if (allMonitemId.contains(mid)) {
+//                            continue;
+//                        }
+//
+//                        if (allMonitemId.length() > 0) {
+//                            allMonitemId += ",";
+//                            allMonitemName += ",";
+//                        }
+//                        allMonitemId += mid;
+//                        allMonitemName += monItemMap.get(mid).getName();
+//                    }
+//
+//                    monItem.setAllMonitemId(allMonitemId);
+//                    monItem.setAllMonitemName(allMonitemName);
                 }
             }
         }
@@ -227,9 +227,9 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
                 intent.putExtra("TagId", item.getTagId());
                 intent.putExtra("TagName", item.getTagName());
 
-                //所有现场监测项目信息
-                intent.putExtra("AllMonitemId", item.getAllMonitemId());
-                intent.putExtra("AllMonitemName", item.getAllMonitemName());
+//                //所有现场监测项目信息
+//                intent.putExtra("AllMonitemId", item.getAllMonitemId());
+//                intent.putExtra("AllMonitemName", item.getAllMonitemName());
 
                 setResult(Activity.RESULT_OK, intent);
                 finish();

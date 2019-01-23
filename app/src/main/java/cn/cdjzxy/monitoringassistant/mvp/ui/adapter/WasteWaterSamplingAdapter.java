@@ -9,6 +9,7 @@ import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterSamplingHolder;
 
@@ -17,10 +18,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.WasteWaterSamplingHolder;
  * 水和废水采样单适配器
  */
 
-public class WasteWaterSamplingAdapter extends DefaultAdapter<SamplingDetail> {
+public class WasteWaterSamplingAdapter extends DefaultAdapter<SamplingContent> {
 
 
-    public WasteWaterSamplingAdapter(List<SamplingDetail> infos) {
+    public WasteWaterSamplingAdapter(List<SamplingContent> infos) {
         super(infos);
     }
 
@@ -30,7 +31,7 @@ public class WasteWaterSamplingAdapter extends DefaultAdapter<SamplingDetail> {
     }
 
     @Override
-    public BaseHolder<SamplingDetail> getHolder(View v, int viewType) {
+    public BaseHolder<SamplingContent> getHolder(View v, int viewType) {
         return new WasteWaterSamplingHolder(v);
     }
 }
