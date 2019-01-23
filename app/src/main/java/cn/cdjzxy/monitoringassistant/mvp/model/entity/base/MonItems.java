@@ -31,10 +31,10 @@ public class MonItems {
     private String tagId;
     @Transient
     private String tagName;
-    @Transient
-    private String allMonitemId;
-    @Transient
-    private String allMonitemName;
+//    @Transient
+//    private String allMonitemId;
+//    @Transient
+//    private String allMonitemName;
 
 
     @Generated(hash = 1403264955)
@@ -112,19 +112,19 @@ public class MonItems {
         this.tagName = tagName;
     }
 
-    public String getAllMonitemId() {
-        return allMonitemId;
-    }
-
-    public void setAllMonitemId(String allMonitemId) {
-        this.allMonitemId = allMonitemId;
-    }
-
-    public String getAllMonitemName() {
-        return allMonitemName;
-    }
-
-    public void setAllMonitemName(String allMonitemName) {
-        this.allMonitemName = allMonitemName;
-    }
+//    public String getAllMonitemId() {
+//        return allMonitemId;
+//    }
+//
+//    public void setAllMonitemId(String allMonitemId) {
+//        this.allMonitemId = allMonitemId;
+//    }
+//
+//    public String getAllMonitemName() {
+//        return allMonitemName;
+//    }
+//
+//    public void setAllMonitemName(String allMonitemName) {
+//        this.allMonitemName = allMonitemName;
+//    }
 }

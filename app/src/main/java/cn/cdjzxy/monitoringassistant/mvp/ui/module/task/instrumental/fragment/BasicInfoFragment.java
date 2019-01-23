@@ -92,10 +92,10 @@ public class BasicInfoFragment  extends BaseFragment {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         if (!CheckUtil.isNull(InstrumentalActivity.mSampling)) {
-            tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
+//            tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
             tvSamplingNo.setText(InstrumentalActivity.mSampling.getSamplingNo());
             tvProjectName.setText(InstrumentalActivity.mSampling.getProjectName());
-            tvMonitemName.setText(InstrumentalActivity.mSampling.getAllMonitemName());
+            tvMonitemName.setText(InstrumentalActivity.mSampling.getMonitemName());
             tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
             tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
             tvTestStartDate.setText(InstrumentalActivity.mSampling.getSamplingTimeBegin());
@@ -206,12 +206,12 @@ public class BasicInfoFragment  extends BaseFragment {
                         InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
                         InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
 
-                        InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
-                        InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
+//                        InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
+//                        InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
 
-                        tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
+//                        tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
                         tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
-                        tvMonitemName.setText(InstrumentalActivity.mSampling.getAllMonitemName());
+                        tvMonitemName.setText(InstrumentalActivity.mSampling.getMonitemName());
 
                         //重置监测方法
                         InstrumentalActivity.mSampling.setMethodId("");
