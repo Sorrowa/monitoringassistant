@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
@@ -72,6 +73,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
     TextView       tvAddBlank;
     @BindView(R.id.btn_add_blank)
     RelativeLayout btnAddBlank;
+    @BindView(R.id.btn_add_new)
+    RelativeLayout btnAddNew;
     @BindView(R.id.tv_print_label)
     TextView       tvPrintLabel;
     @BindView(R.id.btn_print_label)
@@ -109,6 +112,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         btnPrintLabel.setVisibility(View.GONE);
+        btnAddNew.setVisibility(View.GONE);
         tvAddParallel.setText("删除");
         tvAddBlank.setText("保存");
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
@@ -169,10 +173,10 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 break;
             case R.id.btn_add_parallel:
                 DBHelper.get().getProjectDetialDao().delete(mProjectDetial);
-                EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
 
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);
+                EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
                 ArtUtils.makeText(this, "删除采样点位数据成功");
                 finish();
                 break;

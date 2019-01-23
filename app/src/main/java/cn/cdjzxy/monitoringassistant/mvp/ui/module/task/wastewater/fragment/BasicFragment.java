@@ -593,6 +593,7 @@ public class BasicFragment extends BaseFragment {
         WastewaterActivity.mSample.setPressure(weather_pressure.getText().toString());
         WastewaterActivity.mSample.setTransfer(tv_flow_method.getText().toString());
         WastewaterActivity.mSample.setSendSampTime(tv_flow_date.getText().toString());
+        WastewaterActivity.mSample.setComment(base_sample_comment.getText().toString());
         saveFsExtends();
     }
 

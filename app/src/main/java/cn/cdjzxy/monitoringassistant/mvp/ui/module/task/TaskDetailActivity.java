@@ -513,7 +513,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 showAddDialog();
                 break;
             case R.id.btn_submit:
-                if (!isSelecteAll) {
+                if (!hasSelectSample()) {
                     showMessage("请先勾选需要提交的采样单！");
                     return;
                 }
@@ -1249,6 +1249,27 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 //            showMessage("请先勾选需要提交的采样单！");
 //        }
 //    }
+
+    /**
+     * 判断是否有选中的单子
+     * @return
+     */
+    private boolean hasSelectSample(){
+        boolean flag=false;
+        if (!CheckUtil.isNull(mTaskDetailAdapter)){
+            List<Sampling> samplingList=mTaskDetailAdapter.getInfos();
+            if (!CheckUtil.isEmpty(samplingList)){
+                for (Sampling sampling:samplingList){
+                    if (sampling.isSelected()){
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return flag;
+    }
+
     interface FileUploadHandler {
         void onSuccess();
 

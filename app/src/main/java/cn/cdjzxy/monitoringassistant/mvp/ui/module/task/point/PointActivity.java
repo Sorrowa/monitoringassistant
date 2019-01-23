@@ -131,6 +131,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void getData() {
         mProjectDetials.clear();
+        mStringProjectDetialMap.clear();
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
@@ -158,7 +159,8 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
             }
 
         }
-        mPointAdapter.notifyDataSetChanged();
+        mPointAdapter.refreshInfos(mProjectDetials);
+        //mPointAdapter.notifyDataSetChanged();
     }
 
 

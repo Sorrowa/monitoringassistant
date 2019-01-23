@@ -200,9 +200,10 @@ public class ArtUtils {
      * @param string
      */
     public static void makeText(Context context, String string) {
-        if (mToast == null) {
-            mToast = Toast.makeText(context, string, Toast.LENGTH_SHORT);
-        }
+//        if (mToast == null) {
+//            mToast = Toast.makeText(context, string, Toast.LENGTH_SHORT);
+//        }
+        mToast = Toast.makeText(context, string, Toast.LENGTH_SHORT);
         mToast.setText(string);
         mToast.show();
     }

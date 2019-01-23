@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="2018-11-30 12:12:21"
+                    android:text="--"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_14" />
 

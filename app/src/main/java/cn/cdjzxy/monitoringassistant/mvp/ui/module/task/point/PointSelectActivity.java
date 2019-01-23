@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -118,10 +119,12 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void getPointData(boolean isRelationPoint) {
         List<String> pointIds = new ArrayList<>();
+        //List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId),ProjectDetialDao.Properties.TagId.eq(tagId)).list();
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
                 pointIds.add(projectDetial.getAddressId());
+                Log.d(TAG,projectDetial.getAddressId()+":"+projectDetial.getAddress());
             }
         }
 
@@ -134,7 +137,8 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
                         .get()
                         .getEnvirPointDao()
                         .queryBuilder()
-                        .where(EnvirPointDao.Properties.Id.in(pointIds))
+                        .where(EnvirPointDao.Properties.TagId.eq(tagId),EnvirPointDao.Properties.Id.in(pointIds))
+                        //.where(EnvirPointDao.Properties.Id.in(pointIds))
                         .list();
             }
 

@@ -158,7 +158,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
             Tab tab = new Tab();
             tab.setResId(R.drawable.shape_search_condition_nor);
             tab.setSelectedResId(R.drawable.shape_search_condition_selected);
-            tab.setSelected(true);
+            tab.setSelected(false);
             if (i == 0) {
                 tab.setTabName("环境质量");
             } else if (i == 1) {

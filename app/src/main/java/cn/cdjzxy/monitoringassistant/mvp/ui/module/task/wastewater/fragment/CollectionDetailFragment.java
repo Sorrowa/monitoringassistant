@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,6 +155,9 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_monitor_items.setText("");
             sample_monitor.setText("");
             sample_mark.setText("");
+            sample_monitor_items_title.setText("监测项目（0）");
+            sample_monitor_title.setText("现场监测（0）");
+
             setSamplingDetail();
         }
 
@@ -654,6 +658,7 @@ public class CollectionDetailFragment extends BaseFragment {
         if (xcMonIdItems.lastIndexOf(",") > 0) {
             xcMonIdItems.deleteCharAt(xcMonIdItems.lastIndexOf(","));
         }
+
         samplingDetail.setMonitemName(monNameItems.toString());
         samplingDetail.setMonitemId(monIdItems.toString());
         samplingDetail.setSenceMonitemName(xcMonNameItems.toString());

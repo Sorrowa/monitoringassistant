@@ -35,7 +35,7 @@ public class WasteWaterBottleHolder extends BaseHolder<SamplingFormStand> {
     public void setData(SamplingFormStand data, int position) {
         bottle_name.setText(data.getMonitemName());
         bottle_norms.setText(data.getSamplingAmount());
-        bottle_desc.setText(data.getCount()+"");
+        bottle_desc.setText(data.getCount()==0?"":data.getCount()+"");
         bottle_hold_time.setText(data.getSaveTimes());
         bottle_order.setText("排序："+data.getIndex());
         String saveMethod=CheckUtil.isEmpty(data.getSaveMehtod())?"":data.getSaveMehtod();
