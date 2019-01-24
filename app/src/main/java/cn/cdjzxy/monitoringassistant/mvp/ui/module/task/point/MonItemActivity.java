@@ -93,6 +93,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         initMonItemsSelectedView();
 
         tagId = getIntent().getStringExtra("tagId");
+        monItemId=getIntent().getStringExtra("monItemId");
         String selectItemsStr=getIntent().getStringExtra("selectItems");
         if (!CheckUtil.isEmpty(selectItemsStr)){
             selectItems=selectItemsStr.split(",");

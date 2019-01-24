@@ -187,6 +187,10 @@ public class PreciptationSampForm {
         private List<SamplingDetailsBean> SamplingDetailYQFs;
         private List<SamplingFileBean> UploadFiles;
         private List DelFiles;
+        //气象信息
+        private String Weather;
+        private String Temprature;
+        private String Pressure;
 
         public String getProjectId() {
             return ProjectId;
@@ -602,6 +606,30 @@ public class PreciptationSampForm {
 
         public void setDelFiles(List delFiles) {
             DelFiles = delFiles;
+        }
+
+        public String getWeather() {
+            return Weather;
+        }
+
+        public void setWeather(String weather) {
+            Weather = weather;
+        }
+
+        public String getTemprature() {
+            return Temprature;
+        }
+
+        public void setTemprature(String temprature) {
+            Temprature = temprature;
+        }
+
+        public String getPressure() {
+            return Pressure;
+        }
+
+        public void setPressure(String pressure) {
+            Pressure = pressure;
         }
 
         public static class SamplingDetailsBean {

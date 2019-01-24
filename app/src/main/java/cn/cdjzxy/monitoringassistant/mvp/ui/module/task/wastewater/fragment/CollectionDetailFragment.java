@@ -114,6 +114,12 @@ public class CollectionDetailFragment extends BaseFragment {
             public void onClick(View v) {
                 sample_add_preserve.setChecked(!sample_add_preserve.isChecked());
                 samplingDetail.setIsAddPreserve(sample_add_preserve.isChecked());
+                if (samplingDetail.isAddPreserve()){
+                    samplingDetail.setPreservative("是");
+                }else {
+                    samplingDetail.setPreservative("否");
+                }
+
             }
         });
 
@@ -177,6 +183,10 @@ public class CollectionDetailFragment extends BaseFragment {
             samplingDetail.setSamplingType(0);
             samplingDetail.setOrderIndex(HelpUtil.createOrderIndex(mSample));
             samplingDetail.setFrequecyNo(HelpUtil.createFrequency(mSample));
+            //设置是否添加保存剂，是否对比监测
+            samplingDetail.setPreservative("否");
+            samplingDetail.setIsAddPreserve(false);
+            samplingDetail.setIsCompare(false);
             //新增时要将监测项目和现场监测项目带过来
             setDefaultMonitor();
         } else {
@@ -187,7 +197,14 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_monitor_items.setText(samplingDetail.getMonitemName());
             sample_monitor.setText(samplingDetail.getSenceMonitemName());
 
-            sample_add_preserve.setChecked(samplingDetail.getIsAddPreserve());
+            if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")){
+                sample_add_preserve.setChecked(true);
+                samplingDetail.setIsAddPreserve(true);
+            }else {
+                sample_add_preserve.setChecked(false);
+                samplingDetail.setIsAddPreserve(false);
+            }
+
             sample_compare_monitor.setChecked(samplingDetail.getIsCompare());
             sample_mark.setText(samplingDetail.getDescription());
 
@@ -268,7 +285,7 @@ public class CollectionDetailFragment extends BaseFragment {
                         }
                         mSample.getSamplingContentResults().remove(fsListPosition);
                         //删除对应的SamplingDetail
-                        List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(currentDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(currentDetail.getSampingCode())).build().list();
+                        List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(currentDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(currentDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(currentDetail.getSamplingType())).build().list();
                         if (!CheckUtil.isEmpty(samplingDetailList)){
                             DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
                         }
@@ -313,6 +330,9 @@ public class CollectionDetailFragment extends BaseFragment {
             samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getText().toString()));
             samplingDetail.setDescription(sample_mark.getText().toString());
             samplingDetail.setSamplingTime(DateUtils.getWholeDate());
+            //设置样品采集和样品验收
+            samplingDetail.setSampleCollection("");
+            samplingDetail.setSampleAcceptance("");
 
             //新增样品采集到采样单中
             if (fsListPosition == -1) {
@@ -336,10 +356,11 @@ public class CollectionDetailFragment extends BaseFragment {
             }
 
             //删除之前生成的SamplingDetail
-            List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).build().list();
+            List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(samplingDetail.getSamplingType())).build().list();
             if (!CheckUtil.isEmpty(samplingDetailList)){
                 DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
             }
+            //生成新的SamplingDetail
             generateSamplingDetails();
             if (fsListPosition == -1) {
                 //samplingDetail.setId(UUID.randomUUID().toString());
@@ -726,7 +747,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 detail.setSampingCode(samplingDetail.getSampingCode());
                 detail.setFrequecyNo(samplingDetail.getFrequecyNo());
                 detail.setDescription(samplingDetail.getDescription());
-                detail.setSamplingType(0);
+                detail.setSamplingType(samplingDetail.getSamplingType());
                 detail.setIsCompare(samplingDetail.getIsCompare());
                 detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
                 detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
@@ -736,6 +757,11 @@ public class CollectionDetailFragment extends BaseFragment {
                 detail.setIsSenceAnalysis(false);
                 detail.setSamplingTime(samplingDetail.getSamplingTime());
                 detail.setOrderIndex(samplingDetail.getOrderIndex());
+                //设置剩余信息
+                detail.setSampleCollection(samplingDetail.getSampleCollection());
+                detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
+                detail.setPreservative(samplingDetail.getPreservative());
+
                 DBHelper.get().getSamplingDetailDao().insert(detail);
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }
@@ -752,7 +778,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 detail.setSampingCode(samplingDetail.getSampingCode());
                 detail.setFrequecyNo(samplingDetail.getFrequecyNo());
                 detail.setDescription(samplingDetail.getDescription());
-                detail.setSamplingType(0);
+                detail.setSamplingType(samplingDetail.getSamplingType());
                 detail.setIsCompare(samplingDetail.getIsCompare());
                 detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
                 detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
@@ -762,6 +788,11 @@ public class CollectionDetailFragment extends BaseFragment {
                 detail.setIsSenceAnalysis(true);
                 detail.setSamplingTime(samplingDetail.getSamplingTime());
                 detail.setOrderIndex(samplingDetail.getOrderIndex());
+                //设置剩余信息
+                detail.setSampleCollection(samplingDetail.getSampleCollection());
+                detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
+                detail.setPreservative(samplingDetail.getPreservative());
+
                 DBHelper.get().getSamplingDetailDao().insert(detail);
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }

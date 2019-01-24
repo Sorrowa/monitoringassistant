@@ -131,6 +131,10 @@ public class SubmitDataUtil {
         sampFormBean.setVersion(sampling.getVersion());
         sampFormBean.setTagId(sampling.getTagId());
         sampFormBean.setTagName(sampling.getTagName());
+        //设置气象信息
+        sampFormBean.setWeather(sampling.getWeather());
+        sampFormBean.setTemprature(sampling.getTemprature());
+        sampFormBean.setPressure(sampling.getPressure());
         return sampFormBean;
     }
 

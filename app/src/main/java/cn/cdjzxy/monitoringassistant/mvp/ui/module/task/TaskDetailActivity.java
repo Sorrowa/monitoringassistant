@@ -239,6 +239,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 sampling.setStatusName("已提交");
                 sampling.setStatus(7);
                 sampling.setSubmitDate(DateUtils.getDate());
+                sampling.setSelected(false);
                 DBHelper.get().getSamplingDao().update(sampling);
 
                 if (!uploadNextSampling()) {

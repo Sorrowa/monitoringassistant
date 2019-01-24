@@ -344,6 +344,12 @@ public class CollectionFragment extends BaseFragment {
         samplingContent.setAddresssId(selectSamplingDetail.getAddresssId());
         samplingContent.setSamplingTime(selectSamplingDetail.getSamplingTime());
         samplingContent.setOrderIndex(HelpUtil.createOrderIndex(WastewaterActivity.mSample));
+        samplingContent.setSampleCollection(selectSamplingDetail.getSampleCollection());
+        samplingContent.setSampleAcceptance(selectSamplingDetail.getSampleAcceptance());
+        samplingContent.setPreservative(selectSamplingDetail.getPreservative());
+        samplingContent.setSenceMonitemName(selectSamplingDetail.getSenceMonitemName());
+        samplingContent.setSenceMonitemId(selectSamplingDetail.getSenceMonitemId());
+
         //包括监测项目和现场监测项目
         int count=0;
         String[] monitemIds=selectSamplingDetail.getMonitemId().split(",");
@@ -367,6 +373,9 @@ public class CollectionFragment extends BaseFragment {
                 detail.setIsSenceAnalysis(false);
                 detail.setSamplingTime(selectSamplingDetail.getSamplingTime());
                 detail.setOrderIndex(samplingContent.getOrderIndex());
+                detail.setSampleCollection(samplingContent.getSampleCollection());
+                detail.setSampleAcceptance(samplingContent.getSampleAcceptance());
+                detail.setPreservative(samplingContent.getPreservative());
                 DBHelper.get().getSamplingDetailDao().insert(detail);
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }
@@ -393,6 +402,9 @@ public class CollectionFragment extends BaseFragment {
                 detail.setIsSenceAnalysis(true);
                 detail.setSamplingTime(selectSamplingDetail.getSamplingTime());
                 detail.setOrderIndex(samplingContent.getOrderIndex());
+                detail.setSampleCollection(samplingContent.getSampleCollection());
+                detail.setSampleAcceptance(samplingContent.getSampleAcceptance());
+                detail.setPreservative(samplingContent.getPreservative());
                 DBHelper.get().getSamplingDetailDao().insert(detail);
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }
