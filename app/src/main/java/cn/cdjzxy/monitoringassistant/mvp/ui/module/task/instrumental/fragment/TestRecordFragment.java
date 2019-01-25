@@ -260,6 +260,7 @@ public class TestRecordFragment extends BaseFragment {
         SamplingDetail samplingDetail = new SamplingDetail();
 
         samplingDetail.setId("LC-" + UUID.randomUUID().toString());
+        samplingDetail.setProjectId(currSelectDetails.getProjectId());
         samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
         samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
         samplingDetail.setSamplingType(currSelectDetails.getSamplingType());
@@ -267,6 +268,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
+        samplingDetail.setMonitemId(currSelectDetails.getMonitemId());
         samplingDetail.setPrivateDataBooleanValue("HasPX", true);
         samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
         samplingDetail.setPrivateDataStringValue("CaleValue", "");

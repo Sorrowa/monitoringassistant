@@ -221,6 +221,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
             samplingDetail.setId("LC-" + UUID.randomUUID().toString());
             samplingDetail.setMonitemId(mSampling.getMonitemId());
+            samplingDetail.setMonitemName(mSampling.getMonitemName());
             samplingDetail.setSamplingId(mSampling.getId());//对应到当前采样单
             samplingDetail.setSampingCode(item.getSampingCode());//样品编码
             samplingDetail.setSamplingType(item.getSamplingType());//样品类型（样品、平行）
