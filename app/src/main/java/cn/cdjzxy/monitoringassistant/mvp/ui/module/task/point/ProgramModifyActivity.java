@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +118,6 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         tvAddBlank.setText("保存");
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
         mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
-
         bindView(mProjectDetial);
     }
 
@@ -189,6 +189,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mProjectDetial.setComment(etComment.getText().toString());
                 mProjectDetial.setUpdateTime(DateUtils.getWholeDate());
                 DBHelper.get().getProjectDetialDao().update(mProjectDetial);
+
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);

@@ -191,6 +191,54 @@ public class SubmitDataUtil {
     }
 
     /**
+     * 降水SamplingDetail设置
+     * @param sampling
+     * @return
+     */
+    private static List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> setUpJsSamplingDetailDataList(Sampling sampling) {
+        List<SamplingDetail> samplingDetailsList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
+        if (!CheckUtil.isEmpty(samplingDetailsList)) {
+            List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeansList = new ArrayList<>();
+            int count = 1;
+            for (SamplingDetail samplingDetail : samplingDetailsList) {
+                PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
+
+                samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
+                samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
+                samplingDetailsBean.setProjectId(sampling.getProjectId());
+                samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
+                samplingDetailsBean.setMonitemId(samplingDetail.getMonitemId());
+                samplingDetailsBean.setMonitemName(samplingDetail.getMonitemName());
+                samplingDetailsBean.setAddresssId(sampling.getAddressId());
+                samplingDetailsBean.setAddressName(sampling.getAddressName());
+                samplingDetailsBean.setOrderIndex(count + "");
+                samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
+                samplingDetailsBean.setSamplingTime(samplingDetail.getSamplingTime());
+                samplingDetailsBean.setSamplingType(samplingDetail.getSamplingType() + "");
+                samplingDetailsBean.setSamplingCount(samplingDetail.getSamplingCount() + "");
+                samplingDetailsBean.setPreservative(samplingDetail.getPreservative());
+                samplingDetailsBean.setIsCompare(samplingDetail.getIsCompare());
+                samplingDetailsBean.setSampleCollection(samplingDetail.getSampleCollection());
+                samplingDetailsBean.setSampleAcceptance(samplingDetail.getSampleAcceptance());
+                samplingDetailsBean.setDescription(samplingDetail.getDescription());
+                samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
+                samplingDetailsBean.setSamplingOnTime(samplingDetail.getSamplingOnTime());
+                samplingDetailsBean.setValue(samplingDetail.getValue());
+                //降水
+                samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
+                samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
+                samplingDetailsBean.setMonitemName("降水量");
+                samplingDetailsBean.setValue1(samplingDetail.getValue1());
+
+                samplingDetailsBeansList.add(samplingDetailsBean);
+                count++;
+            }
+            return samplingDetailsBeansList;
+        }
+        return null;
+    }
+
+    /**
      * set up BottleSplitDataList
      *
      * @param sampling
@@ -317,14 +365,18 @@ public class SubmitDataUtil {
         //设置SampFormBean数据
         PreciptationSampForm.SampFormBean sampFormBean = setUpSampFormBean(sampling);
         //setSamplingDetails
-        List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList=setUpSamplingDetailDataList(sampling);
+        List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList=setUpJsSamplingDetailDataList(sampling);
         if (!CheckUtil.isEmpty(detailsBeanList)){
             sampFormBean.setSamplingDetails(detailsBeanList);
+        }else {
+            sampFormBean.setSamplingDetails(new ArrayList<>());
         }
         //setUpBottleSplitDataList
         List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList=setUpBottleSplitDataList(sampling);
         if (!CheckUtil.isEmpty(bottleSplitDataList)){
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
+        }else {
+            sampFormBean.setSamplingFormStands(new ArrayList<>());
         }
         preciptationSampForm.setSampForm(sampFormBean);
         //文件信息组装

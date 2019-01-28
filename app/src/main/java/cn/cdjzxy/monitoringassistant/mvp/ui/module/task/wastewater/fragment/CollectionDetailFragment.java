@@ -288,12 +288,16 @@ public class CollectionDetailFragment extends BaseFragment {
                         List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(currentDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(currentDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(currentDetail.getSamplingType())).build().list();
                         if (!CheckUtil.isEmpty(samplingDetailList)){
                             DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+                            WastewaterActivity.mSample.setSamplingDetailResults(new ArrayList<>());
                         }
+
                         //删除分瓶信息
                         deleteRelateBottle();
-                        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+                        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
                         if (!CheckUtil.isEmpty(formStantdsList)){
                             WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
+                        }else {
+                            WastewaterActivity.mSample.setSamplingFormStandResults(new ArrayList<>());
                         }
 
                         mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));

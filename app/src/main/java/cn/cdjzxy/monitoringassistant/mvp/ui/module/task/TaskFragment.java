@@ -385,16 +385,16 @@ public class TaskFragment extends BaseFragment {
             case R.id.btn_date:
                 break;
             case R.id.btn_sampling:
-                ArtUtils.makeText(getContext(), "已采样");
+                ArtUtils.makeText(getContext(), "功能开发中");
                 break;
             case R.id.btn_wait_sampling:
                 ArtUtils.startActivity(TaskActivity.class);
                 break;
             case R.id.btn_receive:
-                ArtUtils.makeText(getContext(), "已收样");
+                ArtUtils.makeText(getContext(), "功能开发中");
                 break;
             case R.id.btn_wait_receive:
-                ArtUtils.makeText(getContext(), "待收样");
+                ArtUtils.makeText(getContext(), "功能开发中");
                 break;
         }
     }
