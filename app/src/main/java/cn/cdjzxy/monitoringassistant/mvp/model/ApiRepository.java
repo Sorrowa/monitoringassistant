@@ -43,6 +43,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Response;
 import retrofit2.http.PartMap;
 
 /**
@@ -758,14 +759,14 @@ public class ApiRepository implements IModel {
      *
      * @return
      */
-    public Observable<UploadFileResponse<List<FileInfoData>>> uploadFile(List<MultipartBody.Part> parts, Map<String, RequestBody> params) {
+    public Observable<Response<UploadFileResponse<List<FileInfoData>>>> uploadFile(List<MultipartBody.Part> parts, Map<String, RequestBody> params) {
         return Observable.just(mApiService.uploadFile(parts, params))
-                .flatMap(new Function<Observable<UploadFileResponse<List<FileInfoData>>>, ObservableSource<UploadFileResponse<List<FileInfoData>>>>() {
+                .flatMap(new Function<Observable<Response<UploadFileResponse<List<FileInfoData>>>>, ObservableSource<Response<UploadFileResponse<List<FileInfoData>>>>>() {
                     @Override
-                    public ObservableSource<UploadFileResponse<List<FileInfoData>>> apply(Observable<UploadFileResponse<List<FileInfoData>>> baseResponseObservable) throws Exception {
-                        return baseResponseObservable.map(new Function<UploadFileResponse<List<FileInfoData>>, UploadFileResponse<List<FileInfoData>>>() {
+                    public ObservableSource<Response<UploadFileResponse<List<FileInfoData>>>> apply(Observable<Response<UploadFileResponse<List<FileInfoData>>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<Response<UploadFileResponse<List<FileInfoData>>>, Response<UploadFileResponse<List<FileInfoData>>>>() {
                             @Override
-                            public UploadFileResponse<List<FileInfoData>> apply(UploadFileResponse<List<FileInfoData>> baseResponse) throws Exception {
+                            public Response<UploadFileResponse<List<FileInfoData>>> apply(Response<UploadFileResponse<List<FileInfoData>>> baseResponse) throws Exception {
                                 return baseResponse;
                             }
                         });

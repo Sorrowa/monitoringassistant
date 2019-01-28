@@ -41,6 +41,7 @@ import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -198,7 +199,7 @@ public interface ApiService {
     //*******************文件******************
     @Multipart
     @POST(Api.UPLOAD_FILE)
-    Observable<UploadFileResponse<List<FileInfoData>>> uploadFile(@Part() List<MultipartBody.Part> parts, @PartMap Map<String,RequestBody> params);
+    Observable<Response<UploadFileResponse<List<FileInfoData>>>> uploadFile(@Part() List<MultipartBody.Part> parts, @PartMap Map<String,RequestBody> params);
 
     @DELETE(Api.DELETE_FILE)
     Observable<BaseResponse> deleteFile();

@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -73,6 +75,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.Instrumenta
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
+import cn.cdjzxy.monitoringassistant.utils.BitmapUtil;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
@@ -132,6 +135,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * 仪器法表单路径/路径
      */
     public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
+
+    /**
+     * 最大文件上传大小，单位（Byte）
+     */
+    public static final int MaxFileUploadSize = 200 * 1024;
 
     private TitleBarView mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
@@ -220,7 +228,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         switch (message.what) {
             case Message.RESULT_FAILURE:
                 isBatchUpload = false;
-                showMessage("操作失败！");
+//                showMessage("操作失败！");
                 break;
             case Message.RESULT_OK:
                 showMessage("采样完结！");
@@ -515,7 +523,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case R.id.btn_submit:
                 if (!hasSelectSample()) {
-                    showMessage("请先勾选需要提交的采样单！");
+                    showMessage("请先勾选已完成的采样单！");
                     return;
                 }
                 batchUploadSampling();
@@ -1077,6 +1085,40 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 return;//文件不存在
             }
 
+//            //文件是否过大
+//            if (file.length() > MaxFileUploadSize) {
+//                Bitmap bitmap = null;
+//
+//                try {
+//                    //获取原图片
+////                    bitMap = BitmapFactory.decodeFile(sf.getFilePath());
+//
+////                    //压缩到指定大小
+////                    int targetOptions = BitmapUtil.Compress(bitMap, MaxFileUploadSize);
+//                    int targetOptions = 100;
+//                    bitmap = BitmapUtil.Compress(sf.getFilePath(), MaxFileUploadSize);
+//
+//                    //获取缓存目录
+//                    File cacheDir = getCacheDir();
+//
+//                    //保存图片到临时目录
+//                    file = BitmapUtil.SaveBitmapToPath(bitmap, cacheDir.getPath(), sf.getFileName(), targetOptions);
+//                    if (file == null) {
+//                        throw new Exception("保存图片失败");
+//                    }
+//                } catch (Exception e) {
+//                    if (handler != null) {
+//                        handler.onFailed(String.format("处理图片失败：%s", e.getMessage()));
+//                    }
+//                    return;
+//                } finally {
+//                    //回收内存
+//                    if (bitmap != null) {
+//                        bitmap.recycle();
+//                    }
+//                }
+//            }
+
             //文件上传Body
             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             //添加文件数据
@@ -1088,6 +1130,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         HashMap<String, RequestBody> map = new HashMap<>();
         map.put("token", RequestBody.create(MediaType.parse("text/plain"), UserInfoHelper.get().getUser().getToken()));
+
+        ArtUtils.makeText(TaskDetailActivity.this, String.format("开始上传采样单[%s]文件！", sampling.getSamplingNo()));
 
         //上传文件
         mPresenter.uploadFile(Message.obtain(new IView() {
@@ -1120,6 +1164,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                             return;
                         }
 
+                        ArtUtils.makeText(TaskDetailActivity.this, String.format("采样单[%s]文件上传成功！", sampling.getSamplingNo()));
+
                         //重新设置文件ID
                         for (FileInfoData item : fileInfoData) {
                             if (!fileSet.containsKey(item.getFileName())) {
@@ -1143,7 +1189,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     case Message.RESULT_FAILURE:
                         //上传失败
                         if (handler != null) {
-                            handler.onFailed("文件上传失败！");
+                            handler.onFailed("文件上传失败：" + (message.obj != null ? message.obj.toString() : ""));
                         }
                         break;
                 }
@@ -1253,15 +1299,16 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     /**
      * 判断是否有选中的单子
+     *
      * @return
      */
-    private boolean hasSelectSample(){
-        boolean flag=false;
-        if (!CheckUtil.isNull(mTaskDetailAdapter)){
-            List<Sampling> samplingList=mTaskDetailAdapter.getInfos();
-            if (!CheckUtil.isEmpty(samplingList)){
-                for (Sampling sampling:samplingList){
-                    if (sampling.isSelected()){
+    private boolean hasSelectSample() {
+        boolean flag = false;
+        if (!CheckUtil.isNull(mTaskDetailAdapter)) {
+            List<Sampling> samplingList = mTaskDetailAdapter.getInfos();
+            if (!CheckUtil.isEmpty(samplingList)) {
+                for (Sampling sampling : samplingList) {
+                    if (sampling.getIsFinish() && sampling.isSelected() && !sampling.getIsUpload()) {
                         return true;
                     }
                 }
