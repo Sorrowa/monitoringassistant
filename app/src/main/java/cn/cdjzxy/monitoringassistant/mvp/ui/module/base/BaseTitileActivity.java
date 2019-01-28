@@ -179,6 +179,10 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
 
     public void showLoadingDialog(String str, boolean isCanCanceled) {
         if (!this.isFinishing()) {
+            if(dialog!=null && dialog.isShowing()){
+                return;
+            }
+
             View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
             TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
             RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);

@@ -63,6 +63,7 @@ import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -1004,6 +1005,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (responseCode == Constants.NET_RESPONSE_SAMPLING_DIFFER) {
                             msg.what = Constants.NET_RESPONSE_SAMPLING_DIFFER;
                         } else {
+                            msg.obj = message;
                             msg.what = Message.RESULT_FAILURE;
                         }
 
@@ -1055,18 +1057,27 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     public void uploadFile(final Message msg, List<MultipartBody.Part> parts, Map<String, RequestBody> params) {
         mModel.uploadFile(parts, params)
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
-                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<UploadFileResponse<List<FileInfoData>>>() {
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<Response<UploadFileResponse<List<FileInfoData>>>>() {
                     @Override
-                    public void onSuccess(UploadFileResponse<List<FileInfoData>> baseResponse) {
-                        msg.what = Message.RESULT_OK;
-//                        msg.obj = baseResponse.getMessage();
-                        msg.obj = baseResponse.getData();
+                    public void onSuccess(Response<UploadFileResponse<List<FileInfoData>>> baseResponse) {
+                        if (baseResponse.code() == 200) {
+                            msg.what = Message.RESULT_OK;
+                            msg.obj = baseResponse.body().getData();
+                        } else if (baseResponse.code() == 413) {
+                            msg.obj = "文件过大！";
+                            msg.what = Message.RESULT_FAILURE;
+                        }else {
+                            msg.obj = String.format("未知错误(%d)", baseResponse.code());
+                            msg.what = Message.RESULT_FAILURE;
+                        }
+
                         msg.handleMessageToTarget();
                     }
 
                     @Override
                     public void onFailure(int Type, String message, int code) {
-                        msg.getTarget().showMessage(message);
+//                        msg.getTarget().showMessage(message);
+                        msg.obj = message;
                         msg.what = Message.RESULT_FAILURE;
                         msg.handleMessageToTarget();
                     }
