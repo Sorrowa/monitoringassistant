@@ -51,6 +51,7 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
     protected TitleBarView  mTitleBar;
 
     private Dialog dialog;
+    private TextView dialogTextView;
 
     protected Context mContext;
 
@@ -180,18 +181,19 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
     public void showLoadingDialog(String str, boolean isCanCanceled) {
         if (!this.isFinishing()) {
             if(dialog!=null && dialog.isShowing()){
+                setLoadingDialogText(str);
                 return;
             }
 
             View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-            TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
+            dialogTextView = (TextView) layout.findViewById(R.id.tv_content);
             RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
             if (CheckUtil.isEmpty(str)) {
-                tvContent.setVisibility(View.GONE);
+                dialogTextView.setVisibility(View.GONE);
             } else {
                 rlDialog.setBackgroundResource(R.drawable.loading_bg);
-                tvContent.setVisibility(View.VISIBLE);
-                tvContent.setText(str);
+                dialogTextView.setVisibility(View.VISIBLE);
+                dialogTextView.setText(str);
             }
             if (dialog == null) {
                 dialog = new Dialog(this, R.style.loadingDialog);
@@ -205,6 +207,12 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
                 }
             });
             dialog.show();
+        }
+    }
+
+    public void setLoadingDialogText(String str) {
+        if (dialogTextView != null) {
+            dialogTextView.setText(str);
         }
     }
 

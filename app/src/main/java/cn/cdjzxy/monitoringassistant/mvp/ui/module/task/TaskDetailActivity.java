@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,7 +41,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -75,7 +73,6 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.Instrumenta
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
-import cn.cdjzxy.monitoringassistant.utils.BitmapUtil;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
@@ -84,6 +81,10 @@ import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.IosDialog;
 import cn.cdjzxy.monitoringassistant.widgets.OperateTipsDialog;
+import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -137,9 +138,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
 
     /**
-     * 最大文件上传大小，单位（Byte）
+     * 最大文件上传大小，单位（KB）
      */
-    public static final int MaxFileUploadSize = 200 * 1024;
+    public static final int MaxFileUploadSize = 100;
 
     private TitleBarView mTitleBarView;
     private TaskDetailAdapter mTaskDetailAdapter;
@@ -173,6 +174,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private TextView mTvOk;
     //是否批量提交
     private boolean isBatchUpload = false;
+    //是否提交
+    private boolean isUpload = false;
     private int samplingIndex;
 
     @Override
@@ -209,12 +212,16 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     @Override
     public void showLoading() {
-        showLoadingDialog("数据提交中...", false);
+        if (!isUpload) {
+            showLoadingDialog("数据提交中...", false);
+        }
     }
 
     @Override
     public void hideLoading() {
-        closeLoadingDialog();
+        if (!isUpload) {
+            closeLoadingDialog();
+        }
     }
 
     @Override
@@ -227,7 +234,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
-                isBatchUpload = false;
+                batchUploadFinish();
 //                showMessage("操作失败！");
                 break;
             case Message.RESULT_OK:
@@ -250,17 +257,26 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 sampling.setSelected(false);
                 DBHelper.get().getSamplingDao().update(sampling);
 
+                isUpload = false;
+                setUploadAltInfo(String.format("采样单[%s]上传成功！", sampling.getSamplingNo()));
+
                 if (!uploadNextSampling()) {
+                    batchUploadFinish();
                     showMessage("数据提交成功");
                     getSampling(mTagId);
                 }
                 break;
             case Constants.NET_RESPONSE_SAMPLING_DIFFER:
                 if (isBatchUpload) {
-                    isBatchUpload = false;
+                    batchUploadFinish();
                     multiCommitTipsOperate();
                 } else {
                     commitSamplingDataConflictOperate();
+                }
+                break;
+            case Constants.VIEW_UPDATE_LOADING_TXT:
+                if (message.obj != null) {
+                    setLoadingDialogText(message.obj.toString());
                 }
                 break;
             default:
@@ -489,7 +505,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 isBatchUpload = false;
-
+                isUpload = true;
                 if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                     uploadProjecteContentData(true);
                 }
@@ -887,12 +903,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         samplingIndex = -1;
         isBatchUpload = true;
 
+        showLoadingDialog("开始批量上传");
+
         if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
             uploadProjecteContentData(true);
         }
 
         //开始批量上传
         uploadNextSampling();
+    }
+
+    private void batchUploadFinish() {
+        this.isBatchUpload = false;
+        this.hideLoading();
     }
 
     /**
@@ -909,7 +932,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             //是否到达结尾
             if (samplingIndex >= mSamplings.size()) {
-                isBatchUpload = false;
                 return false;
             }
 
@@ -938,11 +960,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void uploadSampFormData(Sampling itemSampling, boolean isBatch, boolean isCompelSubmit) {
         sampling = itemSampling;
+        showLoadingDialog(String.format("开始上传采样单[%s]", sampling.getSamplingNo()));
 
         //上传采样单对应的文件，文件上传成功后上传采样单
-        uploadFiles(sampling, new FileUploadHandler() {
+        uploadSamplingFiles(sampling, new FileUploadHandler() {
             @Override
             public void onSuccess() {
+                setUploadAltInfo(String.format("正在上传采样单[%s]", sampling.getSamplingNo()));
+
                 //文件上传完成后，组装采样单数据。文件ID已更改
                 PreciptationSampForm preciptationSampForm = null;
                 if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
@@ -955,7 +980,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
                 //错误处理
                 if (preciptationSampForm == null) {
-                    isBatchUpload = false;
+                    batchUploadFinish();
                     showMessage(String.format("未实现提交功能的采样单！[%s]", sampling.getSamplingNo()));
                     return;
                 }
@@ -979,9 +1004,18 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onFailed(String msg) {
+                closeLoadingDialog();
                 ArtUtils.makeText(TaskDetailActivity.this, msg);
             }
         });
+    }
+
+    private void setUploadAltInfo(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return;
+        }
+
+        handleMessage(Message.obtain(this, Constants.VIEW_UPDATE_LOADING_TXT, str));
     }
 
 //    /**
@@ -999,7 +1033,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 //        }
 //
 //        //上传文件，文件上传成功后上传采样单
-//        uploadFiles(sampling, new FileUploadHandler() {
+//        uploadSamplingFiles(sampling, new FileUploadHandler() {
 //            @Override
 //            public void onSuccess() {
 //                PreciptationSampForm preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
@@ -1062,7 +1096,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param sampling
      * @param handler
      */
-    private void uploadFiles(Sampling sampling, FileUploadHandler handler) {
+    private void uploadSamplingFiles(Sampling sampling, FileUploadHandler handler) {
         //从数据库加载数据
         List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq("")).list();
         if (CheckUtil.isEmpty(samplingFiles)) {
@@ -1073,65 +1107,132 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         }
 
         //文件集合
-        List<MultipartBody.Part> parts = new ArrayList<>();
         HashMap<String, SamplingFile> fileSet = new HashMap<>();
+
+        List<File> sourceFiles = new ArrayList<>();
+        List<File> compressFiles = new ArrayList<>();
 
         for (SamplingFile sf : samplingFiles) {
             File file = new File(sf.getFilePath());
             if (!file.exists()) {
                 if (handler != null) {
-                    handler.onFailed(String.format("文件上传失败，文件不存在[%s]！", sf.getFilePath()));
+                    handler.onFailed(String.format("图片上传失败，图片不存在[%s]！", sf.getFilePath()));
                 }
-                return;//文件不存在
+                return;//图片不存在
             }
 
-//            //文件是否过大
-//            if (file.length() > MaxFileUploadSize) {
-//                Bitmap bitmap = null;
-//
-//                try {
-//                    //获取原图片
-////                    bitMap = BitmapFactory.decodeFile(sf.getFilePath());
-//
-////                    //压缩到指定大小
-////                    int targetOptions = BitmapUtil.Compress(bitMap, MaxFileUploadSize);
-//                    int targetOptions = 100;
-//                    bitmap = BitmapUtil.Compress(sf.getFilePath(), MaxFileUploadSize);
-//
-//                    //获取缓存目录
-//                    File cacheDir = getCacheDir();
-//
-//                    //保存图片到临时目录
-//                    file = BitmapUtil.SaveBitmapToPath(bitmap, cacheDir.getPath(), sf.getFileName(), targetOptions);
-//                    if (file == null) {
-//                        throw new Exception("保存图片失败");
-//                    }
-//                } catch (Exception e) {
-//                    if (handler != null) {
-//                        handler.onFailed(String.format("处理图片失败：%s", e.getMessage()));
-//                    }
-//                    return;
-//                } finally {
-//                    //回收内存
-//                    if (bitmap != null) {
-//                        bitmap.recycle();
-//                    }
-//                }
-//            }
+            sourceFiles.add(file);
 
+            //记录图片
+            fileSet.put(sf.getFileName(), sf);
+        }
+
+        if (CheckUtil.isEmpty(sourceFiles)) {
+            if (handler != null) {
+                handler.onSuccess();
+            }
+            return;
+        }
+
+        setUploadAltInfo(String.format("正在压缩采样单[%s]图片[%d/%d]", sampling.getSamplingNo(), compressFiles.size(), sourceFiles.size()));
+
+        for (File source : sourceFiles) {
+            //异步压缩图片
+            new Compressor(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(30)
+//                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                    .compressToFileAsFlowable(source)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<File>() {
+                        @Override
+                        public void accept(File file) {
+                            // 压缩成功后调用，返回压缩后的图片
+                            compressFiles.add(file);
+
+                            setUploadAltInfo(String.format("正在压缩采样单[%s]图片[%d/%d]", sampling.getSamplingNo(), compressFiles.size(), sourceFiles.size()));
+
+                            //全部压缩完成，上传图片
+                            if (compressFiles.size() >= sourceFiles.size()) {
+                                uploadFiles(sampling, handler, compressFiles, fileSet);
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) {
+//                            throwable.printStackTrace();
+                            //当压缩过程出现问题时调用
+                            if (handler != null) {
+                                handler.onFailed("图片压缩失败：" + throwable.getMessage());
+                            }
+                        }
+                    });
+        }
+
+//        //鲁班异步压缩，压缩结果图片还是太大
+//        Luban.with(this)
+//                .load(sourceFiles)
+//                .ignoreBy(MaxFileUploadSize)
+//                .setTargetDir(getCacheDir().getPath())
+//                .setFocusAlpha(false)
+//                .filter(new CompressionPredicate() {
+//                    @Override
+//                    public boolean apply(String path) {
+//                        return !TextUtils.isEmpty(path);
+//                    }
+//                })
+//                .setCompressListener(new OnCompressListener() {
+//                    @Override
+//                    public void onStart() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(File file) {
+//                        // 压缩成功后调用，返回压缩后的图片
+//                        compressFiles.add(file);
+//
+//                        setUploadAltInfo(String.format("正在压缩采样单[%s]图片[%d/%d]", sampling.getSamplingNo(), compressFiles.size(), sourceFiles.size()));
+//
+//                        //全部压缩完成，上传图片
+//                        if (compressFiles.size() >= sourceFiles.size()) {
+//                            uploadFiles(sampling, handler, compressFiles, fileSet);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        //当压缩过程出现问题时调用
+//                        if (handler != null) {
+//                            handler.onFailed("图片压缩失败！");
+//                        }
+//                    }
+//                }).launch();
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param sampling
+     * @param handler
+     * @param files
+     */
+    private void uploadFiles(Sampling sampling, FileUploadHandler handler, List<File> files, HashMap<String, SamplingFile> fileSet) {
+        List<MultipartBody.Part> parts = new ArrayList<>();
+
+        for (File file : files) {
             //文件上传Body
             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             //添加文件数据
             parts.add(MultipartBody.Part.createFormData("File", file.getName(), requestBody));
-
-            //记录文件
-            fileSet.put(sf.getFileName(), sf);
         }
 
         HashMap<String, RequestBody> map = new HashMap<>();
         map.put("token", RequestBody.create(MediaType.parse("text/plain"), UserInfoHelper.get().getUser().getToken()));
 
-        ArtUtils.makeText(TaskDetailActivity.this, String.format("开始上传采样单[%s]文件！", sampling.getSamplingNo()));
+        setUploadAltInfo(String.format("正在上传采样单[%s]图片[%d]", sampling.getSamplingNo(), files.size()));
 
         //上传文件
         mPresenter.uploadFile(Message.obtain(new IView() {
@@ -1151,7 +1252,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         //上传成功
                         if (message.obj == null || !(message.obj instanceof List)) {
                             if (handler != null) {
-                                handler.onFailed("文件上传失败，数据错误！");
+                                handler.onFailed("图片上传失败，数据错误！");
                             }
                             return;
                         }
@@ -1159,12 +1260,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         List<FileInfoData> fileInfoData = (List<FileInfoData>) message.obj;
                         if (fileInfoData == null || fileInfoData.size() == 0) {
                             if (handler != null) {
-                                handler.onFailed("文件上传失败，未返回文件信息！");
+                                handler.onFailed("图片上传失败，未返回图片信息！");
                             }
                             return;
                         }
 
-                        ArtUtils.makeText(TaskDetailActivity.this, String.format("采样单[%s]文件上传成功！", sampling.getSamplingNo()));
+//                        ArtUtils.makeText(TaskDetailActivity.this, String.format("采样单[%s]图片上传成功！", sampling.getSamplingNo()));
+                        setUploadAltInfo(String.format("采样单[%s]图片上传成功！", sampling.getSamplingNo()));
 
                         //重新设置文件ID
                         for (FileInfoData item : fileInfoData) {
@@ -1189,14 +1291,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     case Message.RESULT_FAILURE:
                         //上传失败
                         if (handler != null) {
-                            handler.onFailed("文件上传失败：" + (message.obj != null ? message.obj.toString() : ""));
+                            handler.onFailed("图片上传失败：" + (message.obj != null ? message.obj.toString() : ""));
                         }
                         break;
                 }
             }
         }), parts, map);
     }
-
 //    /**
 //     * 提交采样单数据冲突处理
 //     */

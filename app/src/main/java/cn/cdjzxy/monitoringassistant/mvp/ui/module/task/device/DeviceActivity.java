@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -45,7 +46,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.recyclerView_point)
     RecyclerView recyclerViewPoint;
     @BindView(R.id.tabview)
-    CustomTab    tabview;
+    CustomTab tabview;
 
 
     private String methodId;
@@ -113,9 +114,13 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> {
         mDeviceAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
+                Devices device = mDevices.get(position);
                 Intent intent = new Intent();
-                intent.putExtra("DeviceId", mDevices.get(position).getId());
-                intent.putExtra("DeviceName", mDevices.get(position).getName());
+                intent.putExtra("DeviceId", device.getId());
+                intent.putExtra("DeviceName", device.getName());
+                intent.putExtra("SourceWay", TextUtils.isEmpty(device.getSourceWay()) ? "" : device.getSourceWay());
+                intent.putExtra("ExpireDate", TextUtils.isEmpty(device.getExpireDate()) ? "" : device.getExpireDate());
+                intent.putExtra("DeviceCode", TextUtils.isEmpty(device.getDevCode()) ? "" : device.getDevCode());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }

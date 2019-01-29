@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
+import android.text.TextUtils;
+
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
@@ -8,6 +10,8 @@ import org.greenrobot.greendao.annotation.Transient;
 import java.util.List;
 
 import org.greenrobot.greendao.annotation.Generated;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
 
@@ -165,6 +169,8 @@ public class Sampling {
     private List<SamplingDetail> SamplingDetailYQFs;
     @Transient
     private List<SamplingContent> SamplingContentResults;
+    @Transient
+    private JSONObject PrivateJsonData;
 
     @Generated(hash = 2042923640)
     public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, List<String> SamplingUserResults) {
@@ -558,6 +564,8 @@ public class Sampling {
 
     public void setPrivateData(String PrivateData) {
         this.PrivateData = PrivateData;
+        //重置json对象
+        this.PrivateJsonData = null;
     }
 
     public String getSamplingUserId() {
@@ -814,5 +822,117 @@ public class Sampling {
 
     public void setSamplingContentResults(List<SamplingContent> samplingContentResults) {
         SamplingContentResults = samplingContentResults;
+    }
+
+    /**
+     * 获取私有数据的JSON数据
+     *
+     * @return
+     */
+    public JSONObject getPrivateJsonData() {
+        if (TextUtils.isEmpty(this.PrivateData)) {
+            return null;
+        }
+
+        if (this.PrivateJsonData == null) {
+            try {
+                this.PrivateJsonData = new JSONObject(this.PrivateData);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return this.PrivateJsonData;
+    }
+
+    /**
+     * 获取私有数据的JSON数据字符串值
+     *
+     * @param key
+     * @return
+     */
+    public String getPrivateDataStringValue(String key) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            return "";
+        }
+
+        try {
+            return obj.getString(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    public void setPrivateDataStringValue(String key, String value) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            obj = new JSONObject();
+        }
+
+        try {
+            obj.put(key, value);
+            this.PrivateData = obj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取私有数据的JSON数据整数值
+     *
+     * @param key
+     * @return
+     */
+    public int getPrivateDataIntValue(String key) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            return 0;
+        }
+
+        try {
+            return obj.getInt(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * 获取私有数据的JSON数据布尔值
+     *
+     * @param key
+     * @return
+     */
+    public boolean getPrivateDataBooleanValue(String key) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            return false;
+        }
+
+        try {
+            return obj.getBoolean(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void setPrivateDataBooleanValue(String key, Boolean value) {
+        JSONObject obj = getPrivateJsonData();
+        if (obj == null) {
+            obj = new JSONObject();
+        }
+
+        try {
+            obj.put(key, value);
+            this.PrivateData = obj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

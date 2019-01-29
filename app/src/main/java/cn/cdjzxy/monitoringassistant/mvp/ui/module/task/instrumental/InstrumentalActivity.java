@@ -304,7 +304,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         privateData.put("RPDValue", "");
         privateData.put("SamplingOnTime", "");
         privateData.put("HasPX", "false");
-        privateData.put("FormTypeName", "地下水");
+        privateData.put("FormTypeName", "");
         privateData.put("SourceWay", "检定");
         privateData.put("SourceDate", "2028-02-28");
         privateData.put("DeviceText", "css1(1201012)(检定2028-02-28)");
@@ -324,7 +324,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
 
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {
             samplingNo.append(StringUtil.autoGenericCode(1, 2));
