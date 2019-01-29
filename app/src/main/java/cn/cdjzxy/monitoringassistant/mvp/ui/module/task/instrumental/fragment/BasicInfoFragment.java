@@ -27,6 +27,7 @@ import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,7 +45,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterM
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
-public class BasicInfoFragment  extends BaseFragment {
+public class BasicInfoFragment extends BaseFragment {
 
     @BindView(R.id.tv_choose_project)
     TextView tvChooseProject;
@@ -65,19 +66,19 @@ public class BasicInfoFragment  extends BaseFragment {
     TextView tvTestUser;
 
     @BindView(R.id.tv_test_start_date)
-    TextView       tvTestStartDate;
+    TextView tvTestStartDate;
 
     @BindView(R.id.tv_test_end_date)
-    TextView       tvTestEndDate;
+    TextView tvTestEndDate;
 
     @BindView(R.id.tv_test_method)
-    TextView       tvTestMethod;
+    TextView tvTestMethod;
 
     @BindView(R.id.tv_test_device)
     TextView tvTestDevice;
 
     @BindView(R.id.tv_comment)
-    EditText       tvComment;
+    EditText tvComment;
 
     Unbinder unbinder;
 
@@ -160,7 +161,7 @@ public class BasicInfoFragment  extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @OnClick({R.id.tv_test_user,R.id.tv_choose_project,R.id.tv_test_start_date,R.id.tv_test_end_date,R.id.tv_test_method, R.id.tv_test_device})
+    @OnClick({R.id.tv_test_user, R.id.tv_choose_project, R.id.tv_test_start_date, R.id.tv_test_end_date, R.id.tv_test_method, R.id.tv_test_device})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_test_user:
@@ -205,6 +206,8 @@ public class BasicInfoFragment  extends BaseFragment {
 
                         InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
                         InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+
+                        InstrumentalActivity.mSampling.setPrivateDataStringValue("FormTypeName", InstrumentalActivity.mSampling.getTagName());
 
 //                        InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
 //                        InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
@@ -284,8 +287,19 @@ public class BasicInfoFragment  extends BaseFragment {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            InstrumentalActivity.mSampling.setDeviceName(data.getStringExtra("DeviceName"));
-                            InstrumentalActivity.mSampling.setDeviceId(data.getStringExtra("DeviceId"));
+                            String deviceId = data.getStringExtra("DeviceId");
+                            String deviceName = data.getStringExtra("DeviceName");
+                            String deviceCode = data.getStringExtra("DeviceCode");
+                            String sourceWay = data.getStringExtra("SourceWay");
+                            String expireDate = data.getStringExtra("ExpireDate");
+
+                            InstrumentalActivity.mSampling.setDeviceId(deviceId);
+                            InstrumentalActivity.mSampling.setDeviceName(deviceName);
+                            InstrumentalActivity.mSampling.setPrivateDataStringValue("SourceWay", sourceWay);
+                            InstrumentalActivity.mSampling.setPrivateDataStringValue("SourceDate", expireDate);
+                            //设备信息格式：仪器名称(仪器编号)(仪器溯源方式 仪器溯源有效期)
+                            InstrumentalActivity.mSampling.setPrivateDataStringValue("DeviceText", String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate));
+
                             tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
                         }
                     }

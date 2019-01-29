@@ -310,7 +310,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         String dateStr = DateUtils.getDate().replace("-","").substring(2);
         samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like("%" + samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {
             samplingNo.append(StringUtil.autoGenericCode(1, 2));

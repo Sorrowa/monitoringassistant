@@ -95,6 +95,7 @@ public class SubmitDataUtil {
         sampFormBean.setSendSampTime(sampling.getSendSampTime());
         sampFormBean.setSamplingNo(sampling.getSamplingNo());
         sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
+        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeEnd());
         sampFormBean.setTagName(sampling.getTagName());
         sampFormBean.setTagId(sampling.getTagId());
         sampFormBean.setAddressId(sampling.getAddressId());
@@ -111,7 +112,6 @@ public class SubmitDataUtil {
         sampFormBean.setFile(sampling.getFile());
         sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
         sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
-        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeBegin());
         sampFormBean.setFormFlows(sampling.getFormFlows());
         sampFormBean.setLayTableCheckbox(sampling.getLayTableCheckbox());
         sampFormBean.setSubmitId(sampling.getSubmitId());

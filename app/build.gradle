@@ -133,10 +133,7 @@ dependencies {
     implementation files('libs/poi-3.9-20121203.jar')
     implementation files('libs/poi-scratchpad-3.9-20121203.jar')
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
-
-    implementation(name:'onsdk_all', ext:'aar')
+    implementation(name: 'onsdk_all', ext: 'aar')
     //implementation files('libs/BaiduLBS_Android.jar')
-
-
-
+    implementation 'id.zelory:compressor:2.1.0'
 }

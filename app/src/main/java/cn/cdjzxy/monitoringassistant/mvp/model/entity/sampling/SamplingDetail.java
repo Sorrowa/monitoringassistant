@@ -594,7 +594,7 @@ public class SamplingDetail {
 
         try {
             obj.put(key, value);
-            this.setPrivateData(obj.toString());
+            this.PrivateData = obj.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -650,7 +650,7 @@ public class SamplingDetail {
 
         try {
             obj.put(key, value);
-            this.setPrivateData(obj.toString());
+            this.PrivateData = obj.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
