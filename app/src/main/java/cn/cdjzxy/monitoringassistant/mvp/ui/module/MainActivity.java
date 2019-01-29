@@ -103,10 +103,10 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private TaskFragment mTaskFragment;
     private ScanCodeFragment mScanCodeFragment;
     private PointMapFragment mPointMapFragment;
-    private ProgressFragment mProgressFragment;
+    //private ProgressFragment mProgressFragment;
     private RepositoryFragment mRepositoryFragment;
     private SettingFragment mSettingFragment;
-    private ManagementFragment mManagementFragment;
+    //private ManagementFragment mManagementFragment;
 
 
     @Override
@@ -159,7 +159,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             }
         }, 3000);
 
-
+        updateDataFromNetwork();
     }
 
     @Override
@@ -176,30 +176,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @Override
     protected void onStart() {
         super.onStart();
-        if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
-            showDialog();
-            mPresenter.getDevices(Message.obtain(this, new Object()));
-            mPresenter.getMethods(Message.obtain(this, new Object()));
-            mPresenter.getMonItems(Message.obtain(this, new Object()));
-            mPresenter.getTags(Message.obtain(this, new Object()));
-            mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));
-            mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));
-            mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));
-            mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));
-            mPresenter.getRight(Message.obtain(this, new Object()));
-            mPresenter.getEnvirPoint(Message.obtain(this, new Object()));
-            mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));
-            mPresenter.getEnterprise(Message.obtain(this, new Object()));
-            mPresenter.getDic(Message.obtain(this, new Object()), 7);
-            mPresenter.getWeather(Message.obtain(this, new Object()));
-            mPresenter.getUser(Message.obtain(this, new Object()));
-            mPresenter.getUnit(Message.obtain(this, new Object()));
-            mPresenter.getMsgs(Message.obtain(this, new Object()));
-            mPresenter.getFormSelect(Message.obtain(this, new Object()));
-            mPresenter.getSamplingStantd(Message.obtain(this, new Object()));
-            mPresenter.getMyTasks(Message.obtain(this, new Object()));
-            HawkUtil.putBoolean("isUpdated", true);
-        }
     }
 
     @Override
@@ -319,21 +295,11 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 tab.setSelectedResId(R.mipmap.ic_point_hov);
                 tab.setSelected(false);
             } else if (i == 3) {
-                tab.setTabName("企业管理");
-                tab.setResId(R.mipmap.ic_manager_nor);
-                tab.setSelectedResId(R.mipmap.ic_manager_hov);
-                tab.setSelected(false);
-            } else if (i == 4) {
                 tab.setTabName("知识库");
                 tab.setResId(R.mipmap.ic_knowledge_nor);
                 tab.setSelectedResId(R.mipmap.ic_knowledge_hov);
                 tab.setSelected(false);
-            } else if (i == 5) {
-                tab.setTabName("进度");
-                tab.setResId(R.mipmap.ic_progress_nor);
-                tab.setSelectedResId(R.mipmap.ic_progress_hov);
-                tab.setSelected(false);
-            } else if (i == 6) {
+            } else if (i == 4) {
                 tab.setTabName("设置");
                 tab.setResId(R.mipmap.ic_setting_nor);
                 tab.setSelectedResId(R.mipmap.ic_setting_hov);
@@ -413,35 +379,13 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 mBundle.putString(WebFragment.URL_KEY, "https://www.amap.com/");
                 break;
 
-            case 3://企业管理
-
-                ft.replace(R.id.layout_container, mWebFragment = WebFragment.getInstance(mBundle), WebFragment.class.getName());
-                //                mBundle.putString(WebFragment.URL_KEY, BuildConfig.SERVER_IP + "/Enterprise/APP");
-                mBundle.putString(WebFragment.URL_KEY, "https://www.baidu.com");
-                break;
-
-            case 4://知识库
+            case 3://知识库
                 ft.replace(R.id.layout_container, mRepositoryFragment = new RepositoryFragment(), RepositoryFragment.class.getName());
                 break;
 
-            case 5://进度
-                ft.replace(R.id.layout_container, mProgressFragment = new ProgressFragment(), ProgressFragment.class.getName());
-                break;
-
-            case 6://设置
+            case 4://设置
                 ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());
 
-//                String path = getSystemFilePath(this) + "/test4.jpeg";
-//                Log.e("Path", path);
-//                File file = new File(path);
-//                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-//
-//                MultipartBody.Part fileData = MultipartBody.Part.createFormData("File", file.getName(), requestBody);
-//
-//                HashMap<String, RequestBody> map = new HashMap<>();
-//                map.put("token", RequestBody.create(MediaType.parse("text/plain"), UserInfoHelper.get().getUser().getToken()));
-//
-//                mPresenter.uploadFile(Message.obtain(this, new Object()), fileData, map);
                 break;
             case 7://修改密码
                 ft.replace(R.id.layout_container, new PwdModifyFragment(), PwdModifyFragment.class.getName());
@@ -497,6 +441,37 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         dialogPlusBuilder.setContentWidth(700);
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
+    }
+
+    /**
+     * 从服务端更新数据
+     */
+    private void updateDataFromNetwork(){
+        if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
+            showDialog();
+            mPresenter.getDevices(Message.obtain(this, new Object()));
+            mPresenter.getMethods(Message.obtain(this, new Object()));
+            mPresenter.getMonItems(Message.obtain(this, new Object()));
+            mPresenter.getTags(Message.obtain(this, new Object()));
+            mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));
+            mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));
+            mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));
+            mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));
+            mPresenter.getRight(Message.obtain(this, new Object()));
+            mPresenter.getEnvirPoint(Message.obtain(this, new Object()));
+            mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));
+            mPresenter.getEnterprise(Message.obtain(this, new Object()));
+            mPresenter.getDic(Message.obtain(this, new Object()), 7);
+            mPresenter.getWeather(Message.obtain(this, new Object()));
+            mPresenter.getUser(Message.obtain(this, new Object()));
+            mPresenter.getUnit(Message.obtain(this, new Object()));
+            mPresenter.getMsgs(Message.obtain(this, new Object()));
+            mPresenter.getFormSelect(Message.obtain(this, new Object()));
+            mPresenter.getSamplingStantd(Message.obtain(this, new Object()));
+            mPresenter.getMyTasks(Message.obtain(this, new Object()));
+            //HawkUtil.putBoolean("isUpdated", true);
+            HawkUtil.putBoolean("isUpdated", false);
+        }
     }
 
 

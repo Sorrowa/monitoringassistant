@@ -19,7 +19,8 @@
     <com.allen.library.SuperTextView
         android:id="@+id/stv_about"
         style="@style/SupperTextStyleItem"
-        app:sLeftTextString="关于" />
+        app:sLeftTextString="关于"
+        android:visibility="invisible"/>
 
     <View
         android:layout_width="match_parent"

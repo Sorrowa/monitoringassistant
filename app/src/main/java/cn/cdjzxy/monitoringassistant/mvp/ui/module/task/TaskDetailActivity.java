@@ -187,7 +187,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(View v) {
                 showFinishDialog();
-                //                putSamplingFinish("测试");
             }
         });
     }
