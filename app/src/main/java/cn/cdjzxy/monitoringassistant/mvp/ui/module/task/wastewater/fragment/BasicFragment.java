@@ -28,6 +28,7 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.io.File;
@@ -320,7 +321,8 @@ public class BasicFragment extends BaseFragment {
                 .capture(true)
                 .captureStrategy(new CaptureStrategy(true, "cn.cdjzxy.monitoringassistant.android7.fileprovider", "MonitoringAssistant"))
                 .maxSelectable(5)
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                //.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
                 .showSingleMediaType(true)
                 .thumbnailScale(0.85f)
                 .imageEngine(new Glide4Engine())
