@@ -459,7 +459,8 @@ public class CollectionFragment extends BaseFragment {
         DBHelper.get().getSamplingContentDao().insert(samplingContent);
         //刷新界面
         if (mWasteWaterCollectAdapter!=null){
-            mWasteWaterCollectAdapter.notifyDataSetChanged();
+            mWasteWaterCollectAdapter.refreshInfos(WastewaterActivity.mSample.getSamplingContentResults());
+            //mWasteWaterCollectAdapter.notifyDataSetChanged();
         }else {
             initRecyclerViewData();
         }

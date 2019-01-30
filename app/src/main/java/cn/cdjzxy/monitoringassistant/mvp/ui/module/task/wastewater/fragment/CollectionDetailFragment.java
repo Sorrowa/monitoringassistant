@@ -259,7 +259,7 @@ public class CollectionDetailFragment extends BaseFragment {
      * delete operate
      */
     private void operateDelete() {
-        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults()) || fsListPosition == -1) {
+        if (CheckUtil.isEmpty(mSample.getSamplingContentResults()) || fsListPosition == -1) {
             ArtUtils.makeText(getContext(), "请先添加采样数据");
             return;
         }
@@ -646,14 +646,14 @@ public class CollectionDetailFragment extends BaseFragment {
      * 设置默认监测项目
      */
     private void setDefaultMonitor(){
-
         StringBuilder monNameItems = new StringBuilder("");
         StringBuilder xcMonNameItems = new StringBuilder("");
         StringBuilder monIdItems = new StringBuilder("");
         StringBuilder xcMonIdItems = new StringBuilder("");
         String xcStandItems=getStandMonitors(true);
         String standItems=getStandMonitors(false);
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId())).list();
+        //List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId())).list();
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId()),ProjectDetialDao.Properties.TagId.eq(mSample.getTagId()),ProjectDetialDao.Properties.AddressId.eq(mSample.getAddressId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
                 if (standItems.contains(projectDetial.getMonItemName())){

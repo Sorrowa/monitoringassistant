@@ -161,7 +161,9 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                         if (!CheckUtil.isEmpty(samplingFiles)) {
                             DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
                         }
-                        mSample.getSamplingFiless().remove(0);
+                        if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())){
+                            mSample.getSamplingFiless().remove(0);
+                        }
                         DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
                     }
                     //保存样品
