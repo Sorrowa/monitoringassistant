@@ -228,7 +228,8 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             samplingDetail.setSamplingOnTime(item.getTempValue1());//监测日期
             samplingDetail.setAddresssId(item.getTempValue2());
             samplingDetail.setAddressName(item.getTempValue3());
-            samplingDetail.setFrequecyNo(item.getFrequecyNo());
+            samplingDetail.setFrequecyNo(item.getFrequecyNo());//复制样品的频次
+            samplingDetail.setOrderIndex(item.getOrderIndex());//复制样品的行号
             samplingDetail.setPrivateDataBooleanValue("HasPX", false);
             samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
             samplingDetail.setPrivateDataStringValue("CaleValue", "");

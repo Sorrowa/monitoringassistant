@@ -150,8 +150,8 @@ public class SubmitDataUtil {
             List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeansList = new ArrayList<>();
             int count = 1;
             for (SamplingDetail samplingDetail : samplingDetailsList) {
-                if (CheckUtil.isEmpty(samplingDetail.getMonitemId())){
-                   continue;
+                if (CheckUtil.isEmpty(samplingDetail.getMonitemId())) {
+                    continue;
                 }
                 PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
 
@@ -163,7 +163,11 @@ public class SubmitDataUtil {
                 samplingDetailsBean.setMonitemName(samplingDetail.getMonitemName());
                 samplingDetailsBean.setAddresssId(sampling.getAddressId());
                 samplingDetailsBean.setAddressName(sampling.getAddressName());
-                samplingDetailsBean.setOrderIndex(count + "");
+                if (samplingDetail.getOrderIndex() == 0) {
+                    samplingDetailsBean.setOrderIndex(count + "");
+                }else{
+                    samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex() + "");
+                }
                 samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
                 samplingDetailsBean.setSamplingTime(samplingDetail.getSamplingTime());
                 samplingDetailsBean.setSamplingType(samplingDetail.getSamplingType() + "");
