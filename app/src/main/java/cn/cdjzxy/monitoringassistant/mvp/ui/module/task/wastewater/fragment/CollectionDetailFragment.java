@@ -646,6 +646,7 @@ public class CollectionDetailFragment extends BaseFragment {
      * 设置默认监测项目
      */
     private void setDefaultMonitor(){
+
         StringBuilder monNameItems = new StringBuilder("");
         StringBuilder xcMonNameItems = new StringBuilder("");
         StringBuilder monIdItems = new StringBuilder("");

@@ -126,16 +126,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * 降水表单路径/路径
      */
     public static final String PATH_PRECIPITATION = "/FormTemplate/FILL_JS_GAS_XD";
+    public static final String NAME_PRECIPITATION = "降水采样及样品交接记录（新都）";
 
     /**
      * 废水表单路径/路径
      */
     public static final String PATH_WASTEWATER = "/FormTemplate/FILL_WATER_NEW_XD";
+    public static final String NAME_WASTEWATER = "水和废水样品采集与交接记录（新都）";
 
     /**
      * 仪器法表单路径/路径
      */
     public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
+    public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
 
     /**
      * 最大文件上传大小，单位（KB）
@@ -233,6 +236,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
+                isUpload = false;
                 batchUploadFinish();
 //                showMessage("操作失败！");
                 break;

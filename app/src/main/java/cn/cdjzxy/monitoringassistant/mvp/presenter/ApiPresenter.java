@@ -56,6 +56,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
@@ -897,6 +898,16 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 DBHelper.get().getSamplingFormStandDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
+                                    String formName=sampling.getFormName();
+
+                                    if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)){
+                                        sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
+                                    }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)){
+                                        sampling.setFormPath(TaskDetailActivity.PATH_WASTEWATER);
+                                    }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)){
+                                        sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
+                                    }
+
 
                                     DBHelper.get().getSamplingDao().delete(sampling);
 

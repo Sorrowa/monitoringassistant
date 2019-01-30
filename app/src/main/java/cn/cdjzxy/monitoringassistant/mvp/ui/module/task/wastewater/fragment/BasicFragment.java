@@ -167,7 +167,9 @@ public class BasicFragment extends BaseFragment {
             }
             base_sample_no.setText(WastewaterActivity.mSample.getSamplingNo());
             base_sample_md.setText(WastewaterActivity.mSample.getProjectName());
-            base_sample_xz.setText(WastewaterActivity.mSample.getMontype());
+            //base_sample_xz.setText(WastewaterActivity.mSample.getMontype());
+            base_sample_xz.setText(WastewaterActivity.mProject.getMonType());
+
 
             base_sample_date.setText(WastewaterActivity.mSample.getSamplingTimeBegin());
             base_sample_user.setText(WastewaterActivity.mSample.getSamplingUserName());
