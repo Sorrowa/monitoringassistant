@@ -263,7 +263,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setProjectId(currSelectDetails.getProjectId());
         samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
         samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
-        samplingDetail.setSamplingType(currSelectDetails.getSamplingType());
+        samplingDetail.setSamplingType(1);//样品0  平行1
         samplingDetail.setSamplingOnTime(currSelectDetails.getSamplingOnTime());
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());

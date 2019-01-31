@@ -224,7 +224,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             samplingDetail.setMonitemName(mSampling.getMonitemName());
             samplingDetail.setSamplingId(mSampling.getId());//对应到当前采样单
             samplingDetail.setSampingCode(item.getSampingCode());//样品编码
-            samplingDetail.setSamplingType(item.getSamplingType());//样品类型（样品、平行）
+            samplingDetail.setSamplingType(0);////样品0  平行1
             samplingDetail.setSamplingOnTime(item.getTempValue1());//监测日期
             samplingDetail.setAddresssId(item.getTempValue2());
             samplingDetail.setAddressName(item.getTempValue3());
