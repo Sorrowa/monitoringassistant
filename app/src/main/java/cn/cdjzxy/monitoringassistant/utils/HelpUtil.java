@@ -214,7 +214,8 @@ public class HelpUtil {
                 }
             }
         }
-        return null;
+        //return null;
+        return "";
     }
 
     /**

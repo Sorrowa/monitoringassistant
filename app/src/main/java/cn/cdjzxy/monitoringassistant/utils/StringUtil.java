@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
+import java.util.List;
+
 public class StringUtil {
 
     /**
@@ -20,5 +22,20 @@ public class StringUtil {
             result = String.format("%0" + num + "d", number);
         }
         return result;
+    }
+
+
+    public static String join(String seperator, List<String> dataList){
+        if (!CheckUtil.isEmpty(dataList)){
+            StringBuilder stringBuilder = new StringBuilder("");
+            for (String item:dataList){
+                stringBuilder.append(item+seperator);
+            }
+            if (stringBuilder.lastIndexOf(seperator) > 0) {
+                stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(seperator));
+            }
+            return stringBuilder.toString();
+        }
+        return "";
     }
 }

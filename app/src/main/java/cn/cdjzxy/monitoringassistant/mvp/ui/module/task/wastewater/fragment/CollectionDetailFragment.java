@@ -28,6 +28,7 @@ import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -417,6 +418,7 @@ public class CollectionDetailFragment extends BaseFragment {
                         if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
                             sample_monitor_items_title.setText("监测项目("+data.getStringExtra("MonItemId").split(",").length+")");
                         }
+                        adjustMonitorItems(false);
                     }
                 }
             }
@@ -444,6 +446,7 @@ public class CollectionDetailFragment extends BaseFragment {
                             sample_monitor_title.setText("现场监测("+data.getStringExtra("MonItemId").split(",").length+")");
                         }
                     }
+                    adjustMonitorItems(true);
                 }
             }
         });
@@ -706,6 +709,8 @@ public class CollectionDetailFragment extends BaseFragment {
         }
         samplingDetail.setSamplingCount(count);
 
+        adjustMonitorItems(true);
+
     }
 
     /**
@@ -809,6 +814,81 @@ public class CollectionDetailFragment extends BaseFragment {
         }
 
         samplingDetail.setSamplingCount(count);
+    }
+
+
+    /**
+     * 调整监测项目和现场监测
+     * @param isSenceAnalysis
+     */
+    private void adjustMonitorItems(boolean isSenceAnalysis){
+        String monitemIdStr=samplingDetail.getMonitemId();
+        String senceMonitemIdStr=samplingDetail.getSenceMonitemId();
+        List<String> monitemIdList=new ArrayList<>();
+        List<String> senceMonitemIdList=new ArrayList<>();
+        if (!CheckUtil.isEmpty(monitemIdStr)){
+            String[] monitemIds=monitemIdStr.split(",");
+            monitemIdList=new ArrayList<>(Arrays.asList(monitemIds));
+        }
+        if (!CheckUtil.isEmpty(senceMonitemIdStr)){
+            String[] sendMonitemIds=senceMonitemIdStr.split(",");
+            senceMonitemIdList=new ArrayList<>(Arrays.asList(sendMonitemIds));
+        }
+
+        if (!isSenceAnalysis){
+            if (!CheckUtil.isEmpty(monitemIdList)){
+                if (!CheckUtil.isEmpty(senceMonitemIdList)){
+                    for (String monitemId:monitemIdList){
+                        if (senceMonitemIdList.contains(monitemId)){
+                            senceMonitemIdList.remove(monitemId);
+                        }
+                    }
+                }
+                if (!CheckUtil.isEmpty(senceMonitemIdList)){
+                    List<String> senceMonitemNameList=new ArrayList<>();
+                    for (String senceMonitemId:senceMonitemIdList){
+                        senceMonitemNameList.add(HelpUtil.getMonItemNameById(senceMonitemId,mSample));
+                    }
+                    samplingDetail.setSenceMonitemName(StringUtil.join(",",senceMonitemNameList));
+                    samplingDetail.setSenceMonitemId(StringUtil.join(",",senceMonitemIdList));
+                    sample_monitor.setText(samplingDetail.getSenceMonitemName());
+                    sample_monitor_title.setText("现场监测("+senceMonitemIdList.size()+")");
+                }else {
+                    samplingDetail.setSenceMonitemName("");
+                    samplingDetail.setSenceMonitemId("");
+                    sample_monitor.setText(samplingDetail.getSenceMonitemName());
+                    sample_monitor_title.setText("现场监测(0)");
+                }
+            }
+
+        }else {
+            if (!CheckUtil.isEmpty(senceMonitemIdList)){
+                if (!CheckUtil.isEmpty(monitemIdList)){
+                    for (String monitemId:senceMonitemIdList){
+                        if (monitemIdList.contains(monitemId)){
+                            monitemIdList.remove(monitemId);
+                        }
+                    }
+                }
+                if (!CheckUtil.isEmpty(monitemIdList)){
+                    List<String> monitemNameList=new ArrayList<>();
+                    for (String monitemId:monitemIdList){
+                        monitemNameList.add(HelpUtil.getMonItemNameById(monitemId,mSample));
+                    }
+                    samplingDetail.setMonitemName(StringUtil.join(",",monitemNameList));
+                    samplingDetail.setMonitemId(StringUtil.join(",",monitemIdList));
+                    sample_monitor_items.setText(samplingDetail.getMonitemName());
+                    sample_monitor_items_title.setText("监测项目("+monitemIdList.size()+")");
+                }else {
+                    samplingDetail.setMonitemName("");
+                    samplingDetail.setMonitemId("");
+                    sample_monitor_items.setText(samplingDetail.getMonitemName());
+                    sample_monitor_items_title.setText("监测项目(0)");
+                }
+            }
+
+        }
+
     }
 
 }
