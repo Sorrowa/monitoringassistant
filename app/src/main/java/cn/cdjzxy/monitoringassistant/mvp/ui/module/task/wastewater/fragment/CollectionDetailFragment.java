@@ -741,67 +741,73 @@ public class CollectionDetailFragment extends BaseFragment {
     private void generateSamplingDetails(){
         //包括监测项目和现场监测项目
         int count=0;
-        String[] monitemIds=samplingDetail.getMonitemId().split(",");
-        if (!CheckUtil.isEmpty(monitemIds)){
-            count+=monitemIds.length;
-            for (String itemId:monitemIds){
-                SamplingDetail detail = new SamplingDetail();
-                detail.setProjectId(samplingDetail.getProjectId());
-                detail.setId(UUID.randomUUID().toString());
-                detail.setSamplingId(samplingDetail.getSamplingId());
-                detail.setSampingCode(samplingDetail.getSampingCode());
-                detail.setFrequecyNo(samplingDetail.getFrequecyNo());
-                detail.setDescription(samplingDetail.getDescription());
-                detail.setSamplingType(samplingDetail.getSamplingType());
-                detail.setIsCompare(samplingDetail.getIsCompare());
-                detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
-                detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
-                detail.setMonitemId(itemId);
-                detail.setAddressName(samplingDetail.getAddressName());
-                detail.setAddresssId(samplingDetail.getAddresssId());
-                detail.setIsSenceAnalysis(false);
-                detail.setSamplingTime(samplingDetail.getSamplingTime());
-                detail.setOrderIndex(samplingDetail.getOrderIndex());
-                //设置剩余信息
-                detail.setSampleCollection(samplingDetail.getSampleCollection());
-                detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
-                detail.setPreservative(samplingDetail.getPreservative());
+        if (!CheckUtil.isNull(samplingDetail.getMonitemId())){
+            String[] monitemIds=samplingDetail.getMonitemId().split(",");
+            if (!CheckUtil.isEmpty(monitemIds)){
+                count+=monitemIds.length;
+                for (String itemId:monitemIds){
+                    SamplingDetail detail = new SamplingDetail();
+                    detail.setProjectId(samplingDetail.getProjectId());
+                    detail.setId(UUID.randomUUID().toString());
+                    detail.setSamplingId(samplingDetail.getSamplingId());
+                    detail.setSampingCode(samplingDetail.getSampingCode());
+                    detail.setFrequecyNo(samplingDetail.getFrequecyNo());
+                    detail.setDescription(samplingDetail.getDescription());
+                    detail.setSamplingType(samplingDetail.getSamplingType());
+                    detail.setIsCompare(samplingDetail.getIsCompare());
+                    detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
+                    detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
+                    detail.setMonitemId(itemId);
+                    detail.setAddressName(samplingDetail.getAddressName());
+                    detail.setAddresssId(samplingDetail.getAddresssId());
+                    detail.setIsSenceAnalysis(false);
+                    detail.setSamplingTime(samplingDetail.getSamplingTime());
+                    detail.setOrderIndex(samplingDetail.getOrderIndex());
+                    //设置剩余信息
+                    detail.setSampleCollection(samplingDetail.getSampleCollection());
+                    detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
+                    detail.setPreservative(samplingDetail.getPreservative());
 
-                DBHelper.get().getSamplingDetailDao().insert(detail);
-                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+                    DBHelper.get().getSamplingDetailDao().insert(detail);
+                    WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+                }
             }
         }
 
-        String[] sendMonitemIds=samplingDetail.getSenceMonitemId().split(",");
-        if (!CheckUtil.isEmpty(sendMonitemIds)){
-            count+=sendMonitemIds.length;
-            for (String itemId:sendMonitemIds){
-                SamplingDetail detail = new SamplingDetail();
-                detail.setProjectId(samplingDetail.getProjectId());
-                detail.setId(UUID.randomUUID().toString());
-                detail.setSamplingId(samplingDetail.getSamplingId());
-                detail.setSampingCode(samplingDetail.getSampingCode());
-                detail.setFrequecyNo(samplingDetail.getFrequecyNo());
-                detail.setDescription(samplingDetail.getDescription());
-                detail.setSamplingType(samplingDetail.getSamplingType());
-                detail.setIsCompare(samplingDetail.getIsCompare());
-                detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
-                detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
-                detail.setMonitemId(itemId);
-                detail.setAddressName(samplingDetail.getAddressName());
-                detail.setAddresssId(samplingDetail.getAddresssId());
-                detail.setIsSenceAnalysis(true);
-                detail.setSamplingTime(samplingDetail.getSamplingTime());
-                detail.setOrderIndex(samplingDetail.getOrderIndex());
-                //设置剩余信息
-                detail.setSampleCollection(samplingDetail.getSampleCollection());
-                detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
-                detail.setPreservative(samplingDetail.getPreservative());
 
-                DBHelper.get().getSamplingDetailDao().insert(detail);
-                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+        if (!CheckUtil.isNull(samplingDetail.getSenceMonitemId())){
+            String[] sendMonitemIds=samplingDetail.getSenceMonitemId().split(",");
+            if (!CheckUtil.isEmpty(sendMonitemIds)){
+                count+=sendMonitemIds.length;
+                for (String itemId:sendMonitemIds){
+                    SamplingDetail detail = new SamplingDetail();
+                    detail.setProjectId(samplingDetail.getProjectId());
+                    detail.setId(UUID.randomUUID().toString());
+                    detail.setSamplingId(samplingDetail.getSamplingId());
+                    detail.setSampingCode(samplingDetail.getSampingCode());
+                    detail.setFrequecyNo(samplingDetail.getFrequecyNo());
+                    detail.setDescription(samplingDetail.getDescription());
+                    detail.setSamplingType(samplingDetail.getSamplingType());
+                    detail.setIsCompare(samplingDetail.getIsCompare());
+                    detail.setIsAddPreserve(samplingDetail.getIsAddPreserve());
+                    detail.setMonitemName(HelpUtil.getMonItemNameById(itemId,mSample));
+                    detail.setMonitemId(itemId);
+                    detail.setAddressName(samplingDetail.getAddressName());
+                    detail.setAddresssId(samplingDetail.getAddresssId());
+                    detail.setIsSenceAnalysis(true);
+                    detail.setSamplingTime(samplingDetail.getSamplingTime());
+                    detail.setOrderIndex(samplingDetail.getOrderIndex());
+                    //设置剩余信息
+                    detail.setSampleCollection(samplingDetail.getSampleCollection());
+                    detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
+                    detail.setPreservative(samplingDetail.getPreservative());
+
+                    DBHelper.get().getSamplingDetailDao().insert(detail);
+                    WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
+                }
             }
         }
+
         samplingDetail.setSamplingCount(count);
     }
 
