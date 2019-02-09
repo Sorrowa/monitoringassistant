@@ -239,3 +239,6 @@
 
 ################gprinter#################
 -keep class com.gprinter.** { *; }
+
+-keep class com.baidu.**{*;}
+-keep class vi.com.gdi.bgl.**{*;}

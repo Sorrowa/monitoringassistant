@@ -60,6 +60,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
+import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import okhttp3.MultipartBody;
@@ -900,6 +901,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 for (Sampling sampling : samplings) {
                                     String formName=sampling.getFormName();
 
+
                                     if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)){
                                         sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
                                     }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)){
@@ -907,6 +909,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)){
                                         sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
                                     }
+
 
 
                                     DBHelper.get().getSamplingDao().delete(sampling);
@@ -928,8 +931,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
                                     if (!CheckUtil.isEmpty(samplingContents)) {
                                         for (SamplingContent samplingContent : samplingContents) {
+                                            List<SamplingContent> dbContentList=HelpUtil.getSamplingContent(samplingContent.getProjectId(),samplingContent.getSamplingId(),samplingContent.getSampingCode(),samplingContent.getSamplingType());
+                                            if (!CheckUtil.isEmpty(dbContentList)){
+                                                DBHelper.get().getSamplingContentDao().deleteInTx(dbContentList);
+                                            }
                                             samplingContent.setId(UUID.randomUUID().toString());
-                                            DBHelper.get().getSamplingContentDao().delete(samplingContent);
                                         }
                                         DBHelper.get().getSamplingContentDao().insertInTx(samplingContents);
                                     }
@@ -987,7 +993,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     public void onSuccess(BaseResponse baseResponse) {
                         msg.what = Message.RESULT_OK;
                         msg.obj = baseResponse.getMessage();
-                        msg.handleMessageToTarget();
+                        //提交采样方案成功后不提示
+                        //msg.handleMessageToTarget();
                     }
 
                     @Override

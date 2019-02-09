@@ -17,6 +17,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
@@ -214,6 +215,19 @@ public class HelpUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 通过projectId samplingId samplingCode samplingType查询对应的SamplingContent
+     * @param projectId
+     * @param samplingId
+     * @param samplingCode
+     * @param samplingType
+     * @return
+     */
+    public static List<SamplingContent> getSamplingContent(String projectId,String samplingId,String samplingCode,int samplingType){
+        List<SamplingContent> contentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.ProjectId.eq(projectId),SamplingContentDao.Properties.SamplingId.eq(samplingId),SamplingContentDao.Properties.SampingCode.eq(samplingCode),SamplingContentDao.Properties.SamplingType.eq(samplingType)).list();
+        return contentList;
     }
 
 }

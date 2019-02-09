@@ -160,7 +160,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
             tab.setSelectedResId(R.drawable.shape_search_condition_selected);
             tab.setSelected(false);
             if (i == 0) {
-                tab.setTabName("环境质量");
+                tab.setTabName("环境质量监测");
             } else if (i == 1) {
                 tab.setTabName("委托监测");
             } else if (i == 2) {
@@ -240,6 +240,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         saveHistory(keyword);
 
         String startDate = "1900-01-01";
+        //String startDate = "";
         for (int i = 0; i < mLastTimes.size(); i++) {
             if (mLastTimes.get(i).isSelected()) {
                 if (i == 0) {
@@ -255,9 +256,11 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         }
 
         if (!CheckUtil.isEmpty(startDate)){
-            startDate = startDate + "T00:00:00";
+            //startDate = startDate + " 00:00:00";
+            startDate = startDate + " 00:00:00";
         }
-        String endDate = DateUtils.getDate() + "T23:59:59";
+        //String endDate = DateUtils.getDate() + "T23:59:59";
+        String endDate = DateUtils.getDate() + " 23:59:59";
 
         ArrayList<String> types = new ArrayList<>();
         for (Tab taskType : mTaskTypes) {
