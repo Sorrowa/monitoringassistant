@@ -277,7 +277,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
         mTabs = new ArrayList<>();
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 5; i++) {
             Tab tab = new Tab();
             if (i == 0) {
                 tab.setTabName("任务");

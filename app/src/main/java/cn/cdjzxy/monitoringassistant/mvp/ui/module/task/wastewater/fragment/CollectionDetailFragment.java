@@ -746,7 +746,7 @@ public class CollectionDetailFragment extends BaseFragment {
     private void generateSamplingDetails(){
         //包括监测项目和现场监测项目
         int count=0;
-        if (!CheckUtil.isNull(samplingDetail.getMonitemId())){
+        if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())){
             String[] monitemIds=samplingDetail.getMonitemId().split(",");
             if (!CheckUtil.isEmpty(monitemIds)){
                 count+=monitemIds.length;
@@ -780,7 +780,7 @@ public class CollectionDetailFragment extends BaseFragment {
         }
 
 
-        if (!CheckUtil.isNull(samplingDetail.getSenceMonitemId())){
+        if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())){
             String[] sendMonitemIds=samplingDetail.getSenceMonitemId().split(",");
             if (!CheckUtil.isEmpty(sendMonitemIds)){
                 count+=sendMonitemIds.length;
