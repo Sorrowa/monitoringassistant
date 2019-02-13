@@ -449,6 +449,9 @@ public class CollectionFragment extends BaseFragment {
         DBHelper.get().getSamplingDetailDao().insert(detail);
         detail.setMonitemId("");
         detail.setMonitemName("");
+        detail.setIsAddPreserve(false);
+        detail.setPreservative("否");
+        detail.setIsCompare(false);
         WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
 
         //数据处理

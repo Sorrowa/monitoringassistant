@@ -201,9 +201,11 @@ public class CollectionDetailFragment extends BaseFragment {
             if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")){
                 sample_add_preserve.setChecked(true);
                 samplingDetail.setIsAddPreserve(true);
+                samplingDetail.setPreservative("是");
             }else {
                 sample_add_preserve.setChecked(false);
                 samplingDetail.setIsAddPreserve(false);
+                samplingDetail.setPreservative("否");
             }
 
             sample_compare_monitor.setChecked(samplingDetail.getIsCompare());

@@ -53,6 +53,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
@@ -901,6 +902,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 for (Sampling sampling : samplings) {
                                     String formName=sampling.getFormName();
 
+                                    Log.e("Karry","获取的："+sampling.getSamplingNo());
+
 
                                     if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)){
                                         sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
@@ -910,9 +913,12 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
                                     }
 
-
-
-                                    DBHelper.get().getSamplingDao().delete(sampling);
+                                    //处理有相同SamplingNo不同id的情况
+                                    List<Sampling> localSamplings=getLocalSamplingsByNo(sampling.getSamplingNo());
+                                    if (!CheckUtil.isEmpty(localSamplings)){
+                                        DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
+                                    }
+                                    //DBHelper.get().getSamplingDao().delete(sampling);
 
                                     List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
                                     if (!CheckUtil.isEmpty(samplingFormStands)) {
@@ -1121,6 +1127,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         if (!CheckUtil.isEmpty(userInfo.getWebUrl())) {
             RetrofitUrlManager.getInstance().putDomain(Api.LOGIN_RESP_WEBURL, userInfo.getWebUrl());
         }
+    }
+
+    private List<Sampling> getLocalSamplingsByNo(String samplingNo){
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo)).list();
+        return samplings;
     }
 
 }
