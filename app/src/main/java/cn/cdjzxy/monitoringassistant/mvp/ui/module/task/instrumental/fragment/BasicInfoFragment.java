@@ -30,12 +30,16 @@ import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MonItemMethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
@@ -102,7 +106,7 @@ public class BasicInfoFragment extends BaseFragment {
             tvTestStartDate.setText(InstrumentalActivity.mSampling.getSamplingTimeBegin());
             tvTestEndDate.setText(InstrumentalActivity.mSampling.getSamplingTimeEnd());
             tvTestMethod.setText(InstrumentalActivity.mSampling.getMethodName());
-            tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
+            tvTestDevice.setText(InstrumentalActivity.mSampling.getPrivateDataStringValue("DeviceText"));
             tvComment.setText(InstrumentalActivity.mSampling.getComment());
 
             tvChooseProject.setEnabled(InstrumentalActivity.mSampling.getIsCanEdit());
@@ -198,8 +202,15 @@ public class BasicInfoFragment extends BaseFragment {
                             return;
                         }
 
-                        InstrumentalActivity.mSampling.setMonitemId(data.getStringExtra("MonitemId"));
-                        InstrumentalActivity.mSampling.setMonitemName(data.getStringExtra("MonitemName"));
+                        String monitemId = data.getStringExtra("MonitemId");
+                        String monitemName = data.getStringExtra("MonitemName");
+
+                        if (monitemId.equals(InstrumentalActivity.mSampling.getMonitemId()) && monitemName.equals(InstrumentalActivity.mSampling.getMonitemName())) {
+                            return;//跟之前选择的一样
+                        }
+
+                        InstrumentalActivity.mSampling.setMonitemId(monitemId);
+                        InstrumentalActivity.mSampling.setMonitemName(monitemName);
 
                         InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
                         InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
@@ -225,6 +236,22 @@ public class BasicInfoFragment extends BaseFragment {
                         InstrumentalActivity.mSampling.setDeviceName("");
                         InstrumentalActivity.mSampling.setDeviceId("");
                         tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
+
+                        //重置检测结果,先清理数据库中的数据
+                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(InstrumentalActivity.mSampling.getId())).list();
+
+                        //遍历数据删除
+                        for (SamplingDetail detail : samplingDetails) {
+                            if (CheckUtil.isNull(detail)) {
+                                continue;
+                            }
+
+                            //从数据库中删除
+                            DBHelper.get().getSamplingDetailDao().delete(detail);
+                        }
+
+                        //清理内存中的数据
+                        InstrumentalActivity.mSampling.getSamplingDetailYQFs().clear();
                     }
                 });
                 break;
@@ -293,14 +320,16 @@ public class BasicInfoFragment extends BaseFragment {
                             String sourceWay = data.getStringExtra("SourceWay");
                             String expireDate = data.getStringExtra("ExpireDate");
 
+                            String deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+
                             InstrumentalActivity.mSampling.setDeviceId(deviceId);
                             InstrumentalActivity.mSampling.setDeviceName(deviceName);
                             InstrumentalActivity.mSampling.setPrivateDataStringValue("SourceWay", sourceWay);
                             InstrumentalActivity.mSampling.setPrivateDataStringValue("SourceDate", expireDate);
                             //设备信息格式：仪器名称(仪器编号)(仪器溯源方式 仪器溯源有效期)
-                            InstrumentalActivity.mSampling.setPrivateDataStringValue("DeviceText", String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate));
+                            InstrumentalActivity.mSampling.setPrivateDataStringValue("DeviceText", deviceText);
 
-                            tvTestDevice.setText(InstrumentalActivity.mSampling.getDeviceName());
+                            tvTestDevice.setText(deviceText);
                         }
                     }
                 });

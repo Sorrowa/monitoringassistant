@@ -305,9 +305,9 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         privateData.put("SamplingOnTime", "");
         privateData.put("HasPX", "false");
         privateData.put("FormTypeName", "");
-        privateData.put("SourceWay", "检定");
-        privateData.put("SourceDate", "2028-02-28");
-        privateData.put("DeviceText", "css1(1201012)(检定2028-02-28)");
+        privateData.put("SourceWay", "");
+        privateData.put("SourceDate", "");
+        privateData.put("DeviceText", "");
         sampling.setPrivateData(com.alibaba.fastjson.JSONObject.toJSONString(privateData));
 
         return sampling;

@@ -220,6 +220,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             SamplingDetail samplingDetail = new SamplingDetail();
 
             samplingDetail.setId("LC-" + UUID.randomUUID().toString());
+            samplingDetail.setProjectId(mSampling.getProjectId());
             samplingDetail.setMonitemId(mSampling.getMonitemId());
             samplingDetail.setMonitemName(mSampling.getMonitemName());
             samplingDetail.setSamplingId(mSampling.getId());//对应到当前采样单

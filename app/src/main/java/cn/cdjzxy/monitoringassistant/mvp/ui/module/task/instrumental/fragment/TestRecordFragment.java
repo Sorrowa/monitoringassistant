@@ -261,6 +261,8 @@ public class TestRecordFragment extends BaseFragment {
 
         samplingDetail.setId("LC-" + UUID.randomUUID().toString());
         samplingDetail.setProjectId(currSelectDetails.getProjectId());
+        samplingDetail.setMonitemId(currSelectDetails.getMonitemId());
+        samplingDetail.setMonitemName(currSelectDetails.getMonitemName());
         samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
         samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
         samplingDetail.setSamplingType(1);//样品0  平行1
@@ -268,7 +270,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
-        samplingDetail.setMonitemId(currSelectDetails.getMonitemId());
+        samplingDetail.setOrderIndex(currSelectDetails.getOrderIndex());//复制样品的行号
         samplingDetail.setPrivateDataBooleanValue("HasPX", true);
         samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
         samplingDetail.setPrivateDataStringValue("CaleValue", "");
@@ -308,8 +310,8 @@ public class TestRecordFragment extends BaseFragment {
                 continue;//过滤原数据
             }
 
-            //平行数据，样品类型（样品、平行）和样品编码相等
-            if (item.getSamplingType() != sourceItem.getSamplingType() || !item.getSampingCode().equals(sourceItem.getSampingCode())) {
+            //平行数据，样品类型（样品、平行）不一样，样品编码相等
+            if (item.getSamplingType() == sourceItem.getSamplingType() || !item.getSampingCode().equals(sourceItem.getSampingCode())) {
                 continue;
             }
 

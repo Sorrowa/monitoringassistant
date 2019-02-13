@@ -230,7 +230,7 @@ public class CollectionFragment extends BaseFragment {
             info.setTaskName(sampling.getProjectName());
             info.setNumber(sampling.getSamplingNo());
             info.setFrequecyNo("频次：" + item.getFrequecyNo());
-            info.setType("废水");//项目类型固定废水
+            info.setType(WastewaterActivity.mSample.getTagName());//项目类型取样品性质
             info.setMonitemName(item.getMonitemName());//监测项目
             info.setSampingCode(item.getSampingCode());//样品编码
             info.setCb1("交接");
