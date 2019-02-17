@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
+import com.google.gson.JsonObject;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
@@ -764,6 +765,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void uploadProjecteContentData(boolean isCompelSubmit) {
         ProjectPlan projectPlan = SubmitDataUtil.setUpProjectPlan(mProject);
         projectPlan.setIsCompelSubmit(isCompelSubmit);
+        String sss=JSONObject.toJSONString(projectPlan);
+        Log.d(TAG,sss);
         mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
 

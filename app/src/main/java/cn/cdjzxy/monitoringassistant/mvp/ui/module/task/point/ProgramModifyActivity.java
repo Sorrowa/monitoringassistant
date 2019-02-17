@@ -26,16 +26,20 @@ import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
@@ -94,6 +98,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
     private RecyclerView mRecyclerView;
     private TagAdapter   mTagAdapter;
 
+    private String oldMontorIds;
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("修改方案");
@@ -118,6 +124,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         tvAddBlank.setText("保存");
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
         mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
+        oldMontorIds=mProjectDetial.getMethodId();
         bindView(mProjectDetial);
     }
 
@@ -189,6 +196,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mProjectDetial.setComment(etComment.getText().toString());
                 mProjectDetial.setUpdateTime(DateUtils.getWholeDate());
                 DBHelper.get().getProjectDetialDao().update(mProjectDetial);
+                //生成新的ProjectDetials
+                generateProjectDetials();
 
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);
@@ -256,6 +265,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mProjectDetial.setTagName(tags.getName());
                 bindView(mProjectDetial);
 
+
+
                 mDialogPlus.dismiss();
             }
         });
@@ -271,6 +282,110 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
             mTags.addAll(tags1);
         }
         mTagAdapter.notifyDataSetChanged();
+    }
+
+
+    private void generateProjectDetials(){
+        String monitorIds=mProjectDetial.getMonItemId();
+        List<String> montorIdList=new ArrayList<>();
+        if (!CheckUtil.isEmpty(monitorIds)){
+            String[] montorIdArray=monitorIds.split(",");
+            if (!CheckUtil.isEmpty(montorIdArray)){
+                montorIdList=Arrays.asList(montorIdArray);
+                for (String monitorId:montorIdArray){
+                    ProjectDetial projectDetial=getProjectDetial(monitorId);
+                    if (CheckUtil.isNull(projectDetial)){
+                        projectDetial=generateProjectDetial(monitorId);
+                        if (!CheckUtil.isNull(projectDetial)){
+                            DBHelper.get().getProjectDetialDao().insertOrReplace(projectDetial);
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        if (!CheckUtil.isEmpty(oldMontorIds)){
+            String[] oldMontorIdArray=oldMontorIds.split(",");
+            if (!CheckUtil.isEmpty(oldMontorIdArray)){
+                for (String monitorId:oldMontorIdArray){
+
+                    if (!CheckUtil.isEmpty(montorIdList) && !montorIdList.contains(monitorId)){
+                        ProjectDetial projectDetial=getProjectDetial(monitorId);
+                        if (!CheckUtil.isNull(projectDetial)){
+                            DBHelper.get().getProjectDetialDao().delete(projectDetial);
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * 判断是否存在ProjectDetial
+     * @param monitorId
+     * @return
+     */
+    private ProjectDetial getProjectDetial(String monitorId){
+        ProjectDetial projectDetial=null;
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject)).list();
+        if (!CheckUtil.isEmpty(projectDetials)){
+            for (ProjectDetial projectDetial1:projectDetials){
+                if (!CheckUtil.isEmpty(monitorId) && !CheckUtil.isEmpty(projectDetial1.getMethodId()) && projectDetial1.getMethodId().equals(monitorId) ){
+                    projectDetial=projectDetial1;
+                    break;
+                }
+            }
+
+        }
+        return projectDetial;
+    }
+
+
+    /**
+     * 生成ProjectDetial
+     * @param monitorId
+     * @return
+     */
+    private ProjectDetial generateProjectDetial(String monitorId){
+        if (!CheckUtil.isNull(mProjectDetial)){
+            ProjectDetial projectDetial=new ProjectDetial();
+            projectDetial.setId(UUID.randomUUID().toString());
+            projectDetial.setAddress(mProjectDetial.getAddress());
+            projectDetial.setAddressId(mProjectDetial.getAddressId());
+            projectDetial.setComment(mProjectDetial.getComment());
+            projectDetial.setDays(mProjectDetial.getDays());
+            projectDetial.setMethodId(mProjectDetial.getMonItemId());
+            projectDetial.setMethodName(mProjectDetial.getMethodName());
+            projectDetial.setMonItemId(monitorId);
+            projectDetial.setMonItemName(getMonItemNameById(monitorId));
+            projectDetial.setPeriod(mProjectDetial.getPeriod());
+            projectDetial.setProjectContentId(mProjectDetial.getProjectContentId());
+            projectDetial.setProjectId(mProjectDetial.getProjectId());
+            projectDetial.setTagId(mProjectDetial.getTagId());
+            projectDetial.setTagName(mProjectDetial.getTagName());
+            projectDetial.setTagParentId(mProjectDetial.getTagParentId());
+            projectDetial.setTagParentName(mProjectDetial.getTagParentName());
+            projectDetial.setUpdateTime(mProjectDetial.getUpdateTime());
+            return projectDetial;
+        }
+        return null;
+    }
+
+    private String getMonItemNameById(String itemId){
+        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mProjectDetial.getTagParentId())).unique();
+        List<MonItems> monItems = tags.getMMonItems();
+        if (!CheckUtil.isEmpty(monItems)){
+            for (MonItems monItem:monItems){
+                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
+                    return monItem.getName();
+                }
+            }
+        }
+        return "";
     }
 
 

@@ -503,7 +503,9 @@ public class SubmitDataUtil {
                 projectContent.setMonItemCount(monItems.size());
                 projectContent.setAddressArr(addressArrs);
                 projectContent.setAddressCount(addressArrs.size());
-                projectContent.setProjectDetials(new ArrayList<>());
+                //projectContent.setProjectDetials(new ArrayList<>());
+                List<ProjectDetial> projectDetialsList=generateProjectDetials(projectDetial.getMonItemId(),project);
+                projectContent.setProjectDetials(projectDetialsList);
                 projectContents.add(projectContent);
             }
         }
@@ -514,5 +516,41 @@ public class SubmitDataUtil {
         //projectPlan.setIsCompelSubmit(true);
         projectPlan.setProjectContents(projectContents);
         return projectPlan;
+    }
+
+
+    /**
+     * 修改采样方案数据组装
+     * @return
+     */
+    private static List<ProjectDetial> generateProjectDetials(String monitorIds, Project project){
+        List<ProjectDetial> dataList=new ArrayList<>();
+        if (!CheckUtil.isEmpty(monitorIds)){
+            String[] monitorIdArray=monitorIds.split(",");
+            if (!CheckUtil.isEmpty(monitorIdArray)){
+                for (String monitorId:monitorIdArray){
+                    ProjectDetial projectDetial=getProjectDetials(monitorId,project);
+                    if (!CheckUtil.isNull(projectDetial)){
+                        dataList.add(projectDetial);
+                    }
+                }
+            }
+        }
+        return dataList;
+    }
+
+    private static ProjectDetial getProjectDetials(String monitorId,Project project){
+        List<ProjectDetial> projectDetialsList = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
+        ProjectDetial projectDetial=null;
+        if (!CheckUtil.isEmpty(projectDetialsList)){
+            for (ProjectDetial projectDetial1:projectDetialsList){
+                String monitorIdStr=projectDetial1.getMonItemId();
+                if (!CheckUtil.isEmpty(monitorIdStr) && !CheckUtil.isEmpty(monitorId) && monitorIdStr.equals(monitorId)){
+                    projectDetial=projectDetial1;
+                    break;
+                }
+            }
+        }
+        return projectDetial;
     }
 }
