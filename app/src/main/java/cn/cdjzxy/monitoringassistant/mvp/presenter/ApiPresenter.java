@@ -903,9 +903,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 for (Sampling sampling : samplings) {
                                     String formName=sampling.getFormName();
 
-                                    Log.e("Karry","获取的："+sampling.getSamplingNo());
-
-
                                     if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)){
                                         sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
                                     }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)){
@@ -938,11 +935,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
                                     if (!CheckUtil.isEmpty(samplingContents)) {
                                         for (SamplingContent samplingContent : samplingContents) {
-
-                                            if (samplingContent.getSampingCode().equals("DBS190212-1143-01")){
-                                                Log.e(TAG,samplingContent.getSenceMonitemId()+",-----"+samplingContent.getMonitemId());
-                                            }
-
                                             List<SamplingContent> dbContentList=HelpUtil.getSamplingContent(samplingContent.getProjectId(),samplingContent.getSamplingId(),samplingContent.getSampingCode(),samplingContent.getSamplingType());
                                             if (!CheckUtil.isEmpty(dbContentList)){
                                                 DBHelper.get().getSamplingContentDao().deleteInTx(dbContentList);
