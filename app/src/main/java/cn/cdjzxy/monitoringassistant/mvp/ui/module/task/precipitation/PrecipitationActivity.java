@@ -157,7 +157,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                     mSampling.setIsFinish(isSamplingFinish());
                     mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
-                        DBHelper.get().getSamplingDao().insert(mSampling);
+                        DBHelper.get().getSamplingDao().insertOrReplace(mSampling);
                         isNewCreate = false;
                     } else {
                         DBHelper.get().getSamplingDao().update(mSampling);
