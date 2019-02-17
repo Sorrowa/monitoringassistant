@@ -2,6 +2,8 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.upload;
 
 import java.util.List;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+
 public class ProjectContent {
 
 
@@ -45,7 +47,8 @@ public class ProjectContent {
     private String                   guid;
     private List<MonItemsBean>       MonItems;
     private List<AddressArrBean>     AddressArr;
-    private List<ProjectDetialsBean> ProjectDetials;
+    //private List<ProjectDetialsBean> ProjectDetials;
+    private List<ProjectDetial> ProjectDetials;
 
     public String getId() {
         return Id;
@@ -191,11 +194,11 @@ public class ProjectContent {
         this.AddressArr = AddressArr;
     }
 
-    public List<ProjectDetialsBean> getProjectDetials() {
+    public List<ProjectDetial> getProjectDetials() {
         return ProjectDetials;
     }
 
-    public void setProjectDetials(List<ProjectDetialsBean> ProjectDetials) {
+    public void setProjectDetials(List<ProjectDetial> ProjectDetials) {
         this.ProjectDetials = ProjectDetials;
     }
 

@@ -956,7 +956,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                                 DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
                                             }
                                         }
-                                        DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetailYQFs);
+                                        DBHelper.get().getSamplingDetailDao().insertOrReplaceInTx(samplingDetailYQFs);
                                     }
 
                                     sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
