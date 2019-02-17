@@ -914,7 +914,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     }
 
                                     //处理有相同SamplingNo不同id的情况
-                                    List<Sampling> localSamplings=getLocalSamplingsByNo(sampling.getSamplingNo());
+                                    List<Sampling> localSamplings=getLocalSamplingsByNo(sampling.getSamplingNo(),sampling.getProjectId());
                                     if (!CheckUtil.isEmpty(localSamplings)){
                                         DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
                                     }
@@ -1134,8 +1134,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
     }
 
-    private List<Sampling> getLocalSamplingsByNo(String samplingNo){
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo)).list();
+    private List<Sampling> getLocalSamplingsByNo(String samplingNo,String projectId){
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo),SamplingDao.Properties.ProjectId.eq(projectId)).list();
         return samplings;
     }
 
