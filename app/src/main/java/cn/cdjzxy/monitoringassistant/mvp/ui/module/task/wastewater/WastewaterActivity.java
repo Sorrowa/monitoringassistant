@@ -285,7 +285,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setMontype(project.getTypeCode() + "");
         //sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
-        sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
+//        sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
+        sampling.setFormTypeName("水");//Tip:毛阳说写死
         sampling.setFormName(formSelect.getFormName());
         sampling.setFormPath(formSelect.getPath());
         //        sampling.setFormFlows(formSelect.getFormFlows().toString());
@@ -313,7 +314,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         String dateStr = DateUtils.getDate().replace("-","").substring(2);
         samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+//        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%")).orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {
             samplingNo.append(StringUtil.autoGenericCode(1, 2));
