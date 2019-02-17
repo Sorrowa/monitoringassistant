@@ -949,7 +949,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
                                         for (SamplingDetail samplingDetail : samplingDetailYQFs) {
                                             List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
-                                            if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
+                                            if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
                                                 DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
                                             }
                                         }
