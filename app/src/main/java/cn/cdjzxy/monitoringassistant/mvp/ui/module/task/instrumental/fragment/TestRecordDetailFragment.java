@@ -339,39 +339,67 @@ public class TestRecordDetailFragment extends BaseFragment {
                 return;
             }
 
-            //样品数据
-            double sourceValue = 0;
-            //平行数据
-            double pxValue = 0;
+            //分别计算原样和平行样
+            calcRecordValue(detail, targetItem);
+            calcRecordValue(targetItem, detail);
 
-            try {
-                if (detail.getPrivateDataBooleanValue("HasPX")) {
-                    pxValue = getCaleValue(detail);
-                    sourceValue = getCaleValue(targetItem);
-                } else if (targetItem.getPrivateDataBooleanValue("HasPX")) {
-                    pxValue = getCaleValue(targetItem);
-                    sourceValue = getCaleValue(detail);
-                }
-            } catch (Exception e) {
-                return;//数字异常
-            }
-
-            //四舍六入，奇进偶退
-            //均值计算公式：（样品含量+平行样含量）/2
-            double avg = NumberUtil.roundingNumber((pxValue + sourceValue) / 2);
-            //(样品含量-平行含量)/(样品含量+平行含量)
-            double rpdValue = NumberUtil.roundingNumber((sourceValue - pxValue) / (sourceValue + pxValue) * 100);
-
-            detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
-            detail.setValue(avg + "");
-
-            targetItem.setPrivateDataStringValue("RPDValue", rpdValue + "");
-            targetItem.setValue(avg + "");
+//            //样品数据
+//            double sourceValue = 0;
+//            //平行数据
+//            double pxValue = 0;
+//
+//            try {
+//                if (detail.getSamplingType() == 1) {
+//                    pxValue = getCaleValue(detail);
+//                    sourceValue = getCaleValue(targetItem);
+//                } else if (targetItem.getSamplingType() == 1) {
+//                    pxValue = getCaleValue(targetItem);
+//                    sourceValue = getCaleValue(detail);
+//                }
+//            } catch (Exception e) {
+//                return;//数字异常
+//            }
+//
+//            //四舍六入，奇进偶退
+//            //均值计算公式：（样品含量+平行样含量）/2
+//            double avg = NumberUtil.roundingNumber((pxValue + sourceValue) / 2);
+//            //(样品含量-平行含量)/(样品含量+平行含量)
+//            double rpdValue = NumberUtil.roundingNumber((sourceValue - pxValue) / (sourceValue + pxValue) * 100);
+//
+//            detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
+//            detail.setValue(avg + "");
+//
+//            targetItem.setPrivateDataStringValue("RPDValue", rpdValue + "");
+//            targetItem.setValue(avg + "");
         } finally {
             //保存一次对应数据
             if (targetItem != null) {
                 DBHelper.get().getSamplingDetailDao().update(targetItem);
             }
+        }
+    }
+
+    /**
+     * 计算记录的值
+     *
+     * @param detail
+     * @param targetDetail
+     */
+    private void calcRecordValue(SamplingDetail detail, SamplingDetail targetDetail) {
+        double value = getCaleValue(detail);
+        double targetValue = getCaleValue(targetDetail);
+
+        //四舍六入，奇进偶退
+        //(样品含量-平行含量)/(样品含量+平行含量)
+        double rpdValue = NumberUtil.roundingNumber((value - targetValue) / (value + targetValue) * 100);
+        detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
+
+        if (detail.getSamplingType() == 0) {
+            //均值计算公式：（样品含量+平行样含量）/2
+            double avg = NumberUtil.roundingNumber((value + targetValue) / 2);
+            detail.setValue(avg + "");
+            //原样数据，标记做了平行
+            detail.setPrivateDataBooleanValue("HasPX", true);
         }
     }
 
