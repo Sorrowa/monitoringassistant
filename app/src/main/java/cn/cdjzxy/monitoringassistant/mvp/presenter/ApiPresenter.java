@@ -54,6 +54,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampFor
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
@@ -914,7 +915,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     }
 
                                     //处理有相同SamplingNo不同id的情况
-                                    List<Sampling> localSamplings=getLocalSamplingsByNo(sampling.getSamplingNo(),sampling.getProjectId());
+                                    List<Sampling> localSamplings=getLocalSamplingsByNo(sampling.getSamplingNo());
                                     if (!CheckUtil.isEmpty(localSamplings)){
                                         DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
                                     }
@@ -949,6 +950,18 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                             samplingContent.setId(UUID.randomUUID().toString());
                                         }
                                         DBHelper.get().getSamplingContentDao().insertInTx(samplingContents);
+                                    }
+
+                                    //同步仪器法监测结果
+                                    List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
+                                    if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
+                                        for (SamplingDetail samplingDetail : samplingDetailYQFs) {
+                                            List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                                            if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
+                                                DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
+                                            }
+                                        }
+                                        DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetailYQFs);
                                     }
 
                                     sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
@@ -1134,8 +1147,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
     }
 
-    private List<Sampling> getLocalSamplingsByNo(String samplingNo,String projectId){
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo),SamplingDao.Properties.ProjectId.eq(projectId)).list();
+    private List<Sampling> getLocalSamplingsByNo(String samplingNo){
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo)).list();
         return samplings;
     }
 
