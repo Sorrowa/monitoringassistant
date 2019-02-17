@@ -937,6 +937,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
                                     if (!CheckUtil.isEmpty(samplingContents)) {
                                         for (SamplingContent samplingContent : samplingContents) {
+
+                                            if (samplingContent.getSampingCode().equals("DBS190212-1143-01")){
+                                                Log.e(TAG,samplingContent.getSenceMonitemId()+",-----"+samplingContent.getMonitemId());
+                                            }
+
                                             List<SamplingContent> dbContentList=HelpUtil.getSamplingContent(samplingContent.getProjectId(),samplingContent.getSamplingId(),samplingContent.getSampingCode(),samplingContent.getSamplingType());
                                             if (!CheckUtil.isEmpty(dbContentList)){
                                                 DBHelper.get().getSamplingContentDao().deleteInTx(dbContentList);

@@ -54,8 +54,8 @@ public class SamplingContent {
     private String PrivateData;
     private boolean isAddPreserve;
     private String SamplingOnTime;
-    private String senceMonitemId;//现场监测id
-    private String senceMonitemName;//现场监测name
+    private String SenceMonitemId;//现场监测id
+    private String SenceMonitemName;//现场监测name
     @Transient
     private JSONObject PrivateJsonData;
     @Transient
@@ -69,7 +69,7 @@ public class SamplingContent {
     @Transient
     private String TempValue3;
 
-    @Generated(hash = 1305448250)
+    @Generated(hash = 1182568687)
     public SamplingContent(String id, String SamplingId, String ProjectId, int OrderIndex,
             String SampingCode, int FrequecyNo, String SamplingTime, int SamplingType,
             String SampStandId, String MonitemId, String MonitemName, String AddresssId,
@@ -81,7 +81,7 @@ public class SamplingContent {
             String ValueUnit, String ValueUnitNname, String Value4, String Value5,
             String MethodName, String MethodId, String DeviceIdName, String DeviceId,
             String Description, String PrivateData, boolean isAddPreserve,
-            String SamplingOnTime, String senceMonitemId, String senceMonitemName) {
+            String SamplingOnTime, String SenceMonitemId, String SenceMonitemName) {
         this.id = id;
         this.SamplingId = SamplingId;
         this.ProjectId = ProjectId;
@@ -124,8 +124,8 @@ public class SamplingContent {
         this.PrivateData = PrivateData;
         this.isAddPreserve = isAddPreserve;
         this.SamplingOnTime = SamplingOnTime;
-        this.senceMonitemId = senceMonitemId;
-        this.senceMonitemName = senceMonitemName;
+        this.SenceMonitemId = SenceMonitemId;
+        this.SenceMonitemName = SenceMonitemName;
     }
 
     @Generated(hash = 682420697)
@@ -541,18 +541,18 @@ public class SamplingContent {
     }
 
     public String getSenceMonitemId() {
-        return this.senceMonitemId;
+        return this.SenceMonitemId;
     }
 
     public void setSenceMonitemId(String senceMonitemId) {
-        this.senceMonitemId = senceMonitemId;
+        this.SenceMonitemId = senceMonitemId;
     }
 
     public String getSenceMonitemName() {
-        return this.senceMonitemName;
+        return this.SenceMonitemName;
     }
 
     public void setSenceMonitemName(String senceMonitemName) {
-        this.senceMonitemName = senceMonitemName;
+        this.SenceMonitemName = senceMonitemName;
     }
 }

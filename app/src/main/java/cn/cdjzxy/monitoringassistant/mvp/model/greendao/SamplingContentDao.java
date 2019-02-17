@@ -66,8 +66,8 @@ public class SamplingContentDao extends AbstractDao<SamplingContent, String> {
         public final static Property PrivateData = new Property(39, String.class, "PrivateData", false, "PRIVATE_DATA");
         public final static Property IsAddPreserve = new Property(40, boolean.class, "isAddPreserve", false, "IS_ADD_PRESERVE");
         public final static Property SamplingOnTime = new Property(41, String.class, "SamplingOnTime", false, "SAMPLING_ON_TIME");
-        public final static Property SenceMonitemId = new Property(42, String.class, "senceMonitemId", false, "SENCE_MONITEM_ID");
-        public final static Property SenceMonitemName = new Property(43, String.class, "senceMonitemName", false, "SENCE_MONITEM_NAME");
+        public final static Property SenceMonitemId = new Property(42, String.class, "SenceMonitemId", false, "SENCE_MONITEM_ID");
+        public final static Property SenceMonitemName = new Property(43, String.class, "SenceMonitemName", false, "SENCE_MONITEM_NAME");
     }
 
 
@@ -125,8 +125,8 @@ public class SamplingContentDao extends AbstractDao<SamplingContent, String> {
                 "\"PRIVATE_DATA\" TEXT," + // 39: PrivateData
                 "\"IS_ADD_PRESERVE\" INTEGER NOT NULL ," + // 40: isAddPreserve
                 "\"SAMPLING_ON_TIME\" TEXT," + // 41: SamplingOnTime
-                "\"SENCE_MONITEM_ID\" TEXT," + // 42: senceMonitemId
-                "\"SENCE_MONITEM_NAME\" TEXT);"); // 43: senceMonitemName
+                "\"SENCE_MONITEM_ID\" TEXT," + // 42: SenceMonitemId
+                "\"SENCE_MONITEM_NAME\" TEXT);"); // 43: SenceMonitemName
     }
 
     /** Drops the underlying database table. */
@@ -321,14 +321,14 @@ public class SamplingContentDao extends AbstractDao<SamplingContent, String> {
             stmt.bindString(42, SamplingOnTime);
         }
  
-        String senceMonitemId = entity.getSenceMonitemId();
-        if (senceMonitemId != null) {
-            stmt.bindString(43, senceMonitemId);
+        String SenceMonitemId = entity.getSenceMonitemId();
+        if (SenceMonitemId != null) {
+            stmt.bindString(43, SenceMonitemId);
         }
  
-        String senceMonitemName = entity.getSenceMonitemName();
-        if (senceMonitemName != null) {
-            stmt.bindString(44, senceMonitemName);
+        String SenceMonitemName = entity.getSenceMonitemName();
+        if (SenceMonitemName != null) {
+            stmt.bindString(44, SenceMonitemName);
         }
     }
 
@@ -518,14 +518,14 @@ public class SamplingContentDao extends AbstractDao<SamplingContent, String> {
             stmt.bindString(42, SamplingOnTime);
         }
  
-        String senceMonitemId = entity.getSenceMonitemId();
-        if (senceMonitemId != null) {
-            stmt.bindString(43, senceMonitemId);
+        String SenceMonitemId = entity.getSenceMonitemId();
+        if (SenceMonitemId != null) {
+            stmt.bindString(43, SenceMonitemId);
         }
  
-        String senceMonitemName = entity.getSenceMonitemName();
-        if (senceMonitemName != null) {
-            stmt.bindString(44, senceMonitemName);
+        String SenceMonitemName = entity.getSenceMonitemName();
+        if (SenceMonitemName != null) {
+            stmt.bindString(44, SenceMonitemName);
         }
     }
 
@@ -579,8 +579,8 @@ public class SamplingContentDao extends AbstractDao<SamplingContent, String> {
             cursor.isNull(offset + 39) ? null : cursor.getString(offset + 39), // PrivateData
             cursor.getShort(offset + 40) != 0, // isAddPreserve
             cursor.isNull(offset + 41) ? null : cursor.getString(offset + 41), // SamplingOnTime
-            cursor.isNull(offset + 42) ? null : cursor.getString(offset + 42), // senceMonitemId
-            cursor.isNull(offset + 43) ? null : cursor.getString(offset + 43) // senceMonitemName
+            cursor.isNull(offset + 42) ? null : cursor.getString(offset + 42), // SenceMonitemId
+            cursor.isNull(offset + 43) ? null : cursor.getString(offset + 43) // SenceMonitemName
         );
         return entity;
     }
