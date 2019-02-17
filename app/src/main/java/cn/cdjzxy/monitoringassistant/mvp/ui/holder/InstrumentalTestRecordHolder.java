@@ -80,7 +80,7 @@ public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
         tvFrequency.setText("频次：" + data.getFrequecyNo());
         tvTime.setText(data.getSamplingTime());
         tvPoint.setText(data.getAddressName());
-        tvHasPX.setText(data.getPrivateDataBooleanValue("HasPX") ? "平行" : "");
+        tvHasPX.setText(data.getSamplingType()==1 ? "平行" : "");
 
 
         String unitName = " " + data.getPrivateDataStringValue("ValueUnitName");

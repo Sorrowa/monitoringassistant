@@ -230,7 +230,7 @@ public class TestRecordFragment extends BaseFragment {
      */
     private void checkPxData(List<SamplingDetail> details) {
         for (SamplingDetail item : details) {
-            if (item.getPrivateDataBooleanValue("HasPX")) {
+            if (item.getSamplingType()==1) {
                 //平行数据，不能被选中
                 item.setCanSelect(false);
                 continue;
@@ -331,7 +331,7 @@ public class TestRecordFragment extends BaseFragment {
             } else if (o1.getFrequecyNo() > o2.getFrequecyNo()) {
                 return 1;
             } else {
-                if (!o1.getPrivateDataBooleanValue("HasPX")) {
+                if (o1.getSamplingType()==0) {
                     return -1;
                 }
 

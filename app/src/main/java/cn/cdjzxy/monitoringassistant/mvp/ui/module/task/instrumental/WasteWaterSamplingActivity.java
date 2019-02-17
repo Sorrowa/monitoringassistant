@@ -212,9 +212,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
         }
 
         for (SamplingContent item : mSelectDetails) {
-            //频次唯一
-            if (isExists(item)) {
-                continue;//过滤已经存在的样品
+            //频次唯一,不选平行数据
+            if (isExists(item) || item.getSamplingType() == 1) {
+                continue;//过滤已经存在的样品 或 平行数据
             }
 
             SamplingDetail samplingDetail = new SamplingDetail();
