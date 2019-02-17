@@ -347,8 +347,10 @@ public class CollectionFragment extends BaseFragment {
         samplingContent.setSampleCollection(selectSamplingDetail.getSampleCollection());
         samplingContent.setSampleAcceptance(selectSamplingDetail.getSampleAcceptance());
         samplingContent.setPreservative(selectSamplingDetail.getPreservative());
-        samplingContent.setSenceMonitemName(selectSamplingDetail.getSenceMonitemName());
-        samplingContent.setSenceMonitemId(selectSamplingDetail.getSenceMonitemId());
+
+//        //金蓉说平行数据不带现场监测项目
+//        samplingContent.setSenceMonitemName(selectSamplingDetail.getSenceMonitemName());
+//        samplingContent.setSenceMonitemId(selectSamplingDetail.getSenceMonitemId());
 
         //包括监测项目和现场监测项目
         int count=0;

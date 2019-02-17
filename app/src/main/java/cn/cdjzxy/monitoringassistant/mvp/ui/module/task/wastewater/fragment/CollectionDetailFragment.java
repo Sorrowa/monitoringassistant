@@ -198,6 +198,11 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_monitor_items.setText(samplingDetail.getMonitemName());
             sample_monitor.setText(samplingDetail.getSenceMonitemName());
 
+            //金蓉：平行数据或空白数据不能编辑现场监测
+            if(samplingDetail.getSamplingType()==2 || samplingDetail.getSamplingType()==1) {
+                sample_monitor.setEnabled(false);
+            }
+
             if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")){
                 sample_add_preserve.setChecked(true);
                 samplingDetail.setIsAddPreserve(true);
