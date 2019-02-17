@@ -356,7 +356,7 @@ public class CollectionDetailFragment extends BaseFragment {
             mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
             Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
             if (CheckUtil.isNull(sampling)) {
-                mSample.setId( UUID.randomUUID().toString());
+                //mSample.setId( UUID.randomUUID().toString());
                 DBHelper.get().getSamplingDao().insert(mSample);
             } else {
                 DBHelper.get().getSamplingDao().update(mSample);

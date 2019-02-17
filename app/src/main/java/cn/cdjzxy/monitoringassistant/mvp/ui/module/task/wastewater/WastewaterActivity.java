@@ -366,7 +366,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             mBasicFragment.saveSamplingData();
         }
         if (isNewCreate) {
-            DBHelper.get().getSamplingDao().insert(mSample);
+            //DBHelper.get().getSamplingDao().insert(mSample);
+            DBHelper.get().getSamplingDao().insertOrReplace(mSample);
             isNewCreate = false;
         } else {
             DBHelper.get().getSamplingDao().update(mSample);
