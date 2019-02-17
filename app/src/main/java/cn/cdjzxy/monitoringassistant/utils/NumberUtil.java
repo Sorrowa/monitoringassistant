@@ -7,17 +7,19 @@ public class NumberUtil {
 
     /**
      * 数字舍入
-     * 修约规则：小于0.5，保留1位有效数，大于0.5，保留整数；四舍六入，奇进偶退
+     * 修约规则：小于0.5，保留1位有效数；四舍六入，奇进偶退
      *
      * @param value
      * @return
      */
     public static double roundingNumber(double value) {
-        if (value <= 0.5) {
-            return fourHomesSixEntries(value, 1);
-        } else {
-            return fourHomesSixEntries(value, 0);
-        }
+        //固定保留一位小数
+        return fourHomesSixEntries(value, 1);
+//        if (Math.abs(value) <= 0.5) {
+//            return fourHomesSixEntries(value, 1);
+//        } else {
+//            return fourHomesSixEntries(value, 0);
+//        }
     }
 
     /**
@@ -28,10 +30,6 @@ public class NumberUtil {
      * @return
      */
     public static double fourHomesSixEntries(double value, int keepNum) {
-        if (value == 0) {
-            return value;
-        }
-
         int pow = 1;
 
         if (keepNum > 0) {
@@ -42,17 +40,23 @@ public class NumberUtil {
         //10的平方，保留数+尾数取整
         double calcPow = Math.pow(10, keepNum + 1);
         //保留数取整
-        int powValue = (int) Math.floor(value * pow);
+        int powValue = (int) (value * pow);
+
         //保留数+尾数
         double calcPowDoubleValue = value * calcPow;
         //保留数+尾数取整
-        int calcPowIntValue = (int) Math.floor(calcPowDoubleValue);
+        int calcPowIntValue = (int) (calcPowDoubleValue);
 
         //取到尾数，保留0位时，直接取尾数
-        int endNum = calcPowIntValue;
-        if (keepNum > 0) {
+        int endNum = Math.abs(calcPowIntValue);
+        if (powValue!=0) {
             //0.543 => 543 % (54 * 10) = 3
-            endNum = calcPowIntValue % (powValue * 10);
+            endNum = Math.abs(calcPowIntValue) % (Math.abs(powValue) * 10);
+        }else{
+            int sourceIntValue = (int) ((int) (Math.abs(value)) * calcPow);
+            if (sourceIntValue != 0) {
+                endNum %= sourceIntValue;
+            }
         }
 
         if (endNum <= 4) {

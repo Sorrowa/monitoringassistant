@@ -9,6 +9,8 @@ import com.wonders.health.lib.base.di.component.AppComponent;
 import com.wonders.health.lib.base.mvp.BasePresenter;
 import com.wonders.health.lib.base.mvp.Message;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -948,7 +950,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
                                     if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
                                         for (SamplingDetail samplingDetail : samplingDetailYQFs) {
-                                            List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                                            QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
+                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"),SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
                                             if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
                                                 DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
                                             }

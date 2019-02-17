@@ -230,7 +230,7 @@ public class TestRecordFragment extends BaseFragment {
      */
     private void checkPxData(List<SamplingDetail> details) {
         for (SamplingDetail item : details) {
-            if (item.getPrivateDataBooleanValue("HasPX")) {
+            if (item.getSamplingType()==1) {
                 //平行数据，不能被选中
                 item.setCanSelect(false);
                 continue;
@@ -271,7 +271,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
         samplingDetail.setOrderIndex(currSelectDetails.getOrderIndex());//复制样品的行号
-        samplingDetail.setPrivateDataBooleanValue("HasPX", true);
+        samplingDetail.setPrivateDataBooleanValue("HasPX", false);
         samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
         samplingDetail.setPrivateDataStringValue("CaleValue", "");
         samplingDetail.setPrivateDataStringValue("RPDValue", "");
@@ -302,9 +302,6 @@ public class TestRecordFragment extends BaseFragment {
      * @return
      */
     public static SamplingDetail findPXItem(List<SamplingDetail> details, SamplingDetail sourceItem) {
-        //平行数据找样品，样品数据找平行
-        boolean needHasPx = !sourceItem.getPrivateDataBooleanValue("HasPX");
-
         for (SamplingDetail item : details) {
             if (item == sourceItem) {
                 continue;//过滤原数据
@@ -315,10 +312,7 @@ public class TestRecordFragment extends BaseFragment {
                 continue;
             }
 
-            //解析私有数据
-            if (item.getPrivateDataBooleanValue("HasPX") == needHasPx) {
-                return item;
-            }
+            return item;
         }
 
         return null;
@@ -337,7 +331,7 @@ public class TestRecordFragment extends BaseFragment {
             } else if (o1.getFrequecyNo() > o2.getFrequecyNo()) {
                 return 1;
             } else {
-                if (!o1.getPrivateDataBooleanValue("HasPX")) {
+                if (o1.getSamplingType()==0) {
                     return -1;
                 }
 
