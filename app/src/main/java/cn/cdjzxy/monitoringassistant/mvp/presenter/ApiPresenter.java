@@ -920,13 +920,14 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     }
                                     //DBHelper.get().getSamplingDao().delete(sampling);
 
+                                    //分瓶
                                     List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
                                     if (!CheckUtil.isEmpty(samplingFormStands)) {
                                         DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
                                     }
 
+                                    //样品
                                     List<SamplingDetail> samplingDetails = sampling.getSamplingDetailResults();
-
                                     if (!CheckUtil.isEmpty(samplingDetails)) {
                                         for (SamplingDetail samplingDetail : samplingDetails) {
                                             DBHelper.get().getSamplingDetailDao().delete(samplingDetail);
