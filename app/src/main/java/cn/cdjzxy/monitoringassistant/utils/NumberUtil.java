@@ -59,24 +59,27 @@ public class NumberUtil {
             }
         }
 
+        //取符号
+        double sign = value / Math.abs(value);
+
         if (endNum <= 4) {
             //尾数小于等于4时直接将尾数舍去
             return powValue / (double) pow;
         } else if (endNum >= 6) {
             //尾数大于等于6时尾数舍去并向前进1位
-            return (powValue + 1) / (double) pow;
+            return sign * (Math.abs(powValue) + 1) / (double) pow;
         }
 
         //当尾数为5而尾数后面还有任何不是0的数字时，都应向前进一位
         if (calcPowDoubleValue > calcPowIntValue) {
-            return (powValue + 1) / (double) pow;
+            return sign * (Math.abs(powValue) + 1) / (double) pow;
         }
 
         //当尾数为5而尾数后面的数字均为0时，应看前一位
         int lessValue = powValue % 10;
         if (lessValue % 2 != 0) {
             //若前一位数字为奇数则向前进一位，
-            return (powValue + 1) / (double) pow;
+            return sign * (Math.abs(powValue) + 1) / (double) pow;
         }
 
         //若前一位数字为偶数则将尾数舍去
