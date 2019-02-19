@@ -25,6 +25,7 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import org.simple.eventbus.EventBus;
 
 import java.text.NumberFormat;
@@ -189,7 +190,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
         tvPoint.setText(samplingDetail.getAddressName());
         tvTestTime.setText(samplingDetail.getSamplingOnTime());//检测日期
-        tvControl.setText(samplingDetail.getSamplingType()==1 ? "平行" : "");
+        tvControl.setText(samplingDetail.getSamplingType() == 1 ? "平行" : "");
         tvAnalyseTime.setText(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
         etAnalyseResult.setText(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
         tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
@@ -326,16 +327,15 @@ public class TestRecordDetailFragment extends BaseFragment {
 
         SamplingDetail targetItem = TestRecordFragment.findPXItem(mSampling.getSamplingDetailYQFs(), detail);
         try {
-            if (targetItem == null) {
+            if (targetItem == null || TextUtils.isEmpty(targetItem.getPrivateDataStringValue("CaleValue"))) {
                 //找不到对应数据，则删除计算的数据
                 detail.setPrivateDataStringValue("RPDValue", "");
                 detail.setValue("");
-                return;//还未添加平行数据
-            } else if (isDelete) {
-                //删除操作，重置对应的数据
+                return;
+            } else if (detail == null || TextUtils.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
+                //找不到对应数据，则删除计算的数据
                 targetItem.setPrivateDataStringValue("RPDValue", "");
                 targetItem.setValue("");
-                targetItem.setCanSelect(true);
                 return;
             }
 
@@ -346,6 +346,11 @@ public class TestRecordDetailFragment extends BaseFragment {
             //保存一次对应数据
             if (targetItem != null) {
                 DBHelper.get().getSamplingDetailDao().update(targetItem);
+
+                //如果是删除平行数据，则原样可以选择
+                if (isDelete && targetItem.getSamplingType() == 0) {
+                    targetItem.setCanSelect(true);
+                }
             }
         }
     }
@@ -357,20 +362,32 @@ public class TestRecordDetailFragment extends BaseFragment {
      * @param targetDetail
      */
     private void calcRecordValue(SamplingDetail detail, SamplingDetail targetDetail) {
-        double value = getCaleValue(detail);
-        double targetValue = getCaleValue(targetDetail);
+        String caleValue = detail.getPrivateDataStringValue("CaleValue");
+        String targetCaleValue = targetDetail.getPrivateDataStringValue("CaleValue");
 
-        //四舍六入，奇进偶退
-        //(样品含量-平行含量)/(样品含量+平行含量)
-        double rpdValue = NumberUtil.roundingNumber((value - targetValue) / (value + targetValue) * 100);
-        detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
+        if (TextUtils.isEmpty(caleValue) || TextUtils.isEmpty(targetCaleValue)) {
+            return;
+        }
 
-        if (detail.getSamplingType() == 0) {
-            //均值计算公式：（样品含量+平行样含量）/2
-            double avg = NumberUtil.roundingNumber((value + targetValue) / 2);
-            detail.setValue(avg + "");
-            //原样数据，标记做了平行
-            detail.setPrivateDataBooleanValue("HasPX", true);
+        try {
+            double value = Double.parseDouble(caleValue);
+            double targetValue = Double.parseDouble(targetCaleValue);
+
+            //四舍六入，奇进偶退
+            //(样品含量-平行含量)/(样品含量+平行含量)
+            double rpdValue = NumberUtil.roundingNumber((value - targetValue) / (value + targetValue) * 100);
+            detail.setPrivateDataStringValue("RPDValue", rpdValue + "");
+
+            if (detail.getSamplingType() == 0) {
+                //均值计算公式：（样品含量+平行样含量）/2
+                double avg = NumberUtil.roundingNumber((value + targetValue) / 2);
+                detail.setValue(avg + "");
+                //原样数据，标记做了平行
+                detail.setPrivateDataBooleanValue("HasPX", true);
+            }
+
+        } catch (Exception e) {
+
         }
     }
 

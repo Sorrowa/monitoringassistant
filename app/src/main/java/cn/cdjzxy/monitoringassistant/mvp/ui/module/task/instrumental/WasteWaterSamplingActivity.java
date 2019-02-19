@@ -162,9 +162,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
                     continue;//过滤不同的项目名
                 }
 
-                //样品唯一
-                if (isExists(content)) {
-                    continue;//过滤已经存在的样品
+                //频次唯一,不选平行数据
+                if (isExists(content) || content.getSamplingType() == 1) {
+                    continue;//过滤已经存在的样品 或 平行数据
                 }
 
                 //水和废水的样品，点位信息保存的现场检测信息，这里改为实际点位信息，用于显示
