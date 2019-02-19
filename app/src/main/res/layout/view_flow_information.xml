@@ -69,7 +69,8 @@
 
             <TextView
                 android:id="@+id/tv_receive_date"
-                style="@style/BasicInfoItemEditTextStyle" />
+                style="@style/BasicInfoItemEditTextStyle"
+                android:hint=""/>
 
         </RelativeLayout>
 

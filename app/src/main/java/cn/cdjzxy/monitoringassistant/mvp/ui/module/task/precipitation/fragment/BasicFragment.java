@@ -103,6 +103,8 @@ public class BasicFragment extends BaseFragment {
     TextView       tvArrow;
     @BindView(R.id.recyclerview)
     RecyclerView   recyclerview;
+    @BindView(R.id.tv_receive_date)
+    TextView   tv_receive_date;
 
     Unbinder unbinder;
 
@@ -141,6 +143,7 @@ public class BasicFragment extends BaseFragment {
             tvSamplingDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
             tvFlowMethod.setText(PrecipitationActivity.mSampling.getTransfer());
             tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
+            tv_receive_date.setText(PrecipitationActivity.mSampling.getReciveTime());
             tvComment.setText(PrecipitationActivity.mSampling.getComment());
             mSamplingFiles.addAll(PrecipitationActivity.mSampling.getSamplingFiless());
 
