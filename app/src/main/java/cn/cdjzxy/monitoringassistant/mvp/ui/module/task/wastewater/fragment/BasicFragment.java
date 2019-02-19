@@ -374,7 +374,7 @@ public class BasicFragment extends BaseFragment {
                 showSendDateSelectDialog(tv_flow_date);
                 break;
             case R.id.tv_receive_date:
-                showReceiveDateSelectDialog(tv_receive_date);
+                //showReceiveDateSelectDialog(tv_receive_date);
                 break;
             case R.id.more_build_date:
                 showBuildTimeSelectDialog(more_build_date);
