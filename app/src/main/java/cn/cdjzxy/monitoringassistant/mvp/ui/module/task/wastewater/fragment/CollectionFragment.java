@@ -383,6 +383,7 @@ public class CollectionFragment extends BaseFragment {
             }
         }
 
+        /*
         String[] sendMonitemIds=selectSamplingDetail.getSenceMonitemId().split(",");
         if (!CheckUtil.isEmpty(sendMonitemIds)){
             count+=sendMonitemIds.length;
@@ -411,6 +412,7 @@ public class CollectionFragment extends BaseFragment {
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }
         }
+        */
 
         samplingContent.setSamplingCount(count);
         DBHelper.get().getSamplingContentDao().insert(samplingContent);
