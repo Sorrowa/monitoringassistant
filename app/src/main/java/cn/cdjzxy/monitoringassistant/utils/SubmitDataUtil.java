@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,13 +62,6 @@ public class SubmitDataUtil {
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
         }else {
             sampFormBean.setSamplingFormStands(new ArrayList<>());
-        }
-        //文件信息组装
-        List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = setUpSamplingFileDataList(sampling);
-        if (!CheckUtil.isEmpty(fileBeanList)) {
-            sampFormBean.setUploadFiles(fileBeanList);
-        }else {
-            sampFormBean.setUploadFiles(new ArrayList<>());
         }
 
         sampFormBean.setSamplingDetailYQFs(new ArrayList<>());
@@ -345,8 +340,6 @@ public class SubmitDataUtil {
             sampFormBean.setSamplingDetailYQFs(detailsBeanList);
         }
 
-        sampFormBean.setUploadFiles(new ArrayList<>());
-
 
         return preciptationSampForm;
     }
@@ -383,13 +376,6 @@ public class SubmitDataUtil {
             sampFormBean.setSamplingFormStands(new ArrayList<>());
         }
         preciptationSampForm.setSampForm(sampFormBean);
-        //文件信息组装
-        List<PreciptationSampForm.SampFormBean.SamplingFileBean> fileBeanList = setUpSamplingFileDataList(sampling);
-        if (!CheckUtil.isEmpty(fileBeanList)) {
-            sampFormBean.setUploadFiles(fileBeanList);
-        }else {
-            sampFormBean.setUploadFiles(new ArrayList<>());
-        }
         sampFormBean.setSamplingDetailYQFs(new ArrayList<>());
 
         return preciptationSampForm;

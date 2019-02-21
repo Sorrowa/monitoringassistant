@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.greenrobot.greendao.annotation.Generated;
@@ -154,6 +155,7 @@ public class Sampling {
     private boolean isCanEdit;//是否可编辑
     private boolean isFinish;//是否完成
     private String layTableCheckbox;
+    private String DeleteFiles;//删除的文件ID集合字符串，格式：ID1,ID2,ID3
 
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> SamplingUserResults;
@@ -171,9 +173,11 @@ public class Sampling {
     private List<SamplingContent> SamplingContentResults;
     @Transient
     private JSONObject PrivateJsonData;
+    @Transient
+    private List<SamplingFile> HasFile;
 
-    @Generated(hash = 2042923640)
-    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, List<String> SamplingUserResults) {
+    @Generated(hash = 565714920)
+    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults) {
         this.Id = Id;
         this.ProjectId = ProjectId;
         this.SamplingNo = SamplingNo;
@@ -237,6 +241,7 @@ public class Sampling {
         this.isCanEdit = isCanEdit;
         this.isFinish = isFinish;
         this.layTableCheckbox = layTableCheckbox;
+        this.DeleteFiles = DeleteFiles;
         this.SamplingUserResults = SamplingUserResults;
     }
 
@@ -934,5 +939,51 @@ public class Sampling {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getDeleteFiles() {
+        return this.DeleteFiles;
+    }
+
+    public void setDeleteFiles(String DeleteFiles) {
+        this.DeleteFiles = DeleteFiles;
+    }
+
+    public void addDeleteFiles(String fileId) {
+        if (TextUtils.isEmpty(fileId)) {
+            return;
+        }
+
+        if (TextUtils.isEmpty(this.DeleteFiles)) {
+            this.DeleteFiles = fileId;
+        } else {
+            this.DeleteFiles += "," + fileId;
+        }
+    }
+
+    public List<SamplingFile> getHasFile() {
+        return HasFile;
+    }
+
+    public void setHasFile(List<SamplingFile> hasFile) {
+        HasFile = hasFile;
+    }
+
+    /**
+     * 获取提交的删除文件ID集合
+     * @return
+     */
+    public List<String> getSubmitDeleteFileIdList() {
+        List<String> result = new ArrayList<>();
+
+        if (TextUtils.isEmpty(this.DeleteFiles)) {
+            return result;
+        }
+
+        for (String id : this.DeleteFiles.split(",")) {
+            result.add(id);
+        }
+
+        return result;
     }
 }

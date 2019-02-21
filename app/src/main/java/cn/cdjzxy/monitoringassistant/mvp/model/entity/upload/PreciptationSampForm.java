@@ -4,7 +4,6 @@ import java.util.List;
 
 public class PreciptationSampForm {
 
-
     /**
      * IsAdd : true
      * IsSubmit : true
@@ -26,7 +25,7 @@ public class PreciptationSampForm {
 
     private boolean isDevceForm;
     private SampFormBean SampForm;
-    private List<String> UploadFiles;
+    private List<PreciptationSampForm.SampFormBean.SamplingFileBean> UploadFiles;
     private List<String> DelFiles;
 
     private boolean isCompelSubmit;//是否强制提交
@@ -57,16 +56,12 @@ public class PreciptationSampForm {
         this.SampForm = SampForm;
     }
 
-    public List<String> getUploadFiles() {
+    public List<PreciptationSampForm.SampFormBean.SamplingFileBean> getUploadFiles() {
         return UploadFiles;
     }
 
-    public void setUploadFiles(List<String> UploadFiles) {
-        this.UploadFiles = UploadFiles;
-    }
-
-    public List<String> getDelFiles() {
-        return DelFiles;
+    public void setUploadFiles(List<PreciptationSampForm.SampFormBean.SamplingFileBean> uploadFiles) {
+        UploadFiles = uploadFiles;
     }
 
     public void setDelFiles(List<String> DelFiles) {
@@ -185,8 +180,6 @@ public class PreciptationSampForm {
         private List<SamplingDetailsBean> SamplingDetails;
         private List<SamplingFormStandsBean> SamplingFormStands;
         private List<SamplingDetailsBean> SamplingDetailYQFs;
-        private List<SamplingFileBean> UploadFiles;
-        private List DelFiles;
         //气象信息
         private String Weather;
         private String Temprature;
@@ -590,22 +583,6 @@ public class PreciptationSampForm {
 
         public void setVersion(int version) {
             Version = version;
-        }
-
-        public List<SamplingFileBean> getUploadFiles() {
-            return UploadFiles;
-        }
-
-        public void setUploadFiles(List<SamplingFileBean> uploadFiles) {
-            UploadFiles = uploadFiles;
-        }
-
-        public List getDelFiles() {
-            return DelFiles;
-        }
-
-        public void setDelFiles(List delFiles) {
-            DelFiles = delFiles;
         }
 
         public String getWeather() {

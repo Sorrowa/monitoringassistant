@@ -260,7 +260,13 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void onDeletePhoto(int position) {
-                sampleFiles.remove(position);
+                SamplingFile samplingFile = sampleFiles.remove(position);
+
+                //记录删除的文件，提交给服务端
+                if(samplingFile!=null){
+                    WastewaterActivity.mSample.addDeleteFiles(samplingFile.getId());
+                }
+
                 WastewaterActivity.mSample.setSamplingFiless(sampleFiles);
                 sampleFileAdapter.notifyDataSetChanged();
             }

@@ -58,6 +58,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
@@ -277,7 +278,13 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void onDeletePhoto(int position) {
-                mSamplingFiles.remove(position);
+                SamplingFile samplingFile = mSamplingFiles.remove(position);
+
+                //记录删除的文件，提交给服务端
+                if(samplingFile!=null){
+                    PrecipitationActivity.mSampling.addDeleteFiles(samplingFile.getId());
+                }
+
                 PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
                 mSamplingFileAdapter.notifyDataSetChanged();
             }

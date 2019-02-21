@@ -49,6 +49,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
@@ -57,6 +58,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
@@ -77,7 +79,7 @@ import timber.log.Timber;
  */
 public class ApiPresenter extends BasePresenter<ApiRepository> {
 
-    public static final int PROGRESS = 100 / 20;
+    public static final double PROGRESS = Math.round((100 / 21.0) * 10) / 10.0;
 
     public ApiPresenter(AppComponent appComponent) {
         super(appComponent.repositoryManager().createRepository(ApiRepository.class));
@@ -945,6 +947,21 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                             samplingContent.setId(UUID.randomUUID().toString());
                                         }
                                         DBHelper.get().getSamplingContentDao().insertInTx(samplingContents);
+                                    }
+
+                                    //文件
+                                    List<SamplingFile> samplingFileList = sampling.getHasFile();
+                                    if(samplingFileList!=null) {
+                                        for (SamplingFile samplingFile : samplingFileList) {
+                                            //从数据库查询对应的文件，Id由于是服务端提供的，所以不会变，但是SamplingId可能会变化，所以这里做一次更新
+                                            for (SamplingFile dbFile : DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.Id.eq(samplingFile.getId())).list()) {
+                                                if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
+                                                        null && !dbFile.getSamplingId().equals(sampling.getId()))) {
+                                                    dbFile.setSamplingId(sampling.getId());
+                                                    DBHelper.get().getSamplingFileDao().update(dbFile);
+                                                }
+                                            }
+                                        }
                                     }
 
                                     //同步仪器法监测结果

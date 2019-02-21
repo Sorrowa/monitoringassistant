@@ -107,6 +107,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private RepositoryFragment mRepositoryFragment;
     private SettingFragment mSettingFragment;
     //private ManagementFragment mManagementFragment;
+    private double progress = 0.0;
 
 
     @Override
@@ -211,7 +212,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 }
                 break;
             case Message.RESULT_OK:
-                updateProgress((int) message.obj);
+                updateProgress((double) message.obj);
                 break;
             case TYPE_TASK:
                 updateProgress(ApiPresenter.PROGRESS);
@@ -225,13 +226,17 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      *
      * @param addValue
      */
-    private void updateProgress(int addValue) {
+    private void updateProgress(double addValue) {
         if (!mDialogPlus.isShowing()) {
             return;
         }
 
-        int progress = mNumberProgressBar.getProgress() + addValue;
-        mNumberProgressBar.setProgress(progress);
+        progress += addValue;
+        if(progress>100) {
+            progress = 100;
+        }
+
+        mNumberProgressBar.setProgress((int)progress);
 
         if (progress >= 100) {
             mDialogPlus.dismiss();
@@ -448,6 +453,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      */
     private void updateDataFromNetwork(){
         if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
+            progress = 0;
             showDialog();
             mPresenter.getDevices(Message.obtain(this, new Object()));
             mPresenter.getMethods(Message.obtain(this, new Object()));
@@ -473,6 +479,4 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             HawkUtil.putBoolean("isUpdated", false);
         }
     }
-
-
 }

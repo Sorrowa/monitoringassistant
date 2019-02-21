@@ -71,7 +71,7 @@ public class NumberUtil {
         }
 
         //当尾数为5而尾数后面还有任何不是0的数字时，都应向前进一位
-        if (calcPowDoubleValue > calcPowIntValue) {
+        if (Math.abs(calcPowDoubleValue) > Math.abs(calcPowIntValue)) {
             return sign * (Math.abs(powValue) + 1) / (double) pow;
         }
 
