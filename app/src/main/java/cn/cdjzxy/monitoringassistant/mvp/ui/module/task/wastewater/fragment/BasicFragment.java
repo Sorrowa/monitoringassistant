@@ -83,18 +83,18 @@ public class BasicFragment extends BaseFragment {
     TextView base_sample_method;
     @BindView(R.id.base_sample_handle)
     CheckedTextView base_sample_handle;
-    @BindView(R.id.water_info_layout)
-    View water_info_layout;
-    @BindView(R.id.water_arrow)
-    TextView water_arrow;
-    @BindView(R.id.layout_water_information_container)
-    View layout_water_information_container;
-    @BindView(R.id.water_temp)
-    EditText water_temp;
-    @BindView(R.id.water_speed)
-    EditText water_speed;
-    @BindView(R.id.water_flow)
-    EditText water_flow;
+    //@BindView(R.id.water_info_layout)
+    //View water_info_layout;
+    //@BindView(R.id.water_arrow)
+    //TextView water_arrow;
+    //@BindView(R.id.layout_water_information_container)
+    //View layout_water_information_container;
+    //@BindView(R.id.water_temp)
+    //EditText water_temp;
+    //@BindView(R.id.water_speed)
+    //EditText water_speed;
+    //@BindView(R.id.water_flow)
+    //EditText water_flow;
     @BindView(R.id.weather_arrow)
     TextView weather_arrow;
     @BindView(R.id.layout_weather_information_container)
@@ -185,10 +185,12 @@ public class BasicFragment extends BaseFragment {
             }
             base_sample_handle.setChecked(sewageDisposal);
             base_sample_comment.setText(WastewaterActivity.mSample.getComment());
+            /*
             //水体信息
             water_temp.setText(fsExtends == null ? "" : fsExtends.getWaterWD());
             water_speed.setText(fsExtends == null ? "" : fsExtends.getWaterLS());
             water_flow.setText(fsExtends == null ? "" : fsExtends.getWaterLL());
+            */
             //气象信息
             weather_state.setText(WastewaterActivity.mSample.getWeather());
             weather_temp.setText(WastewaterActivity.mSample.getTemprature());
@@ -340,7 +342,7 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.water_info_layout, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date,R.id.tv_receive_date,R.id.more_build_date})
+    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date,R.id.tv_receive_date,R.id.more_build_date})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_photo:
@@ -361,9 +363,9 @@ public class BasicFragment extends BaseFragment {
             case R.id.base_sample_method:
                 showSamplingMethods();
                 break;
-            case R.id.water_info_layout:
-                setArrowAnimate(water_arrow, layout_water_information_container);
-                break;
+//            case R.id.water_info_layout:
+//                setArrowAnimate(water_arrow, layout_water_information_container);
+//                break;
             case R.id.weather_info_layout:
                 setArrowAnimate(weather_arrow, layout_weather_information_container);
                 break;
@@ -580,9 +582,11 @@ public class BasicFragment extends BaseFragment {
      */
     private void saveFsExtends() {
         if (fsExtends != null && WastewaterActivity.mSample != null) {
+            /*
             fsExtends.setWaterWD(water_temp.getText().toString());
             fsExtends.setWaterLL(water_flow.getText().toString());
             fsExtends.setWaterLS(water_speed.getText().toString());
+            */
             fsExtends.setClientName(more_name.getText().toString());
             fsExtends.setClientAdd(more_address.getText().toString());
             fsExtends.setHandleDevice(more_device.getText().toString());

@@ -5,6 +5,8 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.wonders.health.lib.base.di.component.AppComponent;
 import com.wonders.health.lib.base.mvp.BasePresenter;
 import com.wonders.health.lib.base.mvp.Message;

@@ -92,6 +92,8 @@ public class CollectionDetailFragment extends BaseFragment {
     TextView sample_monitor_items_title;
     @BindView(R.id.sample_monitor_title)
     TextView sample_monitor_title;
+    @BindView(R.id.operate_layout)
+    View operate_layout;
 
     Unbinder unbinder;
 
@@ -110,6 +112,13 @@ public class CollectionDetailFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()){
+            operate_layout.setVisibility(View.INVISIBLE);
+
+        }else {
+            operate_layout.setVisibility(View.VISIBLE);
+        }
+
         sample_add_preserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

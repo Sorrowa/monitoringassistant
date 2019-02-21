@@ -78,6 +78,9 @@ public class CollectionFragment extends BaseFragment {
     RelativeLayout btnPrintLabel;
     @BindView(R.id.btn_add_new)
     RelativeLayout btn_add_new;
+    @BindView(R.id.operate_layout)
+    View operate_layout;
+
 
     private WasteWaterCollectAdapter mWasteWaterCollectAdapter;
     private SharedPreferences collectListSettings;
@@ -94,6 +97,12 @@ public class CollectionFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()){
+            operate_layout.setVisibility(View.INVISIBLE);
+
+        }else {
+            operate_layout.setVisibility(View.VISIBLE);
+        }
         initRecyclerViewData();
     }
 

@@ -77,6 +77,8 @@ public class BottleSplitDetailFragment extends BaseFragment {
     EditText sample_date;
     @BindView(R.id.sample_place)
     TextView sample_place;
+    @BindView(R.id.operate_layout)
+    View operate_layout;
 
 
     Unbinder unbinder;
@@ -96,6 +98,12 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()){
+            operate_layout.setVisibility(View.INVISIBLE);
+
+        }else {
+            operate_layout.setVisibility(View.VISIBLE);
+        }
 
     }
 

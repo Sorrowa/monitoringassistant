@@ -169,7 +169,7 @@
 
         </RelativeLayout>
 
-        <include layout="@layout/view_water_information" />
+        <!--<include layout="@layout/view_water_information" />-->
 
         <include layout="@layout/view_weather_information" />
 

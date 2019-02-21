@@ -146,6 +146,7 @@
         android:layout_weight="1" />
 
     <LinearLayout
+        android:id="@+id/operate_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height_dp_52"
         android:layout_gravity="bottom"
