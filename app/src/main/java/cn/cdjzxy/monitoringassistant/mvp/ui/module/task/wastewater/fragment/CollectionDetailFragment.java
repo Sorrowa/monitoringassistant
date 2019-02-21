@@ -672,7 +672,8 @@ public class CollectionDetailFragment extends BaseFragment {
         String xcStandItems=getStandMonitors(true);
         String standItems=getStandMonitors(false);
         //List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId())).list();
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId()),ProjectDetialDao.Properties.TagId.eq(mSample.getTagId()),ProjectDetialDao.Properties.AddressId.eq(mSample.getAddressId())).list();
+        //List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId()),ProjectDetialDao.Properties.TagId.eq(mSample.getTagId()),ProjectDetialDao.Properties.AddressId.eq(mSample.getAddressId())).list();
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mSample.getProjectId()),ProjectDetialDao.Properties.TagId.eq(mSample.getTagId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
                 if (standItems.contains(projectDetial.getMonItemName())){
