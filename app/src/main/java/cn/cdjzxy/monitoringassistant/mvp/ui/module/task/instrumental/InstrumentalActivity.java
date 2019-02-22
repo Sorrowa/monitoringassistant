@@ -138,6 +138,14 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    mSampling.setFormType("d877c7d5-6bb8-42d4-a79c-0f644e130a62");
+//                    mSampling.setFormTypeName("水质");
+//                    mSampling.setAddTime("2019-01-23 21:24:51");
+//                    mSampling.setMonitorPerson("Admin");
+//                    Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
+//                    mSampling.setProjectNo(project.getProjectNo());
+//                    mSampling.setAddressNo("");
+
                     mSampling.setIsFinish(IsSamplingFinish());
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
@@ -218,7 +226,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
     private Sampling createSampling() {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
+//        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
 
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
 
@@ -229,7 +237,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setProjectName(project.getName());
         sampling.setProjectNo(project.getProjectNo());
         sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(project.getTypeCode() + "");
+        sampling.setMontype(project.getTypeCode());
         sampling.setTagId(project.getMonType());//TODO:
         sampling.setTagName(project.getMonType());
         sampling.setAddressNo("");

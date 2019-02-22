@@ -98,7 +98,7 @@ public class Sampling {
     private String FormPath;
     private String FormName;
     private String ProjectName;//监测目的（任务名称）
-    private String Montype;//监测性质（类别）
+    private int Montype;//监测性质（类别）
     private String SamplingTimeBegin;
     private String SamplingTimeEnd;
     private String ParentTagId;
@@ -176,8 +176,8 @@ public class Sampling {
     @Transient
     private List<SamplingFile> HasFile;
 
-    @Generated(hash = 565714920)
-    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, String Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults) {
+    @Generated(hash = 1555512954)
+    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, int Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults) {
         this.Id = Id;
         this.ProjectId = ProjectId;
         this.SamplingNo = SamplingNo;
@@ -347,11 +347,11 @@ public class Sampling {
         this.ProjectName = ProjectName;
     }
 
-    public String getMontype() {
+    public int getMontype() {
         return this.Montype;
     }
 
-    public void setMontype(String Montype) {
+    public void setMontype(int Montype) {
         this.Montype = Montype;
     }
 

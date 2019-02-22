@@ -236,7 +236,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setProjectName(mProject.getName());
         sampling.setProjectNo(mProject.getProjectNo());
         sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(mProject.getTypeCode() + "");
+        sampling.setMontype(mProject.getTypeCode());
         sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
         sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());

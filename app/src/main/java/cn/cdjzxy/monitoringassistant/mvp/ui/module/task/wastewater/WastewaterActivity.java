@@ -282,7 +282,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         sampling.setProjectNo(project.getProjectNo());
         //sampling.setTagId(formSelect.getTagId());
         //sampling.setMontype(project.getMonType() + "");
-        sampling.setMontype(project.getTypeCode() + "");
+        sampling.setMontype(project.getTypeCode());
         //sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
         sampling.setFormType(formSelect.getTagParentId());
 //        sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());

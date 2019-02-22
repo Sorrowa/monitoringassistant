@@ -135,7 +135,7 @@ public class PreciptationSampForm {
         private String FormName;
         private String ProjectName;
         private String ProjectNo;
-        private String Montype;
+        private int Montype;
         private String ParentTagId;
         private String FormType;
         private String FormTypeName;
@@ -225,11 +225,11 @@ public class PreciptationSampForm {
             this.ProjectNo = ProjectNo;
         }
 
-        public String getMontype() {
+        public int getMontype() {
             return Montype;
         }
 
-        public void setMontype(String Montype) {
+        public void setMontype(int Montype) {
             this.Montype = Montype;
         }
 

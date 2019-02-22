@@ -33,7 +33,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         public final static Property FormPath = new Property(3, String.class, "FormPath", false, "FORM_PATH");
         public final static Property FormName = new Property(4, String.class, "FormName", false, "FORM_NAME");
         public final static Property ProjectName = new Property(5, String.class, "ProjectName", false, "PROJECT_NAME");
-        public final static Property Montype = new Property(6, String.class, "Montype", false, "MONTYPE");
+        public final static Property Montype = new Property(6, int.class, "Montype", false, "MONTYPE");
         public final static Property SamplingTimeBegin = new Property(7, String.class, "SamplingTimeBegin", false, "SAMPLING_TIME_BEGIN");
         public final static Property SamplingTimeEnd = new Property(8, String.class, "SamplingTimeEnd", false, "SAMPLING_TIME_END");
         public final static Property ParentTagId = new Property(9, String.class, "ParentTagId", false, "PARENT_TAG_ID");
@@ -114,7 +114,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
                 "\"FORM_PATH\" TEXT," + // 3: FormPath
                 "\"FORM_NAME\" TEXT," + // 4: FormName
                 "\"PROJECT_NAME\" TEXT," + // 5: ProjectName
-                "\"MONTYPE\" TEXT," + // 6: Montype
+                "\"MONTYPE\" INTEGER NOT NULL ," + // 6: Montype
                 "\"SAMPLING_TIME_BEGIN\" TEXT," + // 7: SamplingTimeBegin
                 "\"SAMPLING_TIME_END\" TEXT," + // 8: SamplingTimeEnd
                 "\"PARENT_TAG_ID\" TEXT," + // 9: ParentTagId
@@ -214,11 +214,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         if (ProjectName != null) {
             stmt.bindString(6, ProjectName);
         }
- 
-        String Montype = entity.getMontype();
-        if (Montype != null) {
-            stmt.bindString(7, Montype);
-        }
+        stmt.bindLong(7, entity.getMontype());
  
         String SamplingTimeBegin = entity.getSamplingTimeBegin();
         if (SamplingTimeBegin != null) {
@@ -516,11 +512,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         if (ProjectName != null) {
             stmt.bindString(6, ProjectName);
         }
- 
-        String Montype = entity.getMontype();
-        if (Montype != null) {
-            stmt.bindString(7, Montype);
-        }
+        stmt.bindLong(7, entity.getMontype());
  
         String SamplingTimeBegin = entity.getSamplingTimeBegin();
         if (SamplingTimeBegin != null) {
@@ -799,7 +791,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // FormPath
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // FormName
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // ProjectName
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // Montype
+            cursor.getInt(offset + 6), // Montype
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // SamplingTimeBegin
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // SamplingTimeEnd
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // ParentTagId
@@ -870,7 +862,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         entity.setFormPath(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setFormName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setProjectName(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setMontype(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setMontype(cursor.getInt(offset + 6));
         entity.setSamplingTimeBegin(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setSamplingTimeEnd(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setParentTagId(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));

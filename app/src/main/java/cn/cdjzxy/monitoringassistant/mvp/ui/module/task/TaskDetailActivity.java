@@ -515,7 +515,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
                 Sampling sampling = mSamplings.get(position);
                 if (sampling == null || !sampling.getIsFinish()) {
-                    showMessage("请先完善采样单信息！");
+                    if (sampling.getStatus() == 4) {
+                        showMessage("请先完善采样单信息后再次提交！");
+                    }else{
+                        showMessage("请先完善采样单信息！");
+                    }
                     return;
                 }
 
@@ -995,13 +999,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 //删除文件组装
                 preciptationSampForm.setDelFiles(sampling.getSubmitDeleteFileIdList());
 
-                if (sampling.getStatus() == 0) {
+//                if (sampling.getStatus() == 0) {
                     preciptationSampForm.setIsAdd(true);
                     preciptationSampForm.setCompelSubmit(false);
-                } else {
-                    preciptationSampForm.setIsAdd(false);
-                    preciptationSampForm.setCompelSubmit(false);
-                }
+//                } else {
+//                    preciptationSampForm.setIsAdd(false);
+//                    preciptationSampForm.setCompelSubmit(false);
+//                }
 
                 if (isCompelSubmit) {
                     preciptationSampForm.setCompelSubmit(isCompelSubmit);
