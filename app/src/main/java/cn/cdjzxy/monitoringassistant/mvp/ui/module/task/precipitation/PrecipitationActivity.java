@@ -126,13 +126,14 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             mSampling.setSamplingDetailResults(CheckUtil.isEmpty(samplingDetails) ? new ArrayList<>() : samplingDetails);
         }
 
+        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArtUtils.startActivity(FormPrintActivity.class);
+            }
+        }));
+
         if (mSampling.getIsCanEdit()) {
-            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ArtUtils.startActivity(FormPrintActivity.class);
-                }
-            }));
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

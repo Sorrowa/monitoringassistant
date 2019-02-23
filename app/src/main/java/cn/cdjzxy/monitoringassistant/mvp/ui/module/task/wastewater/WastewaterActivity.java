@@ -142,13 +142,14 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
         }
 
+        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArtUtils.startActivity(FormPrintActivity.class);
+            }
+        }));
+
         if (mSample.getIsCanEdit()) {
-            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ArtUtils.startActivity(FormPrintActivity.class);
-                }
-            }));
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

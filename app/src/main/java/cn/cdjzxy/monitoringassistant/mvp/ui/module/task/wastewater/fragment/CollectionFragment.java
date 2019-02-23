@@ -98,10 +98,23 @@ public class CollectionFragment extends BaseFragment {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()){
-            operate_layout.setVisibility(View.INVISIBLE);
-
+            //operate_layout.setVisibility(View.INVISIBLE);
+            btnAddParallel.setEnabled(false);
+            btnAddBlank.setEnabled(false);
+            btn_add_new.setEnabled(false);
+            btnPrintLabel.setEnabled(true);
+            btnAddParallel.setAlpha(0.5f);
+            btnAddBlank.setAlpha(0.5f);
+            btn_add_new.setAlpha(0.5f);
         }else {
-            operate_layout.setVisibility(View.VISIBLE);
+            //operate_layout.setVisibility(View.VISIBLE);
+            btnAddParallel.setEnabled(true);
+            btnAddBlank.setEnabled(true);
+            btn_add_new.setEnabled(true);
+            btnPrintLabel.setEnabled(true);
+            btnAddParallel.setAlpha(1f);
+            btnAddBlank.setAlpha(1f);
+            btn_add_new.setAlpha(1f);
         }
         initRecyclerViewData();
     }

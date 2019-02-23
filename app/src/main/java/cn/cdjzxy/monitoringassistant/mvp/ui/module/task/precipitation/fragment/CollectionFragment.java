@@ -174,8 +174,15 @@ public class CollectionFragment extends BaseFragment {
 
         if (!PrecipitationActivity.mSampling.getIsCanEdit()) {
             btnAddParallel.setVisibility(View.GONE);
-            btnAddBlank.setVisibility(View.GONE);
-            btnPrintLabel.setVisibility(View.GONE);
+            //btnAddBlank.setVisibility(View.GONE);
+            //btnPrintLabel.setVisibility(View.GONE);
+            btnAddBlank.setEnabled(false);
+            btnPrintLabel.setEnabled(true);
+            btnAddBlank.setAlpha(0.5f);
+        }else {
+            btnAddBlank.setEnabled(true);
+            btnPrintLabel.setEnabled(true);
+            btnAddBlank.setAlpha(1f);
         }
 
         if (PrecipitationActivity.mSampling.getSamplingDetailResults() == null) {
