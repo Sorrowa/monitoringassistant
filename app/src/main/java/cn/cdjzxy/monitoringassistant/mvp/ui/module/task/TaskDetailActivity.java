@@ -270,8 +270,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
                 break;
             case Constants.NET_RESPONSE_SAMPLING_DIFFER:
+                batchUploadFinish();
                 if (isBatchUpload) {
-                    batchUploadFinish();
                     multiCommitTipsOperate();
                 } else {
                     commitSamplingDataConflictOperate();
@@ -524,7 +524,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
 
                 //上传数据
-                uploadSampFormData(sampling, false, false);
+                uploadSampFormData(sampling, false);
             }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
@@ -831,13 +831,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                serverDataChooseOperate();
+                appDataChooseOperate();
             }
         }, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                appDataChooseOperate();
+                serverDataChooseOperate();
             }
         });
     }
@@ -851,7 +851,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         String pBtnStr = "确认";
         String nBtnStr = "取消";
 
-        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+        IosDialog.showDialog(mContext, title, msg, nBtnStr, pBtnStr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -860,7 +860,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                uploadSampFormData(sampling, isBatchUpload, true);
+                uploadSampFormData(sampling, true);
             }
         });
     }
@@ -884,6 +884,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 //需要从服务端拉去数据
+                showMessage("从服务端拉去数据（正在开发的功能）");
             }
         });
     }
@@ -953,7 +954,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             }
 
             //上传采样单
-            uploadSampFormData(sampling, true, false);
+            uploadSampFormData(sampling, false);
             break;
         } while (true);
 
@@ -964,10 +965,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * 上传采样单数据
      *
      * @param itemSampling   采样单
-     * @param isBatch        是否批量上传
      * @param isCompelSubmit 是否强制提交
      */
-    private void uploadSampFormData(Sampling itemSampling, boolean isBatch, boolean isCompelSubmit) {
+    private void uploadSampFormData(Sampling itemSampling, boolean isCompelSubmit) {
         sampling = itemSampling;
         showLoadingDialog(String.format("开始上传采样单[%s]", sampling.getSamplingNo()));
 
@@ -999,17 +999,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 //删除文件组装
                 preciptationSampForm.setDelFiles(sampling.getSubmitDeleteFileIdList());
 
-//                if (sampling.getStatus() == 0) {
+                if (sampling.getStatus() == 0) {
                     preciptationSampForm.setIsAdd(true);
-                    preciptationSampForm.setCompelSubmit(false);
-//                } else {
-//                    preciptationSampForm.setIsAdd(false);
-//                    preciptationSampForm.setCompelSubmit(false);
-//                }
-
-                if (isCompelSubmit) {
-                    preciptationSampForm.setCompelSubmit(isCompelSubmit);
+                } else {
+                    preciptationSampForm.setIsAdd(false);
                 }
+
+                preciptationSampForm.setCompelSubmit(isCompelSubmit);
 
                 //文件上传成功，上传采样单
                 mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);

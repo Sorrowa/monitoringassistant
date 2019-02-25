@@ -130,6 +130,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     private void getDeviceData(boolean isRelationDevice) {
+        List<Devices> temp= DBHelper.get().getDevicesDao().loadAll();
         List<Devices> devices = null;
         if (isRelationDevice) {
             Methods methods = DBHelper.get().getMethodsDao().queryBuilder().where(MethodsDao.Properties.Id.eq(methodId)).unique();

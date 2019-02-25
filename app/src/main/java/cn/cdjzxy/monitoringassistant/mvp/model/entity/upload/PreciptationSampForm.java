@@ -130,6 +130,7 @@ public class PreciptationSampForm {
          * SamplingFormStands : [{"Id":"904b99e9-b5e4-c98c-e0fe-83b7f7ced00f","SamplingId":"00000000-0000-0000-0000-000000000000","MonitemIds":"7253950a-9daa-9d4f-bd9a-a84789279c2a","MonitemName":"降水量"}]
          */
 
+        private String Id;
         private String ProjectId;
         private String FormPath;
         private String FormName;
@@ -184,6 +185,14 @@ public class PreciptationSampForm {
         private String Weather;
         private String Temprature;
         private String Pressure;
+
+        public String getId() {
+            return Id;
+        }
+
+        public void setId(String id) {
+            Id = id;
+        }
 
         public String getProjectId() {
             return ProjectId;

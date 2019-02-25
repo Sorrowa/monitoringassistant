@@ -179,35 +179,37 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
 
 
     public void showLoadingDialog(String str, boolean isCanCanceled) {
-        if (!this.isFinishing()) {
-            if(dialog!=null && dialog.isShowing()){
-                setLoadingDialogText(str);
-                return;
-            }
-
-            View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-            dialogTextView = (TextView) layout.findViewById(R.id.tv_content);
-            RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
-            if (CheckUtil.isEmpty(str)) {
-                dialogTextView.setVisibility(View.GONE);
-            } else {
-                rlDialog.setBackgroundResource(R.drawable.loading_bg);
-                dialogTextView.setVisibility(View.VISIBLE);
-                dialogTextView.setText(str);
-            }
-            if (dialog == null) {
-                dialog = new Dialog(this, R.style.loadingDialog);
-            }
-            dialog.setContentView(layout);
-            dialog.setCancelable(isCanCanceled);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                }
-            });
-            dialog.show();
+        if (this.isFinishing()) {
+            return;
         }
+
+        if (dialog != null && dialog.isShowing()) {
+            setLoadingDialogText(str);
+            return;
+        }
+
+        View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
+        dialogTextView = (TextView) layout.findViewById(R.id.tv_content);
+        RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
+        if (CheckUtil.isEmpty(str)) {
+            dialogTextView.setVisibility(View.GONE);
+        } else {
+            rlDialog.setBackgroundResource(R.drawable.loading_bg);
+            dialogTextView.setVisibility(View.VISIBLE);
+            dialogTextView.setText(str);
+        }
+        if (dialog == null) {
+            dialog = new Dialog(this, R.style.loadingDialog);
+        }
+        dialog.setContentView(layout);
+        dialog.setCancelable(isCanCanceled);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+            }
+        });
+        dialog.show();
     }
 
     public void setLoadingDialogText(String str) {

@@ -78,6 +78,7 @@ public class SubmitDataUtil {
     public static PreciptationSampForm.SampFormBean setUpSampFormBean(Sampling sampling) {
         PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
         sampFormBean.setProjectId(sampling.getProjectId());
+        sampFormBean.setId(sampling.getId());
         sampFormBean.setFormPath(sampling.getFormPath());
         sampFormBean.setFormName(sampling.getFormName());
         sampFormBean.setProjectName(sampling.getProjectName());
