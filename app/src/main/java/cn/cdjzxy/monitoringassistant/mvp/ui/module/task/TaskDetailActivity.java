@@ -38,6 +38,7 @@ import org.simple.eventbus.Subscriber;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -177,7 +178,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     //是否批量提交
     private boolean isBatchUpload = false;
     //是否提交
-    private boolean isUpload = false;
     private int samplingIndex;
 
     @Override
@@ -213,16 +213,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     @Override
     public void showLoading() {
-        if (!isUpload) {
-            showLoadingDialog("数据提交中...", false);
-        }
+        showLoadingDialog("数据提交中...", false);
     }
 
     @Override
     public void hideLoading() {
-        if (!isUpload) {
-            closeLoadingDialog();
-        }
+        closeLoadingDialog();
     }
 
     @Override
@@ -235,7 +231,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
-                isUpload = false;
                 batchUploadFinish();
 //                showMessage("操作失败！");
                 break;
@@ -260,7 +255,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 sampling.setSelected(false);
                 DBHelper.get().getSamplingDao().update(sampling);
 
-                isUpload = false;
                 setUploadAltInfo(String.format("采样单[%s]上传成功！", sampling.getSamplingNo()));
 
                 if (!uploadNextSampling()) {
@@ -508,7 +502,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 isBatchUpload = false;
-                isUpload = true;
                 if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                     uploadProjecteContentData(true);
                 }
@@ -874,7 +867,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         String pBtnStr = "确认";
         String nBtnStr = "取消";
 
-        IosDialog.showDialog(mContext, title, msg, pBtnStr, nBtnStr, new DialogInterface.OnClickListener() {
+        IosDialog.showDialog(mContext, title, msg, nBtnStr, pBtnStr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -976,6 +969,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onSuccess() {
                 setUploadAltInfo(String.format("正在上传采样单[%s]", sampling.getSamplingNo()));
+
+                if(TextUtils.isEmpty(sampling.getAddTime())){
+                    sampling.setAddTime(DateUtils.getTime(new Date().getTime()));
+                }
 
                 //文件上传完成后，组装采样单数据。文件ID已更改
                 PreciptationSampForm preciptationSampForm = null;
