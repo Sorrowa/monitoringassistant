@@ -376,11 +376,15 @@ public class CollectionDetailFragment extends BaseFragment {
                 DBHelper.get().getSamplingDao().update(mSample);
             }
 
+            //生成分瓶信息
+            generateBottleSplit();
+
             //删除之前生成的SamplingDetail
             List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(samplingDetail.getSamplingType())).build().list();
             if (!CheckUtil.isEmpty(samplingDetailList)){
                 DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
             }
+
             //生成新的SamplingDetail
             generateSamplingDetails();
             if (fsListPosition == -1) {
@@ -390,8 +394,7 @@ public class CollectionDetailFragment extends BaseFragment {
             }else {
                 DBHelper.get().getSamplingContentDao().update(samplingDetail);
             }
-            //生成分瓶信息
-            generateBottleSplit();
+
             //设置信息
             setBottleAndContent();
 
@@ -789,6 +792,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     detail.setSampleCollection(samplingDetail.getSampleCollection());
                     detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
                     detail.setPreservative(samplingDetail.getPreservative());
+                    //设置SamplingCount为分瓶数
+                    detail.setSamplingCount(getBottleNumber());
 
                     DBHelper.get().getSamplingDetailDao().insert(detail);
                     WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
@@ -823,6 +828,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     detail.setSampleCollection(samplingDetail.getSampleCollection());
                     detail.setSampleAcceptance(samplingDetail.getSampleAcceptance());
                     detail.setPreservative(samplingDetail.getPreservative());
+                    //设置SamplingCount为分瓶数
+                    detail.setSamplingCount(getBottleNumber());
 
                     DBHelper.get().getSamplingDetailDao().insert(detail);
                     WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
@@ -906,6 +913,19 @@ public class CollectionDetailFragment extends BaseFragment {
 
         }
 
+    }
+
+    /**
+     * 获取分瓶信息的瓶数
+     * @return
+     */
+    private int getBottleNumber(){
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
+        if (!CheckUtil.isEmpty(formStantdsList)){
+            return formStantdsList.size();
+        }else {
+            return 0;
+        }
     }
 
 }
