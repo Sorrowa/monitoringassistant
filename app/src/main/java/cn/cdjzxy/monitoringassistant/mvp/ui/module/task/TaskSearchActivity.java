@@ -238,29 +238,28 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void search(String keyword) {
         saveHistory(keyword);
-
-        String startDate = "1900-01-01";
-        //String startDate = "";
+        //设置检测时间
+        String startDate="";
+        String endDate="";
         for (int i = 0; i < mLastTimes.size(); i++) {
             if (mLastTimes.get(i).isSelected()) {
                 if (i == 0) {
-                    startDate = DateUtils.getDate(3);
+                    endDate = DateUtils.getDate(3);
                 } else if (i == 1) {
-                    startDate = DateUtils.getDate(7);
+                    endDate = DateUtils.getDate(7);
                 } else if (i == 2) {
-                    startDate = DateUtils.getDate(15);
+                    endDate = DateUtils.getDate(15);
                 } else {
-                    startDate = "";
+                    endDate = "";
                 }
             }
         }
 
-        if (!CheckUtil.isEmpty(startDate)){
-            //startDate = startDate + " 00:00:00";
-            startDate = startDate + " 00:00:00";
+        if (!CheckUtil.isEmpty(endDate)){
+            startDate=DateUtils.getDate()+" 00:00:00";
+            endDate += " 23:59:59";
         }
-        //String endDate = DateUtils.getDate() + "T23:59:59";
-        String endDate = DateUtils.getDate() + " 23:59:59";
+
 
         ArrayList<String> types = new ArrayList<>();
         for (Tab taskType : mTaskTypes) {
