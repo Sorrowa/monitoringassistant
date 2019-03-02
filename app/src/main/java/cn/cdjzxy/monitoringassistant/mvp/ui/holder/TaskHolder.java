@@ -62,9 +62,9 @@ public class TaskHolder extends BaseHolder<Project> {
             String currentTime = DateUtils.getDate();
             String endTime = data.getPlanEndTime();
             int lastDays = DateUtils.getLastDays(currentTime, endTime.split(" ")[0]);
-            if (lastDays <= 1) {
+            if (lastDays <= 1 && lastDays>=0) {
                 mTvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
-            } else if (lastDays <= 3) {
+            } else if (lastDays <= 3 && lastDays>1) {
                 mTvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
             } else {
                 mTvTaskTimeRange.setTextColor(Color.parseColor("#333333"));

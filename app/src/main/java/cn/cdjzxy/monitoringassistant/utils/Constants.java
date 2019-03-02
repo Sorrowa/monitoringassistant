@@ -8,4 +8,6 @@ public class Constants {
     public static final String SAMPLING_TYPE_PT="普通样";
     public static final String SAMPLING_TYPE_PX="平行样";
     public static final String SAMPLING_TYPE_KB="全程序空白";
+
+    public static final int DATA_PAGE_SIZE=800;
 }

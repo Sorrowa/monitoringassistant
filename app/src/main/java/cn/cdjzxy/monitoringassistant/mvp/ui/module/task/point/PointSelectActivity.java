@@ -33,6 +33,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointSelectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
@@ -128,18 +129,42 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
 
-        List<EnvirPoint> envirPoints = null;
+        //List<EnvirPoint> envirPoints = null;
+        List<EnvirPoint> envirPoints = new ArrayList<>();
         if (isRelationPoint) {
             if (CheckUtil.isEmpty(pointIds)) {
                 envirPoints = new ArrayList<>();
             } else {
-                envirPoints = DBHelper
-                        .get()
-                        .getEnvirPointDao()
-                        .queryBuilder()
-                        .where(EnvirPointDao.Properties.TagId.eq(tagId),EnvirPointDao.Properties.Id.in(pointIds))
-                        //.where(EnvirPointDao.Properties.Id.in(pointIds))
-                        .list();
+                if (pointIds.size()>Constants.DATA_PAGE_SIZE){
+                    int pages = pointIds.size()%Constants.DATA_PAGE_SIZE>0?pointIds.size()/Constants.DATA_PAGE_SIZE+1:pointIds.size()/Constants.DATA_PAGE_SIZE;
+                    for (int i=0;i<pages;i++){
+                        int pageSize=Constants.DATA_PAGE_SIZE;
+                        if ((i+1)==pages){
+                            pageSize=pointIds.size()%Constants.DATA_PAGE_SIZE;
+                        }
+                        List<String> pointIdsTemp=pointIds.subList(i*Constants.DATA_PAGE_SIZE,i*Constants.DATA_PAGE_SIZE+pageSize);
+                        List<EnvirPoint> tempPoints = DBHelper
+                                .get()
+                                .getEnvirPointDao()
+                                .queryBuilder()
+                                .where(EnvirPointDao.Properties.TagId.eq(tagId),EnvirPointDao.Properties.Id.in(pointIdsTemp))
+                                //.where(EnvirPointDao.Properties.Id.in(pointIds))
+                                .list();
+                        for (EnvirPoint envirPoint :tempPoints ){
+                            if (!envirPoints.contains(envirPoint)){
+                                envirPoints.add(envirPoint);
+                            }
+                        }
+                    }
+                }else {
+                    envirPoints = DBHelper
+                            .get()
+                            .getEnvirPointDao()
+                            .queryBuilder()
+                            .where(EnvirPointDao.Properties.TagId.eq(tagId),EnvirPointDao.Properties.Id.in(pointIds))
+                            //.where(EnvirPointDao.Properties.Id.in(pointIds))
+                            .list();
+                }
             }
 
         } else {
@@ -151,12 +176,35 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
                         .where(EnvirPointDao.Properties.TagId.eq(tagId))
                         .list();
             } else {
-                envirPoints = DBHelper
-                        .get()
-                        .getEnvirPointDao()
-                        .queryBuilder()
-                        .where(EnvirPointDao.Properties.TagId.eq(tagId), EnvirPointDao.Properties.Id.notIn(pointIds))
-                        .list();
+                if (pointIds.size()>Constants.DATA_PAGE_SIZE){
+                    int pages = pointIds.size()%Constants.DATA_PAGE_SIZE>0?pointIds.size()/Constants.DATA_PAGE_SIZE+1:pointIds.size()/Constants.DATA_PAGE_SIZE;
+                    for (int i=0;i<pages;i++){
+                        int pageSize=Constants.DATA_PAGE_SIZE;
+                        if ((i+1)==pages){
+                            pageSize=pointIds.size()%Constants.DATA_PAGE_SIZE;
+                        }
+                        List<String> pointIdsTemp=pointIds.subList(i*Constants.DATA_PAGE_SIZE,i*Constants.DATA_PAGE_SIZE+pageSize);
+                        List<EnvirPoint> tempPoints = DBHelper
+                                .get()
+                                .getEnvirPointDao()
+                                .queryBuilder()
+                                .where(EnvirPointDao.Properties.TagId.eq(tagId),EnvirPointDao.Properties.Id.notIn(pointIdsTemp))
+                                //.where(EnvirPointDao.Properties.Id.in(pointIds))
+                                .list();
+                        for (EnvirPoint envirPoint :tempPoints ){
+                            if (!envirPoints.contains(envirPoint)){
+                                envirPoints.add(envirPoint);
+                            }
+                        }
+                    }
+                }else {
+                    envirPoints = DBHelper
+                            .get()
+                            .getEnvirPointDao()
+                            .queryBuilder()
+                            .where(EnvirPointDao.Properties.TagId.eq(tagId), EnvirPointDao.Properties.Id.notIn(pointIds))
+                            .list();
+                }
             }
 
         }
