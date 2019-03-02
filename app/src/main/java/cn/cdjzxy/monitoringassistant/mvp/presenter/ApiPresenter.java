@@ -3,6 +3,7 @@ package cn.cdjzxy.monitoringassistant.mvp.presenter;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,8 +18,10 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1033,28 +1036,46 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      * @return
      */
     private void donwloadSamplingFile(SamplingFile samplingFile, SamplingFile remoteFile, String samplingId) {
-        //下载并保存文件
-        String localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+        DonwloadParams params = new DonwloadParams();
+        params.remoteFile = remoteFile;
+        params.samplingFile = samplingFile;
+        params.samplingId = samplingId;
 
-        //是否成功
-        if (TextUtils.isEmpty(localPath)) {
-            return;
-        }
-
-        if (samplingFile == null) {
-            //创建文件
-            samplingFile = new SamplingFile();
-            samplingFile.setLocalId(UUID.randomUUID().toString());
-        }
-
-        samplingFile.setSamplingId(samplingId);
-        samplingFile.setFilePath(localPath);
-        samplingFile.setId(remoteFile.getId());
-        samplingFile.setFileName(remoteFile.getFileName());
-        samplingFile.setUpdateTime(remoteFile.getUpdateTime());
-
-        DBHelper.get().getSamplingFileDao().insertOrReplace(samplingFile);
+        new DonwloadAsyncTask().execute(params);
     }
+
+//    /**
+//     * 下载采样单文件
+//     *
+//     * @param samplingFile
+//     * @param remoteFile
+//     * @param samplingId
+//     * @return
+//     */
+//    private void donwloadSamplingFile(SamplingFile samplingFile, SamplingFile remoteFile, String samplingId) {
+//        //下载并保存文件
+//        String localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+//
+//        //是否成功
+//        if (TextUtils.isEmpty(localPath)) {
+//            return;
+//        }
+//
+//        if (samplingFile == null) {
+//            //创建文件
+//            samplingFile = new SamplingFile();
+//            samplingFile.setLocalId(UUID.randomUUID().toString());
+//        }
+//
+//        samplingFile.setSamplingId(samplingId);
+//        samplingFile.setFilePath(localPath);
+//        samplingFile.setId(remoteFile.getId());
+//        samplingFile.setFileName(remoteFile.getFileName());
+//        samplingFile.setUpdateTime(remoteFile.getUpdateTime());
+//
+//        DBHelper.get().getSamplingFileDao().insertOrReplace(samplingFile);
+//    }
+//
 
     /**
      * 下载文件
@@ -1064,19 +1085,20 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      */
     private String donwloadFile(String fileAddr, String fileName) {
 
-        String fielUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + fileAddr;
+        try {
+            //文件名手动编码
+            fileAddr = fileAddr.replace(fileName, java.net.URLEncoder.encode(fileName, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        String fileUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + fileAddr;
 
         try {
-            URL url = new URL(fielUrl);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setReadTimeout(5000);
-            con.setConnectTimeout(5000);
-            con.setRequestProperty("Charset", "UTF-8");
-            con.setRequestMethod("GET");
-
-            if (con.getResponseCode() != 200) {
-                return null;
-            }
+            URL url = new URL(fileUrl);
+            URLConnection con = url.openConnection();
+            con.setReadTimeout(30000);
+            con.setConnectTimeout(15000);
 
             InputStream is = con.getInputStream();//获取输入流
             if (is == null) {
@@ -1084,11 +1106,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             }
 
             String cacheDir = this.appComponent.appManager().getCurrentActivity().getCacheDir().getPath();
-            File newFile = new File(cacheDir + fileName);
+            File newFile = new File(cacheDir + "/" + fileName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(newFile);//指定文件保存路径，代码看下一步
 
-            byte[] buf = new byte[1024];
+            byte[] buf = new byte[1024 * 10];
             int ch;
             while ((ch = is.read(buf)) != -1) {
                 fileOutputStream.write(buf, 0, ch);//将获取到的流写入文件中
@@ -1098,7 +1120,14 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 fileOutputStream.flush();
                 fileOutputStream.close();
             }
+
+            is.close();
+
+            Log.d("donwloadFile", "donwload " + fileUrl + " to " + newFile.getPath() + " success!");
+
+            return newFile.getPath();
         } catch (Exception e) {
+            Log.e("donwloadFile", "Url:" + fileUrl + " Exc:" + e);
             e.printStackTrace();
         }
 
@@ -1272,4 +1301,60 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         return samplings;
     }
 
+    class DonwloadParams {
+        public SamplingFile samplingFile;
+        public SamplingFile remoteFile;
+        public String samplingId;
+    }
+
+    //异步下载的任务
+    class DonwloadAsyncTask extends AsyncTask<DonwloadParams, Void, Void> {
+
+        //onPreExecute用于异步处理前的操作
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        //在doInBackground方法中进行异步任务的处理.
+        @Override
+        protected Void doInBackground(DonwloadParams... params) {
+            //获取传进来的参数
+            DonwloadParams param = params[0];
+
+            SamplingFile samplingFile = param.samplingFile;
+            SamplingFile remoteFile = param.remoteFile;
+            String samplingId = param.samplingId;
+
+            //下载并保存文件
+            String localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+
+            //是否成功
+            if (TextUtils.isEmpty(localPath)) {
+                return null;
+            }
+
+            if (samplingFile == null) {
+                //创建文件
+                samplingFile = new SamplingFile();
+                samplingFile.setLocalId(UUID.randomUUID().toString());
+            }
+
+            samplingFile.setSamplingId(samplingId);
+            samplingFile.setFilePath(localPath);
+            samplingFile.setId(remoteFile.getId());
+            samplingFile.setFileName(remoteFile.getFileName());
+            samplingFile.setUpdateTime(remoteFile.getUpdateTime());
+
+            DBHelper.get().getSamplingFileDao().insertOrReplace(samplingFile);
+
+            return null;
+        }
+
+        //onPostExecute用于UI的更新.此方法的参数为doInBackground方法返回的值.
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
 }
