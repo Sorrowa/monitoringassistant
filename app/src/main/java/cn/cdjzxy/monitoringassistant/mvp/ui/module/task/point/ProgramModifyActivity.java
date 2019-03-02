@@ -182,8 +182,9 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 });
                 break;
             case R.id.btn_add_parallel:
-                DBHelper.get().getProjectDetialDao().delete(mProjectDetial);
-
+                //根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
+                List<ProjectDetial> deleteProjectDetialsList = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId()),ProjectDetialDao.Properties.ProjectContentId.eq(mProjectDetial.getProjectContentId())).list();
+                DBHelper.get().getProjectDetialDao().deleteInTx(deleteProjectDetialsList);
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
@@ -233,6 +234,12 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mDialogPlus.dismiss();
             }
         });
+
+        //清空数据
+        mFirstTags.clear();
+        mTagNames.clear();
+        mTags.clear();
+
         List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
         if (!CheckUtil.isEmpty(tags)) {
             for (Tags tag : tags) {
@@ -277,7 +284,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void updateTags(String tagParentId) {
         mTags.clear();
-        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.ParentId.eq(tagParentId)).list();
+        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.ParentId.eq(tagParentId),TagsDao.Properties.Level.eq(1)).list();
         if (!CheckUtil.isEmpty(tags1)) {
             mTags.addAll(tags1);
         }

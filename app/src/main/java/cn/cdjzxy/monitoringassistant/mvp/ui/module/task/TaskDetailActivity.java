@@ -761,8 +761,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void uploadProjecteContentData(boolean isCompelSubmit) {
         ProjectPlan projectPlan = SubmitDataUtil.setUpProjectPlan(mProject);
         projectPlan.setIsCompelSubmit(isCompelSubmit);
-        String sss=JSONObject.toJSONString(projectPlan);
-        Log.d(TAG,sss);
         mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
 
@@ -996,7 +994,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 //删除文件组装
                 preciptationSampForm.setDelFiles(sampling.getSubmitDeleteFileIdList());
 
-                if (sampling.getStatus() == 0) {
+                if (sampling.getStatus() == 0 && sampling.getIsLocal()) {
                     preciptationSampForm.setIsAdd(true);
                 } else {
                     preciptationSampForm.setIsAdd(false);

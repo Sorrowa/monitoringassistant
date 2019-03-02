@@ -61,11 +61,13 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.ClickUtils;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+import cn.cdjzxy.monitoringassistant.widgets.ViewClickProxy;
 
 /**
  * 采集样品详情
@@ -251,6 +253,9 @@ public class CollectionDetailFragment extends BaseFragment {
 
     @OnClick({R.id.btn_back, R.id.sample_monitor_items, R.id.sample_monitor, R.id.btn_delete, R.id.btn_save})
     public void onClick(View view) {
+        if (!ClickUtils.canClick()){
+            return;
+        }
         switch (view.getId()) {
             case R.id.btn_back:
                 EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
@@ -390,7 +395,8 @@ public class CollectionDetailFragment extends BaseFragment {
             if (fsListPosition == -1) {
                 //samplingDetail.setId(UUID.randomUUID().toString());
                 //samplingDetail.setSamplingType(0);
-                DBHelper.get().getSamplingContentDao().insert(samplingDetail);
+                //DBHelper.get().getSamplingContentDao().insert(samplingDetail);
+                DBHelper.get().getSamplingContentDao().insertOrReplace(samplingDetail);
             }else {
                 DBHelper.get().getSamplingContentDao().update(samplingDetail);
             }
