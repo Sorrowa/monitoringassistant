@@ -13,13 +13,12 @@ public class NumberUtil {
      * @return
      */
     public static double roundingNumber(double value) {
-        //固定保留一位小数
-        return fourHomesSixEntries(value, 1);
-//        if (Math.abs(value) <= 0.5) {
-//            return fourHomesSixEntries(value, 1);
-//        } else {
-//            return fourHomesSixEntries(value, 0);
-//        }
+        //小于0.1，保留2位小数；大于等于0.1保留1位小数
+        if (Math.abs(value) < 0.1) {
+            return fourHomesSixEntries(value, 2);
+        } else {
+            return fourHomesSixEntries(value, 1);
+        }
     }
 
     /**

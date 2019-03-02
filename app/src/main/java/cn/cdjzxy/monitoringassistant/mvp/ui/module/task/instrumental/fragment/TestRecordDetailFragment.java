@@ -380,8 +380,7 @@ public class TestRecordDetailFragment extends BaseFragment {
 
             if (detail.getSamplingType() == 0) {
                 //均值计算公式：（样品含量+平行样含量）/2
-                double avg = NumberUtil.roundingNumber((value + targetValue) / 2);
-                detail.setValue(avg + "");
+                detail.setValue(calcAvg(value, targetValue) + "");
                 //原样数据，标记做了平行
                 detail.setPrivateDataBooleanValue("HasPX", true);
             }
@@ -390,6 +389,52 @@ public class TestRecordDetailFragment extends BaseFragment {
 
         }
     }
+
+    /**
+     * 计算均值
+     *
+     * @param value1
+     * @param value2
+     * @return
+     */
+    private double calcAvg(double value1, double value2) {
+        //计算小数位数
+        int value1NumOfBits = calcNumberNumOfBits(value1);
+        int value2NumOfBits = calcNumberNumOfBits(value2);
+
+        //保留位数：取小数位数最大的
+        return NumberUtil.fourHomesSixEntries((value1 + value2) / 2, value1NumOfBits > value2NumOfBits ? value1NumOfBits : value2NumOfBits);
+    }
+
+    /**
+     * 计算小数位数
+     *
+     * @param value
+     * @return
+     */
+    private int calcNumberNumOfBits(double value) {
+        //转换成字符串
+        String valueStr = value + "";
+
+        //获取小数点的位置
+        int bitPos = valueStr.indexOf(".");
+        if (bitPos == -1) {
+            return 0;//没有小数点
+        }
+
+        //往后移一位
+        bitPos += 1;
+
+        //小数点后面的数值转换成整数
+        int bitNum = Integer.parseInt(valueStr.substring(bitPos));
+        if (bitNum == 0) {
+            return 0;//小红点后面是填充的0
+        }
+
+        //字符串总长度减去小数点位置就是小数位数
+        return valueStr.length() - bitPos;
+    }
+
 
     /**
      * 获取分析结果

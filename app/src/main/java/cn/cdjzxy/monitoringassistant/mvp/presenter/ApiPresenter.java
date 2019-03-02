@@ -3,6 +3,7 @@ package cn.cdjzxy.monitoringassistant.mvp.presenter;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
@@ -13,7 +14,13 @@ import com.wonders.health.lib.base.mvp.Message;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +72,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
@@ -83,8 +93,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     public static final double PROGRESS = Math.round((100 / 21.0) * 10) / 10.0;
 
+    private AppComponent appComponent;
+
     public ApiPresenter(AppComponent appComponent) {
         super(appComponent.repositoryManager().createRepository(ApiRepository.class));
+        this.appComponent = appComponent;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -907,19 +920,19 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 DBHelper.get().getSamplingFormStandDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
-                                    String formName=sampling.getFormName();
+                                    String formName = sampling.getFormName();
 
-                                    if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)){
+                                    if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)) {
                                         sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
-                                    }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)){
+                                    } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)) {
                                         sampling.setFormPath(TaskDetailActivity.PATH_WASTEWATER);
-                                    }else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)){
+                                    } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)) {
                                         sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
                                     }
 
                                     //处理有相同SamplingNo不同id的情况
-                                    List<Sampling> localSamplings=getLocalSamplingsByNo(sampling.getSamplingNo());
-                                    if (!CheckUtil.isEmpty(localSamplings)){
+                                    List<Sampling> localSamplings = getLocalSamplingsByNo(sampling.getSamplingNo());
+                                    if (!CheckUtil.isEmpty(localSamplings)) {
                                         DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
                                     }
                                     //DBHelper.get().getSamplingDao().delete(sampling);
@@ -942,8 +955,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
                                     if (!CheckUtil.isEmpty(samplingContents)) {
                                         for (SamplingContent samplingContent : samplingContents) {
-                                            List<SamplingContent> dbContentList=HelpUtil.getSamplingContent(samplingContent.getProjectId(),samplingContent.getSamplingId(),samplingContent.getSampingCode(),samplingContent.getSamplingType());
-                                            if (!CheckUtil.isEmpty(dbContentList)){
+                                            List<SamplingContent> dbContentList = HelpUtil.getSamplingContent(samplingContent.getProjectId(), samplingContent.getSamplingId(), samplingContent.getSampingCode(), samplingContent.getSamplingType());
+                                            if (!CheckUtil.isEmpty(dbContentList)) {
                                                 DBHelper.get().getSamplingContentDao().deleteInTx(dbContentList);
                                             }
                                             samplingContent.setId(UUID.randomUUID().toString());
@@ -953,15 +966,24 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                                     //文件
                                     List<SamplingFile> samplingFileList = sampling.getHasFile();
-                                    if(samplingFileList!=null) {
+                                    if (samplingFileList != null) {
                                         for (SamplingFile samplingFile : samplingFileList) {
                                             //从数据库查询对应的文件，Id由于是服务端提供的，所以不会变，但是SamplingId可能会变化，所以这里做一次更新
-                                            for (SamplingFile dbFile : DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.Id.eq(samplingFile.getId())).list()) {
-                                                if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
+                                            List<SamplingFile> dbFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.Id.eq(samplingFile.getId())).list();
+                                            for (SamplingFile dbFile : dbFiles) {
+                                                if (!new File(dbFile.getFilePath()).exists()) {
+                                                    //本地图片不存在了，重新下载图片
+                                                    donwloadSamplingFile(dbFile, samplingFile, sampling.getId());
+                                                } else if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
                                                         null && !dbFile.getSamplingId().equals(sampling.getId()))) {
                                                     dbFile.setSamplingId(sampling.getId());
                                                     DBHelper.get().getSamplingFileDao().update(dbFile);
                                                 }
+                                            }
+
+                                            //数据库中未找到，直接下载
+                                            if (dbFiles.size() == 0) {
+                                                donwloadSamplingFile(null, samplingFile, sampling.getId());
                                             }
                                         }
                                     }
@@ -971,7 +993,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
                                         for (SamplingDetail samplingDetail : samplingDetailYQFs) {
                                             QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
-                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"),SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+//                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                                            //匹配采样单编号一样的数据或Id一样，覆盖。
+                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()))).list();
                                             if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
                                                 DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
                                             }
@@ -998,6 +1022,87 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         msg.handleMessageToTarget();
                     }
                 }));
+    }
+
+    /**
+     * 下载采样单文件
+     *
+     * @param samplingFile
+     * @param remoteFile
+     * @param samplingId
+     * @return
+     */
+    private void donwloadSamplingFile(SamplingFile samplingFile, SamplingFile remoteFile, String samplingId) {
+        //下载并保存文件
+        String localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+
+        //是否成功
+        if (TextUtils.isEmpty(localPath)) {
+            return;
+        }
+
+        if (samplingFile == null) {
+            //创建文件
+            samplingFile = new SamplingFile();
+            samplingFile.setLocalId(UUID.randomUUID().toString());
+        }
+
+        samplingFile.setSamplingId(samplingId);
+        samplingFile.setFilePath(localPath);
+        samplingFile.setId(remoteFile.getId());
+        samplingFile.setFileName(remoteFile.getFileName());
+        samplingFile.setUpdateTime(remoteFile.getUpdateTime());
+
+        DBHelper.get().getSamplingFileDao().insertOrReplace(samplingFile);
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param fileAddr
+     * @return 保存路径
+     */
+    private String donwloadFile(String fileAddr, String fileName) {
+
+        String fielUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + fileAddr;
+
+        try {
+            URL url = new URL(fielUrl);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setReadTimeout(5000);
+            con.setConnectTimeout(5000);
+            con.setRequestProperty("Charset", "UTF-8");
+            con.setRequestMethod("GET");
+
+            if (con.getResponseCode() != 200) {
+                return null;
+            }
+
+            InputStream is = con.getInputStream();//获取输入流
+            if (is == null) {
+                return null;
+            }
+
+            String cacheDir = this.appComponent.appManager().getCurrentActivity().getCacheDir().getPath();
+            File newFile = new File(cacheDir + fileName);
+
+            FileOutputStream fileOutputStream = new FileOutputStream(newFile);//指定文件保存路径，代码看下一步
+
+            byte[] buf = new byte[1024];
+            int ch;
+            while ((ch = is.read(buf)) != -1) {
+                fileOutputStream.write(buf, 0, ch);//将获取到的流写入文件中
+            }
+
+            if (fileOutputStream != null) {
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
@@ -1123,7 +1228,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         } else if (baseResponse.code() == 413) {
                             msg.obj = "文件过大！";
                             msg.what = Message.RESULT_FAILURE;
-                        }else {
+                        } else {
                             msg.obj = String.format("未知错误(%d)", baseResponse.code());
                             msg.what = Message.RESULT_FAILURE;
                         }
@@ -1162,7 +1267,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
     }
 
-    private List<Sampling> getLocalSamplingsByNo(String samplingNo){
+    private List<Sampling> getLocalSamplingsByNo(String samplingNo) {
         List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo)).list();
         return samplings;
     }
