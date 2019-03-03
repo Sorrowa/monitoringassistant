@@ -55,10 +55,10 @@ android {
             buildConfigField "boolean", "LOG_DEBUG", "false"
             //buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
-            //buildConfigField "String", "SERVER_IP", "\"http://http://xindu.empcloud.net:8000\""
-            //buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "SERVER_IP", "\"http://http://xindu.empcloud.net:8000\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             buildConfigField "boolean", "IS_RELEASE", "true"
             signingConfig signingConfigs.release
             minifyEnabled true
