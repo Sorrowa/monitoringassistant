@@ -57,6 +57,7 @@ public interface Api {
     //*******************采样******************
     String GET_TABLES         = "api/Sampling/GetTableList";//获取采样单清单 GET
     String GET_SAMPLING       = "api/Sampling/GetSampling";///获取所有采样单信息(支持批量)
+    String GET_SAMPLING_BY_ID = "api/Sampling/GetSamplingByID";//根据ID获取采样单信息
     String CREATE_TABLE       = "api/Sampling/PostTable";//创建采样单 POST
     String UPDATE_TABLE       = "api/Sampling/PutTable";//更新采样单 Put
     String DELETE_TABLE       = "api/Sampling/DeleteTable";//删除采样单 DELETE

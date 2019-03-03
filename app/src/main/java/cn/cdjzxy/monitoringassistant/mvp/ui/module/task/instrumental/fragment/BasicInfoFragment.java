@@ -217,8 +217,8 @@ public class BasicInfoFragment extends BaseFragment {
                         InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
                         InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
 
-//                        InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
-//                        InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+                        InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
+                        InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
                         InstrumentalActivity.mSampling.setFormType(data.getStringExtra("TagId"));
                         InstrumentalActivity.mSampling.setFormTypeName(data.getStringExtra("TagName"));
 

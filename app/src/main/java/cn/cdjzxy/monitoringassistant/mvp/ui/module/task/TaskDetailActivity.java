@@ -874,8 +874,36 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                //需要从服务端拉去数据
-                showMessage("从服务端拉去数据（正在开发的功能）");
+
+                showLoadingDialog("正在拉取服务端表单数据...");
+                //去服务器拉取采样单信息，覆盖到本地
+                mPresenter.getSamplinByID(Message.obtain(new IView() {
+                    @Override
+                    public void showMessage(@NonNull String message) {
+                        if (TextUtils.isEmpty(message)) {
+                            return;
+                        }
+
+                        ArtUtils.makeText(TaskDetailActivity.this, message);
+                    }
+
+                    @Override
+                    public void handleMessage(@NonNull Message message) {
+                        TaskDetailActivity.this.hideLoading();
+
+                        switch (message.what) {
+                            case Message.RESULT_OK:
+                                showMessage("表单数据拉取成功！");
+                                //刷新采样单数据
+                                getSampling(mTagId);
+                                break;
+
+                            case Message.RESULT_FAILURE:
+                                showMessage("表单数据拉取失败：" + message.obj.toString());
+                                break;
+                        }
+                    }
+                }), sampling.getId());
             }
         });
     }

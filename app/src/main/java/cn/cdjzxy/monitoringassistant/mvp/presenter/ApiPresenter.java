@@ -923,93 +923,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 DBHelper.get().getSamplingFormStandDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
-                                    String formName = sampling.getFormName();
-
-                                    if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)) {
-                                        sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
-                                    } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)) {
-                                        sampling.setFormPath(TaskDetailActivity.PATH_WASTEWATER);
-                                    } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)) {
-                                        sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
-                                    }
-
-                                    //处理有相同SamplingNo不同id的情况
-                                    List<Sampling> localSamplings = getLocalSamplingsByNo(sampling.getSamplingNo());
-                                    if (!CheckUtil.isEmpty(localSamplings)) {
-                                        DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
-                                    }
-                                    //DBHelper.get().getSamplingDao().delete(sampling);
-
-                                    //分瓶
-                                    List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
-                                    if (!CheckUtil.isEmpty(samplingFormStands)) {
-                                        DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
-                                    }
-
-                                    //样品
-                                    List<SamplingDetail> samplingDetails = sampling.getSamplingDetailResults();
-                                    if (!CheckUtil.isEmpty(samplingDetails)) {
-                                        for (SamplingDetail samplingDetail : samplingDetails) {
-                                            DBHelper.get().getSamplingDetailDao().delete(samplingDetail);
-                                        }
-                                        DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
-                                    }
-
-                                    List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
-                                    if (!CheckUtil.isEmpty(samplingContents)) {
-                                        for (SamplingContent samplingContent : samplingContents) {
-                                            List<SamplingContent> dbContentList = HelpUtil.getSamplingContent(samplingContent.getProjectId(), samplingContent.getSamplingId(), samplingContent.getSampingCode(), samplingContent.getSamplingType());
-                                            if (!CheckUtil.isEmpty(dbContentList)) {
-                                                DBHelper.get().getSamplingContentDao().deleteInTx(dbContentList);
-                                            }
-                                            samplingContent.setId(UUID.randomUUID().toString());
-                                        }
-                                        DBHelper.get().getSamplingContentDao().insertInTx(samplingContents);
-                                    }
-
-                                    //文件
-                                    List<SamplingFile> samplingFileList = sampling.getHasFile();
-                                    if (samplingFileList != null) {
-                                        for (SamplingFile samplingFile : samplingFileList) {
-                                            //从数据库查询对应的文件，Id由于是服务端提供的，所以不会变，但是SamplingId可能会变化，所以这里做一次更新
-                                            List<SamplingFile> dbFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.Id.eq(samplingFile.getId())).list();
-                                            for (SamplingFile dbFile : dbFiles) {
-                                                if (!new File(dbFile.getFilePath()).exists()) {
-                                                    //本地图片不存在了，重新下载图片
-                                                    donwloadSamplingFile(dbFile, samplingFile, sampling.getId());
-                                                } else if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
-                                                        null && !dbFile.getSamplingId().equals(sampling.getId()))) {
-                                                    dbFile.setSamplingId(sampling.getId());
-                                                    DBHelper.get().getSamplingFileDao().update(dbFile);
-                                                }
-                                            }
-
-                                            //数据库中未找到，直接下载
-                                            if (dbFiles.size() == 0) {
-                                                donwloadSamplingFile(null, samplingFile, sampling.getId());
-                                            }
-                                        }
-                                    }
-
-                                    //同步仪器法监测结果
-                                    List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
-                                    if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
-                                        for (SamplingDetail samplingDetail : samplingDetailYQFs) {
-                                            QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
-//                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
-                                            //匹配采样单编号一样的数据或Id一样，覆盖。
-                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()))).list();
-                                            if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
-                                                DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
-                                            }
-                                        }
-                                        DBHelper.get().getSamplingDetailDao().insertOrReplaceInTx(samplingDetailYQFs);
-                                    }
-
-                                    sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
-                                            && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
-                                    sampling.setIsLocal(false);
-                                    DBHelper.get().getSamplingDao().insert(sampling);
+                                    saveOneSampling(sampling);
                                 }
                             }
                         }
@@ -1025,6 +939,134 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         msg.handleMessageToTarget();
                     }
                 }));
+    }
+
+    /**
+     * 根据ID获取采样单
+     * @param msg
+     * @param samplingId
+     */
+    public void getSamplinByID(final Message msg, String samplingId) {
+        mModel.getSamplingById(samplingId)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Sampling>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Sampling>> baseResponse) {
+                        if (!CheckUtil.isNull(baseResponse)) {
+                            List<Sampling> samplings = baseResponse.getData();
+                            if (!CheckUtil.isEmpty(samplings)) {
+                                for (Sampling sampling : samplings) {
+                                    saveOneSampling(sampling);
+                                }
+                            }
+                        }
+
+                        msg.what = Message.RESULT_OK;
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int responseCode) {
+//                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.obj = message;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    /**
+     * 保存一个采样单
+     * @param sampling
+     */
+    private void saveOneSampling(Sampling sampling){
+        String formName = sampling.getFormName();
+
+        if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)) {
+            sampling.setFormPath(TaskDetailActivity.PATH_PRECIPITATION);
+        } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_WASTEWATER)) {
+            sampling.setFormPath(TaskDetailActivity.PATH_WASTEWATER);
+        } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)) {
+            sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
+        }
+
+        //处理有相同SamplingNo不同id的情况
+        List<Sampling> localSamplings = getLocalSamplingsByNo(sampling.getSamplingNo());
+        if (!CheckUtil.isEmpty(localSamplings)) {
+            DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
+        }
+        //DBHelper.get().getSamplingDao().delete(sampling);
+
+        //分瓶
+        List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
+        if (!CheckUtil.isEmpty(samplingFormStands)) {
+            DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
+        }
+
+        //样品
+        List<SamplingDetail> samplingDetails = sampling.getSamplingDetailResults();
+        if (!CheckUtil.isEmpty(samplingDetails)) {
+            for (SamplingDetail samplingDetail : samplingDetails) {
+                DBHelper.get().getSamplingDetailDao().delete(samplingDetail);
+            }
+            DBHelper.get().getSamplingDetailDao().insertInTx(samplingDetails);
+        }
+
+        List<SamplingContent> samplingContents = sampling.getSamplingContentResults();
+        if (!CheckUtil.isEmpty(samplingContents)) {
+            for (SamplingContent samplingContent : samplingContents) {
+                List<SamplingContent> dbContentList = HelpUtil.getSamplingContent(samplingContent.getProjectId(), samplingContent.getSamplingId(), samplingContent.getSampingCode(), samplingContent.getSamplingType());
+                if (!CheckUtil.isEmpty(dbContentList)) {
+                    DBHelper.get().getSamplingContentDao().deleteInTx(dbContentList);
+                }
+                samplingContent.setId(UUID.randomUUID().toString());
+            }
+            DBHelper.get().getSamplingContentDao().insertInTx(samplingContents);
+        }
+
+        //文件
+        List<SamplingFile> samplingFileList = sampling.getHasFile();
+        if (samplingFileList != null) {
+            for (SamplingFile samplingFile : samplingFileList) {
+                //从数据库查询对应的文件，Id由于是服务端提供的，所以不会变，但是SamplingId可能会变化，所以这里做一次更新
+                List<SamplingFile> dbFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.Id.eq(samplingFile.getId())).list();
+                for (SamplingFile dbFile : dbFiles) {
+                    if (!new File(dbFile.getFilePath()).exists()) {
+                        //本地图片不存在了，重新下载图片
+                        donwloadSamplingFile(dbFile, samplingFile, sampling.getId());
+                    } else if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
+                            null && !dbFile.getSamplingId().equals(sampling.getId()))) {
+                        dbFile.setSamplingId(sampling.getId());
+                        DBHelper.get().getSamplingFileDao().update(dbFile);
+                    }
+                }
+
+                //数据库中未找到，直接下载
+                if (dbFiles.size() == 0) {
+                    donwloadSamplingFile(null, samplingFile, sampling.getId());
+                }
+            }
+        }
+
+        //同步仪器法监测结果
+        List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
+        if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
+            for (SamplingDetail samplingDetail : samplingDetailYQFs) {
+                QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
+//                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                //匹配采样单编号一样的数据或Id一样，覆盖。
+                List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()))).list();
+                if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
+                    DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
+                }
+            }
+            DBHelper.get().getSamplingDetailDao().insertOrReplaceInTx(samplingDetailYQFs);
+        }
+
+        sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
+                && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
+        sampling.setIsLocal(false);
+        DBHelper.get().getSamplingDao().insert(sampling);
     }
 
     /**
