@@ -278,14 +278,14 @@ public class SubmitDataUtil {
     /**
      * 组装上传文件
      *
-     * @param sampling
+     * @param dataList
      * @return
      */
-    public static List<PreciptationSampForm.SampFormBean.SamplingFileBean> setUpSamplingFileDataList(Sampling sampling) {
+    public static List<PreciptationSampForm.SampFormBean.SamplingFileBean> setUpSamplingFileDataList(List<SamplingFile> dataList) {
         List<PreciptationSampForm.SampFormBean.SamplingFileBean> result = new ArrayList<>();
 
         //从数据库加载数据
-        List<SamplingFile> dataList = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
+//        List<SamplingFile> dataList = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId())).list();
         if (CheckUtil.isEmpty(dataList)) {
             return result;
         }

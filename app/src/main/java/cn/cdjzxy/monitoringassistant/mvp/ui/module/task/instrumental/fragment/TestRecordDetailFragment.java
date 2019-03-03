@@ -166,13 +166,13 @@ public class TestRecordDetailFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        TestRecordDetailFragment.this.unitId = "";
         mSampling = InstrumentalActivity.mSampling;
 
         if (isVisibleToUser) {
             tvAnalyseTime.setText("");
             tvTestUnit.setText("");
             etAnalyseResult.setText("");
+            TestRecordDetailFragment.this.unitId = "";
             creatSampleDetailNo();
         }
     }
@@ -193,6 +193,10 @@ public class TestRecordDetailFragment extends BaseFragment {
         tvControl.setText(samplingDetail.getSamplingType() == 1 ? "平行" : "");
         tvAnalyseTime.setText(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
         etAnalyseResult.setText(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
+
+        //记录结果单位ID
+        TestRecordDetailFragment.this.unitId = samplingDetail.getPrivateDataStringValue("ValueUnit");
+
         tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
 
         if (!mSampling.getIsCanEdit()) {
@@ -306,6 +310,11 @@ public class TestRecordDetailFragment extends BaseFragment {
             Double.parseDouble(result);
         } catch (Exception e) {
             ArtUtils.makeText(getContext(), "分析结果不是合法数字！");
+            return false;
+        }
+
+        if (TextUtils.isEmpty(TestRecordDetailFragment.this.unitId)) {
+            ArtUtils.makeText(getContext(), "结果单位ID为空！");
             return false;
         }
 

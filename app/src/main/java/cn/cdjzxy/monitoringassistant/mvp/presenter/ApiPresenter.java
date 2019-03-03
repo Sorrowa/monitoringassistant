@@ -955,6 +955,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse)) {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
+
                                 for (Sampling sampling : samplings) {
                                     saveOneSampling(sampling);
                                 }
@@ -1053,9 +1054,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
             for (SamplingDetail samplingDetail : samplingDetailYQFs) {
                 QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
-//                                            List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
                 //匹配采样单编号一样的数据或Id一样，覆盖。
-                List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()))).list();
+//                List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().whereOr(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
                 if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
                     DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
                 }
