@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -54,11 +55,11 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
 
     private String projectId;
 
-    private List<User> mUsers         = new ArrayList<>();
+    private List<User> mUsers = new ArrayList<>();
     private List<User> mUsersSelected = new ArrayList<>();
 
     private StringBuilder UserName = new StringBuilder("");
-    private StringBuilder UserId   = new StringBuilder("");
+    private StringBuilder UserId = new StringBuilder("");
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -93,6 +94,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
         initUsersSelectedView();
 
         projectId = getIntent().getStringExtra("projectId");
+        String selectUserIds = getIntent().getStringExtra("selectUserIds");
 
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
 
@@ -105,6 +107,18 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
         }
         mUserAdapter.notifyDataSetChanged();
 
+        //填充选中的用户
+        if (!TextUtils.isEmpty(selectUserIds)) {
+            String[] selectUserIdArr = selectUserIds.split(",");
+            if (selectUserIdArr != null && selectUserIdArr.length > 0) {
+                List<User> selectUsers = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(selectUserIdArr)).list();
+                if (!CheckUtil.isEmpty(selectUsers)) {
+                    mUsersSelected.clear();
+                    mUsersSelected.addAll(selectUsers);
+                }
+                mUserSelectedAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
 
@@ -177,7 +191,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     private void addMonItems() {
-        List<User> tempList= new ArrayList<>();
+        List<User> tempList = new ArrayList<>();
         for (User user : mUsers) {
             if (user.isSelected()) {
                 user.setSelected(false);
@@ -187,8 +201,8 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
 
-        if (!CheckUtil.isEmpty(tempList)){
-            for (User user : tempList){
+        if (!CheckUtil.isEmpty(tempList)) {
+            for (User user : tempList) {
                 mUsers.remove(user);
             }
         }
@@ -207,7 +221,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void deleteMonItems() {
-        List<User> tempList= new ArrayList<>();
+        List<User> tempList = new ArrayList<>();
         for (User user : mUsersSelected) {
             if (user.isSelected()) {
                 user.setSelected(false);
@@ -216,8 +230,8 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
 
-        if (!CheckUtil.isEmpty(tempList)){
-            for (User user : tempList){
+        if (!CheckUtil.isEmpty(tempList)) {
+            for (User user : tempList) {
                 mUsersSelected.remove(user);
             }
         }

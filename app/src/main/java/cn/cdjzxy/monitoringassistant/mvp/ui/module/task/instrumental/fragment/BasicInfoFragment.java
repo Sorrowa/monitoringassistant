@@ -101,7 +101,8 @@ public class BasicInfoFragment extends BaseFragment {
             tvSamplingNo.setText(InstrumentalActivity.mSampling.getSamplingNo());
             tvProjectName.setText(InstrumentalActivity.mSampling.getProjectName());
             tvMonitemName.setText(InstrumentalActivity.mSampling.getMonitemName());
-            tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+//            tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+            tvSamplingProperty.setText(InstrumentalActivity.mSampling.getFormTypeName());
             tvTestUser.setText(InstrumentalActivity.mSampling.getSamplingUserName());
             tvTestStartDate.setText(InstrumentalActivity.mSampling.getSamplingTimeBegin());
             tvTestEndDate.setText(InstrumentalActivity.mSampling.getSamplingTimeEnd());
@@ -171,6 +172,7 @@ public class BasicInfoFragment extends BaseFragment {
             case R.id.tv_test_user:
                 Intent intent1 = new Intent(getContext(), UserActivity.class);
                 intent1.putExtra("projectId", InstrumentalActivity.mSampling.getProjectId());
+                intent1.putExtra("selectUserIds", InstrumentalActivity.mSampling.getSamplingUserId());
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
@@ -215,16 +217,19 @@ public class BasicInfoFragment extends BaseFragment {
                         InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
                         InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
 
-                        InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
-                        InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+//                        InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
+//                        InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));
+                        InstrumentalActivity.mSampling.setFormType(data.getStringExtra("TagId"));
+                        InstrumentalActivity.mSampling.setFormTypeName(data.getStringExtra("TagName"));
 
-                        InstrumentalActivity.mSampling.setPrivateDataStringValue("FormTypeName", InstrumentalActivity.mSampling.getTagName());
+                        InstrumentalActivity.mSampling.setPrivateDataStringValue("FormTypeName", InstrumentalActivity.mSampling.getFormTypeName());
 
 //                        InstrumentalActivity.mSampling.setAllMonitemId(data.getStringExtra("AllMonitemId"));
 //                        InstrumentalActivity.mSampling.setAllMonitemName(data.getStringExtra("AllMonitemName"));
 
 //                        tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
-                        tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+//                        tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
+                        tvSamplingProperty.setText(InstrumentalActivity.mSampling.getFormTypeName());
                         tvMonitemName.setText(InstrumentalActivity.mSampling.getMonitemName());
 
                         //重置监测方法
