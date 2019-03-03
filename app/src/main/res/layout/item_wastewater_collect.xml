@@ -83,7 +83,9 @@
                 android:layout_marginTop="@dimen/dp_4"
                 android:text="监测项目（0）："
                 android:textColor="@color/text_color_666666"
-                android:textSize="@dimen/text_size_12" />
+                android:textSize="@dimen/text_size_12"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
             <TextView
                 android:id="@+id/collect_live_measure"
@@ -92,7 +94,9 @@
                 android:layout_marginTop="@dimen/dp_2"
                 android:text="现场测定（0）："
                 android:textColor="@color/text_color_666666"
-                android:textSize="@dimen/text_size_12" />
+                android:textSize="@dimen/text_size_12"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
         </LinearLayout>
 
