@@ -508,10 +508,18 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
                 Sampling sampling = mSamplings.get(position);
                 if (sampling == null || !sampling.getIsFinish()) {
+
+                    String finishAlt = "";
+                    if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
+                    } else if (PATH_WASTEWATER.equals(sampling.getFormPath())) {
+                    } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
+                        finishAlt = InstrumentalActivity.CheckIsSamplingFinish(sampling);
+                    }
+
                     if (sampling.getStatus() == 4) {
-                        showMessage("请先完善采样单信息后再次提交！");
+                        showMessage("请先完善采样单信息后再次提交！"+finishAlt);
                     }else{
-                        showMessage("请先完善采样单信息！");
+                        showMessage("请先完善采样单信息！"+finishAlt);
                     }
                     return;
                 }

@@ -190,6 +190,7 @@ public class TestRecordFragment extends BaseFragment {
         //排序
         Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
 
+
         mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
@@ -230,7 +231,7 @@ public class TestRecordFragment extends BaseFragment {
      */
     private void checkPxData(List<SamplingDetail> details) {
         for (SamplingDetail item : details) {
-            if (item.getSamplingType()==1) {
+            if (item.getSamplingType() == 1) {
                 //平行数据，不能被选中
                 item.setCanSelect(false);
                 continue;
@@ -244,6 +245,14 @@ public class TestRecordFragment extends BaseFragment {
             }
 
             item.setCanSelect(true);
+
+            //记录选中项
+            if (item.isSelected()) {
+                if (currSelectDetails != null) {
+                    currSelectDetails.setSelected(false);
+                }
+                currSelectDetails = item;
+            }
         }
     }
 
@@ -331,7 +340,7 @@ public class TestRecordFragment extends BaseFragment {
             } else if (o1.getFrequecyNo() > o2.getFrequecyNo()) {
                 return 1;
             } else {
-                if (o1.getSamplingType()==0) {
+                if (o1.getSamplingType() == 0) {
                     return -1;
                 }
 
