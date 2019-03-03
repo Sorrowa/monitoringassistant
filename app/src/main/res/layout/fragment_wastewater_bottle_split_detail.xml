@@ -39,12 +39,17 @@
     <RelativeLayout style="@style/BasicInfoItemStyle">
 
         <TextView
+            android:id="@+id/jcxm_name"
             style="@style/BasicInfoItemNameStyle"
             android:text="监测项目" />
 
         <TextView
             android:id="@+id/sample_project"
-            style="@style/BasicInfoItemTextViewStyle" />
+            android:layout_toRightOf="@id/jcxm_name"
+            style="@style/BasicInfoItemTextViewStyle"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginLeft="@dimen/dp_20"/>
 
     </RelativeLayout>
 

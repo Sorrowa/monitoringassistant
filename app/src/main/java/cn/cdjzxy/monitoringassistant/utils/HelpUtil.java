@@ -17,9 +17,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -247,6 +249,124 @@ public class HelpUtil {
             builderItems.deleteCharAt(builderItems.lastIndexOf(","));
         }
         return builderItems.toString();
+    }
+
+    /**
+     * 判断采样单下面是否有分瓶信息
+     * @param samplingId
+     * @return
+     */
+    public static boolean isSamplingHasBottle(String samplingId){
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).list();
+        if (!CheckUtil.isEmpty(formStantdsList)){
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * monitemName 对应的 SamplingStantd
+     * @param monitemName
+     * @param tagId
+     * @return
+     */
+    public static SamplingStantd getSamplingStantdByMonItem(String monitemName,String tagId){
+        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().where(SamplingStantdDao.Properties.TagId.eq(tagId)).list();
+        if (!CheckUtil.isEmpty(stantdsList)){
+            for (SamplingStantd samplingStantd:stantdsList){
+                List<String> monItemsList=samplingStantd.getMonItems();
+                if (!CheckUtil.isEmpty(monitemName ) && !CheckUtil.isEmpty(monItemsList) && monItemsList.contains(monitemName)){
+                    return samplingStantd;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 判断采样单下包含itemId的分瓶信息是否存在
+     * @param itemId
+     * @param samplingId
+     * @return
+     */
+    public static SamplingFormStand isBottleExists(String itemId,String samplingId){
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).list();
+        if (!CheckUtil.isEmpty(formStantdsList)){
+            for (SamplingFormStand formStand:formStantdsList){
+                if (formStand.getMonitemIds().contains(itemId)){
+                    return formStand;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取采样单里面的所有样品的MonitIds取并集并去重
+     * @param samplingId
+     * @return
+     */
+    public static List<String> getAllJcMonitIds(String samplingId){
+        List<String> ids=new ArrayList<>();
+        List<SamplingContent> samplingContentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(samplingId)).orderAsc(SamplingContentDao.Properties.OrderIndex).list();
+        if (!CheckUtil.isEmpty(samplingContentList)) {
+            for (SamplingContent samplingContent:samplingContentList){
+                String idsStr=samplingContent.getMonitemId();
+                if (!CheckUtil.isEmpty(idsStr)){
+                    String[] idsArray=idsStr.split(",");
+                    if (!CheckUtil.isEmpty(idsArray)){
+                        for (String idStr:idsArray){
+                            if (!ids.contains(idStr)){
+                                ids.add(idStr);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * 获取采样单下面是否和监测项目的itemId一样的标准的分瓶信息
+     * @param itemId
+     * @param mSample
+     * @return
+     */
+    public static SamplingFormStand getTheSameStandBottleByItemId(String itemId,Sampling mSample){
+        String itemName=HelpUtil.getMonItemNameById(itemId,mSample);
+        SamplingStantd samplingStantd=HelpUtil.getSamplingStantdByMonItem(itemName,mSample.getTagId());
+        //查询所有bottle
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
+        if (!CheckUtil.isEmpty(formStantdsList)){
+            for (SamplingFormStand formStand:formStantdsList){
+                String idsStr=formStand.getMonitemIds();
+                if (!CheckUtil.isEmpty(idsStr)){
+                    String[] idsArry=idsStr.split(",");
+                    if (!CheckUtil.isEmpty(idsArry)){
+                        String firstId=idsArry[0];
+                        String monItemName=HelpUtil.getMonItemNameById(firstId,mSample);
+                        if (!CheckUtil.isEmpty(monItemName) && !CheckUtil.isNull(samplingStantd) && !CheckUtil.isEmpty(samplingStantd.getMonItems()) && samplingStantd.getMonItems().contains(monItemName)){
+                            return formStand;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 产生新的分瓶信息的index
+     * @return
+     */
+    public static int generateNewBottleIndex(String samplingId){
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).orderAsc(SamplingFormStandDao.Properties.Index).list();
+        if (!CheckUtil.isEmpty(formStantdsList)){
+            return formStantdsList.get(formStantdsList.size()-1).getIndex()+1;
+        }
+        return 1;
     }
 
 }

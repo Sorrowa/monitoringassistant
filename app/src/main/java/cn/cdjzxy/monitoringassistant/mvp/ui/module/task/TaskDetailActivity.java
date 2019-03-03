@@ -627,6 +627,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_tag, null);
         mCustomTab = view.findViewById(R.id.tabview);
         mRecyclerView = view.findViewById(R.id.recyclerView);
+
+        //清空数据
+        mFirstTags.clear();
+        mTagNames.clear();
+        mTags.clear();
+
         List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
         if (!CheckUtil.isEmpty(tags)) {
             for (Tags tag : tags) {

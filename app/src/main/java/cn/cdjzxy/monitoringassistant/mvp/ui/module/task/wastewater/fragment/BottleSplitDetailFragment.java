@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +52,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.PlaceActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.BottleMonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
@@ -86,6 +89,8 @@ public class BottleSplitDetailFragment extends BaseFragment {
     private Sampling mSample;
     private int bottleListPosition;
     private SamplingFormStand bottleSplit;
+
+    private String initMonitemIds;
 
 
     public BottleSplitDetailFragment() {
@@ -163,7 +168,8 @@ public class BottleSplitDetailFragment extends BaseFragment {
             sample_date.setText(CheckUtil.isEmpty(bottleSplit.getSaveTimes())?"":bottleSplit.getSaveTimes());
             sample_place.setText(CheckUtil.isEmpty(bottleSplit.getAnalysisSite())?"":bottleSplit.getAnalysisSite());
         }
-
+        //设置初始化的MonitemIds
+        initMonitemIds=new String(bottleSplit.getMonitemIds());
     }
 
     @OnClick({R.id.btn_back, R.id.sample_place, R.id.sample_project, R.id.btn_save, R.id.btn_delete})
@@ -231,6 +237,9 @@ public class BottleSplitDetailFragment extends BaseFragment {
                             DBHelper.get().getSamplingDao().update(mSample);
                         }
 
+                        //更新index
+                        updateAllBottleIndex();
+
                         ArtUtils.makeText(getContext(), "删除成功");
                         EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                         EventBus.getDefault().post(2, EventBusTags.TAG_WASTEWATER_BOTTLE);
@@ -250,6 +259,25 @@ public class BottleSplitDetailFragment extends BaseFragment {
      */
     private void operateSave() {
         if (isSaveChecked()) {
+            /*
+            List<String> initIdList=new ArrayList<>();
+            List<String> endIdList=new ArrayList<>();
+            if (!CheckUtil.isEmpty(initMonitemIds)){
+                initIdList=Arrays.asList(initMonitemIds.split(","));
+            }
+
+            if (!CheckUtil.isEmpty(bottleSplit.getMonitemIds())){
+                endIdList=Arrays.asList(bottleSplit.getMonitemIds().split(","));
+            }
+
+            //判断是合并还是拆分
+            if (initIdList.size()==endIdList.size() && initIdList.containsAll(endIdList)){
+                Log.d("","");
+            }else {
+                Log.d("","");
+            }
+            */
+
             bottleSplit.setSamplingId(mSample.getId());
             bottleSplit.setContainer(sample_vessel.getText().toString());
             bottleSplit.setCount(Integer.parseInt(sample_number.getText().toString()));
@@ -372,8 +400,9 @@ public class BottleSplitDetailFragment extends BaseFragment {
      * 选择监测项目
      */
     private void showMonitorItems() {
-        Intent intent = new Intent(getContext(), MonItemActivity.class);
+        Intent intent = new Intent(getContext(), BottleMonItemActivity.class);
         intent.putExtra("tagId", mSample.getParentTagId());
+        intent.putExtra("samplingId", mSample.getId());
         if (!CheckUtil.isEmpty(bottleSplit.getMonitemIds())) {
             intent.putExtra("selectItems", bottleSplit.getMonitemIds());
         }
@@ -425,5 +454,19 @@ public class BottleSplitDetailFragment extends BaseFragment {
             }
         }
         return null;
+    }
+
+    /**
+     * 更新分瓶信息的index
+     */
+    private void updateAllBottleIndex(){
+        List<SamplingFormStand> samplingFormStandList=mSample.getSamplingFormStandResults();
+        if (!CheckUtil.isEmpty(samplingFormStandList)){
+            for (int i=0;i<samplingFormStandList.size();i++){
+                samplingFormStandList.get(i).setIndex(i+1);
+                samplingFormStandList.get(i).setStandNo(i+1);
+            }
+        }
+        DBHelper.get().getSamplingFormStandDao().updateInTx(samplingFormStandList);
     }
 }

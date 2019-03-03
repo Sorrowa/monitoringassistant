@@ -436,7 +436,8 @@ public class CollectionFragment extends BaseFragment {
         }
         */
 
-        samplingContent.setSamplingCount(count);
+        //添加平行的样品数量和被选择的是一样的
+        samplingContent.setSamplingCount(selectSamplingDetail.getSamplingCount());
         DBHelper.get().getSamplingContentDao().insert(samplingContent);
         WastewaterActivity.mSample.getSamplingContentResults().add(samplingContent);
         mWasteWaterCollectAdapter.notifyDataSetChanged();
