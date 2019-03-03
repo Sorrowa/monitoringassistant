@@ -235,6 +235,8 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
             samplingDetail.setPrivateDataStringValue("CaleValue", "");
             samplingDetail.setPrivateDataStringValue("RPDValue", "");
+            samplingDetail.setPrivateDataStringValue("ValueUnit", "");
+            samplingDetail.setPrivateDataStringValue("ValueUnitName", "");
             samplingDetail.setValue("");//均值
 
             //新加样品都可选择

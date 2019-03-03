@@ -284,6 +284,8 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
         samplingDetail.setPrivateDataStringValue("CaleValue", "");
         samplingDetail.setPrivateDataStringValue("RPDValue", "");
+        samplingDetail.setPrivateDataStringValue("ValueUnit", "");
+        samplingDetail.setPrivateDataStringValue("ValueUnitName", "");
         samplingDetail.setValue("");//均值
 
         //保存到数据库
