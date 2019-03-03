@@ -30,6 +30,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         public final static Property FileName = new Property(3, String.class, "FileName", false, "FILE_NAME");
         public final static Property FilePath = new Property(4, String.class, "FilePath", false, "FILE_PATH");
         public final static Property UpdateTime = new Property(5, String.class, "UpdateTime", false, "UPDATE_TIME");
+        public final static Property IsUploaded = new Property(6, boolean.class, "IsUploaded", false, "IS_UPLOADED");
     }
 
 
@@ -50,7 +51,8 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
                 "\"SAMPLING_ID\" TEXT," + // 2: SamplingId
                 "\"FILE_NAME\" TEXT," + // 3: FileName
                 "\"FILE_PATH\" TEXT," + // 4: FilePath
-                "\"UPDATE_TIME\" TEXT);"); // 5: UpdateTime
+                "\"UPDATE_TIME\" TEXT," + // 5: UpdateTime
+                "\"IS_UPLOADED\" INTEGER NOT NULL );"); // 6: IsUploaded
     }
 
     /** Drops the underlying database table. */
@@ -92,6 +94,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         if (UpdateTime != null) {
             stmt.bindString(6, UpdateTime);
         }
+        stmt.bindLong(7, entity.getIsUploaded() ? 1L: 0L);
     }
 
     @Override
@@ -127,6 +130,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         if (UpdateTime != null) {
             stmt.bindString(6, UpdateTime);
         }
+        stmt.bindLong(7, entity.getIsUploaded() ? 1L: 0L);
     }
 
     @Override
@@ -142,7 +146,8 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // SamplingId
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // FileName
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // FilePath
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // UpdateTime
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // UpdateTime
+            cursor.getShort(offset + 6) != 0 // IsUploaded
         );
         return entity;
     }
@@ -155,6 +160,7 @@ public class SamplingFileDao extends AbstractDao<SamplingFile, String> {
         entity.setFileName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setFilePath(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setUpdateTime(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setIsUploaded(cursor.getShort(offset + 6) != 0);
      }
     
     @Override

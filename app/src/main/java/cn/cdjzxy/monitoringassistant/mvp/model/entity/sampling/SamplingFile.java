@@ -14,15 +14,18 @@ public class SamplingFile {
     private String FileName;
     private String FilePath;
     private String UpdateTime;
-    @Generated(hash = 79382865)
+    private boolean IsUploaded;
+    @Generated(hash = 1777992089)
     public SamplingFile(String LocalId, String Id, String SamplingId,
-            String FileName, String FilePath, String UpdateTime) {
+            String FileName, String FilePath, String UpdateTime,
+            boolean IsUploaded) {
         this.LocalId = LocalId;
         this.Id = Id;
         this.SamplingId = SamplingId;
         this.FileName = FileName;
         this.FilePath = FilePath;
         this.UpdateTime = UpdateTime;
+        this.IsUploaded = IsUploaded;
     }
     @Generated(hash = 863733679)
     public SamplingFile() {
@@ -62,6 +65,12 @@ public class SamplingFile {
     }
     public void setUpdateTime(String UpdateTime) {
         this.UpdateTime = UpdateTime;
+    }
+    public boolean getIsUploaded() {
+        return this.IsUploaded;
+    }
+    public void setIsUploaded(boolean IsUploaded) {
+        this.IsUploaded = IsUploaded;
     }
 
 

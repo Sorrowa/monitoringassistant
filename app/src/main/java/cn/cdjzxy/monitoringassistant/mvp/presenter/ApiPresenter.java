@@ -943,6 +943,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     /**
      * 根据ID获取采样单
+     *
      * @param msg
      * @param samplingId
      */
@@ -978,9 +979,10 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     /**
      * 保存一个采样单
+     *
      * @param sampling
      */
-    private void saveOneSampling(Sampling sampling){
+    private void saveOneSampling(Sampling sampling) {
         String formName = sampling.getFormName();
 
         if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_PRECIPITATION)) {
@@ -1129,8 +1131,12 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     private String donwloadFile(String fileAddr, String fileName) {
 
         try {
-            //文件名手动编码
-            fileAddr = fileAddr.replace(fileName, java.net.URLEncoder.encode(fileName, "utf-8"));
+            int lastIndex = fileAddr.lastIndexOf("/");
+            if (lastIndex >= 0) {
+                String fn = fileAddr.substring(lastIndex + 1);
+                //文件名手动编码
+                fileAddr = fileAddr.replace(fn, java.net.URLEncoder.encode(fn, "utf-8"));
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -1295,8 +1301,14 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onSuccess(Response<UploadFileResponse<List<FileInfoData>>> baseResponse) {
                         if (baseResponse.code() == 200) {
-                            msg.what = Message.RESULT_OK;
-                            msg.obj = baseResponse.body().getData();
+                            UploadFileResponse<List<FileInfoData>> data = baseResponse.body();
+                            if (data.getCode() == 1) {
+                                msg.what = Message.RESULT_OK;
+                                msg.obj = data.getData();
+                            } else {
+                                msg.obj = String.format("上传错误：%s，%d", data.getMessage(), data.getCode());
+                                msg.what = Message.RESULT_FAILURE;
+                            }
                         } else if (baseResponse.code() == 413) {
                             msg.obj = "文件过大！";
                             msg.what = Message.RESULT_FAILURE;
@@ -1370,7 +1382,16 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             String samplingId = param.samplingId;
 
             //下载并保存文件
-            String localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+            String localPath = "";
+
+            String cacheDir = ApiPresenter.this.appComponent.appManager().getCurrentActivity().getCacheDir().getPath();
+            File newFile = new File(cacheDir + "/" + remoteFile.getFileName());
+            if (!newFile.exists()) {
+                //下载并保存文件
+                localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+            } else {
+                localPath = newFile.getPath();
+            }
 
             //是否成功
             if (TextUtils.isEmpty(localPath)) {
@@ -1388,6 +1409,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             samplingFile.setId(remoteFile.getId());
             samplingFile.setFileName(remoteFile.getFileName());
             samplingFile.setUpdateTime(remoteFile.getUpdateTime());
+            samplingFile.setIsUploaded(true);
 
             DBHelper.get().getSamplingFileDao().insertOrReplace(samplingFile);
 

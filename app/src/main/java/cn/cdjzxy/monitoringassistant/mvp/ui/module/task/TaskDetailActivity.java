@@ -258,6 +258,20 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 sampling.setSelected(false);
                 DBHelper.get().getSamplingDao().update(sampling);
 
+                //标记文件已上传
+                List<SamplingFile> updateFiles = new ArrayList<>();
+                List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.IsUploaded.eq(false)).list();
+                for (SamplingFile sf : samplingFiles) {
+                    if(!sf.getIsUploaded()){
+                        sf.setIsUploaded(true);
+                        updateFiles.add(sf);
+                    }
+                }
+
+                if (updateFiles.size() > 0) {
+                    DBHelper.get().getSamplingFileDao().updateInTx(updateFiles);
+                }
+
                 setUploadAltInfo(String.format("采样单[%s]上传成功！", sampling.getSamplingNo()));
 
                 if (!uploadNextSampling()) {
@@ -520,9 +534,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     }
 
                     if (sampling.getStatus() == 4) {
-                        showMessage("请先完善采样单信息后再次提交！"+finishAlt);
-                    }else{
-                        showMessage("请先完善采样单信息！"+finishAlt);
+                        showMessage("请先完善采样单信息后再次提交！" + finishAlt);
+                    } else {
+                        showMessage("请先完善采样单信息！" + finishAlt);
                     }
                     return;
                 }
@@ -1004,10 +1018,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         //上传采样单对应的文件，文件上传成功后上传采样单
         uploadSamplingFiles(sampling, new FileUploadHandler() {
             @Override
-            public void onSuccess(List<SamplingFile> samplingFiles) {
+            public void onSuccess() {
                 setUploadAltInfo(String.format("正在上传采样单[%s]", sampling.getSamplingNo()));
 
-                if(TextUtils.isEmpty(sampling.getAddTime())){
+                if (TextUtils.isEmpty(sampling.getAddTime())) {
                     sampling.setAddTime(DateUtils.getTime(new Date().getTime()));
                 }
 
@@ -1029,7 +1043,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
 
                 //上传文件组装
-                preciptationSampForm.setUploadFiles(SubmitDataUtil.setUpSamplingFileDataList(samplingFiles));
+                preciptationSampForm.setUploadFiles(SubmitDataUtil.setUpSamplingFileDataList(sampling));
                 //删除文件组装
                 preciptationSampForm.setDelFiles(sampling.getSubmitDeleteFileIdList());
 
@@ -1069,10 +1083,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void uploadSamplingFiles(Sampling sampling, FileUploadHandler handler) {
         //从数据库加载数据
-        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq("")).list();
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq(""),SamplingFileDao.Properties.IsUploaded.eq(false)).list();
         if (CheckUtil.isEmpty(samplingFiles)) {
             if (handler != null) {
-                handler.onSuccess(null);
+                handler.onSuccess();
             }
             return;
         }
@@ -1084,7 +1098,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         List<File> compressFiles = new ArrayList<>();
 
         for (SamplingFile sf : samplingFiles) {
-            if(!TextUtils.isEmpty(sf.getId())){
+            if (!TextUtils.isEmpty(sf.getId())) {
                 continue;//已经有文件ID，上传成功的文件
             }
 
@@ -1104,7 +1118,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         if (CheckUtil.isEmpty(sourceFiles)) {
             if (handler != null) {
-                handler.onSuccess(null);
+                handler.onSuccess();
             }
             return;
         }
@@ -1233,15 +1247,15 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         }
 
                         if (!(message.obj instanceof List)) {
-                            String error="";
-                            if(message.obj instanceof String){
+                            String error = "";
+                            if (message.obj instanceof String) {
                                 error = message.obj.toString();
-                            }else{
+                            } else {
                                 error = message.obj.toString();
                             }
 
                             if (handler != null) {
-                                handler.onFailed("图片上传失败，数据错误！"+error);
+                                handler.onFailed("图片上传失败，数据错误！" + error);
                             }
                             return;
                         }
@@ -1255,7 +1269,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         }
 
                         setUploadAltInfo(String.format("采样单[%s]图片上传成功！", sampling.getSamplingNo()));
-                        List<SamplingFile> samplingFiles = new ArrayList<>();
+
                         //重新设置文件ID
                         for (FileInfoData item : fileInfoData) {
                             if (!fileSet.containsKey(item.getFileName())) {
@@ -1266,15 +1280,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                             SamplingFile samplingFile = fileSet.get(item.getFileName());
                             //更新文件ID
                             samplingFile.setId(item.getId());
+                            samplingFile.setIsUploaded(false);
 
                             //更新到数据库
                             DBHelper.get().getSamplingFileDao().update(samplingFile);
-
-                            samplingFiles.add(samplingFile);
                         }
 
                         if (handler != null) {
-                            handler.onSuccess(samplingFiles);
+                            handler.onSuccess();
                         }
                         break;
 
@@ -1311,7 +1324,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     }
 
     interface FileUploadHandler {
-        void onSuccess(List<SamplingFile> samplingFiles);
+        void onSuccess();
 
         void onFailed(String message);
     }
