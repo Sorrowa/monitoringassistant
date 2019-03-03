@@ -485,6 +485,126 @@ public class CollectionDetailFragment extends BaseFragment {
         String currentMonitemIds=samplingDetail.getMonitemId();
         String[] monitemIds=currentMonitemIds.split(",");
         if (monitemIds!=null && monitemIds.length>0){
+            //判断之前是否有分瓶信息存在
+            if (HelpUtil.isSamplingHasBottle(mSample.getId())){
+                for (String itemId:monitemIds){
+                    SamplingFormStand samplingFormStand=HelpUtil.isBottleExists(itemId,mSample.getId());
+                    SamplingFormStand theSameStandBottle=HelpUtil.getTheSameStandBottleByItemId(itemId,mSample);
+                    //如果存在则不增加
+                    if (CheckUtil.isNull(samplingFormStand)){
+                        String itemName=HelpUtil.getMonItemNameById(itemId,mSample);
+                        if (CheckUtil.isNull(theSameStandBottle)){
+                            SamplingStantd samplingStantd=HelpUtil.getSamplingStantdByMonItem(itemName,mSample.getTagId());
+                            if (!CheckUtil.isNull(samplingStantd)){
+                                SamplingFormStand bottleSplit = new SamplingFormStand();
+                                bottleSplit.setContainer(samplingStantd.getContaner());
+                                bottleSplit.setAnalysisSite("");
+                                bottleSplit.setSaveTimes("");
+                                bottleSplit.setMonitemIds(itemId);
+                                bottleSplit.setId(UUID.randomUUID().toString());
+                                bottleSplit.setMonitemName(itemName);
+                                List<String> items=new ArrayList<>();
+                                items.add(itemId);
+                                bottleSplit.setMonItems(items);
+                                bottleSplit.setSamplingAmount(samplingStantd.getCapacity());
+                                bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setSamplingId(mSample.getId());
+                                bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                                bottleSplit.setSaveMehtod(samplingStantd.getSaveDescription());
+                                bottleSplit.setCount(1);
+                                DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+                            }else {
+                                SamplingFormStand bottleSplit = new SamplingFormStand();
+                                bottleSplit.setContainer("");
+                                bottleSplit.setAnalysisSite("");
+                                bottleSplit.setSaveTimes("");
+                                bottleSplit.setMonitemIds(itemId);
+                                bottleSplit.setId(UUID.randomUUID().toString());
+                                bottleSplit.setMonitemName(itemName);
+                                List<String> items=new ArrayList<>();
+                                items.add(itemId);
+                                bottleSplit.setMonItems(items);
+                                bottleSplit.setSamplingAmount("");
+                                bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setSamplingId(mSample.getId());
+                                bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                                bottleSplit.setSaveMehtod("");
+                                bottleSplit.setCount(1);
+                                DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+
+                            }
+
+                        }else {
+                            theSameStandBottle.setMonitemIds(theSameStandBottle.getMonitemIds()+","+itemId);
+                            theSameStandBottle.setMonitemName(theSameStandBottle.getMonitemName()+","+itemName);
+                            DBHelper.get().getSamplingFormStandDao().updateInTx(theSameStandBottle);
+                        }
+                    }
+                }
+            }else {//如果不存在表示第一次增加
+                for (String itemId:monitemIds){
+                    SamplingFormStand samplingFormStand=HelpUtil.isBottleExists(itemId,mSample.getId());
+                    SamplingFormStand theSameStandBottle=HelpUtil.getTheSameStandBottleByItemId(itemId,mSample);
+                    //如果存在则不增加
+                    if (CheckUtil.isNull(samplingFormStand)){
+                        String itemName=HelpUtil.getMonItemNameById(itemId,mSample);
+                        if (CheckUtil.isNull(theSameStandBottle)){
+                            SamplingStantd samplingStantd=HelpUtil.getSamplingStantdByMonItem(itemName,mSample.getTagId());
+                            if (!CheckUtil.isNull(samplingStantd)){
+                                SamplingFormStand bottleSplit = new SamplingFormStand();
+                                bottleSplit.setContainer(samplingStantd.getContaner());
+                                bottleSplit.setAnalysisSite("");
+                                bottleSplit.setSaveTimes("");
+                                bottleSplit.setMonitemIds(itemId);
+                                bottleSplit.setId(UUID.randomUUID().toString());
+                                bottleSplit.setMonitemName(itemName);
+                                List<String> items=new ArrayList<>();
+                                items.add(itemId);
+                                bottleSplit.setMonItems(items);
+                                bottleSplit.setSamplingAmount(samplingStantd.getCapacity());
+                                bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setSamplingId(mSample.getId());
+                                bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                                bottleSplit.setSaveMehtod(samplingStantd.getSaveDescription());
+                                bottleSplit.setCount(1);
+                                DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+                            }else {
+                                SamplingFormStand bottleSplit = new SamplingFormStand();
+                                bottleSplit.setContainer("");
+                                bottleSplit.setAnalysisSite("");
+                                bottleSplit.setSaveTimes("");
+                                bottleSplit.setMonitemIds(itemId);
+                                bottleSplit.setId(UUID.randomUUID().toString());
+                                bottleSplit.setMonitemName(itemName);
+                                List<String> items=new ArrayList<>();
+                                items.add(itemId);
+                                bottleSplit.setMonItems(items);
+                                bottleSplit.setSamplingAmount("");
+                                bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                                bottleSplit.setSamplingId(mSample.getId());
+                                bottleSplit.setUpdateTime(DateUtils.getWholeDate());
+                                bottleSplit.setSaveMehtod("");
+                                bottleSplit.setCount(1);
+                                DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+
+                            }
+                        }else {//存在则更新
+                            theSameStandBottle.setMonitemIds(theSameStandBottle.getMonitemIds()+","+itemId);
+                            theSameStandBottle.setMonitemName(theSameStandBottle.getMonitemName()+","+itemName);
+                            DBHelper.get().getSamplingFormStandDao().updateInTx(theSameStandBottle);
+                        }
+                    }
+                }
+
+            }
+
+
+
+            /*
             for (String itemId:monitemIds){
                 SamplingFormStand samplingFormStand=bottleIsExists(itemId);
                 //如果已经存在，则不操作
@@ -535,6 +655,7 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
                 }
             }
+            */
 
         }
     }
@@ -576,17 +697,17 @@ public class CollectionDetailFragment extends BaseFragment {
         return null;
     }
 
-    /**
-     * 产生新的index
-     * @return
-     */
-    private int generateNewIndex(){
-        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
-        if (!CheckUtil.isEmpty(formStantdsList)){
-            return formStantdsList.get(formStantdsList.size()-1).getIndex()+1;
-        }
-        return 1;
-    }
+//    /**
+//     * 产生新的index
+//     * @return
+//     */
+//    private int generateNewIndex(){
+//        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+//        if (!CheckUtil.isEmpty(formStantdsList)){
+//            return formStantdsList.get(formStantdsList.size()-1).getIndex()+1;
+//        }
+//        return 1;
+//    }
 
     private void setBottleAndContent(){
         List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
@@ -989,7 +1110,7 @@ public class CollectionDetailFragment extends BaseFragment {
             if (!CheckUtil.isEmpty(idsArray)){
                 for (String itemId:idsArray){
                     String itemName=HelpUtil.getMonItemNameById(itemId,mSample);
-                    SamplingStantd samplingStantd=getSamplingStantdByMonItem(itemName);
+                    SamplingStantd samplingStantd=HelpUtil.getSamplingStantdByMonItem(itemName,mSample.getTagId());
                     if (!CheckUtil.isNull(samplingStantd)){
                         if (!groupStandList.contains(samplingStantd)){
                             groupStandList.add(samplingStantd);
@@ -1005,22 +1126,57 @@ public class CollectionDetailFragment extends BaseFragment {
         return count;
     }
 
-    /**
-     * monitemName 对应的 SamplingStantd
-     * @param monitemName
-     * @return
-     */
-    private SamplingStantd getSamplingStantdByMonItem(String monitemName){
-        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().where(SamplingStantdDao.Properties.TagId.eq(mSample.getTagId())).list();
-        if (!CheckUtil.isEmpty(stantdsList)){
-            for (SamplingStantd samplingStantd:stantdsList){
-                List<String> monItemsList=samplingStantd.getMonItems();
-                if (!CheckUtil.isEmpty(monitemName ) && !CheckUtil.isEmpty(monItemsList) && monItemsList.contains(monitemName)){
-                    return samplingStantd;
-                }
-            }
-        }
-        return null;
-    }
+//    /**
+//     * monitemName 对应的 SamplingStantd
+//     * @param monitemName
+//     * @return
+//     */
+//    private SamplingStantd getSamplingStantdByMonItem(String monitemName){
+//        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().where(SamplingStantdDao.Properties.TagId.eq(mSample.getTagId())).list();
+//        if (!CheckUtil.isEmpty(stantdsList)){
+//            for (SamplingStantd samplingStantd:stantdsList){
+//                List<String> monItemsList=samplingStantd.getMonItems();
+//                if (!CheckUtil.isEmpty(monitemName ) && !CheckUtil.isEmpty(monItemsList) && monItemsList.contains(monitemName)){
+//                    return samplingStantd;
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
+//    private SamplingFormStand getTheSameStandBottle(String itemId){
+//        String itemName=HelpUtil.getMonItemNameById(itemId,mSample);
+//        SamplingStantd samplingStantd=HelpUtil.getSamplingStantdByMonItem(itemName,mSample.getTagId());
+//        //查询所有bottle
+//        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
+//        if (!CheckUtil.isEmpty(formStantdsList)){
+//            for (SamplingFormStand formStand:formStantdsList){
+//                String idsStr=formStand.getMonitemIds();
+//                if (!CheckUtil.isEmpty(idsStr)){
+//                    String[] idsArry=idsStr.split(",");
+//                    if (!CheckUtil.isEmpty(idsArry)){
+//                        String firstId=idsArry[0];
+//                        String monItemName=HelpUtil.getMonItemNameById(firstId,mSample);
+//                        if (!CheckUtil.isEmpty(monItemName) && !CheckUtil.isNull(samplingStantd) && !CheckUtil.isEmpty(samplingStantd.getMonItems()) && samplingStantd.getMonItems().contains(monItemName)){
+//                            return formStand;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
+//
+//    public static SamplingFormStand isBottleExists(String itemId,String samplingId){
+//        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).list();
+//        if (!CheckUtil.isEmpty(formStantdsList)){
+//            for (SamplingFormStand formStand:formStantdsList){
+//                if (formStand.getMonitemIds().contains(itemId)){
+//                    return formStand;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
 }

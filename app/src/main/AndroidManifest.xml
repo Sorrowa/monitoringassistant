@@ -229,6 +229,11 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".mvp.ui.module.task.point.BottleMonItemActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+
         <service android:name=".services.RepositoryService" />
 
         <!-- 佳博蓝牙打印 -->
