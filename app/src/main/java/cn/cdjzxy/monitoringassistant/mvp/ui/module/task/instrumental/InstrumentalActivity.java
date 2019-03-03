@@ -356,46 +356,55 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
      * @return
      */
     public static boolean IsSamplingFinish() {
-        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
-            return false;
+        return TextUtils.isEmpty(CheckIsSamplingFinish(mSampling));
+    }
+
+    /**
+     * 采样是否完成
+     *
+     * @return
+     */
+    public static String CheckIsSamplingFinish(Sampling sampling) {
+        if (CheckUtil.isEmpty(sampling.getSamplingUserName())) {
+            return "请选择“监测人”";
         }
 
-        if (CheckUtil.isEmpty(mSampling.getSamplingTimeBegin())) {
-            return false;
+        if (CheckUtil.isEmpty(sampling.getSamplingTimeBegin())) {
+            return "请选择“分析开始日期”";
         }
-        if (CheckUtil.isEmpty(mSampling.getSamplingTimeEnd())) {
-            return false;
-        }
-
-        if (CheckUtil.isEmpty(mSampling.getMonitemId())) {
-            return false;
+        if (CheckUtil.isEmpty(sampling.getSamplingTimeEnd())) {
+            return "请选择“分析结束日期”";
         }
 
-        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
-            return false;
+        if (CheckUtil.isEmpty(sampling.getMonitemId())) {
+            return "请选择“监测项目”";
         }
 
-        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
-            return false;
+        if (CheckUtil.isEmpty(sampling.getMethodName())) {
+            return "请选择“监测方法”";
         }
 
-        if (CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs())) {
-            return false;
+        if (CheckUtil.isEmpty(sampling.getDeviceName())) {
+            return "请选择“监测设备”";
         }
 
-        for (SamplingDetail detail : mSampling.getSamplingDetailYQFs()) {
+        if (CheckUtil.isEmpty(sampling.getSamplingDetailYQFs())) {
+            return "请添加监测结果";
+        }
+
+        for (SamplingDetail detail : sampling.getSamplingDetailYQFs()) {
             if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("SamplingOnTime"))) {
-                return false;//没有填写分析时间
+                return String.format("监测结果[%s]需选择分析时间",detail.getSampingCode());//没有填写分析时间
             }
             if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
-                return false;//没有填写分析结果
+                return String.format("监测结果[%s]需填写分析结果",detail.getSampingCode());//没有填写分析结果
             }
             if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("ValueUnit"))) {
-                return false;//没有填写结果单位
+                return String.format("监测结果[%s]需填写结果单位",detail.getSampingCode());//没有填写结果单位
             }
         }
 
-        return true;
+        return "";
     }
 
 }

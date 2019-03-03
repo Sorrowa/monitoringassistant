@@ -647,6 +647,27 @@ public class ApiRepository implements IModel {
     }
 
     /**
+     * 根据ID获取采样单信息
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<Sampling>>> getSamplingById(String samplingId) {
+        return Observable.just(mApiService.getSamplingByID(samplingId))
+                .flatMap(new Function<Observable<BaseResponse<List<Sampling>>>, ObservableSource<BaseResponse<List<Sampling>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Sampling>>> apply(Observable<BaseResponse<List<Sampling>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Sampling>>, BaseResponse<List<Sampling>>>() {
+                            @Override
+                            public BaseResponse<List<Sampling>> apply(BaseResponse<List<Sampling>> baseResponse) throws Exception {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+
+    /**
      * 创建
      *
      * @return

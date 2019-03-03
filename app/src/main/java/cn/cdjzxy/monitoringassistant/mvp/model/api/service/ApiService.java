@@ -196,6 +196,9 @@ public interface ApiService {
     @GET(Api.GET_SAMPLING)
     Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") List<String> projectIds);
 
+    @GET(Api.GET_SAMPLING_BY_ID)
+    Observable<BaseResponse<List<Sampling>>> getSamplingByID(@Query("SamplingID") String samplingID);
+
     //*******************文件******************
     @Multipart
     @POST(Api.UPLOAD_FILE)
