@@ -353,6 +353,7 @@ public class CollectionDetailFragment extends BaseFragment {
      */
     private void operateSave() {
         if (isSaveChecked()) {
+            ArtUtils.makeText(getContext(), "请等待");
             samplingDetail.setProjectId(mSample.getProjectId());
             samplingDetail.setSamplingId(mSample.getId());
             samplingDetail.setSampingCode(sample_code.getText().toString());
@@ -369,7 +370,9 @@ public class CollectionDetailFragment extends BaseFragment {
                     mSample.setSamplingContentResults(new ArrayList<SamplingContent>());
                 }
                 List<SamplingContent> samplingDetailResults = mSample.getSamplingContentResults();
-                samplingDetailResults.add(samplingDetail);
+                if (!samplingDetailResults.contains(samplingDetail)){
+                    samplingDetailResults.add(samplingDetail);
+                }
                 mSample.setSamplingContentResults(samplingDetailResults);
             }
 
