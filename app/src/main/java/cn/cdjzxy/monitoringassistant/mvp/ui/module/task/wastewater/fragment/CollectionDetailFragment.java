@@ -313,7 +313,8 @@ public class CollectionDetailFragment extends BaseFragment {
                         List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(currentDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(currentDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(currentDetail.getSamplingType())).build().list();
                         if (!CheckUtil.isEmpty(samplingDetailList)){
                             DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
-                            WastewaterActivity.mSample.setSamplingDetailResults(new ArrayList<>());
+                            //WastewaterActivity.mSample.setSamplingDetailResults(new ArrayList<>());
+                            WastewaterActivity.mSample.getSamplingDetailResults().removeAll(samplingDetailList);
                         }
 
                         //删除分瓶信息
@@ -394,6 +395,7 @@ public class CollectionDetailFragment extends BaseFragment {
             List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(samplingDetail.getSamplingType())).build().list();
             if (!CheckUtil.isEmpty(samplingDetailList)){
                 DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+                WastewaterActivity.mSample.getSamplingDetailResults().removeAll(samplingDetailList);
             }
             //生成新的SamplingDetail
             generateSamplingDetails();
@@ -1183,5 +1185,18 @@ public class CollectionDetailFragment extends BaseFragment {
 //        }
 //        return null;
 //    }
+
+    /**
+     * 删除对应的SamplingDetailList
+     */
+    private void deleteSamplingDetailList(){
+        //删除对应的SamplingDetail
+        List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()),SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()),SamplingDetailDao.Properties.SamplingType.eq(samplingDetail.getSamplingType())).build().list();
+        if (!CheckUtil.isEmpty(samplingDetailList)){
+            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+            //WastewaterActivity.mSample.setSamplingDetailResults(new ArrayList<>());
+            WastewaterActivity.mSample.getSamplingDetailResults().removeAll(samplingDetailList);
+        }
+    }
 
 }
