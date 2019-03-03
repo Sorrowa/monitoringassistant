@@ -231,4 +231,22 @@ public class HelpUtil {
         return contentList;
     }
 
+    /**
+     * 使用,连接数据
+     * @param strList
+     * @return
+     */
+    public static String joinStringList(List<String> strList){
+        StringBuilder builderItems = new StringBuilder("");
+        if (!CheckUtil.isEmpty(strList)) {
+            for (String itemStr : strList) {
+                builderItems.append(itemStr + ",");
+            }
+        }
+        if (builderItems.lastIndexOf(",") > 0) {
+            builderItems.deleteCharAt(builderItems.lastIndexOf(","));
+        }
+        return builderItems.toString();
+    }
+
 }
