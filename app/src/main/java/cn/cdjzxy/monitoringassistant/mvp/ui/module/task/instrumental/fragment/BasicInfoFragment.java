@@ -214,8 +214,9 @@ public class BasicInfoFragment extends BaseFragment {
                         InstrumentalActivity.mSampling.setMonitemId(monitemId);
                         InstrumentalActivity.mSampling.setMonitemName(monitemName);
 
-                        InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
-                        InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
+                        //改为在添加样品时记录点位信息
+//                        InstrumentalActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
+//                        InstrumentalActivity.mSampling.setAddressName(data.getStringExtra("AddressName"));
 
                         InstrumentalActivity.mSampling.setTagId(data.getStringExtra("TagId"));
                         InstrumentalActivity.mSampling.setTagName(data.getStringExtra("TagName"));

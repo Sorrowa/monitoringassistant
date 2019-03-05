@@ -490,6 +490,20 @@ public class TestRecordDetailFragment extends BaseFragment {
                                 DBHelper.get().getSamplingDetailDao().delete(pxItem);
                                 mSampling.getSamplingDetailYQFs().remove(pxItem);
                             }
+
+                            //删除点位ID和点位名称
+                            if (!TextUtils.isEmpty(samplingDetail1.getAddresssId()) && mSampling.getAddressId().contains(samplingDetail1.getAddresssId())) {
+                                mSampling.setAddressId(StringUtil.trimStr(mSampling.getAddressId().replace(samplingDetail1.getAddresssId(), ""),","));
+                            }
+                            if (!TextUtils.isEmpty(samplingDetail1.getAddressName()) && mSampling.getAddressName().contains(samplingDetail1.getAddressName())) {
+                                mSampling.setAddressName(StringUtil.trimStr(mSampling.getAddressName().replace(samplingDetail1.getAddressName(),""),","));
+                            }
+
+                            //保存到数据库
+                            DBHelper.get().getSamplingDao().update(mSampling);
+
+                            //更新采样单列表的显示
+                            EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                         }
 
                         ArtUtils.makeText(getContext(), "删除成功");

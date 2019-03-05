@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 public class StringUtil {
@@ -37,5 +39,29 @@ public class StringUtil {
             return stringBuilder.toString();
         }
         return "";
+    }
+
+    /**
+     * 去除开始和末尾的字符串
+     * @param targetStr
+     * @param c
+     * @return
+     */
+    public static String trimStr(String targetStr, String c) {
+        if (TextUtils.isEmpty(targetStr) || TextUtils.isEmpty(c)) {
+            return targetStr;
+        }
+
+        //aaabcdef->a
+        while (targetStr.length() > 0 && targetStr.startsWith(c)) {
+            targetStr = targetStr.substring(c.length());
+        }
+
+        //abcdee->e
+        while (targetStr.length() > 0 && targetStr.endsWith(c)) {
+            targetStr = targetStr.substring(0, targetStr.length() - c.length());
+        }
+
+        return targetStr;
     }
 }

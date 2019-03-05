@@ -40,6 +40,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.TestRecordDetailFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
 public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter> {
 
@@ -249,10 +250,22 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
             //添加到记录
             mSampling.getSamplingDetailYQFs().add(samplingDetail);
+
+            //记录点位ID和点位名称
+            if (!TextUtils.isEmpty(item.getTempValue2()) && !mSampling.getAddressId().contains(item.getTempValue2())) {
+                mSampling.setAddressId(StringUtil.trimStr(mSampling.getAddressId() + "," + item.getTempValue2(), ","));
+            }
+            if (!TextUtils.isEmpty(item.getTempValue3()) && !mSampling.getAddressName().contains(item.getTempValue3())) {
+                mSampling.setAddressName(StringUtil.trimStr(mSampling.getAddressName() + "," + item.getTempValue3(), ","));
+            }
         }
 
         mSelectDetails.clear();
 
+        //保存到数据库
+        DBHelper.get().getSamplingDao().update(mSampling);
+
+        //更新采样单列表的显示
         EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
 
         return true;
