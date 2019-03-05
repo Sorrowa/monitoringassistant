@@ -631,7 +631,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         //清空数据
         mFirstTags.clear();
         mTagNames.clear();
-        mTags.clear();
 
         List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
         if (!CheckUtil.isEmpty(tags)) {

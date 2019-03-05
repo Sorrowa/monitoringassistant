@@ -369,4 +369,33 @@ public class HelpUtil {
         return 1;
     }
 
+    /**
+     * 统计样品数量
+     * @return
+     */
+    public static int countSamplingCount(SamplingContent samplingContent,Sampling sample){
+        int count=0;
+        String monitemIdStr=samplingContent.getMonitemId();
+        List<SamplingStantd> groupStandList=new ArrayList<>();
+        if (!CheckUtil.isEmpty(monitemIdStr)){
+            String[] idsArray=monitemIdStr.split(",");
+            if (!CheckUtil.isEmpty(idsArray)){
+                for (String itemId:idsArray){
+                    String itemName=HelpUtil.getMonItemNameById(itemId,sample);
+                    SamplingStantd samplingStantd=HelpUtil.getSamplingStantdByMonItem(itemName,sample.getTagId());
+                    if (!CheckUtil.isNull(samplingStantd)){
+                        if (!groupStandList.contains(samplingStantd)){
+                            groupStandList.add(samplingStantd);
+                        }
+                    }else {
+                        count +=1;
+                    }
+                }
+
+            }
+        }
+        count +=groupStandList.size();
+        return count;
+    }
+
 }

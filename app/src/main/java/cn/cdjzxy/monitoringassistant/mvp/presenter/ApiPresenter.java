@@ -71,6 +71,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
@@ -920,7 +921,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
 
-                                DBHelper.get().getSamplingFormStandDao().deleteAll();
+                                //DBHelper.get().getSamplingFormStandDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
                                     saveOneSampling(sampling);
@@ -956,7 +957,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse)) {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
-
                                 for (Sampling sampling : samplings) {
                                     saveOneSampling(sampling);
                                 }
@@ -1000,13 +1000,21 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
         //DBHelper.get().getSamplingDao().delete(sampling);
 
-        //分瓶
+        //删除本地对应的分瓶信息
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(sampling.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+        DBHelper.get().getSamplingFormStandDao().deleteInTx(formStantdsList);
+        //新增分瓶信息
         List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
         if (!CheckUtil.isEmpty(samplingFormStands)) {
             DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
         }
 
-        //样品
+        //删除对应的SamplingDetail
+        List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).build().list();
+        if (!CheckUtil.isEmpty(samplingDetailList)){
+            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+        }
+        //新增SamplingDetail
         List<SamplingDetail> samplingDetails = sampling.getSamplingDetailResults();
         if (!CheckUtil.isEmpty(samplingDetails)) {
             for (SamplingDetail samplingDetail : samplingDetails) {

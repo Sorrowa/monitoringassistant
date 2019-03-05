@@ -400,41 +400,12 @@ public class CollectionFragment extends BaseFragment {
                 detail.setSampleCollection(samplingContent.getSampleCollection());
                 detail.setSampleAcceptance(samplingContent.getSampleAcceptance());
                 detail.setPreservative(samplingContent.getPreservative());
+                //计算SamplingCount为非现场监测的样品数量
+                detail.setSamplingCount(HelpUtil.countSamplingCount(selectSamplingDetail,WastewaterActivity.mSample));
                 DBHelper.get().getSamplingDetailDao().insert(detail);
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }
         }
-
-        /*
-        String[] sendMonitemIds=selectSamplingDetail.getSenceMonitemId().split(",");
-        if (!CheckUtil.isEmpty(sendMonitemIds)){
-            count+=sendMonitemIds.length;
-            for (String itemId:sendMonitemIds){
-                SamplingDetail detail = new SamplingDetail();
-                detail.setProjectId(samplingContent.getProjectId());
-                detail.setId(UUID.randomUUID().toString());
-                detail.setSamplingId(samplingContent.getSamplingId());
-                detail.setSampingCode(samplingContent.getSampingCode());
-                detail.setFrequecyNo(samplingContent.getFrequecyNo());
-                detail.setDescription(samplingContent.getDescription());
-                detail.setSamplingType(1);
-                detail.setIsCompare(samplingContent.getIsCompare());
-                detail.setIsAddPreserve(samplingContent.getIsAddPreserve());
-                detail.setMonitemName(getMonItemNameById(itemId));
-                detail.setMonitemId(itemId);
-                detail.setAddressName(samplingContent.getAddressName());
-                detail.setAddresssId(samplingContent.getAddresssId());
-                detail.setIsSenceAnalysis(true);
-                detail.setSamplingTime(selectSamplingDetail.getSamplingTime());
-                detail.setOrderIndex(samplingContent.getOrderIndex());
-                detail.setSampleCollection(samplingContent.getSampleCollection());
-                detail.setSampleAcceptance(samplingContent.getSampleAcceptance());
-                detail.setPreservative(samplingContent.getPreservative());
-                DBHelper.get().getSamplingDetailDao().insert(detail);
-                WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
-            }
-        }
-        */
 
         //添加平行的样品数量和被选择的是一样的
         samplingContent.setSamplingCount(selectSamplingDetail.getSamplingCount());
