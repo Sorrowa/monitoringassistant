@@ -2,14 +2,8 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.JoinProperty;
-import org.greenrobot.greendao.annotation.ToMany;
-import org.greenrobot.greendao.annotation.ToOne;
-import org.greenrobot.greendao.DaoException;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DaoSession;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodTagRelationDao;
 
 @Entity
 public class MethodTagRelation {
@@ -23,13 +17,13 @@ public class MethodTagRelation {
     private String Id;
     private String MethodId;
     private String TagId;
-    @Generated(hash = 1040507137)
+    @Keep()
     public MethodTagRelation(String Id, String MethodId, String TagId) {
         this.Id = Id;
         this.MethodId = MethodId;
         this.TagId = TagId;
     }
-    @Generated(hash = 1149229255)
+    @Keep()
     public MethodTagRelation() {
     }
     public String getId() {

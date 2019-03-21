@@ -2,6 +2,8 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.Transient;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -27,8 +29,10 @@ public class EnvirPoint {
     private String TagId;
     private String TagName;
     private String UpdateTime;
+    @Transient
+    private boolean isSelected;
 
-    @Generated(hash = 1832485445)
+    @Keep()
     public EnvirPoint(String Id, String Name, String Code, double Longtitude,
                       double Latitude, String TagId, String TagName, String UpdateTime) {
         this.Id = Id;
@@ -41,7 +45,7 @@ public class EnvirPoint {
         this.UpdateTime = UpdateTime;
     }
 
-    @Generated(hash = 1000807744)
+    @Keep()
     public EnvirPoint() {
     }
 
@@ -110,4 +114,11 @@ public class EnvirPoint {
     }
 
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }

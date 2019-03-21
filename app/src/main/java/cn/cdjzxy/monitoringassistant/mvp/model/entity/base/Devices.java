@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -49,7 +50,7 @@ public class Devices {
     private String  CertCode;
     private String  SourceWay;
 
-    @Generated(hash = 765118164)
+    @Keep()
     public Devices(String Id, String Name, String Specification, String SystemCode,
                    String DevCode, String DepartmentId, String DepartmentName,
                    String Company, String PurchasingDate, float RePrice,
@@ -74,7 +75,7 @@ public class Devices {
         this.SourceWay = SourceWay;
     }
 
-    @Generated(hash = 597445211)
+    @Keep()
     public Devices() {
     }
 

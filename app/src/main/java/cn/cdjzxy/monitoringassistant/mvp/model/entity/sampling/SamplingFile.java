@@ -1,8 +1,9 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class SamplingFile {
@@ -15,7 +16,7 @@ public class SamplingFile {
     private String FilePath;
     private String UpdateTime;
     private boolean IsUploaded;
-    @Generated(hash = 1777992089)
+    @Keep()
     public SamplingFile(String LocalId, String Id, String SamplingId,
             String FileName, String FilePath, String UpdateTime,
             boolean IsUploaded) {
@@ -27,7 +28,7 @@ public class SamplingFile {
         this.UpdateTime = UpdateTime;
         this.IsUploaded = IsUploaded;
     }
-    @Generated(hash = 863733679)
+    @Keep()
     public SamplingFile() {
     }
     public String getId() {

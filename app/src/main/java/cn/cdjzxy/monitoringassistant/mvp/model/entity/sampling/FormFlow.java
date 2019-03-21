@@ -1,7 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -15,7 +15,7 @@ public class FormFlow {
     private String  AllFlowUsers;
     private String  FlowUserIds;
     private String  FlowUserNames;
-    @Generated(hash = 444277217)
+    @Keep()
     public FormFlow(String FlowId, String FlowName, int NodeNumber,
             int CurrentStatus, boolean IsJoinFlow, String NodeHandleCode,
             String AllFlowUsers, String FlowUserIds, String FlowUserNames) {
@@ -29,7 +29,7 @@ public class FormFlow {
         this.FlowUserIds = FlowUserIds;
         this.FlowUserNames = FlowUserNames;
     }
-    @Generated(hash = 384426255)
+    @Keep()
     public FormFlow() {
     }
     public String getFlowId() {

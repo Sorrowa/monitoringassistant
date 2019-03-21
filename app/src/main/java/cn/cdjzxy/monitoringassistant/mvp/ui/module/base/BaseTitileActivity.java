@@ -3,7 +3,6 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.base;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +22,6 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
-import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import butterknife.ButterKnife;
@@ -42,7 +40,7 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
  */
 public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompatActivity implements IActivity<P>, ITitleView {
     protected final String TAG = this.getClass().getSimpleName();
-    private   Cache<String, Object> mCache;
+    private Cache mCache;
     private   Unbinder              mUnbinder;
     protected P                     mPresenter;
 

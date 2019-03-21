@@ -10,6 +10,11 @@ android {
         incremental false
     }
 
+    configurations.all {
+        //解决"Conflict with dependency 'com.android.supportsupport-annotations' in project 'app'"
+        resolutionStrategy.force 'com.alibaba:fastjson:1.2.12'
+    }
+
     defaultConfig {
         applicationId rootProject.ext.android.applicationId
         minSdkVersion rootProject.ext.android.minSdkVersion
@@ -43,8 +48,8 @@ android {
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
             buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
-            //buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
-            //buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             buildConfigField "boolean", "IS_RELEASE", "false"
             debuggable true
             minifyEnabled false
@@ -57,8 +62,8 @@ android {
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
             buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
-            //buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
-            //buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             buildConfigField "boolean", "IS_RELEASE", "true"
             signingConfig signingConfigs.release
             minifyEnabled false
@@ -144,4 +149,8 @@ dependencies {
     implementation(name: 'onsdk_all', ext: 'aar')
     //implementation files('libs/BaiduLBS_Android.jar')
     implementation 'id.zelory:compressor:2.1.0'
+//    implementation (rootProject.ext.dependencies["rxcache-jolyglot-gson"])
+//            {
+//                exclude module: 'gson'
+//            }
 }

@@ -6,9 +6,10 @@ import org.greenrobot.greendao.annotation.Id;
 
 import java.util.List;
 
-import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * 采样规范
@@ -38,7 +39,7 @@ public class SamplingStantd {
     private String       TagName;
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> MonItems;
-    @Generated(hash = 1884107182)
+    @Keep()
     public SamplingStantd(String Id, String Capacity, String Contaner,
             String SaveDescription, boolean IsSenceAnalysis, String TagId,
             String TagName, List<String> MonItems) {
@@ -51,7 +52,7 @@ public class SamplingStantd {
         this.TagName = TagName;
         this.MonItems = MonItems;
     }
-    @Generated(hash = 212713864)
+    @Keep()
     public SamplingStantd() {
     }
     public String getId() {

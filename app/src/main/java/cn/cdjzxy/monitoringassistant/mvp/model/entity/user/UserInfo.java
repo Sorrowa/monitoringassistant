@@ -1,10 +1,10 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.user;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.Generated;
 
-import java.io.Serializable;
 
 /**
  * 用户信息
@@ -63,7 +63,7 @@ public class UserInfo {
     private String WebUrl;
     private String pwd;
     private int    intId;
-    @Generated(hash = 1596207180)
+    @Keep()
     public UserInfo(String Id, String LoginName, String WorkNo, String Name,
             String Sex, String Brithdate, String IdentityCode, String Mobile,
             String DepartmentName, String Position, String ReportSite,
@@ -97,8 +97,10 @@ public class UserInfo {
         this.pwd = pwd;
         this.intId = intId;
     }
-    @Generated(hash = 1279772520)
+    @Keep()
     public UserInfo() {
+        //改url
+//        this.WebUrl="192.168.1.242";
     }
     public String getId() {
         return this.Id;

@@ -1,18 +1,11 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.JoinProperty;
-import org.greenrobot.greendao.annotation.ToMany;
+import org.greenrobot.greendao.annotation.Keep;
 
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Transient;
-
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DaoSession;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormDao;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class Form {
@@ -23,13 +16,13 @@ public class Form {
     @Transient
     private List<FormSelect> FormSelectList;
 
-    @Generated(hash = 1230256564)
+    @Keep()
     public Form(String TagId, String TagName) {
         this.TagId = TagId;
         this.TagName = TagName;
     }
 
-    @Generated(hash = 535210737)
+    @Keep()
     public Form() {
     }
 

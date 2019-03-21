@@ -1,7 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -32,14 +31,7 @@ import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.Subscriber;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,11 +45,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MainTabAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.management.ManagementFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.msg.MsgActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.pointMap.PointMapFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.progress.ProgressFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.repository.RepositoryFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.scanCode.ScanCodeFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.PwdModifyFragment;
@@ -69,9 +58,6 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -116,7 +102,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         mTitleBarView.setLeftVisible(false);
         mTitleBarView.setTitleMainText("首页");
         mTitleBarView.addLeftAction(titleBar.new ViewAction(getTitleLeftView()));
-        mTitleBarView.addRightAction(titleBar.new ViewAction(getTitleRightView(), new View.OnClickListener() {
+        mTitleBarView.addRightAction(titleBar.new ViewAction(getTitleRightView()
+                , new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArtUtils.startActivity(MsgActivity.class);
@@ -453,7 +440,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      */
     private void updateDataFromNetwork(){
         if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
-            progress = 0;
+            progress = 5;
             showDialog();
             mPresenter.getDevices(Message.obtain(this, new Object()));
             mPresenter.getMethods(Message.obtain(this, new Object()));

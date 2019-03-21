@@ -1,6 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -13,12 +14,12 @@ public class Rights {
 
     private String EnumName;
     private int    EnumValue;
-    @Generated(hash = 1201011745)
+    @Keep()
     public Rights(String EnumName, int EnumValue) {
         this.EnumName = EnumName;
         this.EnumValue = EnumValue;
     }
-    @Generated(hash = 40682534)
+    @Keep()
     public Rights() {
     }
     public String getEnumName() {

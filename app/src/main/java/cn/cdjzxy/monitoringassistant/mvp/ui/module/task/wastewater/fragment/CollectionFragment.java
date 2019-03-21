@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +119,6 @@ public class CollectionFragment extends BaseFragment {
         }
         initRecyclerViewData();
     }
-
     @Nullable
     @Override
     public IPresenter obtainPresenter() {
@@ -185,6 +185,7 @@ public class CollectionFragment extends BaseFragment {
                 addBlankSample();
                 break;
             case R.id.btn_print_label:
+                //todo:修改打印标签
                 Gson gson = new Gson();
                 //构建标签数据
                 String labelStr = gson.toJson(buildPrintLabelList(WastewaterActivity.mSample));
@@ -220,7 +221,7 @@ public class CollectionFragment extends BaseFragment {
                 return true;
             }
         });
-
+        /**选定状态**/
         mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingContentResults(), new WasteWaterCollectAdapter.OnWasteWaterCollectListener() {
             @Override
             public void onSelected(View view, int position, boolean isSelected) {
@@ -245,7 +246,7 @@ public class CollectionFragment extends BaseFragment {
      */
     private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
         ArrayList<LabelInfo> result = new ArrayList<>();
-
+//        Log.d("zzh","样品信息:"+sampling.getSamplingContentResults());
         //组装标签信息\
         for (SamplingContent item : sampling.getSamplingContentResults()) {
             LabelInfo info = new LabelInfo();

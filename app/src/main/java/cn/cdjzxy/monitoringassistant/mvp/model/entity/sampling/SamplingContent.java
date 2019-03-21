@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Transient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,7 +70,7 @@ public class SamplingContent {
     @Transient
     private String TempValue3;
 
-    @Generated(hash = 1182568687)
+    @Keep()
     public SamplingContent(String id, String SamplingId, String ProjectId, int OrderIndex,
             String SampingCode, int FrequecyNo, String SamplingTime, int SamplingType,
             String SampStandId, String MonitemId, String MonitemName, String AddresssId,
@@ -128,7 +129,7 @@ public class SamplingContent {
         this.SenceMonitemName = SenceMonitemName;
     }
 
-    @Generated(hash = 682420697)
+    @Keep()
     public SamplingContent() {
     }
 

@@ -6,8 +6,9 @@ import org.greenrobot.greendao.annotation.Entity;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class SamplingFormStand {
@@ -45,7 +46,7 @@ public class SamplingFormStand {
     private String       SampingCode;//和SamplingId一样，唯一标识一条采样信息
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> MonItems;
-    @Generated(hash = 705730091)
+    @Keep()
     public SamplingFormStand(String Id, String SamplingId, int StandNo,
             String MonitemIds, String MonitemName, String SamplingAmount,
             String AnalysisSite, String SaveMehtod, String Preservative, int Count,
@@ -68,7 +69,7 @@ public class SamplingFormStand {
         this.SampingCode = SampingCode;
         this.MonItems = MonItems;
     }
-    @Generated(hash = 922621764)
+    @Keep()
     public SamplingFormStand() {
     }
     public String getId() {

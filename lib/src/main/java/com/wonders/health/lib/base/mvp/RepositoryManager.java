@@ -104,7 +104,8 @@ public class RepositoryManager implements IRepositoryManager {
     public synchronized <T> T createRetrofitService(Class<T> service) {
         if (mRetrofitServiceCache == null)
             mRetrofitServiceCache = mCachefactory.build(CacheType.RETROFIT_SERVICE_CACHE);
-        Preconditions.checkNotNull(mRetrofitServiceCache, "Cannot return null from a Cache.Factory#build(int) method");
+        Preconditions.checkNotNull(mRetrofitServiceCache
+                , "Cannot return null from a Cache.Factory#build(int) method");
         T retrofitService = (T) mRetrofitServiceCache.get(service.getCanonicalName());
         if (retrofitService == null) {
             retrofitService = mRetrofit.get().create(service);

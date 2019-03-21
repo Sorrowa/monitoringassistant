@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -43,7 +44,7 @@ public class Enterprise {
     private String MainAuxiliary;
     private String PollutionSolveTech;
     private String enterprisePollutionResult;
-    @Generated(hash = 610080650)
+    @Keep()
     public Enterprise(String Id, String Name, String Division, String DetailAddress,
             String LegalName, String PhoneNum, String Longitude, String Latitude,
             String UpdateTime, String RawMaterial, String Product,
@@ -66,7 +67,7 @@ public class Enterprise {
         this.PollutionSolveTech = PollutionSolveTech;
         this.enterprisePollutionResult = enterprisePollutionResult;
     }
-    @Generated(hash = 790140480)
+    @Keep()
     public Enterprise() {
     }
     public String getId() {

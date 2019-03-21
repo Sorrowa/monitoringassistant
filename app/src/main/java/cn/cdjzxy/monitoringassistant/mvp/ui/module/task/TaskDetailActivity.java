@@ -73,6 +73,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterSamplingActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -142,6 +143,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
     public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
+
+    /**
+     * 仪器法表单路径/路径
+     */
+//    public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
+//    public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
 
     /**
      * 最大文件上传大小，单位（KB）
@@ -507,7 +514,15 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     intent.putExtra("isNewCreate", false);
                     ArtUtils.startActivity(intent);
                 } else {
+                    //水样采集与交接记录
+                    //todo:水样采集
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
+//                    Intent intent = new Intent(TaskDetailActivity.this,
+//                            WasteWaterSamplingActivity.class);
+//                    intent.putExtra("projectId", mProject.getId());
+//                    intent.putExtra("samplingId", mSamplings.get(position).getId());
+//                    intent.putExtra("isNewCreate", false);
+//                    ArtUtils.startActivity(intent);
                 }
             }
 
@@ -684,6 +699,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     intent.putExtra("isNewCreate", true);
                     ArtUtils.startActivity(intent);
                 } else {
+                    //todo:
+//
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
                 }
                 mDialogPlus.dismiss();

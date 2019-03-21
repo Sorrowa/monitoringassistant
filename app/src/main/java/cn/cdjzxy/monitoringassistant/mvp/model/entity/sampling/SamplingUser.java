@@ -1,7 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -13,12 +13,12 @@ public class SamplingUser {
 
     private String UserId;
     private String UserName;
-    @Generated(hash = 381214366)
+    @Keep()
     public SamplingUser(String UserId, String UserName) {
         this.UserId = UserId;
         this.UserName = UserName;
     }
-    @Generated(hash = 2057515258)
+    @Keep()
     public SamplingUser() {
     }
     public String getUserId() {

@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -23,12 +24,12 @@ public class Weather {
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> weathers;
 
-    @Generated(hash = 741257925)
+    @Keep()
     public Weather(List<String> weathers) {
         this.weathers = weathers;
     }
 
-    @Generated(hash = 556711069)
+    @Keep()
     public Weather() {
     }
 

@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.msg;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -38,7 +39,7 @@ public class Msg {
     private String ReceiptTypeName;
     private int    MessageOutType;
     private String MessageOutTypeName;
-    @Generated(hash = 1796981808)
+    @Keep()
     public Msg(String Id, String MsgContent, String MsgTitle, String RecipientsId, String Recipients, String SendTime, String ReceiveTime, int MsgStatus, String MsgStatusName, String ReceiptType, String ReceiptTypeName,
             int MessageOutType, String MessageOutTypeName) {
         this.Id = Id;
@@ -55,7 +56,7 @@ public class Msg {
         this.MessageOutType = MessageOutType;
         this.MessageOutTypeName = MessageOutTypeName;
     }
-    @Generated(hash = 23037457)
+    @Keep()
     public Msg() {
     }
     public String getId() {

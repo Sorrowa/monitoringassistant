@@ -2,8 +2,9 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Transient;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * 监测项目
@@ -37,14 +38,14 @@ public class MonItems {
 //    private String allMonitemName;
 
 
-    @Generated(hash = 1403264955)
+    @Keep()
     public MonItems(String Id, String Code, String Name) {
         this.Id = Id;
         this.Code = Code;
         this.Name = Name;
     }
 
-    @Generated(hash = 1505645660)
+    @Keep()
     public MonItems() {
     }
 

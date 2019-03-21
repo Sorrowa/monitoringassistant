@@ -3,17 +3,18 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.ToMany;
 
 import java.util.List;
 
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DaoSession;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class Tags {
@@ -49,16 +50,16 @@ public class Tags {
     /**
      * Used to resolve relations
      */
-    @Generated(hash = 2040040024)
+    @Keep()
     private transient DaoSession daoSession;
     /**
      * Used for active entity operations.
      */
-    @Generated(hash = 724869618)
+    @Keep()
     private transient TagsDao    myDao;
 
 
-    @Generated(hash = 519331555)
+    @Keep()
     public Tags(String Id, String Name, String ParentId, int level) {
         this.Id = Id;
         this.Name = Name;
@@ -67,7 +68,7 @@ public class Tags {
     }
 
 
-    @Generated(hash = 1290390976)
+    @Keep()
     public Tags() {
     }
 
@@ -116,7 +117,7 @@ public class Tags {
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
      */
-    @Generated(hash = 1612151967)
+    @Keep()
     public List<MonItems> getMMonItems() {
         if (mMonItems == null) {
             final DaoSession daoSession = this.daoSession;
@@ -138,7 +139,7 @@ public class Tags {
     /**
      * Resets a to-many relationship, making the next get call to query for a fresh result.
      */
-    @Generated(hash = 217958567)
+    @Keep()
     public synchronized void resetMMonItems() {
         mMonItems = null;
     }
@@ -148,7 +149,7 @@ public class Tags {
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
      */
-    @Generated(hash = 751124266)
+    @Keep()
     public List<Methods> getMMethods() {
         if (mMethods == null) {
             final DaoSession daoSession = this.daoSession;
@@ -170,7 +171,7 @@ public class Tags {
     /**
      * Resets a to-many relationship, making the next get call to query for a fresh result.
      */
-    @Generated(hash = 896370764)
+    @Keep()
     public synchronized void resetMMethods() {
         mMethods = null;
     }
@@ -180,7 +181,7 @@ public class Tags {
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
      */
-    @Generated(hash = 128553479)
+    @Keep()
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -193,7 +194,7 @@ public class Tags {
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
      * Entity must attached to an entity context.
      */
-    @Generated(hash = 1942392019)
+    @Keep()
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -206,7 +207,7 @@ public class Tags {
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
      * Entity must attached to an entity context.
      */
-    @Generated(hash = 713229351)
+    @Keep()
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
@@ -218,7 +219,7 @@ public class Tags {
     /**
      * called by internal mechanisms, do not call yourself.
      */
-    @Generated(hash = 876284070)
+    @Keep()
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getTagsDao() : null;

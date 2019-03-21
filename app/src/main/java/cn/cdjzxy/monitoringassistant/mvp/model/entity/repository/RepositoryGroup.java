@@ -24,6 +24,46 @@ public class RepositoryGroup {
     private List<Member>          Members;//组成员列表
     private List<RepositoryGroup> Childs;//子级组
 
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
+    public String getFatherId() {
+        return FatherId;
+    }
+
+    public void setFatherId(String fatherId) {
+        FatherId = fatherId;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
+
+    public List<Member> getMembers() {
+        return Members;
+    }
+
+    public void setMembers(List<Member> members) {
+        Members = members;
+    }
+
+    public List<RepositoryGroup> getChilds() {
+        return Childs;
+    }
+
+    public void setChilds(List<RepositoryGroup> childs) {
+        Childs = childs;
+    }
+
     /**
      * 成员
      */
@@ -43,5 +83,44 @@ public class RepositoryGroup {
         private String CoreId;
         private String Name;
 
+        public String getLasterLoginTm() {
+            return LasterLoginTm;
+        }
+
+        public void setLasterLoginTm(String lasterLoginTm) {
+            LasterLoginTm = lasterLoginTm;
+        }
+
+        public String getEmail() {
+            return Email;
+        }
+
+        public void setEmail(String email) {
+            Email = email;
+        }
+
+        public String getId() {
+            return Id;
+        }
+
+        public void setId(String id) {
+            Id = id;
+        }
+
+        public String getCoreId() {
+            return CoreId;
+        }
+
+        public void setCoreId(String coreId) {
+            CoreId = coreId;
+        }
+
+        public String getName() {
+            return Name;
+        }
+
+        public void setName(String name) {
+            Name = name;
+        }
     }
 }

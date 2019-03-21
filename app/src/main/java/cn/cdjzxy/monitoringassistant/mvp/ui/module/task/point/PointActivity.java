@@ -112,6 +112,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if (mProject.getCanSamplingEidt()) {
+                //if (!mProject.getCanSamplingEidt()) {
                     Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
                     intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
                     intent.putExtra("projectId", projectId);

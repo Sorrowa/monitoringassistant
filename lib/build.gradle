@@ -15,7 +15,7 @@ android {
         versionName rootProject.ext.android.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -88,7 +88,11 @@ dependencies {
         exclude module: 'support-annotations'
     }
     api rootProject.ext.dependencies['rxerrorhandler2']
-    implementation(rootProject.ext.dependencies["rxcache-jolyglot-gson"]) {
+//    implementation (rootProject.ext.dependencies["rxcache-jolyglot-gson"]){
+//        exclude module: 'api'
+//    }
+    implementation ('com.github.VictorAlbertos.Jolyglot:gson:0.0.3'){
+        exclude module: 'api'
         exclude module: 'gson'
     }
 

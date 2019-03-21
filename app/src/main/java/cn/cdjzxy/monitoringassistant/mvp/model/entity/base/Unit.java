@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -10,12 +11,12 @@ public class Unit {
     @Id
     private String Id;
     private String Name;
-    @Generated(hash = 1123566035)
+    @Keep()
     public Unit(String Id, String Name) {
         this.Id = Id;
         this.Name = Name;
     }
-    @Generated(hash = 1236212320)
+    @Keep()
     public Unit() {
     }
     public String getId() {

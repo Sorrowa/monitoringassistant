@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.ArrayList;
@@ -176,7 +177,7 @@ public class Sampling {
     @Transient
     private List<SamplingFile> HasFile;
 
-    @Generated(hash = 1555512954)
+    @Keep()
     public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, int Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults) {
         this.Id = Id;
         this.ProjectId = ProjectId;
@@ -245,7 +246,7 @@ public class Sampling {
         this.SamplingUserResults = SamplingUserResults;
     }
 
-    @Generated(hash = 1062560110)
+    @Keep()
     public Sampling() {
     }
 

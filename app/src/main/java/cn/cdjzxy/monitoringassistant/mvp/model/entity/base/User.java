@@ -2,8 +2,9 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.base;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Transient;
+import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class User {
@@ -22,7 +23,7 @@ public class User {
     @Transient
     private boolean isSelected;
 
-    @Generated(hash = 69282225)
+    @Keep()
     public User(String Id, String Code, String Name, int intId) {
         this.Id = Id;
         this.Code = Code;
@@ -30,7 +31,7 @@ public class User {
         this.intId = intId;
     }
 
-    @Generated(hash = 586692638)
+    @Keep()
     public User() {
     }
 

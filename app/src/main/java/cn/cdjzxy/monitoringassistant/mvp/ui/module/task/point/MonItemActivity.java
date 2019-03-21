@@ -91,10 +91,11 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
     public void initData(@Nullable Bundle savedInstanceState) {
         initMonItemsView();
         initMonItemsSelectedView();
-
+        //调出选中的信息
         tagId = getIntent().getStringExtra("tagId");
         monItemId=getIntent().getStringExtra("monItemId");
         String selectItemsStr=getIntent().getStringExtra("selectItems");
+
         if (!CheckUtil.isEmpty(selectItemsStr)){
             selectItems=selectItemsStr.split(",");
         }

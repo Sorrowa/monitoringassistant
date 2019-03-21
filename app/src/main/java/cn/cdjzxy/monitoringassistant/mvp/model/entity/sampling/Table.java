@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -52,7 +53,7 @@ public class Table {
     private int    Status;
     private String StatusName;
     private String UpdateTime;
-    @Generated(hash = 426210253)
+    @Keep()
     public Table(String Id, String ProjectId, String ProjectName, String montype,
             String SamplingNo, String FormName, String ParentTagId, String TagId,
             String TagName, String AddressId, String AddressName,
@@ -80,7 +81,7 @@ public class Table {
         this.StatusName = StatusName;
         this.UpdateTime = UpdateTime;
     }
-    @Generated(hash = 752389689)
+    @Keep()
     public Table() {
     }
     public String getId() {

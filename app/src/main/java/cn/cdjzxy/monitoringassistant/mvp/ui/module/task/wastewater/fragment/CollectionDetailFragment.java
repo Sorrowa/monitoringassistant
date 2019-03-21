@@ -19,22 +19,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
-import org.greenrobot.greendao.query.WhereCondition;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,10 +40,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
@@ -59,20 +52,15 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.ClickUtils;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
-import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
-import cn.cdjzxy.monitoringassistant.widgets.ViewClickProxy;
 
 /**
  * 采集样品详情
@@ -214,9 +202,15 @@ public class CollectionDetailFragment extends BaseFragment {
             samplingDetail = samplingDetailResults.get(fsListPosition);
             sample_code.setText(samplingDetail.getSampingCode());
             sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
-
+            /**设置检测项目简介**/
             sample_monitor_items.setText(samplingDetail.getMonitemName());
-            sample_monitor.setText(samplingDetail.getSenceMonitemName());
+            /**设置现场项目简介**/
+            //在过滤重复项
+            String res=Getdifference(samplingDetail.getSenceMonitemName()
+                    ,samplingDetail.getMonitemName());
+//            Log.d("zzh","res="+res);
+//            Log.d("zzh","template="+samplingDetail.getSenceMonitemName());
+            sample_monitor.setText(res.substring(0,res.length()-1));
 
             if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")){
                 sample_add_preserve.setChecked(true);
@@ -231,12 +225,19 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_compare_monitor.setChecked(samplingDetail.getIsCompare());
             sample_mark.setText(samplingDetail.getDescription());
 
+            //记录不同项目的长度
+
             if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())){
-                sample_monitor_items_title.setText("监测项目（"+samplingDetail.getMonitemId().split(",").length+"）");
+                sample_monitor_items_title.setText("监测项目（"
+                        +samplingDetail.getMonitemId().split(",").length
+                        +"）");
             }
 
             if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())){
-                sample_monitor_title.setText("现场监测（"+samplingDetail.getSenceMonitemId().split(",").length+"）");
+                /**判断有无相似项目**/
+                int resone=getThelenth(samplingDetail.getSenceMonitemId().split(",")
+                        ,samplingDetail.getMonitemId().split(","));
+                sample_monitor_title.setText("现场监测（"+resone+"）");
             }
 
             if (samplingDetail.getSamplingType()==0){
@@ -254,6 +255,40 @@ public class CollectionDetailFragment extends BaseFragment {
         }else {
             sample_monitor.setEnabled(true);
         }
+    }
+
+    /**
+     * 过滤重复项
+     * @param senceMonitemName 过滤的本体
+     * @param monitemName 过滤材料源
+     * @return 由","区分的结果
+     */
+    private String Getdifference(String senceMonitemName, String monitemName) {
+        List<String> sence=Arrays.asList(senceMonitemName.split(","));
+        List<String> monitem=Arrays.asList(monitemName.split(","));
+        StringBuilder res= new StringBuilder();
+        for (String item : sence){
+            if (!monitem.contains(item)){
+                res.append(item).append(",");
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * 判断有无相似项
+     * @param split 返回不同项的长度
+     */
+    private int getThelenth(String[] split,String[] other) {
+        int count=0;
+        int len=split.length;
+        List<String> one=Arrays.asList(other);
+        for (int i=0;i<len;i++){
+            if (!one.contains(split[i])){
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
@@ -449,23 +484,48 @@ public class CollectionDetailFragment extends BaseFragment {
      * 选择监测项目
      */
     private void showMonitorItems(){
+        Log.d("zzh","选择检测项目");
         Intent intent = new Intent(getContext(), MonItemActivity.class);
         intent.putExtra("tagId", mSample.getParentTagId());
         if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())){
             intent.putExtra("selectItems", samplingDetail.getMonitemId());
         }
-        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode == Activity.RESULT_OK) {
-                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                        samplingDetail.setMonitemName(data.getStringExtra("MonItemName"));
-                        samplingDetail.setMonitemId(data.getStringExtra("MonItemId"));
-                        sample_monitor_items.setText(samplingDetail.getMonitemName());
-                        if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
-                            sample_monitor_items_title.setText("监测项目("+data.getStringExtra("MonItemId").split(",").length+")");
-                        }
+        new AvoidOnResult(getActivity()).startForResult(intent, (resultCode, data) -> {
+            if (resultCode == Activity.RESULT_OK) {
+                if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))
+                        && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
+                    //将选中 检测项目信息加载
+                    samplingDetail.setMonitemName(data.getStringExtra("MonItemName"));
+                    samplingDetail.setMonitemId(data.getStringExtra("MonItemId"));
+                    sample_monitor_items.setText(samplingDetail.getMonitemName());
+
+                    //todo:去除重复项
+                    String res=Getdifference(samplingDetail.getSenceMonitemName()
+                            ,samplingDetail.getMonitemName());
+                    samplingDetail.setSenceMonitemName(res);
+                    String res1=Getdifference(samplingDetail.getSenceMonitemId()
+                            ,samplingDetail.getMonitemId());
+                    samplingDetail.setSenceMonitemId(res1);
+                    sample_monitor.setText(res.substring(0,res.length()-1));
+
+
+                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
+                        sample_monitor_items_title.setText("监测项目（"
+                                +data.getStringExtra("MonItemId").split(",").length
+                                +"）");
+//                            int resone=getThelenth(samplingDetail.getSenceMonitemName().split(",")
+//                                    ,samplingDetail.getMonitemName().split(","));
+                        sample_monitor_title.setText("现场监测（"
+                                +(samplingDetail.getSenceMonitemName().split(",").length)
+                                +"）");
+                    }else{
+                        sample_monitor_items_title.setText("监测项目（0）");
                     }
+                }else{
+                    samplingDetail.setMonitemName(null);
+                    samplingDetail.setMonitemId(null);
+                    sample_monitor_items.setText("");
+                    sample_monitor_items_title.setText("监测项目（0）");
                 }
             }
         });
@@ -484,13 +544,39 @@ public class CollectionDetailFragment extends BaseFragment {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
+                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))
+                            && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
                         samplingDetail.setSenceMonitemName(data.getStringExtra("MonItemName"));
                         samplingDetail.setSenceMonitemId(data.getStringExtra("MonItemId"));
                         sample_monitor.setText(samplingDetail.getSenceMonitemName());
+
+                        //todo:去除重复项 这没问题
+                        String res=Getdifference(samplingDetail.getMonitemName()
+                                ,samplingDetail.getSenceMonitemName());
+                        samplingDetail.setMonitemName(res);
+                        String res1=Getdifference(samplingDetail.getMonitemId()
+                                ,samplingDetail.getSenceMonitemId());
+                        samplingDetail.setMonitemId(res1);
+                        sample_monitor_items.setText(res.substring(0,res.length()-1));
+//                        sample_monitor.setText(samplingDetail.getSenceMonitemName());
+
                         if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
-                            sample_monitor_title.setText("现场监测("+data.getStringExtra("MonItemId").split(",").length+")");
+//                            sample_monitor_title.setText("现场监测("+data.getStringExtra("MonItemId").split(",").length+")");
+//                            int resone=getThelenth(data.getStringExtra("MonItemId").split(",")
+//                                    ,samplingDetail.getMonitemId().split(","));
+//                            sample_monitor_title.setText("现场监测（"+resone+"）");
+                            sample_monitor_items_title.setText("监测项目（"
+                                    +samplingDetail.getMonitemName().split(",").length
+                                    +"）");
+                            sample_monitor_title.setText("现场监测（"
+                                    +(samplingDetail.getSenceMonitemName().split(",").length)
+                                    +"）");
                         }
+                    }else{
+                        samplingDetail.setSenceMonitemName(null);
+                        samplingDetail.setSenceMonitemId(null);
+                        sample_monitor.setText("");
+                        sample_monitor_items_title.setText("现场监测（0）");
                     }
                 }
             }
@@ -748,7 +834,10 @@ public class CollectionDetailFragment extends BaseFragment {
         samplingDetail.setSenceMonitemId(HelpUtil.joinStringList(xcIdList));
 
         sample_monitor_items.setText(samplingDetail.getMonitemName());
-        sample_monitor.setText(samplingDetail.getSenceMonitemName());
+        //todo:去除重复项
+        String res=Getdifference(samplingDetail.getSenceMonitemName()
+                ,samplingDetail.getMonitemName());
+        sample_monitor.setText(res.substring(0,res.length()-1));
 
         samplingDetail.setSamplingTime(DateUtils.getWholeDate());
         int count=0;
@@ -759,7 +848,10 @@ public class CollectionDetailFragment extends BaseFragment {
 
         if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())){
             count+=samplingDetail.getSenceMonitemId().split(",").length;
-            sample_monitor_title.setText("现场监测（"+samplingDetail.getSenceMonitemId().split(",").length+"）");
+            int resone=getThelenth(samplingDetail.getSenceMonitemId().split(",")
+                    ,samplingDetail.getMonitemId().split(","));
+            sample_monitor_title.setText("现场监测（"+resone+"）");
+//            sample_monitor_title.setText("现场监测（"+samplingDetail.getSenceMonitemId().split(",").length+"）");
         }
 
         samplingDetail.setSamplingCount(HelpUtil.countSamplingCount(samplingDetail,mSample));
@@ -906,11 +998,22 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
                     samplingDetail.setSenceMonitemName(StringUtil.join(",",senceMonitemNameList));
                     samplingDetail.setSenceMonitemId(StringUtil.join(",",senceMonitemIdList));
-                    sample_monitor.setText(samplingDetail.getSenceMonitemName());
-                    sample_monitor_title.setText("现场监测("+senceMonitemIdList.size()+")");
+                    //todo:去除重复项
+                    String res=Getdifference(samplingDetail.getSenceMonitemName()
+                            ,samplingDetail.getMonitemName());
+                    Log.d("zzh","res="+res);
+                    Log.d("zzh","template="+samplingDetail.getSenceMonitemName());
+                    sample_monitor.setText(res.substring(0,res.length()-1));
+
+                    int resone=getLenth(senceMonitemIdList
+                            ,samplingDetail.getMonitemId().split(","));
+                    sample_monitor_title.setText("现场监测（"+resone+"）");
+
+//                    sample_monitor_title.setText("现场监测("+senceMonitemIdList.size()+")");
                 }else {
                     samplingDetail.setSenceMonitemName("");
                     samplingDetail.setSenceMonitemId("");
+                    //空的，就不管了
                     sample_monitor.setText(samplingDetail.getSenceMonitemName());
                     sample_monitor_title.setText("现场监测(0)");
                 }
@@ -944,6 +1047,24 @@ public class CollectionDetailFragment extends BaseFragment {
 
         }
 
+    }
+
+    /**
+     * 返回相似长度
+     * @param senceMonitemIdList
+     * @param split
+     * @return
+     */
+    private int getLenth(List<String> senceMonitemIdList, String[] split) {
+        int count=0;
+        int len=Math.min(senceMonitemIdList.size(),split.length);
+        List<String> one=Arrays.asList(split);
+        for (int i=0;i<len;i++){
+            if (!one.contains(senceMonitemIdList.get(i))){
+                count++;
+            }
+        }
+        return count;
     }
 
     /**

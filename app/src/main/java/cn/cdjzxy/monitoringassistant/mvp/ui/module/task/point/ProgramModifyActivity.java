@@ -149,6 +149,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 break;
             case R.id.tv_point:
                 Intent intent = new Intent(this, PointSelectActivity.class);
+                //Intent intent = new Intent(this, ProgramPointSelectActivity.class);
                 intent.putExtra("projectId", mProjectDetial.getProjectId());
                 intent.putExtra("tagId", mProjectDetial.getTagId());
                 new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {

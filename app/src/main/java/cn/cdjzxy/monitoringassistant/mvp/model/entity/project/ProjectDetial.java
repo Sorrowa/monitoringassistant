@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.model.entity.project;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -45,7 +46,7 @@ public class ProjectDetial {
     private String ProjectContentId;
     private String TagParentId;
     private String TagParentName;
-    @Generated(hash = 475900743)
+    @Keep()
     public ProjectDetial(String Id, String ProjectId, String UpdateTime,
             String TagId, String TagName, String MonItemId, String MethodId,
             String AddressId, String Address, String Comment, String MonItemName,
@@ -69,7 +70,7 @@ public class ProjectDetial {
         this.TagParentId = TagParentId;
         this.TagParentName = TagParentName;
     }
-    @Generated(hash = 1852370034)
+    @Keep()
     public ProjectDetial() {
     }
     public String getId() {
