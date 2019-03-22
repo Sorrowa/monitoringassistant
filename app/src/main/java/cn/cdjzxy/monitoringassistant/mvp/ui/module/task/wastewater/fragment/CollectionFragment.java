@@ -187,11 +187,12 @@ public class CollectionFragment extends BaseFragment {
             case R.id.btn_print_label:
                 //todo:修改打印标签
                 Gson gson = new Gson();
+                //修改标签打印显示的bug
                 //构建标签数据
-                String labelStr = gson.toJson(buildPrintLabelList(WastewaterActivity.mSample));
+                String labelStr = gson.toJson(
+                        transformArrayList(buildPrintLabelList(WastewaterActivity.mSample)));
                 //构建封条数据
                 String sealStr = gson.toJson(buildSealInfo(WastewaterActivity.mProject));
-
                 Intent intent = new Intent(getContext(), LabelPrintActivity.class);
                 intent.putExtra(LabelPrintActivity.LABEL_JSON_DATA, labelStr);
                 intent.putExtra(LabelPrintActivity.SEAL_JSON_DATA, sealStr);
@@ -209,6 +210,35 @@ public class CollectionFragment extends BaseFragment {
             default:
                 break;
         }
+    }
+
+    /**
+     * 转化标签显示的字符串形式
+     * @param buildPrintLabelList 转换的数组
+     * @return 转化后的数组
+     */
+    private ArrayList<LabelInfo> transformArrayList(
+            ArrayList<LabelInfo> buildPrintLabelList) {
+        ArrayList<LabelInfo> res=new ArrayList<>();
+        for (LabelInfo item : buildPrintLabelList){
+            String names=item.getMonitemName();
+            String[] n=names.split(",");
+            int len=n.length;
+            for (int i=0;i<len;i++){
+                LabelInfo newOne=new LabelInfo(item.getTaskName()
+                        ,item.getNumber()
+                        ,item.getFrequecyNo()
+                        ,item.getType()
+                        ,item.getSampingCode()
+                        ,n[i]
+                        ,item.getRemark()
+                        ,item.getQrCode()
+                        ,item.getCb1()
+                        ,item.getCb2());
+                res.add(newOne);
+            }
+        }
+        return res;
     }
 
     private void initRecyclerViewData() {
