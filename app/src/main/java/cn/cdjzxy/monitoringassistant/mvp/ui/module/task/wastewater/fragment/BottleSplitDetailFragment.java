@@ -301,7 +301,12 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
             mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
             mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
-            Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
+            Sampling sampling = DBHelper
+                    .get()
+                    .getSamplingDao()
+                    .queryBuilder()
+                    .where(SamplingDao.Properties.Id.eq(mSample.getId()))
+                    .unique();
             if (CheckUtil.isNull(sampling)) {
                 mSample.setId(UUID.randomUUID().toString());
                 DBHelper.get().getSamplingDao().insert(mSample);
@@ -319,7 +324,12 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
            // DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
             //设置分瓶信息
-            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+            List<SamplingFormStand> formStantdsList = DBHelper
+                    .get().getSamplingFormStandDao()
+                    .queryBuilder()
+                    .where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId()))
+                    .orderAsc(SamplingFormStandDao.Properties.Index)
+                    .list();
             if (!CheckUtil.isEmpty(formStantdsList)){
                 WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
             }else {

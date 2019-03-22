@@ -46,7 +46,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
@@ -98,7 +102,7 @@ public class CollectionFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()){
+        if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()) {
             //operate_layout.setVisibility(View.INVISIBLE);
             btnAddParallel.setEnabled(false);
             btnAddBlank.setEnabled(false);
@@ -107,7 +111,7 @@ public class CollectionFragment extends BaseFragment {
             btnAddParallel.setAlpha(0.5f);
             btnAddBlank.setAlpha(0.5f);
             btn_add_new.setAlpha(0.5f);
-        }else {
+        } else {
             //operate_layout.setVisibility(View.VISIBLE);
             btnAddParallel.setEnabled(true);
             btnAddBlank.setEnabled(true);
@@ -119,6 +123,7 @@ public class CollectionFragment extends BaseFragment {
         }
         initRecyclerViewData();
     }
+
     @Nullable
     @Override
     public IPresenter obtainPresenter() {
@@ -185,14 +190,12 @@ public class CollectionFragment extends BaseFragment {
                 addBlankSample();
                 break;
             case R.id.btn_print_label:
-                //todo:修改打印标签
                 Gson gson = new Gson();
-                //修改标签打印显示的bug
                 //构建标签数据
-                String labelStr = gson.toJson(
-                        transformArrayList(buildPrintLabelList(WastewaterActivity.mSample)));
+                String labelStr = gson.toJson(buildPrintLabelList(WastewaterActivity.mSample));
                 //构建封条数据
                 String sealStr = gson.toJson(buildSealInfo(WastewaterActivity.mProject));
+
                 Intent intent = new Intent(getContext(), LabelPrintActivity.class);
                 intent.putExtra(LabelPrintActivity.LABEL_JSON_DATA, labelStr);
                 intent.putExtra(LabelPrintActivity.SEAL_JSON_DATA, sealStr);
@@ -212,35 +215,6 @@ public class CollectionFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 转化标签显示的字符串形式
-     * @param buildPrintLabelList 转换的数组
-     * @return 转化后的数组
-     */
-    private ArrayList<LabelInfo> transformArrayList(
-            ArrayList<LabelInfo> buildPrintLabelList) {
-        ArrayList<LabelInfo> res=new ArrayList<>();
-        for (LabelInfo item : buildPrintLabelList){
-            String names=item.getMonitemName();
-            String[] n=names.split(",");
-            int len=n.length;
-            for (int i=0;i<len;i++){
-                LabelInfo newOne=new LabelInfo(item.getTaskName()
-                        ,item.getNumber()
-                        ,item.getFrequecyNo()
-                        ,item.getType()
-                        ,item.getSampingCode()
-                        ,n[i]
-                        ,item.getRemark()
-                        ,item.getQrCode()
-                        ,item.getCb1()
-                        ,item.getCb2());
-                res.add(newOne);
-            }
-        }
-        return res;
-    }
-
     private void initRecyclerViewData() {
         if (WastewaterActivity.mSample.getSamplingContentResults() == null) {
             return;
@@ -251,7 +225,7 @@ public class CollectionFragment extends BaseFragment {
                 return true;
             }
         });
-        /**选定状态**/
+
         mWasteWaterCollectAdapter = new WasteWaterCollectAdapter(WastewaterActivity.mSample.getSamplingContentResults(), new WasteWaterCollectAdapter.OnWasteWaterCollectListener() {
             @Override
             public void onSelected(View view, int position, boolean isSelected) {
@@ -276,28 +250,129 @@ public class CollectionFragment extends BaseFragment {
      */
     private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
         ArrayList<LabelInfo> result = new ArrayList<>();
-//        Log.d("zzh","样品信息:"+sampling.getSamplingContentResults());
+
         //组装标签信息\
         for (SamplingContent item : sampling.getSamplingContentResults()) {
-            LabelInfo info = new LabelInfo();
-            info.setTaskName(sampling.getProjectName());
-            info.setNumber(sampling.getSamplingNo());
-            info.setFrequecyNo("频次：" + item.getFrequecyNo());
-            info.setType(WastewaterActivity.mSample.getTagName());//项目类型取样品性质
-            info.setMonitemName(item.getMonitemName());//监测项目
-            info.setSampingCode(item.getSampingCode());//样品编码
-            info.setCb1("交接");
-            info.setCb2("分析");
-            info.setQrCode(item.getSampingCode());//二维码为样品编码
 
-            //根据样品的监测项目获取对应的分瓶信息
-            SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
-            if (samplingFormStand != null) {
-                //保存方法
-                info.setRemark(samplingFormStand.getPreservative());
+            //将MonitemName与SenceMonitemName分组
+            //将Name进行分组
+            SamplingFormStandDao stand=DBHelper.get()
+                    .getSamplingFormStandDao();
+            //采样项目信息数据库
+            MonItemsDao monItemsDao=DBHelper.get().getMonItemsDao();
+
+            String[] ids=(item.getMonitemId()+","+item.getSenceMonitemId())
+                    .split(",");
+            ArrayList<itemOne> names=new ArrayList<>();
+            for (String id :ids){
+                //分组
+                List<SamplingFormStand> tmp=stand.queryBuilder()
+                        .where(SamplingFormStandDao.Properties.MonitemIds.eq(id))
+                        .list();
+                if (tmp.size()==0){
+                    continue;
+                }
+                SamplingFormStand stand1=tmp.get(0);
+                //这里获得的是一个名字组合
+                Log.d("zzh","名字为:"+stand1.getMonitemName());
+                //先判断是否存在
+                int len=names.size();
+                if (len==0){
+                    MonItems items=monItemsDao.queryBuilder()
+                            .where(MonItemsDao.Properties.Id.eq(id))
+                            .unique();
+                    Log.d("zzh","查询的名字为:"+items.getName());
+                    names.add(new itemOne(items.getName(),stand1.getId()));
+                    continue;
+                }
+                for (int m=0;m<len;m++ ){
+                    itemOne i=names.get(m);
+                    //todo:判断内容
+                    String[] tmpIds=stand1.getId().split(",");
+                    if (i.id.equals(stand1.getId())){
+                        //然后从数据库获取项目名称
+                        MonItems items=monItemsDao.queryBuilder()
+                                .where(MonItemsDao.Properties.Id.eq(id))
+                                .unique();
+                        Log.d("zzh",items.getName());
+                        i.res=i.res+","+items.getName();
+                        continue;
+                    }
+                    if (m==len-1){
+                        //遍历完了，结果没有
+                        MonItems items=monItemsDao.queryBuilder()
+                                .where(MonItemsDao.Properties.Id.eq(id))
+                                .unique();
+                        names.add(new itemOne(items.getName(),stand1.getId()));
+                    }
+                }
+//                int len=names.size();
+//                if (len==0){
+//                    names.add(stand1);
+//                    continue;
+//                }
+//                for (int i=0;i<len;i++){
+//                    SamplingFormStand s=names.get(i);
+//                    if (s.getSamplingId().equals(stand1.getSamplingId())){
+//                        s.setMonitemName(s.getMonitemName()
+//                                +","+stand1.getMonitemName());
+//                        continue;
+//                    }
+//                    if (i==len-1){
+//                        names.add(stand1);
+//                    }
+//                }
+
             }
 
-            result.add(info);
+//            //出来之后，根据names分组的标签信息打印
+            for (itemOne i:names){
+                LabelInfo info = new LabelInfo();
+                info.setTaskName(sampling.getProjectName());
+                info.setNumber(sampling.getSamplingNo());
+                info.setFrequecyNo("频次：" + item.getFrequecyNo());
+                info.setType(WastewaterActivity.mSample.getTagName());//项目类型取样品性质
+                info.setMonitemName(i.getRes());//监测项目
+                //将MonitemName与SenceMonitemName分组
+                //将Name进行分组
+
+                info.setSampingCode(item.getSampingCode());//样品编码
+                info.setCb1("交接");
+                info.setCb2("分析");
+                info.setQrCode(item.getSampingCode());//二维码为样品编码
+
+                //根据样品的监测项目获取对应的分瓶信息
+                SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
+                if (samplingFormStand != null) {
+                    //保存方法
+                    info.setRemark(samplingFormStand.getPreservative());
+                }
+
+                result.add(info);
+            }
+
+//            LabelInfo info = new LabelInfo();
+//            info.setTaskName(sampling.getProjectName());
+//            info.setNumber(sampling.getSamplingNo());
+//            info.setFrequecyNo("频次：" + item.getFrequecyNo());
+//            info.setType(WastewaterActivity.mSample.getTagName());//项目类型取样品性质
+//            info.setMonitemName(item.getMonitemName() + item.getSenceMonitemName());//监测项目
+//            //将MonitemName与SenceMonitemName分组
+//            //将Name进行分组
+//
+//            info.setSampingCode(item.getSampingCode());//样品编码
+//            info.setCb1("交接");
+//            info.setCb2("分析");
+//            info.setQrCode(item.getSampingCode());//二维码为样品编码
+//
+//            //根据样品的监测项目获取对应的分瓶信息
+//            SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
+//            if (samplingFormStand != null) {
+//                //保存方法
+//                info.setRemark(samplingFormStand.getPreservative());
+//            }
+//
+//            result.add(info);
         }
 
         return result;
@@ -381,7 +456,7 @@ public class CollectionFragment extends BaseFragment {
      * 添加平行样品:频次相同，但是SamplingCode不同
      */
     private void addTheSameSample() {
-        SamplingContent samplingContent=new SamplingContent();
+        SamplingContent samplingContent = new SamplingContent();
         samplingContent.setId(UUID.randomUUID().toString());
         samplingContent.setProjectId(selectSamplingDetail.getProjectId());
         samplingContent.setSamplingId(selectSamplingDetail.getSamplingId());
@@ -406,11 +481,11 @@ public class CollectionFragment extends BaseFragment {
 //        samplingContent.setSenceMonitemId(selectSamplingDetail.getSenceMonitemId());
 
         //包括监测项目和现场监测项目
-        int count=0;
-        String[] monitemIds=selectSamplingDetail.getMonitemId().split(",");
-        if (!CheckUtil.isEmpty(monitemIds)){
-            count+=monitemIds.length;
-            for (String itemId:monitemIds){
+        int count = 0;
+        String[] monitemIds = selectSamplingDetail.getMonitemId().split(",");
+        if (!CheckUtil.isEmpty(monitemIds)) {
+            count += monitemIds.length;
+            for (String itemId : monitemIds) {
                 SamplingDetail detail = new SamplingDetail();
                 detail.setProjectId(samplingContent.getProjectId());
                 detail.setId(UUID.randomUUID().toString());
@@ -432,7 +507,7 @@ public class CollectionFragment extends BaseFragment {
                 detail.setSampleAcceptance(samplingContent.getSampleAcceptance());
                 detail.setPreservative(samplingContent.getPreservative());
                 //计算SamplingCount为非现场监测的样品数量
-                detail.setSamplingCount(HelpUtil.countSamplingCount(selectSamplingDetail,WastewaterActivity.mSample));
+                detail.setSamplingCount(HelpUtil.countSamplingCount(selectSamplingDetail, WastewaterActivity.mSample));
                 DBHelper.get().getSamplingDetailDao().insert(detail);
                 WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
             }
@@ -451,7 +526,7 @@ public class CollectionFragment extends BaseFragment {
      */
     private void addBlankSample() {
         //创建SamplingContent
-        SamplingContent samplingContent=new SamplingContent();
+        SamplingContent samplingContent = new SamplingContent();
         samplingContent.setId(UUID.randomUUID().toString());
         samplingContent.setProjectId(WastewaterActivity.mSample.getProjectId());
         samplingContent.setSamplingType(2);
@@ -484,16 +559,16 @@ public class CollectionFragment extends BaseFragment {
         WastewaterActivity.mSample.getSamplingDetailResults().add(detail);
 
         //数据处理
-        if (CheckUtil.isEmpty(WastewaterActivity.mSample.getSamplingContentResults())){
+        if (CheckUtil.isEmpty(WastewaterActivity.mSample.getSamplingContentResults())) {
             WastewaterActivity.mSample.setSamplingContentResults(new ArrayList<>());
         }
         WastewaterActivity.mSample.getSamplingContentResults().add(samplingContent);
         DBHelper.get().getSamplingContentDao().insert(samplingContent);
         //刷新界面
-        if (mWasteWaterCollectAdapter!=null){
+        if (mWasteWaterCollectAdapter != null) {
             mWasteWaterCollectAdapter.refreshInfos(WastewaterActivity.mSample.getSamplingContentResults());
             //mWasteWaterCollectAdapter.notifyDataSetChanged();
-        }else {
+        } else {
             initRecyclerViewData();
         }
 
@@ -510,7 +585,7 @@ public class CollectionFragment extends BaseFragment {
         List<SamplingContent> samplingList = WastewaterActivity.mSample.getSamplingContentResults();
         if (!CheckUtil.isEmpty(samplingList)) {
             for (SamplingContent detail : samplingList) {
-                if (selectSamplingDetail.getFrequecyNo()==detail.getFrequecyNo() && detail.getSamplingType() == 1) {
+                if (selectSamplingDetail.getFrequecyNo() == detail.getFrequecyNo() && detail.getSamplingType() == 1) {
                     flag = true;
                     break;
                 }
@@ -522,15 +597,16 @@ public class CollectionFragment extends BaseFragment {
 
     /**
      * 根据itemId获取name
+     *
      * @param itemId
      * @return
      */
-    private String getMonItemNameById(String itemId){
+    private String getMonItemNameById(String itemId) {
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(WastewaterActivity.mSample.getParentTagId())).unique();
         List<MonItems> monItems = tags.getMMonItems();
-        if (!CheckUtil.isEmpty(monItems)){
-            for (MonItems monItem:monItems){
-                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
+        if (!CheckUtil.isEmpty(monItems)) {
+            for (MonItems monItem : monItems) {
+                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)) {
                     return monItem.getName();
                 }
             }
@@ -538,4 +614,33 @@ public class CollectionFragment extends BaseFragment {
         return "";
     }
 
+    /**
+     * 中转类
+     */
+    private class itemOne{
+        private String res;
+        private String id;
+
+        public itemOne(String res,String id){
+            this.res=res;
+            this.id=id;
+        }
+
+        public String getRes() {
+            return res;
+        }
+
+        public void setRes(String res) {
+            this.res = res;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
 }
+

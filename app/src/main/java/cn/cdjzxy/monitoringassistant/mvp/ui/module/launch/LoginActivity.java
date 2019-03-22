@@ -36,6 +36,9 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
 
+
+    public static String userName;
+
     @BindView(R.id.et_name)
     ClearEditText etName;
     @BindView(R.id.et_pwd)
@@ -173,6 +176,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         FileUtils.makeDir(Constant.REPOSITORY_DIR);//创建知识库文件目录
         FileUtils.makeDir(Constant.FILE_DIR);//创建文件目录
         FileUtils.makeDir(Constant.DATABASE_DIR);//创建数据库
+        userName=name;
         DBHelper.init(this, name);//初始化创建数据库
     }
 

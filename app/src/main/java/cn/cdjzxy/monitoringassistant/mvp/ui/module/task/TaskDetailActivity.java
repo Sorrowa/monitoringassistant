@@ -306,7 +306,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     }
 
     private void initTask() {
-        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId"))).unique();
+        mProject = DBHelper.get().getProjectDao().queryBuilder()
+                .where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("taskId")))
+                .unique();
         bindView(mProject);
     }
 

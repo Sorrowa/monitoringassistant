@@ -181,8 +181,10 @@ public class CollectionDetailFragment extends BaseFragment {
     private void setSamplingDetail() {
         mSample = WastewaterActivity.mSample;
         List<SamplingContent> samplingDetailResults = mSample.getSamplingContentResults();
-        SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
-        fsListPosition = collectListSettings.getInt("fsListPosition", -1);
+        SharedPreferences collectListSettings = getActivity()
+                .getSharedPreferences("setting", 0);
+        fsListPosition = collectListSettings
+                .getInt("fsListPosition", -1);
         if (fsListPosition == -1) {
             samplingDetail = new SamplingContent();
             samplingDetail.setId(UUID.randomUUID().toString());
@@ -210,7 +212,9 @@ public class CollectionDetailFragment extends BaseFragment {
                     ,samplingDetail.getMonitemName());
 //            Log.d("zzh","res="+res);
 //            Log.d("zzh","template="+samplingDetail.getSenceMonitemName());
-            sample_monitor.setText(res.substring(0,res.length()-1));
+//            sample_monitor.setText(res.substring(0,res.length()-1));
+            sample_monitor.setText(res);
+
 
             if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")){
                 sample_add_preserve.setChecked(true);
@@ -271,6 +275,9 @@ public class CollectionDetailFragment extends BaseFragment {
             if (!monitem.contains(item)){
                 res.append(item).append(",");
             }
+        }
+        if (res.length()>0){
+            res.replace(res.length()-1,res.length(),"");
         }
         return res.toString();
     }
@@ -506,8 +513,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     String res1=Getdifference(samplingDetail.getSenceMonitemId()
                             ,samplingDetail.getMonitemId());
                     samplingDetail.setSenceMonitemId(res1);
-                    sample_monitor.setText(res.substring(0,res.length()-1));
-
+//                    sample_monitor.setText(res.substring(0,res.length()-1));
+                    sample_monitor.setText(res);
 
                     if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
                         sample_monitor_items_title.setText("监测项目（"
@@ -516,7 +523,7 @@ public class CollectionDetailFragment extends BaseFragment {
 //                            int resone=getThelenth(samplingDetail.getSenceMonitemName().split(",")
 //                                    ,samplingDetail.getMonitemName().split(","));
                         sample_monitor_title.setText("现场监测（"
-                                +(samplingDetail.getSenceMonitemName().split(",").length)
+                                +(samplingDetail.getSenceMonitemId().split(",").length)
                                 +"）");
                     }else{
                         sample_monitor_items_title.setText("监测项目（0）");
@@ -557,7 +564,8 @@ public class CollectionDetailFragment extends BaseFragment {
                         String res1=Getdifference(samplingDetail.getMonitemId()
                                 ,samplingDetail.getSenceMonitemId());
                         samplingDetail.setMonitemId(res1);
-                        sample_monitor_items.setText(res.substring(0,res.length()-1));
+                        sample_monitor_items.setText(res);
+//                        sample_monitor_items.setText(res.substring(0,res.length()-1));
 //                        sample_monitor.setText(samplingDetail.getSenceMonitemName());
 
                         if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))){
@@ -569,7 +577,7 @@ public class CollectionDetailFragment extends BaseFragment {
                                     +samplingDetail.getMonitemName().split(",").length
                                     +"）");
                             sample_monitor_title.setText("现场监测（"
-                                    +(samplingDetail.getSenceMonitemName().split(",").length)
+                                    +(samplingDetail.getSenceMonitemId().split(",").length)
                                     +"）");
                         }
                     }else{

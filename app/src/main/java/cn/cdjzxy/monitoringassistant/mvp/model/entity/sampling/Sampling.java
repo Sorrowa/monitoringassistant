@@ -362,6 +362,8 @@ public class Sampling {
 
     public void setSamplingTimeBegin(String SamplingTimeBegin) {
         this.SamplingTimeBegin = SamplingTimeBegin;
+        //后端表示放弃治疗
+        this.SamplingTimeEnd=this.SamplingTimeBegin;
     }
 
     public String getSamplingTimeEnd() {
