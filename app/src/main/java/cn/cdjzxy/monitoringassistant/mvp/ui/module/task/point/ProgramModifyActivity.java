@@ -173,11 +173,13 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                                mProjectDetial.setMonItemName(data.getStringExtra("MonItemName"));
-                                mProjectDetial.setMonItemId(data.getStringExtra("MonItemId"));
-                                bindView(mProjectDetial);
-                            }
+                            mProjectDetial.setMonItemName(data.getStringExtra("MonItemName"));
+                            mProjectDetial.setMonItemId(data.getStringExtra("MonItemId"));
+                            bindView(mProjectDetial);
+//                            if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !
+//                                    CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
+//
+//                            }
                         }
                     }
                 });
