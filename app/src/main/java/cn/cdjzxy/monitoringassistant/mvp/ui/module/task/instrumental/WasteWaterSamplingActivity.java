@@ -128,6 +128,10 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
                     mSelectDetails.add(item);
                     ivChoose.setImageResource(R.mipmap.ic_cb_checked);
                 }
+                if (addSelectSampling()) {
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                }
             }
         });
         recyclerViewMonite.setAdapter(mWasteWaterSamplingAdapter);

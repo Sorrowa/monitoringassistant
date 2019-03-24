@@ -21,12 +21,11 @@
 
     <uses-permission android:name="android.hardware.usb.accessory" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!--<uses-permission android:name="android.permission.DEVICE_POWER"/>-->
+    <!-- <uses-permission android:name="android.permission.DEVICE_POWER"/> -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.ACCESS_GPS"/>
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
+    <uses-permission android:name="android.permission.ACCESS_GPS" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:name="com.wonders.health.lib.base.base.BaseApplication"
@@ -36,18 +35,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
         <meta-data
             android:name="cn.cdjzxy.monitoringassistant.app.GlobalConfiguration"
             android:value="ConfigModule" />
-
         <meta-data
             android:name="design_width_in_dp"
             android:value="1280" />
         <meta-data
             android:name="design_height_in_dp"
             android:value="720" />
-
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="vwNmpY0UYISRq2ND3cfuv2elewqBDm1e" />
@@ -64,164 +60,132 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".mvp.ui.module.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.TaskActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.TaskSearchActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.TaskSearchResultActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.TaskDetailActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.precipitation.PrecipitationActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".mvp.ui.module.task.wastewater.WastewaterActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".mvp.ui.module.repository.RepositoryActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.instrumental.InstrumentalActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.instrumental.WasteWaterMoniteActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.instrumental.WasteWaterSamplingActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.repository.RepositorySearchActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.setting.AboutActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.webview.WebActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.msg.MsgActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.msg.MsgDetailActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.print.FormPrintActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.print.LabelPrintActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.print.LabelPrintDeviceActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.point.PointActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.point.PointSelectActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.point.ProgramModifyActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.point.MonItemActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.device.DeviceActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.UserActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.MethodActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.MonItemMethodActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.TypeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.WeatherActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.PlaceActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.UnitActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.print.PreviewPrintActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -230,17 +194,21 @@
             android:name=".mvp.ui.module.task.NavigationActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.point.BottleMonItemActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.task.point.ProgramPointSelectActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".mvp.ui.module.preview.PreviewActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        </activity>
         <service android:name=".services.RepositoryService" />
 
         <!-- 佳博蓝牙打印 -->
@@ -253,7 +221,7 @@
                 <action android:name="com.gprinter.aidl.GpPrintService" />
             </intent-filter>
         </service>
-        <service android:name="com.gprinter.service.AllService"></service>
+        <service android:name="com.gprinter.service.AllService" />
 
         <!-- 自动蓝牙配对 -->
         <receiver android:name=".mvp.ui.module.task.print.PairingRequest">
@@ -265,9 +233,9 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote">
+            android:process=":remote"></service>
 
-        </service>
 
     </application>
+
 </manifest>

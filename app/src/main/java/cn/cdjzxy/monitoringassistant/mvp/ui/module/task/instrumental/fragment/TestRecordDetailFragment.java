@@ -25,10 +25,15 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import org.simple.eventbus.EventBus;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +41,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
@@ -168,11 +174,11 @@ public class TestRecordDetailFragment extends BaseFragment {
             tvTestUnit.setText("");
             etAnalyseResult.setText("");
             TestRecordDetailFragment.this.unitId = "";
-            creatSampleDetailNo();
+            createSampleDetailNo();
         }
     }
 
-    private void creatSampleDetailNo() {
+    private void createSampleDetailNo() {
         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailYQFs();
 
         SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
@@ -191,9 +197,17 @@ public class TestRecordDetailFragment extends BaseFragment {
 
         //记录结果单位ID
         TestRecordDetailFragment.this.unitId = samplingDetail.getPrivateDataStringValue("ValueUnit");
+        if (samplingDetail.getPrivateDataStringValue("ValueUnitName") == null ||
+                samplingDetail.getPrivateDataStringValue("ValueUnitName").equals("")) {
+            List<Unit> units = DBHelper.get().getUnitDao().loadAll();
+            if (units != null && units.size() > 0) {
+                tvTestUnit.setText(units.get(0).getName());
+                TestRecordDetailFragment.this.unitId = units.get(0).getId();
+            }
 
-        tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
-
+        } else {
+            tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
+        }
         if (!mSampling.getIsCanEdit()) {
             btnDelete.setVisibility(View.GONE);
             btnSave.setVisibility(View.GONE);
@@ -488,10 +502,10 @@ public class TestRecordDetailFragment extends BaseFragment {
 
                             //删除点位ID和点位名称
                             if (!TextUtils.isEmpty(samplingDetail1.getAddresssId()) && mSampling.getAddressId().contains(samplingDetail1.getAddresssId())) {
-                                mSampling.setAddressId(StringUtil.trimStr(mSampling.getAddressId().replace(samplingDetail1.getAddresssId(), ""),","));
+                                mSampling.setAddressId(StringUtil.trimStr(mSampling.getAddressId().replace(samplingDetail1.getAddresssId(), ""), ","));
                             }
                             if (!TextUtils.isEmpty(samplingDetail1.getAddressName()) && mSampling.getAddressName().contains(samplingDetail1.getAddressName())) {
-                                mSampling.setAddressName(StringUtil.trimStr(mSampling.getAddressName().replace(samplingDetail1.getAddressName(),""),","));
+                                mSampling.setAddressName(StringUtil.trimStr(mSampling.getAddressName().replace(samplingDetail1.getAddressName(), ""), ","));
                             }
 
                             //保存到数据库

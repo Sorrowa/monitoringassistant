@@ -206,7 +206,7 @@ public class BasicInfoFragment extends BaseFragment {
 
                         String monitemId = data.getStringExtra("MonitemId");
                         String monitemName = data.getStringExtra("MonitemName");
-
+                        tvChooseProject.setText(monitemName);
                         if (monitemId.equals(InstrumentalActivity.mSampling.getMonitemId()) && monitemName.equals(InstrumentalActivity.mSampling.getMonitemName())) {
                             return;//跟之前选择的一样
                         }

@@ -126,16 +126,23 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         if (isNewCreate) {
             mSample = createSample();
         } else {
-            mSample = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
+            mSample = DBHelper.get().getSamplingDao().queryBuilder().
+                    where(SamplingDao.Properties.Id.eq(samplingId)).unique();
+            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().
+                    where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
             mSample.setSamplingFiless(samplingFiles);
-            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
+            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().
+                    where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
             mSample.setSamplingDetailResults(samplingDetails);
-            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().
+                    where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
+                    orderAsc(SamplingFormStandDao.Properties.Index).list();
             if (!CheckUtil.isEmpty(formStantdsList)) {
                 WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
             }
-            List<SamplingContent> samplingContentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingContentDao.Properties.OrderIndex).list();
+            List<SamplingContent> samplingContentList = DBHelper.get().getSamplingContentDao().
+                    queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(mSample.getId())).
+                    orderAsc(SamplingContentDao.Properties.OrderIndex).list();
             if (!CheckUtil.isEmpty(samplingContentList)) {
                 WastewaterActivity.mSample.setSamplingContentResults(samplingContentList);
             }
@@ -162,7 +169,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                         if (!CheckUtil.isEmpty(samplingFiles)) {
                             DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
                         }
-                        if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())){
+                        if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())) {
                             mSample.getSamplingFiless().remove(0);
                         }
                         DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
@@ -312,7 +319,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private String createSamplingNo() {
         StringBuilder samplingNo = new StringBuilder("");
-        String dateStr = DateUtils.getDate().replace("-","").substring(2);
+        String dateStr = DateUtils.getDate().replace("-", "").substring(2);
         samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
 //        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();

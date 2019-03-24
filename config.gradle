@@ -22,7 +22,8 @@ ext {
             espressoSdkVersion      : "3.0.2",
             canarySdkVersion        : "1.6.1",
             fastJsonVersion         : "1.1.67.android",
-            dartVersion             : "3.0.0"
+            dartVersion             : "3.0.0",
+            tinyPinyinVirsion       :"2.0.3"
     ]
 
     dependencies = [
@@ -57,7 +58,6 @@ ext {
             "nineoldandroids"          : "com.nineoldandroids:library:2.4.0",
             "paginate"                 : "com.github.markomilos:paginate:0.5.1",
             "vlayout"                  : "com.alibaba.android:vlayout:1.1.0@aar",
-
             "autosize"                 : "me.jessyan:autosize:1.1.0",
 
             //rx2
@@ -148,6 +148,9 @@ ext {
             "fileprovider"             : "com.zhy.base:fileprovider:1.0.0",
             "numberprogressbar"        : "com.daimajia.numberprogressbar:library:1.4@aar",
             "matisse"                  : "com.zhihu.android:matisse:0.5.2-beta4",
+
+            //汉字转拼音  便于搜索
+            "tinyPinyin"               :"com.github.promeg:tinypinyin-lexicons-android-cncity:${version["tinyPinyinVirsion"]}"
 
     ]
 

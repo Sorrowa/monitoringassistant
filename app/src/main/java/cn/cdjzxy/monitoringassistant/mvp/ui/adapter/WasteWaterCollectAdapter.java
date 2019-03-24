@@ -38,4 +38,9 @@ public class WasteWaterCollectAdapter extends DefaultAdapter<SamplingContent> {
     public interface OnWasteWaterCollectListener {
         void onSelected(View view, int position, boolean isSelected);
     }
+
+    @Override
+    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
+        super.setOnItemClickListener(listener);
+    }
 }

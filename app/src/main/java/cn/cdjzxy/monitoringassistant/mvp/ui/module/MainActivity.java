@@ -45,7 +45,6 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MainTabAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.msg.MsgActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.pointMap.PointMapFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.repository.RepositoryFragment;
@@ -154,9 +153,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @Override
     protected void onResume() {
         super.onResume();
-        if (DBHelper.getInstance()==null){
-            DBHelper.init(this, LoginActivity.userName);
-        }
         List<Msg> msgs = DBHelper.get().getMsgDao().queryBuilder().where(MsgDao.Properties.MsgStatus.eq(0)).list();
         if (!CheckUtil.isEmpty(msgs)) {
             mBadgeView.setVisibility(View.VISIBLE);

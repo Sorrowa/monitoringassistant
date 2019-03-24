@@ -1,12 +1,15 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class SamplingFile {
+public class SamplingFile implements Parcelable {
 
     @Id
     private String LocalId;
@@ -75,5 +78,41 @@ public class SamplingFile {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.LocalId);
+        dest.writeString(this.Id);
+        dest.writeString(this.SamplingId);
+        dest.writeString(this.FileName);
+        dest.writeString(this.FilePath);
+        dest.writeString(this.UpdateTime);
+        dest.writeByte(this.IsUploaded ? (byte) 1 : (byte) 0);
+    }
+
+    protected SamplingFile(Parcel in) {
+        this.LocalId = in.readString();
+        this.Id = in.readString();
+        this.SamplingId = in.readString();
+        this.FileName = in.readString();
+        this.FilePath = in.readString();
+        this.UpdateTime = in.readString();
+        this.IsUploaded = in.readByte() != 0;
+    }
+
+    public static final Creator<SamplingFile> CREATOR = new Creator<SamplingFile>() {
+        @Override
+        public SamplingFile createFromParcel(Parcel source) {
+            return new SamplingFile(source);
+        }
+
+        @Override
+        public SamplingFile[] newArray(int size) {
+            return new SamplingFile[size];
+        }
+    };
 }

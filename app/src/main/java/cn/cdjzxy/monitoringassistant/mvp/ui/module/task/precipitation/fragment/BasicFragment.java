@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -51,6 +52,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.preview.PreviewActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TypeActivity;
@@ -68,46 +70,49 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 public class BasicFragment extends BaseFragment {
 
+
     private static final int REQUEST_CODE = 24;
 
     @BindView(R.id.tv_sampling_date)
-    TextView       tvSamplingDate;
+    TextView tvSamplingDate;
     @BindView(R.id.tv_sampling_user)
-    TextView       tvSamplingUser;
+    TextView tvSamplingUser;
     @BindView(R.id.tv_sampling_type)
-    TextView       tvSamplingType;
+    TextView tvSamplingType;
     @BindView(R.id.tv_sampling_point)
-    TextView       tvSamplingPoint;
+    TextView tvSamplingPoint;
     @BindView(R.id.tv_sampling_no)
-    EditText       tvSamplingNo;
+    EditText tvSamplingNo;
     @BindView(R.id.tv_sampling_height)
-    EditText       tvSamplingHeight;
+    EditText tvSamplingHeight;
     @BindView(R.id.et_sampling_area)
-    EditText       etSamplingArea;
+    EditText etSamplingArea;
     @BindView(R.id.tv_sampling_method)
-    TextView       tvSamplingMethod;
+    TextView tvSamplingMethod;
     @BindView(R.id.tv_sampling_device)
-    TextView       tvSamplingDevice;
+    TextView tvSamplingDevice;
     @BindView(R.id.layout_flow_information)
     RelativeLayout layoutFlowInformation;
     @BindView(R.id.tv_flow_method)
-    EditText       tvFlowMethod;
+    EditText tvFlowMethod;
     @BindView(R.id.tv_flow_date)
-    TextView       tvFlowDate;
+    TextView tvFlowDate;
     @BindView(R.id.tv_comment)
-    EditText       tvComment;
+    EditText tvComment;
     @BindView(R.id.layout_flow_information_container)
-    LinearLayout   layoutFlowInformationContainer;
+    LinearLayout layoutFlowInformationContainer;
     @BindView(R.id.iv_add_photo)
-    ImageView      ivAddPhoto;
+    ImageView ivAddPhoto;
     @BindView(R.id.tv_arrow)
-    TextView       tvArrow;
+    TextView tvArrow;
     @BindView(R.id.recyclerview)
-    RecyclerView   recyclerview;
+    RecyclerView recyclerview;
     @BindView(R.id.tv_receive_date)
-    TextView   tv_receive_date;
+    TextView tv_receive_date;
 
     Unbinder unbinder;
+
+    private static final int request_Code = 20001;
 
 
     private PreciptationPrivateData mPrivateData;
@@ -281,12 +286,22 @@ public class BasicFragment extends BaseFragment {
                 SamplingFile samplingFile = mSamplingFiles.remove(position);
 
                 //记录删除的文件，提交给服务端
-                if(samplingFile!=null){
+                if (samplingFile != null) {
                     PrecipitationActivity.mSampling.addDeleteFiles(samplingFile.getId());
                 }
 
                 PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
                 mSamplingFileAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onPirViewPhoto(int position) {
+                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS, (ArrayList<SamplingFile>) mSamplingFiles);
+                intent.putExtra(PreviewActivity.PREVIEW_PHOTOS, bundle);
+                intent.putExtra(PreviewActivity.POSITION, position);
+                getActivity().startActivityForResult(intent, request_Code);
             }
         });
         recyclerview.setAdapter(mSamplingFileAdapter);
@@ -345,6 +360,8 @@ public class BasicFragment extends BaseFragment {
 
             PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
             mSamplingFileAdapter.notifyDataSetChanged();
+        } else if (requestCode == request_Code && requestCode == PreviewActivity.BACK_RESULT_CODE) {
+            mSamplingFiles = data.getParcelableArrayListExtra(PreviewActivity.PREVIEW_PHOTOS);
         }
     }
 

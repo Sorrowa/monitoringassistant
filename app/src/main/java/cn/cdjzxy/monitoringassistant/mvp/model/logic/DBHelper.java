@@ -11,8 +11,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.wrapper.GreenDaoContext;
 public class DBHelper {
 
     private static DaoSession sDaoSession;
-    private static DaoMaster sDaoMaster;
-    private static DBHelper sDBHelper;
+    private static DaoMaster  sDaoMaster;
+    private static DBHelper   sDBHelper;
 
     private DBHelper() {
 

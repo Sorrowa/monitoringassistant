@@ -31,7 +31,7 @@ public class SamplingFileHolder extends BaseHolder<SamplingFile> {
     ImageView mIvDeletePhoto;
 
     private SamplingFileAdapter.OnSamplingFileListener onSamplingFileListener;
-    private ImageLoader                                mImageLoader;
+    private ImageLoader mImageLoader;
 
     public SamplingFileHolder(View itemView, SamplingFileAdapter.OnSamplingFileListener onSamplingFileListener) {
         super(itemView);
@@ -68,6 +68,14 @@ public class SamplingFileHolder extends BaseHolder<SamplingFile> {
                 public void onClick(View v) {
                     if (!CheckUtil.isNull(onSamplingFileListener)) {
                         onSamplingFileListener.onDeletePhoto(position);
+                    }
+                }
+            });
+            mIvPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!CheckUtil.isNull(onSamplingFileListener)) {
+                        onSamplingFileListener.onPirViewPhoto(position);
                     }
                 }
             });

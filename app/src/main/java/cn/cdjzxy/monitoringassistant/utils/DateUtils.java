@@ -392,6 +392,15 @@ public class DateUtils {
         return new SimpleDateFormat("yyyy-MM-dd HH:MM:ss").format(new Date()).toString();
     }
 
+    /**
+     * 返回时间
+     * @param date
+     * @return
+     */
+    public static String getTime(Date date) {
+        return new SimpleDateFormat("HH:mm:ss").format(date);
+    }
+
 
     /**
      * 获取当前年月日

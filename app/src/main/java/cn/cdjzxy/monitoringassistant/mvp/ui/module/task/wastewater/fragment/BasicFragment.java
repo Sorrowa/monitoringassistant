@@ -23,6 +23,7 @@ import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
+import com.wonders.health.lib.base.http.imageloader.ImageConfig;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
@@ -30,6 +31,7 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.ui.SelectedPreviewActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.preview.PreviewActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TypeActivity;
@@ -138,7 +141,7 @@ public class BasicFragment extends BaseFragment {
     @BindView(R.id.more_gw)
     CheckedTextView more_gw;
 
-
+    private static final int request_Code = 20002;
 
     private List<SamplingFile> sampleFiles = new ArrayList<>();
     private SamplingFileAdapter sampleFileAdapter;
@@ -180,7 +183,7 @@ public class BasicFragment extends BaseFragment {
             if (fsExtends != null && !TextUtils.isEmpty(fsExtends.getSewageDisposal()) && fsExtends.getSewageDisposal().equals("是")) {
                 sewageDisposal = true;
                 fsExtends.setSewageDisposal("是");
-            }else {
+            } else {
                 fsExtends.setSewageDisposal("否");
             }
             base_sample_handle.setChecked(sewageDisposal);
@@ -214,7 +217,7 @@ public class BasicFragment extends BaseFragment {
             if (fsExtends != null && !TextUtils.isEmpty(fsExtends.getAccessPipeNetwork()) && fsExtends.getAccessPipeNetwork().equals("是")) {
                 gw = true;
                 fsExtends.setAccessPipeNetwork("是");
-            }else {
+            } else {
                 fsExtends.setAccessPipeNetwork("否");
             }
             more_gw.setChecked(gw);
@@ -263,14 +266,25 @@ public class BasicFragment extends BaseFragment {
             @Override
             public void onDeletePhoto(int position) {
                 SamplingFile samplingFile = sampleFiles.remove(position);
-
                 //记录删除的文件，提交给服务端
-                if(samplingFile!=null){
+                if (samplingFile != null) {
                     WastewaterActivity.mSample.addDeleteFiles(samplingFile.getId());
                 }
-
                 WastewaterActivity.mSample.setSamplingFiless(sampleFiles);
                 sampleFileAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onPirViewPhoto(int position) {
+                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                Bundle bundle = new Bundle();
+                List<SamplingFile> list = new ArrayList<>();
+                list = sampleFiles;
+                list.remove(0);
+                bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS, (ArrayList<SamplingFile>) list);
+                intent.putExtra(PreviewActivity.PREVIEW_PHOTOS, bundle);
+                intent.putExtra(PreviewActivity.POSITION, position);
+                getActivity().startActivityForResult(intent, request_Code);
             }
         });
         recyclerview.setAdapter(sampleFileAdapter);
@@ -307,7 +321,6 @@ public class BasicFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             List<String> paths = Matisse.obtainPathResult(data);
             ArtUtils.makeText(getContext(), paths.toString());
-
             for (String path : paths) {
                 SamplingFile samplingFile = new SamplingFile();
                 File file = new File(path);
@@ -319,8 +332,15 @@ public class BasicFragment extends BaseFragment {
                 samplingFile.setUpdateTime(DateUtils.getTime(new Date().getTime()));
                 sampleFiles.add(samplingFile);
             }
-
             WastewaterActivity.mSample.setSamplingFiless(sampleFiles);
+            sampleFileAdapter.notifyDataSetChanged();
+        } else if (requestCode == request_Code && resultCode == PreviewActivity.BACK_RESULT_CODE) {
+            Bundle bundle = data.getBundleExtra(PreviewActivity.PREVIEW_PHOTOS);
+            List<SamplingFile> list = bundle.getParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS);
+            SamplingFile file = sampleFiles.get(0);
+            sampleFiles.clear();
+            sampleFiles.add(file);
+            sampleFiles.addAll(list);
             sampleFileAdapter.notifyDataSetChanged();
         }
     }
@@ -329,7 +349,9 @@ public class BasicFragment extends BaseFragment {
         Matisse.from(this)
                 .choose(MimeType.ofImage())
                 .capture(true)
-                .captureStrategy(new CaptureStrategy(true, "cn.cdjzxy.monitoringassistant.android7.fileprovider", "MonitoringAssistant"))
+                .captureStrategy(new CaptureStrategy(true,
+                        "cn.cdjzxy.monitoringassistant.android7.fileprovider",
+                        "MonitoringAssistant"))
                 .maxSelectable(5)
                 //.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
@@ -342,7 +364,9 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
-    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property, R.id.base_sample_point, R.id.base_sample_method, R.id.weather_info_layout, R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date,R.id.tv_receive_date,R.id.more_build_date})
+    @OnClick({R.id.iv_add_photo, R.id.base_sample_date, R.id.base_sample_user, R.id.base_sample_property,
+            R.id.base_sample_point, R.id.base_sample_method, R.id.weather_info_layout,
+            R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date, R.id.tv_receive_date, R.id.more_build_date})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_photo:
@@ -411,6 +435,7 @@ public class BasicFragment extends BaseFragment {
 
     /**
      * 设置送样时间
+     *
      * @param dateTextView
      */
     private void showSendDateSelectDialog(TextView dateTextView) {
@@ -427,6 +452,7 @@ public class BasicFragment extends BaseFragment {
 
     /**
      * 选择收样时间
+     *
      * @param dateTextView
      */
     private void showReceiveDateSelectDialog(TextView dateTextView) {
@@ -443,6 +469,7 @@ public class BasicFragment extends BaseFragment {
 
     /**
      * 建设时间
+     *
      * @param dateTextView
      */
     private void showBuildTimeSelectDialog(TextView dateTextView) {

@@ -91,7 +91,7 @@ dependencies {
 //    implementation (rootProject.ext.dependencies["rxcache-jolyglot-gson"]){
 //        exclude module: 'api'
 //    }
-    implementation ('com.github.VictorAlbertos.Jolyglot:gson:0.0.3'){
+    implementation ('com.github.VictorAlbertos.Jolyglot:gson:0.0.4'){
         exclude module: 'api'
         exclude module: 'gson'
     }

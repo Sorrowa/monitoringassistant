@@ -37,8 +37,21 @@ public class SamplingFileAdapter extends DefaultAdapter<SamplingFile> {
 
 
     public interface OnSamplingFileListener {
+        /**
+         * 相册选择图片 ——可以拍照
+         */
         void onChoosePhoto();
 
+        /**
+         * 删除图片
+         * @param position
+         */
         void onDeletePhoto(int position);
+
+        /**
+         * 查看图片
+         * @param position
+         */
+        void onPirViewPhoto(int position);
     }
 }

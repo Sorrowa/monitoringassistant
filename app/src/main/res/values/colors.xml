@@ -55,6 +55,7 @@
     <color name="bg_color_ff912d">#ff912d</color>
     <color name="bg_color_2b99ff">#2b99ff</color>
     <color name="bg_color_0f73cd">#0f73cd</color>
+    <color name="bg_search">#2c98fe</color>
 
     <color name="text_color_cccccc">#cccccc</color>
     <color name="text_color_333333">#333333</color>

@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/choose_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:padding="@dimen/dp_8"
             android:src="@mipmap/radio" />
 
@@ -53,7 +53,7 @@
                     android:text="--"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_14" />
-
+                 <!--//这里显示了时间——————现在不需要显示-->
                 <TextView
                     android:id="@+id/collect_operate"
                     android:layout_width="wrap_content"
@@ -61,6 +61,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="现场平行"
+                    android:visibility="gone"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_14" />
 
