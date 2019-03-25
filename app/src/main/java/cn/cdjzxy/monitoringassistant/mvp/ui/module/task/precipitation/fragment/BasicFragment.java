@@ -298,7 +298,8 @@ public class BasicFragment extends BaseFragment {
             public void onPirViewPhoto(int position) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS, (ArrayList<SamplingFile>) mSamplingFiles);
+                bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS
+                        , (ArrayList<SamplingFile>) mSamplingFiles);
                 intent.putExtra(PreviewActivity.PREVIEW_PHOTOS, bundle);
                 intent.putExtra(PreviewActivity.POSITION, position);
                 getActivity().startActivityForResult(intent, request_Code);

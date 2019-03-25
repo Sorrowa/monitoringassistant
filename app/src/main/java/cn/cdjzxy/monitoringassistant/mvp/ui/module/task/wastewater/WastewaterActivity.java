@@ -157,7 +157,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         }));
 
         if (mSample.getIsCanEdit()) {
-            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
+            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save
+                    , new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!checkBaseInfo()) {
@@ -170,6 +171,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                             DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
                         }
                         if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())) {
+                            //将补充位置的第一个图片去除,添加图片的标志
                             mSample.getSamplingFiless().remove(0);
                         }
                         DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());

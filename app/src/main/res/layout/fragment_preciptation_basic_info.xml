@@ -9,27 +9,34 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
-                android:text="采样日期" />
+                android:text="采样日期"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:id="@+id/tv_sampling_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:text="2018-09-30"
                 android:textColor="#333333"
                 android:textSize="@dimen/text_size_13" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -37,15 +44,21 @@
 
             <TextView
                 android:id="@+id/tv_sampling_user"
-                style="@style/BasicInfoItemTextViewStyle"
+                style="@style/BasicInfoItemTextViewStyle_gai"
+                android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center|end"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -54,13 +67,15 @@
 
             <TextView
                 android:id="@+id/tv_sampling_type"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/BasicInfoItemTextViewStyle_gai" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -69,13 +84,15 @@
 
             <TextView
                 android:id="@+id/tv_sampling_point"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/BasicInfoItemTextViewStyle_gai" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -83,15 +100,17 @@
 
             <EditText
                 android:id="@+id/tv_sampling_no"
-                style="@style/BasicInfoItemEditTextStyle"
+                style="@style/BasicInfoItemEditTextStyle_gai"
                 android:inputType="number"
                 android:maxLength="50" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -99,15 +118,17 @@
 
             <EditText
                 android:id="@+id/tv_sampling_height"
-                style="@style/BasicInfoItemEditTextStyle"
+                style="@style/BasicInfoItemEditTextStyle_gai"
                 android:inputType="numberDecimal"
                 android:maxLength="50" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
 
@@ -116,14 +137,16 @@
 
             <EditText
                 android:id="@+id/et_sampling_area"
-                style="@style/BasicInfoItemEditTextStyle"
+                style="@style/BasicInfoItemEditTextStyle_gai"
                 android:inputType="numberDecimal" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -131,13 +154,13 @@
 
             <TextView
                 android:id="@+id/tv_sampling_method"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/BasicInfoItemTextViewStyle_gai" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -145,15 +168,15 @@
 
             <TextView
                 android:id="@+id/tv_sampling_device"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/BasicInfoItemTextViewStyle_gai" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_flow_information" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -161,10 +184,10 @@
 
             <EditText
                 android:id="@+id/tv_comment"
-                style="@style/BasicInfoItemEditTextStyle"
+                style="@style/BasicInfoItemEditTextStyle_gai"
                 android:maxLength="100" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 

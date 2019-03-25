@@ -1337,7 +1337,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             List<Sampling> samplingList = mTaskDetailAdapter.getInfos();
             if (!CheckUtil.isEmpty(samplingList)) {
                 for (Sampling sampling : samplingList) {
-                    if (sampling.getIsFinish() && sampling.isSelected() && !sampling.getIsUpload()) {
+                    if (sampling.getIsFinish()
+                            && sampling.isSelected()
+                            && !sampling.getIsUpload()) {
                         return true;
                     }
                 }

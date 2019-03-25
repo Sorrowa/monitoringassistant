@@ -236,7 +236,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      * @return
      */
     private View getTitleRightView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.view_main_title_right, null);
+        View view = LayoutInflater.from(this)
+                .inflate(R.layout.view_main_title_right, null);
         mBadgeView = view.findViewById(R.id.red_hot);
         return view;
     }
