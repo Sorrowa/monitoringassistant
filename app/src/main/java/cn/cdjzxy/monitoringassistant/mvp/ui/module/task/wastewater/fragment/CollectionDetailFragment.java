@@ -536,21 +536,24 @@ public class CollectionDetailFragment extends BaseFragment {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                        samplingDetail.setMonitemName(data.getStringExtra("MonItemName"));
-                        samplingDetail.setMonitemId(data.getStringExtra("MonItemId"));
-                        sample_monitor_items.setText(samplingDetail.getMonitemName());
-                        //todo:去除重复项 这没问题
-                        String res = Getdifference(samplingDetail.getSenceMonitemName()
-                                , samplingDetail.getMonitemName());
-                        sample_monitor.setText(res);
-                        if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))) {
-                            sample_monitor_items_title.setText("监测项目(" + data.getStringExtra("MonItemId").split(",").length + ")");
-                            int resone = getThelenth(data.getStringExtra("MonItemId").split(",")
-                                    , samplingDetail.getMonitemName().split(","));
-                            sample_monitor_title.setText("现场监测（" + resone + "）");
-                        }
+                    samplingDetail.setMonitemName(data.getStringExtra("MonItemName"));
+                    samplingDetail.setMonitemId(data.getStringExtra("MonItemId"));
+                    sample_monitor_items.setText(samplingDetail.getMonitemName());
+                    //todo:去除重复项 这没问题
+                    String res = Getdifference(samplingDetail.getSenceMonitemName()
+                            , samplingDetail.getMonitemName());
+                    sample_monitor.setText(res);
+                    if (samplingDetail.getMonitemId() == null
+                            || samplingDetail.getMonitemId().equals("")) {
+                        sample_monitor_items_title.setText("监测项目(" + 0 + ")");
+                    } else {
+                        sample_monitor_items_title.setText("监测项目(" + samplingDetail.
+                                getMonitemId().split(",").length + ")");
                     }
+
+                    int resone = getThelenth(data.getStringExtra("MonItemId").split(",")
+                            , samplingDetail.getSenceMonitemId().split(","));
+                    sample_monitor_title.setText("现场监测（" + resone + "）");
                 }
             }
         });
@@ -569,22 +572,18 @@ public class CollectionDetailFragment extends BaseFragment {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                        samplingDetail.setSenceMonitemName(data.getStringExtra("MonItemName"));
-                        samplingDetail.setSenceMonitemId(data.getStringExtra("MonItemId"));
-                        //todo:去除重复项 这没问题
-                        String res = Getdifference(samplingDetail.getSenceMonitemName()
-                                , samplingDetail.getMonitemName());
-                        sample_monitor.setText(res);
+                    samplingDetail.setSenceMonitemName(data.getStringExtra("MonItemName"));
+                    samplingDetail.setSenceMonitemId(data.getStringExtra("MonItemId"));
+                    //todo:去除重复项 这没问题
+                    String res = Getdifference(samplingDetail.getSenceMonitemName()
+                            , samplingDetail.getMonitemName());
+                    sample_monitor.setText(res);
 //                        sample_monitor.setText(samplingDetail.getSenceMonitemName());
-                        if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId"))) {
 //                            sample_monitor_title.setText("现场监测("+data.getStringExtra("MonItemId").split(",").length+")");
-                            int resone = getThelenth(data.getStringExtra("MonItemId").split(",")
-                                    , samplingDetail.getMonitemId().split(","));
+                    int resone = getThelenth(data.getStringExtra("MonItemId").split(",")
+                            , samplingDetail.getSenceMonitemId().split(","));
 //                            Log.d("zzh","长度为:"+resone);
-                            sample_monitor_title.setText("现场监测（" + resone + "）");
-                        }
-                    }
+                    sample_monitor_title.setText("现场监测（" + resone + "）");
                 }
             }
         });

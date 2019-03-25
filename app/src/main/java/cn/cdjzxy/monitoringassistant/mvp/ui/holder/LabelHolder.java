@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baidu.mapframework.commonlib.utils.JSONUtils;
 import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
