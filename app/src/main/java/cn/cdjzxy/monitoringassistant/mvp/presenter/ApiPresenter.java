@@ -22,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,6 +70,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
@@ -795,6 +798,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
 
     /**
+     * 获得与我相关的任务
+     * 添加：判断时间先后保留信息
      * @param msg
      */
     public void getMyTasks(final Message msg) {
@@ -804,16 +809,59 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onSuccess(BaseResponse<List<Project>> baseResponse) {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
-                            List<Project> projects = baseResponse.getData();
-                            DBHelper.get().getProjectDetialDao().deleteAll();
-                            DBHelper.get().getProjectDao().deleteAll();
-                            for (Project project : projects) {
-                                List<ProjectDetial> projectDetials = project.getProjectDetials();
-                                if (!CheckUtil.isEmpty(projectDetials)) {
-                                    DBHelper.get().getProjectDetialDao().insertInTx(projectDetials);
+                            List<Project> projects = baseResponse.getData();//所有与我相关的任务
+                            //todo:找出时间后于服务器的数据
+                            ProjectDao dao=DBHelper.get().getProjectDao();
+                            //日期转化
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            for (Project project : projects){
+
+                                Project old=dao.queryBuilder()
+                                        .where(ProjectDao.Properties.Id.eq(project.getId()))
+                                        .build()
+                                        .unique();
+                                /**如果没有冲突，那么直接插入**/
+                                if (old==null){
+                                    List<ProjectDetial> projectDetials = project.getProjectDetials();
+                                    if (!CheckUtil.isEmpty(projectDetials)) {
+                                        DBHelper.get()
+                                                .getProjectDetialDao()
+                                                .insertInTx(projectDetials);
+                                    }
+                                    dao.insert(project);
+                                    continue;
+                                }
+                                /**有冲突，比较时间先后，暂时默认相同时间使用服务器版本**/
+                                try {
+                                    Date remoteDate = sdf.parse(project.getUpdateTime());
+                                    Date localDate= sdf.parse(old.getUpdateTime());
+                                    if (remoteDate.compareTo(localDate)>=0){
+                                        //服务端后更新,以及相等情况
+                                        //更新本地的记录
+                                        dao.update(project);
+                                        List<ProjectDetial> projectDetials = project.getProjectDetials();
+                                        //todo:搞定
+                                        if (!CheckUtil.isEmpty(projectDetials)) {
+                                            DBHelper.get()
+                                                    .getProjectDetialDao()
+                                                    .updateInTx(projectDetials);
+                                        }
+                                    }
+                                    //如果是客户端后更新,那么不用任何操作,因为存储的就是最新的
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
                             }
-                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
+
+//                            DBHelper.get().getProjectDetialDao().deleteAll();
+//                            DBHelper.get().getProjectDao().deleteAll();
+//                            for (Project project : projects) {
+//                                List<ProjectDetial> projectDetials = project.getProjectDetials();
+//                                if (!CheckUtil.isEmpty(projectDetials)) {
+//                                    DBHelper.get().getProjectDetialDao().insertInTx(projectDetials);
+//                                }
+//                            }
+//                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
                         }
 
                         List<Project> projects = baseResponse.getData();
