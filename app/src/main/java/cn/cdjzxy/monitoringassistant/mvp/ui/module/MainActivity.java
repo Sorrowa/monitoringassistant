@@ -153,7 +153,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @Override
     protected void onResume() {
         super.onResume();
-        List<Msg> msgs = DBHelper.get().getMsgDao().queryBuilder().where(MsgDao.Properties.MsgStatus.eq(0)).list();
+        List<Msg> msgs = DBHelper.get().getMsgDao().queryBuilder()
+                .where(MsgDao.Properties.MsgStatus.eq(0)).list();
         if (!CheckUtil.isEmpty(msgs)) {
             mBadgeView.setVisibility(View.VISIBLE);
         } else {
@@ -203,7 +204,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 break;
             case TYPE_TASK:
                 updateProgress(ApiPresenter.PROGRESS);
-                mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);
+                mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);//获取所有采样单信息(支持批量)
                 break;
         }
     }
@@ -443,26 +444,26 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
             progress = 5;
             showDialog();
-            mPresenter.getDevices(Message.obtain(this, new Object()));
-            mPresenter.getMethods(Message.obtain(this, new Object()));
-            mPresenter.getMonItems(Message.obtain(this, new Object()));
-            mPresenter.getTags(Message.obtain(this, new Object()));
-            mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));
-            mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));
-            mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));
-            mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));
-            mPresenter.getRight(Message.obtain(this, new Object()));
-            mPresenter.getEnvirPoint(Message.obtain(this, new Object()));
-            mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));
-            mPresenter.getEnterprise(Message.obtain(this, new Object()));
-            mPresenter.getDic(Message.obtain(this, new Object()), 7);
-            mPresenter.getWeather(Message.obtain(this, new Object()));
-            mPresenter.getUser(Message.obtain(this, new Object()));
-            mPresenter.getUnit(Message.obtain(this, new Object()));
-            mPresenter.getMsgs(Message.obtain(this, new Object()));
-            mPresenter.getFormSelect(Message.obtain(this, new Object()));
-            mPresenter.getSamplingStantd(Message.obtain(this, new Object()));
-            mPresenter.getMyTasks(Message.obtain(this, new Object()));
+            mPresenter.getDevices(Message.obtain(this, new Object()));//获取设备信息 GET
+            mPresenter.getMethods(Message.obtain(this, new Object()));//获取方法信息 GET
+            mPresenter.getMonItems(Message.obtain(this, new Object()));//获取监测项目 GET
+            mPresenter.getTags(Message.obtain(this, new Object()));//获取要素分类 GET
+            mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));// 获取项目要素关系 GET
+            mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));//获取方法要素关系 GET
+            mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));//获取项目方法关系 GET
+            mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));//获取方法设备关系 GET
+            mPresenter.getRight(Message.obtain(this, new Object()));//获取权限 GET
+            mPresenter.getEnvirPoint(Message.obtain(this, new Object()));//获取环境质量点位 GET
+            mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));//获取企业点位 GET
+            mPresenter.getEnterprise(Message.obtain(this, new Object()));//获取企业 GET
+            mPresenter.getDic(Message.obtain(this, new Object()), 7);//获取字典  GET
+            mPresenter.getWeather(Message.obtain(this, new Object()));//获取天气  GET
+            mPresenter.getUser(Message.obtain(this, new Object()));//获取采样用户  GET
+            mPresenter.getUnit(Message.obtain(this, new Object()));//获取结果单位  GET
+            mPresenter.getMsgs(Message.obtain(this, new Object()));//获取全部消息
+            mPresenter.getFormSelect(Message.obtain(this, new Object()));//获取表单分类 GET
+            mPresenter.getSamplingStantd(Message.obtain(this, new Object()));//获取采样规范 GET
+            mPresenter.getMyTasks(Message.obtain(this, new Object()));//获取跟我相关待采样任务 GET
             //HawkUtil.putBoolean("isUpdated", true);
             HawkUtil.putBoolean("isUpdated", false);
         }

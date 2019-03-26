@@ -9,6 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
@@ -25,6 +28,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
@@ -48,6 +52,14 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
     RecyclerView rvProject;
     @BindView(R.id.rv_project_selected)
     RecyclerView rvProjectSelected;
+    @BindView(R.id.text_optional)
+    TextView tvOptional;
+    @BindView(R.id.text_select)
+    TextView tvSelect;
+    @BindView(R.id.et_search)
+    EditText etSearch;
+    @BindView(R.id.linear_search)
+    LinearLayout linearSearch;
 
     private UserAdapter mUserAdapter;
 
@@ -92,6 +104,10 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
     public void initData(@Nullable Bundle savedInstanceState) {
         initUsersView();
         initUsersSelectedView();
+        tvSelect.setText("已选人员");
+        tvOptional.setText("可选人员");
+        etSearch.setHint("请输入查找人员姓名");
+        linearSearch.setVisibility(View.GONE);
 
         projectId = getIntent().getStringExtra("projectId");
         String selectUserIds = getIntent().getStringExtra("selectUserIds");
@@ -128,7 +144,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
         mUserAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                upateMonItemState(position);
+                updateMonItemState(position);
             }
         });
         rvProject.addItemDecoration(new GridItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_16), 4));
@@ -142,7 +158,7 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
         mUserSelectedAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                upateMonItemSelectedState(position);
+                updateMonItemSelectedState(position);
             }
         });
         rvProjectSelected.addItemDecoration(new GridItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_16), 4));
@@ -151,14 +167,14 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
 
     @OnClick({R.id.iv_add_monitem, R.id.iv_delete_monitem})
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_add_monitem:
-                addMonItems();
-                break;
-            case R.id.iv_delete_monitem:
-                deleteMonItems();
-                break;
-        }
+//        switch (view.getId()) {
+//            case R.id.iv_add_monitem:
+//                addMonItems();
+//                break;
+//            case R.id.iv_delete_monitem:
+//                deleteMonItems();
+//                break;
+//        }
     }
 
     /**
@@ -166,13 +182,21 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
      *
      * @param position
      */
-    private void upateMonItemState(int position) {
-        if (mUsers.get(position).isSelected()) {
-            mUsers.get(position).setSelected(false);
-        } else {
-            mUsers.get(position).setSelected(true);
+    private void updateMonItemState(int position) {
+        User user = mUsers.get(position);
+
+        if (!user.isSelected()) {
+            user.setSelected(true);
+            mUsersSelected.add(user);
+            mUserSelectedAdapter.notifyDataSetChanged();
+            mUserAdapter.notifyDataSetChanged();
         }
-        mUserAdapter.notifyDataSetChanged();
+//        if (mUsers.get(position).isSelected()) {
+//            mUsers.get(position).setSelected(false);
+//        } else {
+//            mUsers.get(position).setSelected(true);
+//        }
+
     }
 
     /**
@@ -180,13 +204,23 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
      *
      * @param position
      */
-    private void upateMonItemSelectedState(int position) {
-        if (mUsersSelected.get(position).isSelected()) {
-            mUsersSelected.get(position).setSelected(false);
-        } else {
-            mUsersSelected.get(position).setSelected(true);
+    private void updateMonItemSelectedState(int position) {
+        User user = mUsersSelected.get(position);
+        user.setSelected(false);
+        mUsersSelected.remove(user);
+        for (int i = 0; i <mUsers.size() ; i++) {
+            if (mUsers.get(i).getId().equals(user.getId())){
+                mUsers.set(i,user);
+                break;
+            }
         }
+//        if (mUsersSelected.get(position).isSelected()) {
+//            mUsersSelected.get(position).setSelected(false);
+//        } else {
+//            mUsersSelected.get(position).setSelected(true);
+//        }
         mUserSelectedAdapter.notifyDataSetChanged();
+        mUserAdapter.notifyDataSetChanged();
     }
 
 

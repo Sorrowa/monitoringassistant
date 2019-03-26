@@ -106,12 +106,13 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
         tagId = getIntent().getStringExtra("tagId");
         monItemId = getIntent().getStringExtra("monItemId");
-         selectItemsStr = getIntent().getStringExtra("selectItems");
+        selectItemsStr = getIntent().getStringExtra("selectItems");
         if (!CheckUtil.isEmpty(selectItemsStr)) {
             selectItems = selectItemsStr.split(",");
         }
 
         initListData();
+        //搜索
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -137,33 +138,25 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         List<MonItems> monItems = tags.getMMonItems();
         if (!CheckUtil.isEmpty(monItems)) {
             mMonItems.clear();
-            if (!CheckUtil.isEmpty(selectItemsStr)) {
-                for (MonItems monItem : monItems) {
+            for (MonItems monItem : monItems) {
+                if (!CheckUtil.isEmpty(selectItemsStr)) {
                     if (!selectItemsStr.contains(monItem.getId())) {
                         monItem.setSelected(false);
                         mMonItems.add(monItem);
                     } else {
                         monItem.setSelected(true);
                         mMonItems.add(monItem);
+                        //设置选中的items
+                        mMonItemsSelected.add(monItem);
                     }
+                } else {
+                    monItem.setSelected(false);
+                    mMonItems.addAll(monItems);
                 }
-            } else {
-                mMonItems.addAll(monItems);
             }
         }
         mMonItemAdapter.notifyDataSetChanged();
-        //设置选中的items
-        if (!CheckUtil.isEmpty(monItems)) {
-            mMonItemsSelected.clear();
-            if (!CheckUtil.isEmpty(selectItemsStr)) {
-                for (MonItems monItem : monItems) {
-                    if (selectItemsStr.contains(monItem.getId())) {
-                        mMonItemsSelected.add(monItem);
-                    }
-                }
-                mMonItemSelectedAdapter.notifyDataSetChanged();
-            }
-        }
+        mMonItemSelectedAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -207,7 +200,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_monitem:
-               // addMonItems();
+                // addMonItems();
                 break;
             case R.id.iv_delete_monitem:
                 //deleteMonItems();
@@ -320,8 +313,9 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         item.setSelected(false);
         mMonItemsSelected.remove(item);
         for (int i = 0; i < mMonItems.size(); i++) {
-            if (mMonItems.get(i).equals(item)) {
+            if (mMonItems.get(i).getId().equals(item.getId())) {
                 mMonItems.set(i, item);
+                break;
             }
         }
 //        if (mMonItemsSelected.get(position).isSelected()) {

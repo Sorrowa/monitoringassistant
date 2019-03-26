@@ -121,7 +121,9 @@
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -130,14 +132,15 @@
         <TextView
             android:id="@+id/tv_analyse_time"
             android:layout_height="match_parent"
-            android:gravity="right|center"
-            style="@style/BasicInfoItemTextViewStyle" />
+            style="@style/RightViewItemHintStyle" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -147,15 +150,18 @@
             android:id="@+id/et_analyse_result"
             style="@style/BasicInfoItemEditTextStyle"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="right|center"
             android:inputType="numberDecimal"
             android:maxLength="64" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -165,9 +171,9 @@
             android:id="@+id/tv_test_unit"
             android:layout_height="match_parent"
             android:gravity="right|center"
-            style="@style/BasicInfoItemTextViewStyle" />
+            style="@style/RightViewItemHintStyle" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 

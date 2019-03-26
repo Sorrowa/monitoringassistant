@@ -129,11 +129,11 @@ public class CollectionDetailFragment extends BaseFragment {
             etPrecipitation.setText("");
             etRainwaterVolume.setText("");
             etRemark.setText("");
-            creatSampleDetailNo();
+            createSampleDetailNo();
         }
     }
 
-    private void creatSampleDetailNo() {
+    private void createSampleDetailNo() {
         mSampling = PrecipitationActivity.mSampling;
 
         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
@@ -272,13 +272,10 @@ public class CollectionDetailFragment extends BaseFragment {
                         DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
                     }
                     DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
-
-
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                     ArtUtils.makeText(getContext(), "保存成功");
                 }
-
                 break;
         }
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -7,9 +7,10 @@
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/weather_info_layout"
-        style="@style/BasicInfoItemStyle">
+        style="@style/BasicInfoItemStyle"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -17,12 +18,12 @@
 
         <TextView
             android:id="@+id/weather_arrow"
-            style="@style/BasicInfoItemTextViewRotateStyle"
+            style="@style/RightViewItemHintStyle"
             android:hint=""
             android:rotation="0"
-            android:text=""/>
+            android:text="" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_weather_information_container"
@@ -33,21 +34,27 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoNextItemNameStyle"
+                android:layout_gravity="center"
                 android:text="天气" />
 
             <TextView
                 android:id="@+id/weather_state"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoNextItemNameStyle"
@@ -56,14 +63,18 @@
             <EditText
                 android:id="@+id/weather_temp"
                 style="@style/BasicInfoItemEditTextStyle"
+                android:layout_weight="1"
                 android:inputType="numberDecimal"
-                android:maxLength="50"/>
+                android:maxLength="50" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoNextItemNameStyle"
@@ -72,11 +83,12 @@
             <EditText
                 android:id="@+id/weather_pressure"
                 style="@style/BasicInfoItemEditTextStyle"
+                android:layout_weight="1"
                 android:inputType="numberDecimal"
-                android:maxLength="50"/>
+                android:maxLength="50" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
-</merge>
+</LinearLayout>

@@ -166,7 +166,8 @@ public class BasicInfoFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @OnClick({R.id.tv_test_user, R.id.tv_choose_project, R.id.tv_test_start_date, R.id.tv_test_end_date, R.id.tv_test_method, R.id.tv_test_device})
+    @OnClick({R.id.tv_test_user, R.id.tv_choose_project, R.id.tv_test_start_date,
+            R.id.tv_test_end_date, R.id.tv_test_method, R.id.tv_test_device})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_test_user:

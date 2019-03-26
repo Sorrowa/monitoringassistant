@@ -60,6 +60,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
@@ -426,7 +427,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         //了解源码得知 线的宽度是根据 tabView的宽度来设置的
         tabLayout.post(() -> {
-
             try {
                 //拿到tabLayout的mTabStrip属性
                 Field mTabStripField = tabLayout.getClass().getDeclaredField("mTabStrip");
@@ -542,7 +542,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
                 Sampling sampling = mSamplings.get(position);
                 if (sampling == null || !sampling.getIsFinish()) {
-
                     String finishAlt = "";
                     if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
                     } else if (PATH_WASTEWATER.equals(sampling.getFormPath())) {
@@ -566,6 +565,20 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         mTagId = mTags.get(0).getId();
         getSampling(mTagId);
+    }
+
+
+    /**
+     * 判断当前表单是否是本人的
+     * @return@true本人表单，@false他人表单
+     */
+    public static boolean isMySampling(Sampling mSample) {
+        UserInfo user = UserInfoHelper.get().getUserInfo();
+        if (user.getId().equals(mSample.getSubmitId())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit, R.id.cb_all})

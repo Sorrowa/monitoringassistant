@@ -247,7 +247,7 @@ public class CollectionFragment extends BaseFragment {
      */
     private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
         ArrayList<LabelInfo> result = new ArrayList<>();
-        List<String> stringList=new ArrayList<>();
+        List<String> stringList = new ArrayList<>();
         //组装标签信息\
         if (sampling.getSamplingContentResults() == null) return result;
         for (SamplingContent item : sampling.getSamplingContentResults()) {
@@ -260,21 +260,23 @@ public class CollectionFragment extends BaseFragment {
                         String itemName = HelpUtil.getMonItemNameById(itemId, sampling);
                         SamplingStantd samplingStantd = HelpUtil.getSamplingStantdByMonItem(itemName,
                                 sampling.getTagId());
+                        StringBuffer stringBuffer = new StringBuffer();
                         if (samplingStantd != null) {
-                            StringBuffer stringBuffer = new StringBuffer();
-                            for (int i = 0; i <samplingStantd.getMonItems().size() ; i++) {
-                                if (i==samplingStantd.getMonItems().size()-1){
-                                    stringBuffer.append(samplingStantd.getMonItems().get(i)+" ");
-                                }else {
-                                    stringBuffer.append(samplingStantd.getMonItems().get(i)+",");
+                            for (int i = 0; i < samplingStantd.getMonItems().size(); i++) {
+                                if (i == samplingStantd.getMonItems().size() - 1) {
+                                    stringBuffer.append(samplingStantd.getMonItems().get(i) + " ");
+                                } else {
+                                    stringBuffer.append(samplingStantd.getMonItems().get(i) + ",");
                                 }
                             }
-                            stringList.add(stringBuffer.toString()) ;
+                        } else {
+                            stringBuffer.append("");
                         }
+                        stringList.add(stringBuffer.toString());
                     }
                 }
             }
-            for (String s:stringList){
+            for (String s : stringList) {
                 LabelInfo info = new LabelInfo();
                 info.setTaskName(sampling.getProjectName());
                 info.setNumber(sampling.getAddressName());
