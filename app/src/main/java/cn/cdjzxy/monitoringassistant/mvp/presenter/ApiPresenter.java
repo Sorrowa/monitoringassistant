@@ -969,7 +969,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
 
-                                //DBHelper.get().getSamplingFormStandDao().deleteAll();
+//                                DBHelper.get().getSamplingFormStandDao().deleteAll();
 
                                 for (Sampling sampling : samplings) {
                                     saveOneSampling(sampling);

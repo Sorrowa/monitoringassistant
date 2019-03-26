@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
@@ -73,13 +74,10 @@ public class TaskActivity extends BaseTitileActivity<ApiPresenter> {
         final List<Project> projects = DBHelper.get().getProjectDao().queryBuilder().orderAsc(ProjectDao.Properties.PlanEndTime).list();
         if (!CheckUtil.isEmpty(projects)) {
             mTaskAdapter = new TaskAdapter(projects);
-            mTaskAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
-                @Override
-                public void onItemClick(View view, int viewType, Object data, int position) {
-                    Intent intent = new Intent(TaskActivity.this, TaskDetailActivity.class);
-                    intent.putExtra("taskId", projects.get(position).getId());
-                    startActivityForResult(intent, TASK_REQUEST_CODE);
-                }
+            mTaskAdapter.setOnItemClickListener((view, viewType, data, position) -> {
+                Intent intent = new Intent(TaskActivity.this, TaskDetailActivity.class);
+                intent.putExtra("taskId", projects.get(position).getId());
+                startActivityForResult(intent, TASK_REQUEST_CODE);
             });
             recyclerview.setAdapter(mTaskAdapter);
         }

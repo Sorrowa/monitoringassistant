@@ -156,6 +156,10 @@ dependencies {
     implementation(name: 'onsdk_all', ext: 'aar')
     //implementation files('libs/BaiduLBS_Android.jar')
     implementation 'id.zelory:compressor:2.1.0'
+    //下拉刷新库
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-21'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-21'//没有使用特殊Header，可以不加这行
+    implementation 'com.android.support:appcompat-v7:25.3.1'//版本 23以上（必须）
 //    implementation (rootProject.ext.dependencies["rxcache-jolyglot-gson"])
 //            {
 //                exclude module: 'gson'

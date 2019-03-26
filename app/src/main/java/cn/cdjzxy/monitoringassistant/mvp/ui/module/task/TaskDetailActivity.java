@@ -195,12 +195,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTitleBarView = titleBar;
         mTitleBarView.setTitleMainText("采样任务");
         mTitleBarView.setRightText("采样完结");
-        mTitleBarView.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showFinishDialog();
-            }
-        });
+        mTitleBarView.setOnRightTextClickListener(v -> showFinishDialog());
     }
 
     @Nullable
