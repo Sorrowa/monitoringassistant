@@ -68,6 +68,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -230,8 +231,6 @@ public class CollectionDetailFragment extends BaseFragment {
             //在过滤重复项
             String res = Getdifference(samplingDetail.getSenceMonitemName()
                     , samplingDetail.getMonitemName());
-            Log.d("zzh", "res=" + res);
-            Log.d("zzh", "template=" + samplingDetail.getSenceMonitemName());
             sample_monitor.setText(res);
             sample_Time.setText(samplingDetail.getSamplingTime());
             if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")) {
@@ -441,71 +440,79 @@ public class CollectionDetailFragment extends BaseFragment {
 
     /**
      * save
+     * todo:修改下面这个地方！！
      */
     private void operateSave() {
         if (isSaveChecked()) {
-            showLoadingDialog("请等待...", true);
-            samplingDetail.setProjectId(mSample.getProjectId());
-            samplingDetail.setSamplingId(mSample.getId());
-            samplingDetail.setSampingCode(sample_code.getText().toString());
-            samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getText().toString()));
-            samplingDetail.setDescription(sample_mark.getText().toString());
-            samplingDetail.setSamplingTime(DateUtils.getWholeDate());
-            //设置样品采集和样品验收
-            samplingDetail.setSampleCollection("");
-            samplingDetail.setSampleAcceptance("");
+            Log.d("zzh","开始保存操作");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    showLoadingDialog("请等待...", true);
+                    samplingDetail.setProjectId(mSample.getProjectId());
+                    samplingDetail.setSamplingId(mSample.getId());
+                    samplingDetail.setSampingCode(sample_code.getText().toString());
+                    samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getText().toString()));
+                    samplingDetail.setDescription(sample_mark.getText().toString());
+                    samplingDetail.setSamplingTime(DateUtils.getWholeDate());
+                    //设置样品采集和样品验收
+                    samplingDetail.setSampleCollection("");
+                    samplingDetail.setSampleAcceptance("");
 
-            //新增样品采集到采样单中
-            if (fsListPosition == -1) {
-                if (mSample.getSamplingContentResults() == null) {
-                    mSample.setSamplingContentResults(new ArrayList<SamplingContent>());
+                    //新增样品采集到采样单中
+                    if (fsListPosition == -1) {
+                        if (mSample.getSamplingContentResults() == null) {
+                            mSample.setSamplingContentResults(new ArrayList<SamplingContent>());
+                        }
+                        List<SamplingContent> samplingDetailResults = mSample.getSamplingContentResults();
+                        if (!samplingDetailResults.contains(samplingDetail)) {
+                            samplingDetailResults.add(samplingDetail);
+                        }
+                        mSample.setSamplingContentResults(samplingDetailResults);
+                    }
+
+                    //设置采样单完结状态以及更新采样单
+                    mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
+                    mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+                    Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
+                    if (CheckUtil.isNull(sampling)) {
+                        //mSample.setId( UUID.randomUUID().toString());
+                        DBHelper.get().getSamplingDao().insert(mSample);
+                    } else {
+                        DBHelper.get().getSamplingDao().update(mSample);
+                    }
+
+                    //生成分瓶信息
+                    generateBottleSplit();
+
+                    //删除之前生成的SamplingDetail
+                    List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()), SamplingDetailDao.Properties.SamplingType.eq(samplingDetail.getSamplingType())).build().list();
+                    if (!CheckUtil.isEmpty(samplingDetailList)) {
+                        DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+                        WastewaterActivity.mSample.getSamplingDetailResults().removeAll(samplingDetailList);
+                    }
+                    //生成新的SamplingDetail
+                    generateSamplingDetails();
+                    if (fsListPosition == -1) {
+                        //samplingDetail.setId(UUID.randomUUID().toString());
+                        //samplingDetail.setSamplingType(0);
+                        //DBHelper.get().getSamplingContentDao().insert(samplingDetail);
+                        DBHelper.get().getSamplingContentDao().insertOrReplace(samplingDetail);
+                    } else {
+                        DBHelper.get().getSamplingContentDao().update(samplingDetail);
+                    }
+
+                    //设置信息
+                    setBottleAndContent();
+                    Log.d("zzh","保存完成");
+                    closeLoadingDialog();
+
+                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+                    EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
+//                    ArtUtils.makeText(getContext(), "保存成功");
                 }
-                List<SamplingContent> samplingDetailResults = mSample.getSamplingContentResults();
-                if (!samplingDetailResults.contains(samplingDetail)) {
-                    samplingDetailResults.add(samplingDetail);
-                }
-                mSample.setSamplingContentResults(samplingDetailResults);
-            }
+            }).start();
 
-            //设置采样单完结状态以及更新采样单
-            mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-            mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
-            Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
-            if (CheckUtil.isNull(sampling)) {
-                //mSample.setId( UUID.randomUUID().toString());
-                DBHelper.get().getSamplingDao().insert(mSample);
-            } else {
-                DBHelper.get().getSamplingDao().update(mSample);
-            }
-
-            //生成分瓶信息
-            generateBottleSplit();
-
-            //删除之前生成的SamplingDetail
-            List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getSamplingId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode()), SamplingDetailDao.Properties.SamplingType.eq(samplingDetail.getSamplingType())).build().list();
-            if (!CheckUtil.isEmpty(samplingDetailList)) {
-                DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
-                WastewaterActivity.mSample.getSamplingDetailResults().removeAll(samplingDetailList);
-            }
-            //生成新的SamplingDetail
-            generateSamplingDetails();
-            if (fsListPosition == -1) {
-                //samplingDetail.setId(UUID.randomUUID().toString());
-                //samplingDetail.setSamplingType(0);
-                //DBHelper.get().getSamplingContentDao().insert(samplingDetail);
-                DBHelper.get().getSamplingContentDao().insertOrReplace(samplingDetail);
-            } else {
-                DBHelper.get().getSamplingContentDao().update(samplingDetail);
-            }
-
-            //设置信息
-            setBottleAndContent();
-
-            closeLoadingDialog();
-
-            EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-            EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
-            ArtUtils.makeText(getContext(), "保存成功");
         }
     }
 
@@ -851,8 +858,6 @@ public class CollectionDetailFragment extends BaseFragment {
         //todo:去除重复项
         String res = Getdifference(samplingDetail.getSenceMonitemName()
                 , samplingDetail.getMonitemName());
-        Log.d("zzh", "res=" + res);
-        Log.d("zzh", "template=" + samplingDetail.getSenceMonitemName());
         sample_monitor.setText(res);
 
         samplingDetail.setSamplingTime(DateUtils.getWholeDate());
@@ -1157,8 +1162,8 @@ public class CollectionDetailFragment extends BaseFragment {
                 }
 
                 View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-                dialogTextView = (TextView) layout.findViewById(R.id.tv_content);
-                RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
+                dialogTextView = layout.findViewById(R.id.tv_content);
+                RelativeLayout rlDialog = layout.findViewById(R.id.rl_dialog);
                 if (CheckUtil.isEmpty(str)) {
                     dialogTextView.setVisibility(View.GONE);
                 } else {
@@ -1201,6 +1206,11 @@ public class CollectionDetailFragment extends BaseFragment {
             }
         }.sendEmptyMessage(0);
 
+    }
+
+    private void closeLoadingDialog_gai(){
+        dialog.dismiss();
+        dialog = null;
     }
 
 }
