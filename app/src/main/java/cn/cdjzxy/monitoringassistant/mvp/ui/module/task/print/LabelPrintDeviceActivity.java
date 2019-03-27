@@ -326,6 +326,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
         GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
         Log.e(TAG, "result :" + String.valueOf(r));
+        Log.e("zzh","result :" + String.valueOf(r));
         if (r == GpCom.ERROR_CODE.SUCCESS) {
             mPortParam.setBluetoothAddr(currDevice.getAddress());
         } else {

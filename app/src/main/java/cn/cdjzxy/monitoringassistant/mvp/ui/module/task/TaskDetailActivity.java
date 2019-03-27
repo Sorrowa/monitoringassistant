@@ -196,12 +196,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTitleBarView = titleBar;
         mTitleBarView.setTitleMainText("采样任务");
         mTitleBarView.setRightText("采样完结");
-        mTitleBarView.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showFinishDialog();
-            }
-        });
+        mTitleBarView.setOnRightTextClickListener(v -> showFinishDialog());
     }
 
     @Nullable
@@ -517,7 +512,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     ArtUtils.startActivity(intent);
                 } else {
                     //水样采集与交接记录
-                    //todo:水样采集
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
 //                    Intent intent = new Intent(TaskDetailActivity.this,
 //                            WasteWaterSamplingActivity.class);

@@ -3,7 +3,8 @@
     android:id="@+id/rl_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/loading_bg">
+    android:background="@drawable/loading_bg"
+    android:visibility="visible">
 
     <RelativeLayout
         android:layout_width="wrap_content"

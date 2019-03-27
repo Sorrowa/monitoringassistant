@@ -104,6 +104,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //todo:蓝牙崩溃问题在这里
                 getBluetoothDevice();
             }
         });
@@ -224,7 +225,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         }
         unregisterReceiver(mBroadcastReceiver);
     }
-
+    //todo:一个记号
     @OnClick({R.id.btnPrintSeal, R.id.btnPrintLabel, R.id.ivSelectAll, R.id.tvSelectAll})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -289,7 +290,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             }
             mPrintList.clear();
         } else {
-            ArtUtils.makeText(this, "请选择要打印的标f签！");
+            ArtUtils.makeText(this, "请选择要打印的标签！");
         }
     }
 
@@ -624,6 +625,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        Log.d("zzh","打印结束位置");
     }
 
     /**
