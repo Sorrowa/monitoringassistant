@@ -65,6 +65,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
     private String selectItemsStr;
 
     private List<MonItems> mMonItems = new ArrayList<>();
+    private List<MonItems> searchMonItem = new ArrayList<>();
     private List<MonItems> mMonItemsSelected = new ArrayList<>();
     //    private List<MonItems> mMonItemsDelete = new ArrayList<>();
 
@@ -113,20 +114,20 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
         initListData();
         //搜索
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                search(etSearch.getText().toString());
-            }
-        });
+//        etSearch.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                search(etSearch.getText().toString());
+//            }
+//        });
     }
 
     /**
@@ -155,6 +156,8 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
                 }
             }
         }
+        searchMonItem.clear();
+        searchMonItem.addAll(mMonItems);
         mMonItemAdapter.notifyDataSetChanged();
         mMonItemSelectedAdapter.notifyDataSetChanged();
     }
@@ -171,7 +174,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void initMonItemsView() {
         ArtUtils.configRecyclerView(rvProject, new GridLayoutManager(this, 4));
-        mMonItemAdapter = new MonItemAdapter(mMonItems);
+        mMonItemAdapter = new MonItemAdapter(searchMonItem);
         mMonItemAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
@@ -227,13 +230,16 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
      */
     public void search(String key) {
         if (key == null || key.equals("")) {
-            initListData();
+            searchMonItem.clear();
+            searchMonItem.addAll(mMonItems);
+            mMonItemAdapter.refreshInfos(searchMonItem);
+            mMonItemSelectedAdapter.refreshInfos(mMonItemsSelected);
             return;
         }
         List<MonItems> monItems = new ArrayList<>();
         List<MonItems> monItemsSelected = new ArrayList<>();
         char[] chars = key.toCharArray();
-        for (MonItems item : mMonItems) {
+        for (MonItems item : searchMonItem) {
             // 已经包含这个字段了, 直接放入.
             if (item.getName().contains(key)) {
                 monItems.add(item);
@@ -252,31 +258,30 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
                 monItems.add(item);
             }
         }
-        mMonItems.clear();
-        mMonItems.addAll(monItems);
-        mMonItemAdapter.refreshInfos(mMonItems);
-        for (MonItems item : mMonItemsSelected) {
-            // 已经包含这个字段了, 直接放入.
-            if (item.getName().contains(key)) {
-                monItemsSelected.add(item);
-                continue;
-            }
-            String pinyin = Pinyin.toPinyin(item.getName(), "").toLowerCase();
-            boolean isSame = true;
-            int currentIndex = 0;
-            for (char c : chars) {
-                if ((currentIndex = pinyin.indexOf(c, currentIndex)) == -1) {
-                    isSame = false;
-                    break;
-                }
-            }
-            if (isSame) {
-                monItemsSelected.add(item);
-            }
-        }
-        mMonItemsSelected.clear();
-        mMonItemsSelected.addAll(monItemsSelected);
-        mMonItemSelectedAdapter.refreshInfos(mMonItemsSelected);
+        searchMonItem.clear();
+        searchMonItem.addAll(monItems);
+        mMonItemAdapter.refreshInfos(searchMonItem);
+//        for (MonItems item : mMonItemsSelected) {
+//            // 已经包含这个字段了, 直接放入.
+//            if (item.getName().contains(key)) {
+//                //monItemsSelected.add(item);
+//                continue;
+//            }
+//            String pinyin = Pinyin.toPinyin(item.getName(), "").toLowerCase();
+//            boolean isSame = true;
+//            int currentIndex = 0;
+//            for (char c : chars) {
+//                if ((currentIndex = pinyin.indexOf(c, currentIndex)) == -1) {
+//                    isSame = false;
+//                    break;
+//                }
+//            }
+//            if (isSame) {
+//                monItemsSelected.add(item);
+//            }
+//        }
+//        mMonItemsSelected.addAll(monItemsSelected);
+//        mMonItemSelectedAdapter.refreshInfos(mMonItemsSelected);
     }
 
     /**
@@ -286,12 +291,12 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
      * @param position
      */
     private void updateMonItem(int position) {
-        MonItems item = mMonItems.get(position);
+        MonItems item = searchMonItem.get(position);
         item.setSelected(true);
         if (mMonItemsSelected.contains(item)) {
-            mMonItems.set(position, item);
+            searchMonItem.set(position, item);
         } else {
-            mMonItems.get(position).setSelected(true);
+            searchMonItem.get(position).setSelected(true);
             mMonItemsSelected.add(item);
 //            if (mMonItems.get(position).isSelected()) {
 //                mMonItems.get(position).setSelected(false);

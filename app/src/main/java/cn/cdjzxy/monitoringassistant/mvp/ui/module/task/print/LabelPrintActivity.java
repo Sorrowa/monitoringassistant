@@ -386,9 +386,10 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 //跳转到蓝牙设备扫描、连接界面
                 Intent intent = new Intent(LabelPrintActivity.this, LabelPrintDeviceActivity.class);
                 ArtUtils.startActivity(intent);
-            } else {
-                ArtUtils.makeText(this, "请打开蓝牙！");
             }
+//            else {
+//                ArtUtils.makeText(this, "请打开蓝牙！");
+//            }
         }
     }
 

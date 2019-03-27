@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -250,32 +252,61 @@ public class CollectionFragment extends BaseFragment {
         List<String> stringList = new ArrayList<>();
         //组装标签信息\
         if (sampling.getSamplingContentResults() == null) return result;
-
         for (SamplingContent item : sampling.getSamplingContentResults()) {
             String monItemIdStr = item.getMonitemId();
             //获取样品数量分组
-            if (!CheckUtil.isEmpty(monItemIdStr)) {
-                String[] idsArray = monItemIdStr.split(",");
-                if (!CheckUtil.isEmpty(idsArray)) {
-                    for (String itemId : idsArray) {
-                        String itemName = HelpUtil.getMonItemNameById(itemId, sampling);
-                        SamplingStantd samplingStantd = HelpUtil.getSamplingStantdByMonItem(itemName,
-                                sampling.getTagId());
+            if (!CheckUtil.isEmpty(monItemIdStr) && (!monItemIdStr.equals(""))) {
+                ArrayList<String> idList = new ArrayList<>();
+                for (String s : monItemIdStr.split(",")) {
+                    idList.add(s);
+                }
+                while (idList.size() > 0) {
+                    String itemName = HelpUtil.getMonItemNameById(idList.get(0), sampling);
+                    Log.e(TAG, "buildPrintLabelList: itemName:" + itemName);
+                    SamplingStantd samplingStantd = HelpUtil.getSamplingStantdByMonItem(itemName,
+                            sampling.getTagId());
+                    if (samplingStantd != null) {
+                        //有可一起分瓶
                         StringBuffer stringBuffer = new StringBuffer();
-                        if (samplingStantd != null) {
-                            for (int i = 0; i < samplingStantd.getMonItems().size(); i++) {
-                                if (i == samplingStantd.getMonItems().size() - 1) {
-                                    stringBuffer.append(samplingStantd.getMonItems().get(i) + " ");
-                                } else {
-                                    stringBuffer.append(samplingStantd.getMonItems().get(i) + ",");
-                                }
+                        for (int j = 0; j < idList.size(); j++) {
+                            String name = HelpUtil.getMonItemNameById(idList.get(j), sampling);
+                            if (samplingStantd.getMonItems().contains(name)) {
+                                stringBuffer.append(name).append(",");
+                                idList.remove(j);
                             }
-                        } else {
-                            stringBuffer.append(itemName);
                         }
-                        stringList.add(stringBuffer.toString());
+                        if (stringBuffer.lastIndexOf(",") > 0) {
+                            stringBuffer.deleteCharAt(stringBuffer.lastIndexOf(","));
+                        }
+                        if (!stringBuffer.equals("") && (!stringBuffer.toString().isEmpty())) {
+                            stringList.add(stringBuffer.toString());
+                            Log.e(TAG, "buildPrintLabelList: stringBuffer:" + stringBuffer.toString());
+                        }
+                    } else {
+                        //没有可一起分瓶
+                        idList.remove(0);
+                        stringList.add(itemName);
                     }
                 }
+
+            } else {
+                LabelInfo info = new LabelInfo();
+                info.setTaskName(sampling.getProjectName());
+                info.setNumber(sampling.getAddressName());
+                info.setFrequecyNo("频次：" + item.getFrequecyNo());
+                info.setType(WastewaterActivity.mSample.getTagName());//项目类型取样品性质
+                info.setMonitemName("");//监测项目
+                info.setSampingCode(item.getSampingCode());//样品编码
+                info.setCb1("交接");
+                info.setCb2("分析");
+                info.setQrCode(item.getSampingCode());//二维码为样品编码
+                //根据样品的监测项目获取对应的分瓶信息
+                SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
+                if (samplingFormStand != null) {
+                    //保存方法
+                    info.setRemark(samplingFormStand.getPreservative());
+                }
+                result.add(info);
             }
             for (String s : stringList) {
                 LabelInfo info = new LabelInfo();
@@ -296,9 +327,8 @@ public class CollectionFragment extends BaseFragment {
                 }
                 result.add(info);
             }
-
+            stringList.clear();
         }
-
         return result;
     }
 

@@ -606,16 +606,16 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.getMonitemId()));
         }
         //名称项数量
-        if (samplingDetail.getMonitemName() == null || samplingDetail.getMonitemName().equals("")) {
+        if (samplingDetail.getMonitemId() == null || samplingDetail.getMonitemId().equals("")) {
             sample_monitor_items_title.setText("监测项目(" + 0 + ")");
         } else {
             sample_monitor_items_title.setText("监测项目(" + samplingDetail.
-                    getMonitemName().split(",").length + ")");
+                    getMonitemId().split(",").length + ")");
         }
-        if (samplingDetail.getSenceMonitemName() == null || samplingDetail.getSenceMonitemName().equals("")) {
+        if (samplingDetail.getSenceMonitemId() == null || samplingDetail.getSenceMonitemId().equals("")) {
             sample_monitor_title.setText("现场监测(" + 0 + ")");
         } else {
-            sample_monitor_title.setText("现场监测(" + samplingDetail.getSenceMonitemName().
+            sample_monitor_title.setText("现场监测(" + samplingDetail.getSenceMonitemId().
                     split(",").length + ")");
         }
     }
@@ -654,7 +654,7 @@ public class CollectionDetailFragment extends BaseFragment {
         SamplingFormStand theSameStandBottle = HelpUtil.getTheSameStandBottleByItemId(itemId, mSample);
         //如果存在包含该itemId的分瓶信息则不用管
         if (CheckUtil.isNull(samplingFormStand)) {
-           // 据itemId获取对应的name
+            // 据itemId获取对应的name
             String itemName = HelpUtil.getMonItemNameById(itemId, mSample);
             //如果存在相同标准的分瓶信息则跟新否则新增
             if (CheckUtil.isNull(theSameStandBottle)) {
