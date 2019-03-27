@@ -319,13 +319,19 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
         int rel = 0;
         try {
-            rel = LabelPrintActivity.GpService.openPort(LabelPrintActivity.PrinterIndex, PortParameters.BLUETOOTH, currDevice.getAddress(), 0);
+            rel = LabelPrintActivity
+                    .GpService
+                    .openPort(LabelPrintActivity.PrinterIndex
+                            , PortParameters.BLUETOOTH
+                            , currDevice.getAddress()
+                            , 0);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
         GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
         Log.e(TAG, "result :" + String.valueOf(r));
+        Log.e("zzh","result :" + String.valueOf(r));
         if (r == GpCom.ERROR_CODE.SUCCESS) {
             mPortParam.setBluetoothAddr(currDevice.getAddress());
         } else {

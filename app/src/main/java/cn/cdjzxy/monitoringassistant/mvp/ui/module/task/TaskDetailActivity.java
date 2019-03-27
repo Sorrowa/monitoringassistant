@@ -512,7 +512,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     ArtUtils.startActivity(intent);
                 } else {
                     //水样采集与交接记录
-                    //todo:水样采集
                     ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
 //                    Intent intent = new Intent(TaskDetailActivity.this,
 //                            WasteWaterSamplingActivity.class);
