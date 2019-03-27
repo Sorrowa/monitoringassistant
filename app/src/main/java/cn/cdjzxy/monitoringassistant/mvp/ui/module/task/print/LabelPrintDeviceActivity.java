@@ -110,7 +110,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
     public boolean getConnectState() {
         try {
-            if (LabelPrintActivity.GpService.getPrinterConnectStatus(LabelPrintActivity.PrinterIndex) == GpDevice.STATE_CONNECTED) {
+            if (LabelPrintActivity.gpService.getPrinterConnectStatus(LabelPrintActivity.PrinterIndex) == GpDevice.STATE_CONNECTED) {
                 return true;
             }
         } catch (RemoteException e) {
@@ -312,14 +312,14 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         }
 
         try {
-            LabelPrintActivity.GpService.closePort(LabelPrintActivity.PrinterIndex);
+            LabelPrintActivity.gpService.closePort(LabelPrintActivity.PrinterIndex);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
         int rel = 0;
         try {
-            rel = LabelPrintActivity.GpService.openPort(LabelPrintActivity.PrinterIndex, PortParameters.BLUETOOTH, currDevice.getAddress(), 0);
+            rel = LabelPrintActivity.gpService.openPort(LabelPrintActivity.PrinterIndex, PortParameters.BLUETOOTH, currDevice.getAddress(), 0);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -336,7 +336,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
     private void disConnectToDevice() {
         Log.d(TAG, "DisconnectToDevice ");
         try {
-            LabelPrintActivity.GpService.closePort(LabelPrintActivity.PrinterIndex);
+            LabelPrintActivity.gpService.closePort(LabelPrintActivity.PrinterIndex);
             currDevice = null;
         } catch (RemoteException e) {
             e.printStackTrace();

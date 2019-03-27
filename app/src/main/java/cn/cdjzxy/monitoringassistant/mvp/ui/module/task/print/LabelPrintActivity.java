@@ -92,7 +92,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
     private static final int UPDATE_STATUS = 1;
     public static final String LABEL_JSON_DATA = "label_json_data";
     public static final String SEAL_JSON_DATA = "seal_json_data";
-    public static GpService GpService;
+    public static GpService gpService;
     public static int PrinterIndex = 0;
     public static boolean IsConnet = false;
     private static PrinterServiceConnection conn = null;
@@ -219,10 +219,10 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if (conn != null) {
-//            unbindService(conn); // unBindService
-//        }
-//        unregisterReceiver(mBroadcastReceiver);
+        if (conn != null) {
+            unbindService(conn); // unBindService
+        }
+        unregisterReceiver(mBroadcastReceiver);
     }
 
     @OnClick({R.id.btnPrintSeal, R.id.btnPrintLabel, R.id.ivSelectAll, R.id.tvSelectAll})
@@ -316,7 +316,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化打印服务
      */
     private void initPrintService() {
-        if (conn != null && GpService != null) {
+        if (conn != null && gpService != null) {
             return;
         }
 
@@ -378,7 +378,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             }
 
             if (bluetoothAdapter.isEnabled()) {
-                if (GpService == null) {
+                if (gpService == null) {
                     ArtUtils.makeText(this, "打印服务初始化失败！");
                     return;
                 }
@@ -397,12 +397,12 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * 查询打印状态
      */
     public void queryPrinterStatus() {
-        if (GpService == null) {
+        if (gpService == null) {
             return;
         }
 
         try {
-            GpService.queryPrinterStatus(PrinterIndex, 500, MAIN_QUERY_PRINTER_STATUS);
+            gpService.queryPrinterStatus(PrinterIndex, 500, MAIN_QUERY_PRINTER_STATUS);
         } catch (RemoteException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -414,7 +414,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      */
     public void printTestPage() {
         try {
-            int rel = GpService.printeTestPage(PrinterIndex);
+            int rel = gpService.printeTestPage(PrinterIndex);
             Log.i("ServiceConnection", "rel " + rel);
             GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
             if (r != GpCom.ERROR_CODE.SUCCESS) {
@@ -466,7 +466,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         String str = Base64.encodeToString(bytes, Base64.DEFAULT);
         int rel;
         try {
-            rel = GpService.sendLabelCommand(PrinterIndex, str);
+            rel = gpService.sendLabelCommand(PrinterIndex, str);
             GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
             if (r != GpCom.ERROR_CODE.SUCCESS) {
                 Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
@@ -616,7 +616,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         String str = Base64.encodeToString(bytes, Base64.DEFAULT);
         int rel;
         try {
-            rel = GpService.sendLabelCommand(PrinterIndex, str);
+            rel = gpService.sendLabelCommand(PrinterIndex, str);
             GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
             if (r != GpCom.ERROR_CODE.SUCCESS) {
                 Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
@@ -775,7 +775,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         String str = Base64.encodeToString(bytes, Base64.DEFAULT);
         int rel;
         try {
-            rel = GpService.sendLabelCommand(PrinterIndex, str);
+            rel = gpService.sendLabelCommand(PrinterIndex, str);
             GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
             if (r != GpCom.ERROR_CODE.SUCCESS) {
                 Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
@@ -1089,13 +1089,13 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i(TAG, "onServiceDisconnected() called");
-            GpService = null;
+            gpService = null;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i(TAG, "onServiceConnected() called");
-            GpService = com.gprinter.aidl.GpService.Stub.asInterface(service);
+            gpService = GpService.Stub.asInterface(service);
         }
     }
 
