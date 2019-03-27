@@ -417,7 +417,8 @@ public class CollectionDetailFragment extends BaseFragment {
 
                         //删除分瓶信息
                         deleteRelateBottle();
-                        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
+                        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().
+                                queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
                         if (!CheckUtil.isEmpty(formStantdsList)) {
                             WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
                         } else {
@@ -580,36 +581,36 @@ public class CollectionDetailFragment extends BaseFragment {
     public void saveAndShowItem(Intent data, boolean isScene) {
         String id = data.getStringExtra("MonItemId");
         String name = data.getStringExtra("MonItemName");
-        String str = "", idDiff = "";
+        String str = "";
         if (isScene) {//现场检测
             samplingDetail.setSenceMonitemName(name);
             samplingDetail.setSenceMonitemId(id);
             sample_monitor.setText(name);
             //name去重
-            str = getDifference(samplingDetail.getMethodName(), samplingDetail.getSenceMonitemName());
+            str = getDifference(samplingDetail.getMonitemName(), samplingDetail.getSenceMonitemName());
             sample_monitor_items.setText(str);
-            samplingDetail.setMethodName(str);
+            samplingDetail.setMonitemName(str);
             //id去重
-            samplingDetail.setMethodId(getDifference(samplingDetail.getMethodId(),
+            samplingDetail.setMonitemId(getDifference(samplingDetail.getMonitemId(),
                     samplingDetail.getSenceMonitemId()));
         } else {//检测项目
-            samplingDetail.setMethodName(name);
-            samplingDetail.setMethodId(id);
+            samplingDetail.setMonitemName(name);
+            samplingDetail.setMonitemId(id);
             sample_monitor_items.setText(name);
             //name去重
-            str = getDifference(samplingDetail.getSenceMonitemName(), samplingDetail.getMethodName());
+            str = getDifference(samplingDetail.getSenceMonitemName(), samplingDetail.getMonitemName());
             sample_monitor.setText(str);
             samplingDetail.setSenceMonitemName(str);
             //id去重
             samplingDetail.setSenceMonitemId(getDifference(samplingDetail.getSenceMonitemId(),
-                    samplingDetail.getMethodId()));
+                    samplingDetail.getMonitemId()));
         }
         //名称项数量
-        if (samplingDetail.getMethodName() == null || samplingDetail.getMethodName().equals("")) {
+        if (samplingDetail.getMonitemName() == null || samplingDetail.getMonitemName().equals("")) {
             sample_monitor_items_title.setText("监测项目(" + 0 + ")");
         } else {
             sample_monitor_items_title.setText("监测项目(" + samplingDetail.
-                    getMethodName().split(",").length + ")");
+                    getMonitemName().split(",").length + ")");
         }
         if (samplingDetail.getSenceMonitemName() == null || samplingDetail.getSenceMonitemName().equals("")) {
             sample_monitor_title.setText("现场监测(" + 0 + ")");
@@ -653,6 +654,7 @@ public class CollectionDetailFragment extends BaseFragment {
         SamplingFormStand theSameStandBottle = HelpUtil.getTheSameStandBottleByItemId(itemId, mSample);
         //如果存在包含该itemId的分瓶信息则不用管
         if (CheckUtil.isNull(samplingFormStand)) {
+           // 据itemId获取对应的name
             String itemName = HelpUtil.getMonItemNameById(itemId, mSample);
             //如果存在相同标准的分瓶信息则跟新否则新增
             if (CheckUtil.isNull(theSameStandBottle)) {

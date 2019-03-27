@@ -82,7 +82,7 @@
         <TextView
             android:id="@+id/sample_frequency"
             android:layout_weight="1"
-            style="@style/RightViewItemHintStyle" />
+            style="@style/RightViewItemStyle" />
 
     </LinearLayout>
 

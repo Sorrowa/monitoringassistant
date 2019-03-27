@@ -250,6 +250,7 @@ public class CollectionFragment extends BaseFragment {
         List<String> stringList = new ArrayList<>();
         //组装标签信息\
         if (sampling.getSamplingContentResults() == null) return result;
+
         for (SamplingContent item : sampling.getSamplingContentResults()) {
             String monItemIdStr = item.getMonitemId();
             //获取样品数量分组
@@ -270,7 +271,7 @@ public class CollectionFragment extends BaseFragment {
                                 }
                             }
                         } else {
-                            stringBuffer.append("");
+                            stringBuffer.append(itemName);
                         }
                         stringList.add(stringBuffer.toString());
                     }

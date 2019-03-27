@@ -315,7 +315,9 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
            // DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
             //设置分瓶信息
-            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().
+                    queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
+                    orderAsc(SamplingFormStandDao.Properties.Index).list();
             if (!CheckUtil.isEmpty(formStantdsList)){
                 WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
             }else {
