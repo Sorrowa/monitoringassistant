@@ -122,6 +122,8 @@ public class CollectionDetailFragment extends BaseFragment {
     private Dialog dialog;
     private TextView dialogTextView;
 
+    private static ArrayList<SamplingFormStand> oldMonitemIds=new ArrayList<>();
+
 
     public CollectionDetailFragment() {
     }
@@ -447,6 +449,7 @@ public class CollectionDetailFragment extends BaseFragment {
 
                         //删除分瓶信息
                         deleteRelateBottle();
+                        //下面这个地方有问题，没清除数据库之前的数据
                         List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().
                                 queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
                         if (!CheckUtil.isEmpty(formStantdsList)) {
@@ -545,12 +548,10 @@ public class CollectionDetailFragment extends BaseFragment {
 
                     //设置信息
                     setBottleAndContent();
-                    Log.d("zzh","保存完成");
                     closeLoadingDialog();
 
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
-//                    ArtUtils.makeText(getContext(), "保存成功");
                 }
             }).start();
 
@@ -665,6 +666,13 @@ public class CollectionDetailFragment extends BaseFragment {
     private void generateBottleSplit() {
         String currentMonitemIds = samplingDetail.getMonitemId();
         String[] monitemIds = currentMonitemIds.split(",");
+        if (oldMonitemIds!=null&&oldMonitemIds.size()!=0){
+            SamplingFormStandDao dao=DBHelper.get().getSamplingFormStandDao();
+            for (SamplingFormStand item : oldMonitemIds ){
+                dao.deleteInTx(item);
+            }
+        }
+//        DBHelper.get().getSamplingFormStandDao().deleteAll();
         if (monitemIds != null && monitemIds.length > 0) {
             //判断之前是否有分瓶信息存在
             if (HelpUtil.isSamplingHasBottle(mSample.getId())) {
@@ -685,6 +693,7 @@ public class CollectionDetailFragment extends BaseFragment {
      * @param itemId
      */
     private void createAndUpdateBottle(String itemId) {
+        oldMonitemIds.clear();
         //获取存在包含该itemId的分瓶信息
         SamplingFormStand samplingFormStand = HelpUtil.isBottleExists(itemId, mSample.getId());
         //获取与itemId同一个标准的分瓶信息
@@ -716,6 +725,7 @@ public class CollectionDetailFragment extends BaseFragment {
                     bottleSplit.setSaveMehtod(samplingStantd.getSaveDescription());
                     bottleSplit.setCount(1);
                     DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+                    oldMonitemIds.add(bottleSplit);
                 } else {
                     SamplingFormStand bottleSplit = new SamplingFormStand();
                     bottleSplit.setContainer("");
@@ -735,6 +745,7 @@ public class CollectionDetailFragment extends BaseFragment {
                     bottleSplit.setSaveMehtod("");
                     bottleSplit.setCount(1);
                     DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
+                    oldMonitemIds.add(bottleSplit);
                 }
             } else {//存在则更新
                 theSameStandBottle.setMonitemIds(theSameStandBottle.getMonitemIds() + "," + itemId);
@@ -807,7 +818,7 @@ public class CollectionDetailFragment extends BaseFragment {
     private void deleteRelateBottle() {
         String currentMonitemIds = samplingDetail.getMonitemId();
         String[] monitemIds = currentMonitemIds.split(",");
-        if (monitemIds != null && monitemIds.length > 0) {
+        if (monitemIds.length > 0) {
             for (String itemId : monitemIds) {
                 deleteBottleByItemId(itemId);
             }
@@ -837,7 +848,6 @@ public class CollectionDetailFragment extends BaseFragment {
                             if (!id.equals(itemId)) {
                                 monItemIdList.add(id);
                                 String itemName = HelpUtil.getMonItemNameById(id, mSample);
-                                ;
                                 if (CheckUtil.isEmpty(itemName)) {
                                     monItemNameList.add(" ");
                                 } else {
