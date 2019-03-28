@@ -666,16 +666,18 @@ public class CollectionDetailFragment extends BaseFragment {
     private void generateBottleSplit() {
         String currentMonitemIds = samplingDetail.getMonitemId();
         String[] monitemIds = currentMonitemIds.split(",");
+        //更新数据库所存的分瓶信息
         if (oldMonitemIds!=null&&oldMonitemIds.size()!=0){
             SamplingFormStandDao dao=DBHelper.get().getSamplingFormStandDao();
             for (SamplingFormStand item : oldMonitemIds ){
-                dao.deleteInTx(item);
+                dao.deleteByKey(item.getId());
             }
         }
 //        DBHelper.get().getSamplingFormStandDao().deleteAll();
         if (monitemIds != null && monitemIds.length > 0) {
             //判断之前是否有分瓶信息存在
             if (HelpUtil.isSamplingHasBottle(mSample.getId())) {
+                oldMonitemIds.clear();
                 for (String itemId : monitemIds) {
                     createAndUpdateBottle(itemId);
                 }
@@ -693,7 +695,6 @@ public class CollectionDetailFragment extends BaseFragment {
      * @param itemId
      */
     private void createAndUpdateBottle(String itemId) {
-        oldMonitemIds.clear();
         //获取存在包含该itemId的分瓶信息
         SamplingFormStand samplingFormStand = HelpUtil.isBottleExists(itemId, mSample.getId());
         //获取与itemId同一个标准的分瓶信息
@@ -923,11 +924,6 @@ public class CollectionDetailFragment extends BaseFragment {
         samplingDetail.setSenceMonitemId(HelpUtil.joinStringList(xcIdList));
 
         sample_monitor_items.setText(samplingDetail.getMonitemName());
-        //todo:去除重复项
-//        String res = GetDifference(samplingDetail.getSenceMonitemName()
-//                , samplingDetail.getMonitemName());
-//        Log.d("zzh", "res=" + res);
-//        Log.d("zzh", "template=" + samplingDetail.getSenceMonitemName());
         sample_monitor.setText(samplingDetail.getSenceMonitemName());
 
         samplingDetail.setSamplingTime(DateUtils.getWholeDate());
@@ -1089,11 +1085,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
                     samplingDetail.setSenceMonitemName(StringUtil.join(",", senceMonitemNameList));
                     samplingDetail.setSenceMonitemId(StringUtil.join(",", senceMonitemIdList));
-                    //todo:去除重复项
                     String res = getDifference(samplingDetail.getSenceMonitemName()
                             , samplingDetail.getMonitemName());
-                    Log.d("zzh", "res=" + res);
-                    Log.d("zzh", "template=" + samplingDetail.getSenceMonitemName());
                     sample_monitor.setText(res);
 
                     int resone = getLenth(senceMonitemIdList
