@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.baidu.mapframework.commonlib.utils.JSONUtils;
 import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
