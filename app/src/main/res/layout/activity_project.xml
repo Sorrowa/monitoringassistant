@@ -8,6 +8,7 @@
     <include layout="@layout/layout_title_bar" />
 
     <LinearLayout
+        android:id="@+id/linear_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_search"
@@ -55,6 +56,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/text_optional"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -101,6 +103,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/text_select"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@mipmap/ic_project_select"

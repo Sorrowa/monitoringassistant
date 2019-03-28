@@ -207,7 +207,8 @@ public class HelpUtil {
      * @return
      */
     public static String getMonItemNameById(String itemId,Sampling mSample){
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mSample.getParentTagId())).unique();
+        Tags tags = DBHelper.get().getTagsDao().queryBuilder().
+                where(TagsDao.Properties.Id.eq(mSample.getParentTagId())).unique();
         List<MonItems> monItems = tags.getMMonItems();
         if (!CheckUtil.isEmpty(monItems)){
             for (MonItems monItem:monItems){
@@ -257,13 +258,13 @@ public class HelpUtil {
      * @return
      */
     public static boolean isSamplingHasBottle(String samplingId){
-        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).list();
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().
+                where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).list();
         if (!CheckUtil.isEmpty(formStantdsList)){
             return true;
         }
         return false;
     }
-
 
     /**
      * monitemName 对应的 SamplingStantd

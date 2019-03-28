@@ -55,6 +55,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.preview.PreviewActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TypeActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UserActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
@@ -181,6 +182,10 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                    ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
+                    return;
+                }
                 PrecipitationActivity.mSampling.setAddressNo(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
                 //点位编号修改后依据新的点位编号重新生成采样单编号
                 String snPointPosition = "采样点位编号未填写";
@@ -227,6 +232,10 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                    ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
+                    return;
+                }
                 mPrivateData.setSampArea(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
                 PrecipitationActivity.mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
             }
@@ -245,6 +254,10 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                    ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
+                    return;
+                }
                 PrecipitationActivity.mSampling.setTransfer(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
             }
         });
@@ -262,6 +275,10 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                    ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
+                    return;
+                }
                 PrecipitationActivity.mSampling.setComment(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
             }
         });
@@ -278,11 +295,19 @@ public class BasicFragment extends BaseFragment {
         mSamplingFileAdapter = new SamplingFileAdapter(mSamplingFiles, new SamplingFileAdapter.OnSamplingFileListener() {
             @Override
             public void onChoosePhoto() {
+                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                    ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
+                    return;
+                }
                 choosePhoto(REQUEST_CODE);
             }
 
             @Override
             public void onDeletePhoto(int position) {
+                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                    ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
+                    return;
+                }
                 SamplingFile samplingFile = mSamplingFiles.remove(position);
 
                 //记录删除的文件，提交给服务端
@@ -382,6 +407,7 @@ public class BasicFragment extends BaseFragment {
                 .forResult(requestCode);
     }
 
+
     @OnClick({R.id.layout_flow_information, R.id.tv_sampling_type, R.id.tv_flow_date, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -413,7 +439,6 @@ public class BasicFragment extends BaseFragment {
                             PrecipitationActivity.mSampling.setTagId(data.getStringExtra("TagId"));
                             PrecipitationActivity.mSampling.setTagName(data.getStringExtra("TagName"));
                             tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
-
                         }
                     }
                 });
@@ -421,15 +446,14 @@ public class BasicFragment extends BaseFragment {
             case R.id.tv_sampling_user:
                 Intent intent1 = new Intent(getContext(), UserActivity.class);
                 intent1.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
+                intent1.putExtra("selectUserIds",PrecipitationActivity.mSampling.getSamplingUserId());
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            if (!CheckUtil.isEmpty(data.getStringExtra("UserId")) && !CheckUtil.isEmpty(data.getStringExtra("UserName"))) {
-                                PrecipitationActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
-                                PrecipitationActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
-                                tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
-                            }
+                            PrecipitationActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
+                            PrecipitationActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
+                            tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
                         }
                     }
                 });
@@ -521,5 +545,6 @@ public class BasicFragment extends BaseFragment {
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
+
 
 }

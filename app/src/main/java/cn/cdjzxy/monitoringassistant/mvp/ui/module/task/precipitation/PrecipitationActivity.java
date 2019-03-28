@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -55,22 +56,22 @@ import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.tabview)
-    CustomTab         tabview;
+    CustomTab tabview;
     @BindView(R.id.layout)
-    LinearLayout      layout;
+    LinearLayout layout;
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
 
-    private String  projectId;
-    private String  formSelectId;
-    private String  samplingId;
+    private String projectId;
+    private String formSelectId;
+    private String samplingId;
     private boolean isNewCreate;
 
-    private List<Fragment>  mFragments;
+    private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
 
-    private BasicFragment            mBasicFragment;
-    private CollectionFragment       mCollectionFragment;
+    private BasicFragment mBasicFragment;
+    private CollectionFragment mCollectionFragment;
     private CollectionDetailFragment mCollectionDetailFragment;
 
     public static Sampling mSampling;
@@ -138,7 +139,6 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
                         List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
                         if (!CheckUtil.isEmpty(samplingFiles)) {
@@ -164,7 +164,6 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                     } else {
                         DBHelper.get().getSamplingDao().update(mSampling);
                     }
-
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     ArtUtils.makeText(getApplicationContext(), "数据保存成功");
                 }
@@ -317,5 +316,6 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         }
         return true;
     }
+
 
 }

@@ -50,15 +50,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.PlaceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.BottleMonItemActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
-import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
 /**
  * 分瓶信息详情
@@ -319,7 +315,9 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
            // DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
             //设置分瓶信息
-            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().
+                    queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
+                    orderAsc(SamplingFormStandDao.Properties.Index).list();
             if (!CheckUtil.isEmpty(formStantdsList)){
                 WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
             }else {

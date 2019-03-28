@@ -20,15 +20,7 @@
 
             <TextView
                 android:id="@+id/tv_sampling_date"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="2018-09-30"
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+                style="@style/RightViewItemHintStyle" />
 
         </LinearLayout>
 

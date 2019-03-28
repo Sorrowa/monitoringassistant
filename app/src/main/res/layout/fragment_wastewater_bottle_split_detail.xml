@@ -36,7 +36,9 @@
 
     <include layout="@layout/view_line" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/jcxm_name"
@@ -45,17 +47,20 @@
 
         <TextView
             android:id="@+id/sample_project"
+            android:layout_weight="1"
             android:layout_toRightOf="@id/jcxm_name"
             style="@style/BasicInfoItemTextViewStyle"
             android:maxLines="2"
             android:ellipsize="end"
             android:layout_marginLeft="@dimen/dp_20"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -63,14 +68,17 @@
 
         <EditText
             android:id="@+id/sample_quantity"
+            android:layout_weight="1"
             style="@style/BasicInfoItemEditTextStyle"
             android:maxLength="20"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -78,14 +86,17 @@
 
         <EditText
             android:id="@+id/sample_vessel"
+            android:layout_weight="1"
             style="@style/BasicInfoItemEditTextStyle"
             android:maxLength="20"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -95,13 +106,16 @@
             android:id="@+id/sample_number"
             style="@style/BasicInfoItemEditTextStyle"
             android:maxLength="2"
+            android:layout_weight="1"
             android:inputType="number"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -109,14 +123,17 @@
 
         <EditText
             android:id="@+id/sample_method"
+            android:layout_weight="1"
             style="@style/BasicInfoItemEditTextStyle"
             android:maxLength="20"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -125,13 +142,16 @@
         <EditText
             android:id="@+id/sample_date"
             style="@style/BasicInfoItemEditTextStyle"
+            android:layout_weight="1"
             android:maxLength="20"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <LinearLayout style="@style/BasicInfoItemStyle"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             style="@style/BasicInfoItemNameStyle"
@@ -139,9 +159,10 @@
 
         <TextView
             android:id="@+id/sample_place"
-            style="@style/BasicInfoItemTextViewStyle" />
+            style="@style/BasicInfoItemTextViewStyle"
+            android:layout_weight="1"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 

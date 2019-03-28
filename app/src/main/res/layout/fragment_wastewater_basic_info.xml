@@ -9,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -17,18 +20,15 @@
 
             <TextView
                 android:id="@+id/base_sample_no"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text=""
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+                style="@style/RightViewItemStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -36,18 +36,14 @@
 
             <TextView
                 android:id="@+id/base_sample_md"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text=""
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+                style="@style/RightViewItemStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -55,23 +51,14 @@
 
             <TextView
                 android:id="@+id/base_sample_xz"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text=""
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
-
-        </RelativeLayout>
+                style="@style/RightViewItemStyle" />
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-
-
-
-
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -79,19 +66,14 @@
 
             <TextView
                 android:id="@+id/base_sample_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text=""
-                android:textColor="#333333"
-                android:textSize="@dimen/text_size_13" />
+                style="@style/RightViewItemStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -100,15 +82,16 @@
 
             <TextView
                 android:id="@+id/base_sample_user"
-                style="@style/BasicInfoItemTextViewStyle"
+                style="@style/RightViewItemHintStyle"
                 android:ellipsize="end"
                 android:maxLines="1" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -117,13 +100,14 @@
 
             <TextView
                 android:id="@+id/base_sample_property"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -132,13 +116,13 @@
 
             <TextView
                 android:id="@+id/base_sample_point"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -146,9 +130,9 @@
 
             <TextView
                 android:id="@+id/base_sample_method"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
@@ -162,8 +146,8 @@
                 android:id="@+id/base_sample_handle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:background="@drawable/icon_switch_button"
                 android:checked="false" />
 
@@ -179,7 +163,9 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -187,10 +173,11 @@
 
             <EditText
                 android:id="@+id/base_sample_comment"
+                android:layout_weight="1"
                 style="@style/BasicInfoItemEditTextStyle"
                 android:maxLength="100" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_add_photo" />
 

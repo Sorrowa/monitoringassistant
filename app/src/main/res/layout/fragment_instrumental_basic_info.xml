@@ -12,7 +12,10 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -21,11 +24,12 @@
 
             <TextView
                 android:id="@+id/tv_choose_project"
+                style="@style/BasicInfoItemTextViewStyle"
                 android:layout_height="match_parent"
-                android:gravity="right|center"
-                style="@style/BasicInfoItemTextViewStyle" />
+                android:layout_weight="1"
+                android:gravity="right|center" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
@@ -93,7 +97,10 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -101,17 +108,18 @@
 
             <TextView
                 android:id="@+id/tv_test_user"
-                style="@style/BasicInfoItemTextViewStyle"
-                android:layout_height="match_parent"
-                android:gravity="right|center"
+                style="@style/RightViewItemHintStyle"
                 android:ellipsize="end"
                 android:maxLines="1" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -119,15 +127,15 @@
 
             <TextView
                 android:id="@+id/tv_test_start_date"
-                android:layout_height="match_parent"
-                android:gravity="right|center"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -135,15 +143,15 @@
 
             <TextView
                 android:id="@+id/tv_test_end_date"
-                android:layout_height="match_parent"
-                android:gravity="right|center"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -151,15 +159,14 @@
 
             <TextView
                 android:id="@+id/tv_test_method"
-                android:layout_height="match_parent"
-                android:gravity="right|center"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle"
+                />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -167,15 +174,16 @@
 
             <TextView
                 android:id="@+id/tv_test_device"
-                android:layout_height="match_parent"
-                android:gravity="right|center"
-                style="@style/BasicInfoItemTextViewStyle" />
+                style="@style/RightViewItemHintStyle"
+                android:layout_height="match_parent" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <LinearLayout style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/BasicInfoItemNameStyle"
@@ -183,12 +191,13 @@
 
             <EditText
                 android:id="@+id/tv_comment"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:gravity="right|center"
-                style="@style/BasicInfoItemEditTextStyle"
                 android:maxLength="100" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

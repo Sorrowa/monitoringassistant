@@ -957,6 +957,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
 
     /**
+     * 获取所有采样单信息(支持批量)
      * @param msg
      */
     public void getSampling(final Message msg, List<String> projectIds) {
@@ -968,9 +969,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
-
-//                                DBHelper.get().getSamplingFormStandDao().deleteAll();
-
+                                //DBHelper.get().getSamplingFormStandDao().deleteAll();
                                 for (Sampling sampling : samplings) {
                                     saveOneSampling(sampling);
                                 }
