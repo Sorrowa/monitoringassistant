@@ -7,10 +7,11 @@ import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.BleDeviceInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintDeviceActivity;
 
-public class BluetoothDeviceHolder extends BaseHolder<LabelPrintDeviceActivity.DeviceInfo> {
+public class BluetoothDeviceHolder extends BaseHolder<BleDeviceInfo> {
 
     @BindView(R.id.tv_name)
     TextView mTvName;
@@ -22,7 +23,7 @@ public class BluetoothDeviceHolder extends BaseHolder<LabelPrintDeviceActivity.D
     }
 
     @Override
-    public void setData(LabelPrintDeviceActivity.DeviceInfo data, int position) {
+    public void setData(BleDeviceInfo data, int position) {
         mTvName.setText(data.getName()+String.format(" [%s]",data.getAddress()));
         mTvConnect.setText(data.getStatusName());
     }

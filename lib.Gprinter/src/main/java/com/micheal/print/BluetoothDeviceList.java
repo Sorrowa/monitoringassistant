@@ -199,7 +199,7 @@ public class BluetoothDeviceList extends Activity {
                 String address = info.substring(info.length() - 17);
                 // Create the result Intent and include the MAC address
                 Intent intent = new Intent();
-                intent.putExtra(PortConfigurationActivity.EXTRA_DEVICE_ADDRESS, address);
+                //intent.putExtra(PortConfigurationActivity.EXTRA_DEVICE_ADDRESS, address);
                 intent.putExtra("Device_Name", info.split("\n")[0]);
                 // Set result and finish this Activity
                 setResult(Activity.RESULT_OK, intent);

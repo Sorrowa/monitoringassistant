@@ -8,6 +8,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.BleDeviceInfo;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.BluetoothDeviceHolder;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintDeviceActivity;
 
@@ -16,10 +17,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintDeviceAc
  * 蓝牙设备适配器
  */
 
-public class BluetoothDeviceAdapter extends DefaultAdapter<LabelPrintDeviceActivity.DeviceInfo> {
+public class BluetoothDeviceAdapter extends DefaultAdapter<BleDeviceInfo> {
 
 
-    public BluetoothDeviceAdapter(List<LabelPrintDeviceActivity.DeviceInfo> infos) {
+    public BluetoothDeviceAdapter(List<BleDeviceInfo> infos) {
         super(infos);
     }
 
@@ -29,7 +30,7 @@ public class BluetoothDeviceAdapter extends DefaultAdapter<LabelPrintDeviceActiv
     }
 
     @Override
-    public BaseHolder<LabelPrintDeviceActivity.DeviceInfo> getHolder(View v, int viewType) {
+    public BaseHolder<BleDeviceInfo> getHolder(View v, int viewType) {
         return new BluetoothDeviceHolder(v);
     }
 }

@@ -11,17 +11,17 @@
         <activity android:name="com.micheal.print.PrintMainActivity"/>
         <activity android:name="com.micheal.print.PrinterConnectDialog"/>
 
-        <service
-            android:name="com.gprinter.service.GpPrintService"
-            android:enabled="true"
-            android:exported="true"
-            android:label="GpPrintService" >
-            <intent-filter>
-                <action android:name="com.gprinter.aidl.GpPrintService" />
-            </intent-filter>
-        </service>
-        <service android:name="com.gprinter.service.AllService" >
-        </service>
+        <!--<service-->
+            <!--android:name="com.gprinter.service.GpPrintService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true"-->
+            <!--android:label="GpPrintService" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.gprinter.aidl.GpPrintService" />-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+        <!--<service android:name="com.gprinter.service.AllService" >-->
+        <!--</service>-->
     </application>
 
 </manifest>

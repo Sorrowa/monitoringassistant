@@ -98,7 +98,7 @@ public class UsbDeviceList extends Activity {
 				String address = info;
 				// Create the result Intent and include the MAC address
 				Intent intent = new Intent();
-				intent.putExtra(PortConfigurationActivity.EXTRA_DEVICE_ADDRESS, address);
+			//	intent.putExtra(PortConfigurationActivity.EXTRA_DEVICE_ADDRESS, address);
 				// Set result and finish this Activity
 				setResult(Activity.RESULT_OK, intent);
 			}

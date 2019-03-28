@@ -42,6 +42,7 @@ import com.gprinter.command.GpUtils;
 import com.gprinter.command.LabelCommand;
 import com.gprinter.io.GpDevice;
 import com.gprinter.service.GpPrintService;
+import com.micheal.print.DeviceConnFactoryManager;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
@@ -52,6 +53,7 @@ import java.util.Vector;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.BleDeviceInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -94,10 +96,13 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
     public static final String SEAL_JSON_DATA = "seal_json_data";
     public static GpService gpService;
     public static int PrinterIndex = 0;
-    public static boolean IsConnet = false;
+    public static boolean isConnect = false;
     private static PrinterServiceConnection conn = null;
+    public static final int REQUEST_CODE = 10010;
+    private String deviceName;
 
     @Override
+
     public void setTitleBar(TitleBarView titleBar) {
         this.titleBar = titleBar;
         titleBar.setTitleMainText("标签打印");
@@ -108,12 +113,11 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 getBluetoothDevice();
             }
         });
-
         updateConnectText();
     }
 
     private void updateConnectText() {
-        titleBar.setRightText(IsConnet ? "已连接" : "未连接");
+        titleBar.setRightText(isConnect ? "已连接" : "未连接");
     }
 
     @Nullable
@@ -158,7 +162,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             sealInfo = gson.fromJson(sealStr, new TypeToken<SealInfo>() {
             }.getType());
         }
-
 //        //增加测试数据
 //        addTestData();
 
@@ -171,7 +174,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 //打印视图内容
 //                View content = view.findViewById(R.id.ll_content);
 //                printViewImage(content);
-
                 //打印标签内容
                 if (position >= 0 && position < mDataList.size()) {
                     LabelInfo item = mDataList.get(position);
@@ -225,19 +227,18 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         }
         unregisterReceiver(mBroadcastReceiver);
     }
+
     //todo:一个记号
     @OnClick({R.id.btnPrintSeal, R.id.btnPrintLabel, R.id.ivSelectAll, R.id.tvSelectAll})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btnPrintSeal:
+            case R.id.btnPrintSeal://密封条
                 printSeal();
                 break;
-
-            case R.id.btnPrintLabel:
+            case R.id.btnPrintLabel://标签
                 printAllLabel();
                 break;
-
-            case R.id.ivSelectAll:
+            case R.id.ivSelectAll://全选
             case R.id.tvSelectAll:
                 isSelectAll = !isSelectAll;
                 selectAllLabel();
@@ -320,7 +321,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         if (conn != null && gpService != null) {
             return;
         }
-
         if (conn != null) {
             unbindService(conn); // unBindService
             unregisterReceiver(mBroadcastReceiver);
@@ -366,10 +366,8 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         // If the adapter is null, then Bluetooth is not supported
         if (bluetoothAdapter == null) {
             ArtUtils.makeText(this, "当前设备不支持蓝牙！");
+            return;
         } else {
-            // If BT is not on, request that it be enabled.
-            // setupChat() will then be called during onActivityResult
-
             if (!bluetoothAdapter.isEnabled()) {
                 //蓝牙未启用，请求打开蓝牙
 //                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -377,16 +375,12 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 //请求打开蓝牙
                 bluetoothAdapter.enable();
             }
-
             if (bluetoothAdapter.isEnabled()) {
-                if (gpService == null) {
-                    ArtUtils.makeText(this, "打印服务初始化失败！");
-                    return;
-                }
-
                 //跳转到蓝牙设备扫描、连接界面
-                Intent intent = new Intent(LabelPrintActivity.this, LabelPrintDeviceActivity.class);
-                ArtUtils.startActivity(intent);
+                Intent intent = new Intent(LabelPrintActivity.this,
+                        LabelPrintDeviceActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+               // ArtUtils.startActivity(intent);
             }
 //            else {
 //                ArtUtils.makeText(this, "请打开蓝牙！");
@@ -483,26 +477,24 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * 1mm约等于2.8像素=>210px * 140px
      */
     public void printLabelInfo(LabelInfo item) {
-        if (!IsConnet) {
+        if (!isConnect) {
             ArtUtils.makeText(this, "请先连接到打印机！");
             return;
         }
-
         if (item == null) {
             return;
         }
-
         LabelCommand tsc = new LabelCommand();
         tsc.addSize(75, 50); // 设置标签尺寸，按照实际尺寸设置
         tsc.addGap(2); // 设置标签间隙，按照实际尺寸设置，如果为无间隙纸则设置为0
         tsc.addDirection(LabelCommand.DIRECTION.FORWARD, LabelCommand.MIRROR.NORMAL);// 设置打印方向
+        // 开启带Response的打印，用于连续打印
+        tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
         tsc.addReference(0, 0);// 设置原点坐标
         tsc.addTear(EscCommand.ENABLE.ON); // 撕纸模式开启
         tsc.addCls();// 清除打印缓冲区
-
         // 先绘制表格
 //        tsc.addBox(10,20,60,50,1);
-
         /**
          * SX轴0开始，SY轴30开始，留有一定边距，Y轴设置为0打印不全
          * 最大宽度550-sx，最大高度360-SY，留有一定边距
@@ -614,18 +606,23 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
 
         Vector<Byte> datas = tsc.getCommand(); // 发送数据
         byte[] bytes = GpUtils.ByteTo_byte(datas);
-        String str = Base64.encodeToString(bytes, Base64.DEFAULT);
-        int rel;
-        try {
-            rel = gpService.sendLabelCommand(PrinterIndex, str);
-            GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
-            if (r != GpCom.ERROR_CODE.SUCCESS) {
-                Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[0] == null) {
+            return;
         }
-        Log.d("zzh","打印结束位置");
+        DeviceConnFactoryManager.getDeviceConnFactoryManagers()[0].sendDataImmediately(datas);
+//        String str = Base64.encodeToString(bytes, Base64.DEFAULT);
+//        int rel;
+//        try {
+//
+//            rel = gpService.sendLabelCommand(PrinterIndex, str);
+//            GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
+//            if (r != GpCom.ERROR_CODE.SUCCESS) {
+//                Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
+//            }
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
+        Log.d("zzh", "打印结束位置");
     }
 
     /**
@@ -634,7 +631,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      * 1mm约等于2.8像素=>210px * 140px
      */
     public void printSealInfo() {
-        if (!IsConnet) {
+        if (!isConnect) {
             ArtUtils.makeText(this, "请先连接到打印机！");
             return;
         }
@@ -1017,11 +1014,11 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                 Log.d(TAG, "connect status " + type);
                 switch (type) {
                     case GpDevice.STATE_NONE:
-                        IsConnet = false;
+                        isConnect = false;
                         break;
 
                     case GpDevice.STATE_VALID_PRINTER:
-                        IsConnet = true;
+                        isConnect = true;
                         break;
                 }
 
@@ -1040,9 +1037,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
                     String str = "";
                     if (status == GpCom.STATE_NO_ERR) {
 //                        str = "打印机连接正常";
-                        IsConnet = true;
+                        isConnect = true;
                     } else {
-                        IsConnet = false;
+                        isConnect = false;
                         str = "打印机: ";
                         if ((byte) (status & GpCom.STATE_OFFLINE) > 0) {
                             str += "未连接";
@@ -1112,4 +1109,18 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            isConnect = data.getBooleanExtra("is_connect", false);
+            deviceName = data.getStringExtra("device_name");
+            if (isConnect) {
+                titleBar.setRightText("未连接打印机");
+            } else {
+                titleBar.setRightText(deviceName + " 已连接");
+            }
+
+        }
+    }
 }
