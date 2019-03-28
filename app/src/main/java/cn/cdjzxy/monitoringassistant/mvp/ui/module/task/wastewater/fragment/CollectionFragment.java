@@ -26,7 +26,6 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;

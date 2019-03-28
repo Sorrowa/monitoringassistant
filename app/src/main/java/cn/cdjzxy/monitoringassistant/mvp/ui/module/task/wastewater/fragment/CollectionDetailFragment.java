@@ -227,7 +227,10 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_code.setText(samplingDetail.getSampingCode());
             sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
             /**设置检测项目简介**/
-            sample_monitor_items.setText(samplingDetail.getMonitemName());
+            //这里把MonitemName内容去除重复
+            String res=MakeDeferenceGone(samplingDetail.getMonitemName());
+            samplingDetail.setMonitemName(res);
+            sample_monitor_items.setText(res);
             /**设置现场项目简介**/
             //在过滤重复项
 //            String res = getDifference(samplingDetail.getSenceMonitemName()
@@ -280,6 +283,32 @@ public class CollectionDetailFragment extends BaseFragment {
         } else {
             sample_monitor.setEnabled(true);
         }
+    }
+
+    /**
+     * 将monitemName中的重复项去除
+     * @param monitemName 需要去重的字符串
+     * @return 去重结果
+     */
+    private String MakeDeferenceGone(String monitemName) {
+        if (monitemName==null||monitemName.equals("")){
+            return monitemName;
+        }
+
+        List<String> aimList=new ArrayList<>();
+        List<String> itemList=Arrays.asList(monitemName.split(","));
+
+        for (String item:itemList){
+            if (!aimList.contains(item)){
+                aimList.add(item);
+            }
+        }
+        StringBuilder builder=new StringBuilder();
+        for (String item:aimList){
+            builder.append(item+",");
+        }
+        builder.deleteCharAt(builder.lastIndexOf(","));
+        return builder.toString();
     }
 
     /**
@@ -457,7 +486,6 @@ public class CollectionDetailFragment extends BaseFragment {
      */
     private void operateSave() {
         if (isSaveChecked()) {
-            Log.d("zzh","开始保存操作");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
