@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.baidu.mapframework.commonlib.utils.JSONUtils;
 import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
@@ -27,7 +26,6 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,15 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterBottleAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 
@@ -110,6 +114,10 @@ public class BottleSplitFragment extends BaseFragment {
         unbinder.unbind();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
     @OnClick({R.id.btn_add_blank})
     public void onClick(View view) {
@@ -147,5 +155,8 @@ public class BottleSplitFragment extends BaseFragment {
         recyclerview.setAdapter(mWasteWaterBottleAdapter);
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }
