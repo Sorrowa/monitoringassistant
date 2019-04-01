@@ -202,26 +202,28 @@
             android:name=".mvp.ui.module.task.point.ProgramPointSelectActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".mvp.ui.module.preview.PreviewActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
 
-        </activity>
+        <activity android:name=".mvp.ui.module.autograph.AutographActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <service android:name=".services.RepositoryService" />
 
         <!-- 佳博蓝牙打印 -->
-        <service
-            android:name="com.gprinter.service.GpPrintService"
-            android:enabled="true"
-            android:exported="true"
-            android:label="GpPrintService">
-            <intent-filter>
-                <action android:name="com.gprinter.aidl.GpPrintService" />
-            </intent-filter>
-        </service>
-        <service android:name="com.gprinter.service.AllService" />
+        <!--<service-->
+            <!--android:name="com.gprinter.service.GpPrintService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true"-->
+            <!--android:label="GpPrintService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.gprinter.aidl.GpPrintService" />-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+        <!--<service android:name="com.gprinter.service.AllService" />-->
 
         <!-- 自动蓝牙配对 -->
         <receiver android:name=".mvp.ui.module.task.print.PairingRequest">
@@ -233,7 +235,7 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
 
 
     </application>

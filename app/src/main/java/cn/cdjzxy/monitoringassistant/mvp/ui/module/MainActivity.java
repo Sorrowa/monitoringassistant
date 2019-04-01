@@ -271,7 +271,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
         mTabs = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             Tab tab = new Tab();
             if (i == 0) {
                 tab.setTabName("任务");
@@ -294,6 +294,11 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 tab.setSelectedResId(R.mipmap.ic_knowledge_hov);
                 tab.setSelected(false);
             } else if (i == 4) {
+                tab.setTabName("视频直播");
+                tab.setResId(R.mipmap.ic_setting_nor);
+                tab.setSelectedResId(R.mipmap.ic_setting_hov);
+                tab.setSelected(false);
+            }else if (i == 5) {
                 tab.setTabName("设置");
                 tab.setResId(R.mipmap.ic_setting_nor);
                 tab.setSelectedResId(R.mipmap.ic_setting_hov);
@@ -376,12 +381,12 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             case 3://知识库
                 ft.replace(R.id.layout_container, mRepositoryFragment = new RepositoryFragment(), RepositoryFragment.class.getName());
                 break;
-
-            case 4://设置
-                ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());
-
+            case 4://视频
                 break;
-            case 7://修改密码
+            case 5://设置
+                ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());
+                break;
+            case 8://修改密码
                 ft.replace(R.id.layout_container, new PwdModifyFragment(), PwdModifyFragment.class.getName());
                 break;
             default:

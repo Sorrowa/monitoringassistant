@@ -176,7 +176,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);//蓝牙打开状态广播
         filter.addAction(MyPrinterPlusManager.BLUE_TOOTH_DEVICE_NO_SUPPORTED);//设备不支持蓝牙
         filter.addAction(MyPrinterPlusConnManager.ACTION_CONN_STATE);//设备连接状态广播
-        filter.addAction(MyPrinterPlusConnManager.ACTION_QUERY_PRINTER_STATE);//设备当前状态
+        //filter.addAction(MyPrinterPlusConnManager.ACTION_QUERY_PRINTER_STATE);//设备当前状态
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);//蓝牙搜索结束
         registerReceiver(mBlueToothReceiver, filter);
         // Get the local Bluetooth adapter

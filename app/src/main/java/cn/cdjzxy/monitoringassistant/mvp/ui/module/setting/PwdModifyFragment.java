@@ -87,7 +87,7 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
 
                 break;
             case Message.RESULT_OK:
-                EventBus.getDefault().post(6, EventBusTags.TAG_MODIFY_PWD);
+                EventBus.getDefault().post(5, EventBusTags.TAG_MODIFY_PWD);
                 showMessage("修改密码成功");
                 break;
 

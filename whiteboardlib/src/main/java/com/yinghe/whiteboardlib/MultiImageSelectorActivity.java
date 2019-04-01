@@ -155,6 +155,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
     private void setActivitySize(int orientation) {
         Intent intent = getIntent();
         int[] bounds = intent.getIntArrayExtra(EXTRA_BOUNDS);
+        if (bounds==null) return;
         WindowManager.LayoutParams p = getWindow().getAttributes();  //获取对话框当前的参数值
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {//横屏
             p.x = bounds[0] + bounds[2] / 2;

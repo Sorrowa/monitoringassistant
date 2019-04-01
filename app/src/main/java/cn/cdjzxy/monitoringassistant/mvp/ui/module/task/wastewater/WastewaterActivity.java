@@ -11,6 +11,7 @@ import com.aries.ui.view.title.TitleBarView;
 import com.google.gson.Gson;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
+import com.yinghe.whiteboardlib.MultiImageSelectorActivity;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
@@ -44,6 +45,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.AutographActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BasicFragment;
@@ -212,11 +214,16 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化Tab数据
      */
     private void initTabData() {
-        tabview.setTabs("基本信息", "样品采集", "分瓶信息");
+        tabview.setTabs("基本信息", "样品采集", "分瓶信息", "签名");
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                openFragment(position);
+                if (tab.getTabName().equals("签名")) {
+                    startActivity(new Intent(WastewaterActivity.this,AutographActivity.class));
+                } else {
+                    openFragment(position);
+                }
+
             }
         });
 

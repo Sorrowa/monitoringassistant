@@ -119,7 +119,7 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
                 showClearDialog();
                 break;
             case R.id.stv_modify_pwd:
-                EventBus.getDefault().post(7, EventBusTags.TAG_MODIFY_PWD);
+                EventBus.getDefault().post(8, EventBusTags.TAG_MODIFY_PWD);
                 break;
             case R.id.stv_about:
                 ArtUtils.startActivity(AboutActivity.class);

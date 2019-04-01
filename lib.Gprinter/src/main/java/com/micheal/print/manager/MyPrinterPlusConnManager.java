@@ -317,7 +317,9 @@ public class MyPrinterPlusConnManager {
      */
     public void closePort() {
         if (this.port != null) {
-            reader.cancel();
+            if (reader!=null){
+                reader.cancel();
+            }
             boolean b = this.port.closePort();
             if (b) {
                 this.port = null;
