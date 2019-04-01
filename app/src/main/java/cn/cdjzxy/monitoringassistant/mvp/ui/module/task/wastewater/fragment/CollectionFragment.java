@@ -341,7 +341,10 @@ public class CollectionFragment extends BaseFragment {
         if (TextUtils.isEmpty(monitemName)) {
             return null;
         }
-
+        if (sampling == null || sampling.getSamplingFormStandResults() == null ||
+                sampling.getSamplingFormStandResults().size() == 0) {
+            return null;
+        }
         for (SamplingFormStand item : sampling.getSamplingFormStandResults()) {
             if (monitemName.equals(item.getMonitemName())) {
                 return item;

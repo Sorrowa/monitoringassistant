@@ -1,14 +1,10 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print;
 
-import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -19,9 +15,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -36,13 +30,11 @@ import android.widget.Toast;
 import com.aries.ui.view.title.TitleBarView;
 import com.google.gson.reflect.TypeToken;
 import com.gprinter.aidl.GpService;
-import com.gprinter.command.EscCommand;
-import com.gprinter.command.GpCom;
-import com.gprinter.command.GpUtils;
-import com.gprinter.command.LabelCommand;
-import com.gprinter.io.GpDevice;
-import com.gprinter.service.GpPrintService;
-import com.micheal.print.DeviceConnFactoryManager;
+import com.micheal.print.manager.MyPrinterPlusConnManager;
+import com.micheal.print.manager.MyPrinterPlusManager;
+import com.tools.command.EscCommand;
+import com.tools.command.GpUtils;
+import com.tools.command.LabelCommand;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
@@ -53,7 +45,6 @@ import java.util.Vector;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.BleDeviceInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -100,6 +91,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
     private static PrinterServiceConnection conn = null;
     public static final int REQUEST_CODE = 10010;
     private String deviceName;
+    private MyPrinterPlusManager manager;
 
     @Override
 
@@ -134,10 +126,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         initLabelData();
-
+        manager = MyPrinterPlusManager.getInstance(this);
         mLabelAdapter.notifyDataSetChanged();
-
-        initPrintService();
+        //  initPermission();//获取定位权限
     }
 
     /**
@@ -145,7 +136,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void initLabelData() {
         Gson gson = new Gson();
-
         //读取传过来的标签数据
         String labelStr = getIntent().getStringExtra(LABEL_JSON_DATA);
         if (!TextUtils.isEmpty(labelStr)) {
@@ -166,7 +156,6 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
 //        addTestData();
 
         ArtUtils.configRecyclerView(recyclerview, new GridLayoutManager(this, 2));
-
         mLabelAdapter = new LabelAdapter(mDataList);
         mLabelAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
@@ -314,78 +303,14 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         printSealInfo();
     }
 
-    /**
-     * 初始化打印服务
-     */
-    private void initPrintService() {
-        if (conn != null && gpService != null) {
-            return;
-        }
-        if (conn != null) {
-            unbindService(conn); // unBindService
-            unregisterReceiver(mBroadcastReceiver);
-        }
-
-        //由于gprinter会读取/proc/stat来获取cpu信息，所以再次获取一次文件读写权限，android6.0后会不会在xml里面自动获取权限
-        //也可在android应用设置中授权文件读写权限
-        int REQUEST_EXTERNAL_STORAGE = 1;
-        String[] PERMISSIONS_STORAGE = {
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        };
-        int permission1 = ActivityCompat.checkSelfPermission(LabelPrintActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        int permission2 = ActivityCompat.checkSelfPermission(LabelPrintActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permission1 != PackageManager.PERMISSION_GRANTED || permission2 != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(LabelPrintActivity.this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
-        }
-
-        conn = new PrinterServiceConnection();
-        Intent intent = new Intent(this, GpPrintService.class);
-        bindService(intent, conn, Context.BIND_AUTO_CREATE); // bindService
-
-        // 注册实时状态查询广播
-        registerReceiver(mBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        //注册连接状态广播
-        registerReceiver(mBroadcastReceiver, new IntentFilter(GpCom.ACTION_CONNECT_STATUS));
-        /**
-         * 标签模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus(RESPONSE_MODE mode)
-         * ，在打印完成后会接收到，action为GpCom.ACTION_LABEL_RESPONSE的广播，特别用于连续打印，
-         * 可参照该sample中的sendLabelWithResponse方法与广播中的处理
-         **/
-        registerReceiver(mBroadcastReceiver, new IntentFilter(GpCom.ACTION_LABEL_RESPONSE));
-    }
 
     /**
      * 获取蓝牙设备
      */
     public void getBluetoothDevice() {
-        // Get local Bluetooth adapter
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter
-                .getDefaultAdapter();
-        // If the adapter is null, then Bluetooth is not supported
-        if (bluetoothAdapter == null) {
-            ArtUtils.makeText(this, "当前设备不支持蓝牙！");
-            return;
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                //蓝牙未启用，请求打开蓝牙
-//                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-                //请求打开蓝牙
-                bluetoothAdapter.enable();
-            }
-            if (bluetoothAdapter.isEnabled()) {
-                //跳转到蓝牙设备扫描、连接界面
-                Intent intent = new Intent(LabelPrintActivity.this,
-                        LabelPrintDeviceActivity.class);
-                startActivityForResult(intent, REQUEST_CODE);
-               // ArtUtils.startActivity(intent);
-            }
-//            else {
-//                ArtUtils.makeText(this, "请打开蓝牙！");
-//            }
-        }
+        Intent intent = new Intent(LabelPrintActivity.this,
+                LabelPrintDeviceActivity.class);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     /**
@@ -411,10 +336,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         try {
             int rel = gpService.printeTestPage(PrinterIndex);
             Log.i("ServiceConnection", "rel " + rel);
-            GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
-            if (r != GpCom.ERROR_CODE.SUCCESS) {
-                Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
-            }
+
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
@@ -462,10 +384,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         int rel;
         try {
             rel = gpService.sendLabelCommand(PrinterIndex, str);
-            GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
-            if (r != GpCom.ERROR_CODE.SUCCESS) {
-                Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
-            }
+
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -605,11 +524,9 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
 //        tsc.addQueryPrinterStatus(LabelCommand.RESPONSE_MODE.ON);
 
         Vector<Byte> datas = tsc.getCommand(); // 发送数据
-        byte[] bytes = GpUtils.ByteTo_byte(datas);
-        if (DeviceConnFactoryManager.getDeviceConnFactoryManagers()[0] == null) {
-            return;
-        }
-        DeviceConnFactoryManager.getDeviceConnFactoryManagers()[0].sendDataImmediately(datas);
+        // TODO: 2019/3/30 打印
+        MyPrinterPlusConnManager.getInstance(this).sendDataImmediately(datas);
+
 //        String str = Base64.encodeToString(bytes, Base64.DEFAULT);
 //        int rel;
 //        try {
@@ -775,10 +692,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         int rel;
         try {
             rel = gpService.sendLabelCommand(PrinterIndex, str);
-            GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
-            if (r != GpCom.ERROR_CODE.SUCCESS) {
-                Toast.makeText(getApplicationContext(), GpCom.getErrorText(r), Toast.LENGTH_SHORT).show();
-            }
+
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -1009,78 +923,7 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "BroadcastReceiver->" + action);
-            if (GpCom.ACTION_CONNECT_STATUS.equals(intent.getAction())) {
-                int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
-                Log.d(TAG, "connect status " + type);
-                switch (type) {
-                    case GpDevice.STATE_NONE:
-                        isConnect = false;
-                        break;
 
-                    case GpDevice.STATE_VALID_PRINTER:
-                        isConnect = true;
-                        break;
-                }
-
-                //更新连接字符串
-                handler.sendEmptyMessage(UPDATE_STATUS);
-            }
-
-            // GpCom.ACTION_DEVICE_REAL_STATUS 为广播的IntentFilter
-            if (action.equals(GpCom.ACTION_DEVICE_REAL_STATUS)) {
-                // 业务逻辑的请求码，对应哪里查询做什么操作
-                int requestCode = intent.getIntExtra(GpCom.EXTRA_PRINTER_REQUEST_CODE, -1);
-                // 判断请求码，是则进行业务操作
-                if (requestCode == MAIN_QUERY_PRINTER_STATUS) {
-                    int status = intent.getIntExtra(GpCom.EXTRA_PRINTER_REAL_STATUS, 16);
-
-                    String str = "";
-                    if (status == GpCom.STATE_NO_ERR) {
-//                        str = "打印机连接正常";
-                        isConnect = true;
-                    } else {
-                        isConnect = false;
-                        str = "打印机: ";
-                        if ((byte) (status & GpCom.STATE_OFFLINE) > 0) {
-                            str += "未连接";
-                        }
-                        if ((byte) (status & GpCom.STATE_PAPER_ERR) > 0) {
-                            str += "缺纸";
-                        }
-                        if ((byte) (status & GpCom.STATE_COVER_OPEN) > 0) {
-                            str += "打印机开盖";
-                        }
-                        if ((byte) (status & GpCom.STATE_ERR_OCCURS) > 0) {
-                            str += "打印机出错";
-                        }
-                        if ((byte) (status & GpCom.STATE_TIMES_OUT) > 0) {
-                            str += "查询超时";
-                        }
-                    }
-
-                    //更新连接字符串
-                    handler.sendEmptyMessage(UPDATE_STATUS);
-
-                    if (!TextUtils.isEmpty(str)) {
-                        ArtUtils.makeText(context, "打印机：" + PrinterIndex + " 状态：" + str);
-                    }
-                }
-//                else if (action.equals(GpCom.ACTION_LABEL_RESPONSE)) {
-//                    byte[] data = intent.getByteArrayExtra(GpCom.EXTRA_PRINTER_LABEL_RESPONSE);
-//                    int cnt = intent.getIntExtra(GpCom.EXTRA_PRINTER_LABEL_RESPONSE_CNT, 1);
-//                    String d = new String(data, 0, cnt);
-//                    /**
-//                     * 这里的d的内容根据RESPONSE_MODE去判断返回的内容去判断是否成功，具体可以查看标签编程手册SET
-//                     * RESPONSE指令
-//                     * 该sample中实现的是发一张就返回一次,这里返回的是{00,00001}。这里的对应{Status,######,ID}
-//                     * 所以我们需要取出STATUS
-//                     */
-//                    Log.d("LABEL RESPONSE", d);
-//                    if (d.charAt(1) == 0x00) {
-//                        printNextLabel();
-//                    }
-//                }
-            }
         }
     };
 
@@ -1116,11 +959,10 @@ public class LabelPrintActivity extends BaseTitileActivity<ApiPresenter> {
             isConnect = data.getBooleanExtra("is_connect", false);
             deviceName = data.getStringExtra("device_name");
             if (isConnect) {
-                titleBar.setRightText("未连接打印机");
+                titleBar.setRightText(deviceName == null || deviceName.equals("") ? "打印机以连接" : deviceName + " 已连接");
             } else {
-                titleBar.setRightText(deviceName + " 已连接");
+                titleBar.setRightText(deviceName == null || deviceName.equals("") ? "打印机未连接" : deviceName + " 未连接");
             }
-
         }
     }
 }

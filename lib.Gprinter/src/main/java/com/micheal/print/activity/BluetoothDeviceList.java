@@ -1,4 +1,4 @@
-package com.micheal.print;
+package com.micheal.print.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.micheal.print.R;
 
 import java.util.ArrayList;
 import java.util.List;

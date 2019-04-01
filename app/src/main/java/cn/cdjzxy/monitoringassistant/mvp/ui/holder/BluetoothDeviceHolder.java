@@ -3,13 +3,11 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.holder;
 import android.view.View;
 import android.widget.TextView;
 
+import com.micheal.print.bean.BleDeviceInfo;
 import com.wonders.health.lib.base.base.BaseHolder;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.BleDeviceInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintDeviceActivity;
 
 public class BluetoothDeviceHolder extends BaseHolder<BleDeviceInfo> {
 

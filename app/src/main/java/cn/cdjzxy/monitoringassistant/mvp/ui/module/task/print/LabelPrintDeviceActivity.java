@@ -28,6 +28,7 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
@@ -48,7 +49,6 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
     private TitleBarView titleBar;
 
     private BluetoothDeviceAdapter mDeviceAdapter;
-    private BluetoothAdapter mBluetoothAdapter;
     private List<BluetoothDevice> deviceList = new ArrayList<>();
     private List<BleDeviceInfo> deviceInfoList = new ArrayList<>();
     private BleDeviceInfo currDevice = null;
@@ -65,6 +65,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
             Manifest.permission.BLUETOOTH
     };
     private MyPrinterPlusManager myPrinterPlusManager;
+    private boolean isConnect = false;//是否成功连接设备
 
     /**
      * 蓝牙状态
@@ -75,7 +76,8 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         DEVICE_OPEN("蓝牙打开"),
         DEVICE_OPENING("蓝牙正在打开..."),
         DEVICE_Shutting_down("蓝牙正在关闭..."),
-        DEVICE_STATE_Discovery("正在刷新列表...");
+        DEVICE_STATE_Discovery("正在刷新列表..."),
+        DEVICE_STATE_SEARCH("点击查找设备");
 
         private String name;
 
@@ -126,9 +128,9 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         initPermission();//请求权限
-        initPrinterPlusManager();//初始化蓝牙打印机信息
         registerBroadcast();//注册广播
         initDeviceData();
+        initPrinterPlusManager();//初始化蓝牙打印机信息
         //自动开始刷新
         //discoveryDevice();
 
@@ -136,13 +138,12 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void initPrinterPlusManager() {
         myPrinterPlusManager = MyPrinterPlusManager.getInstance(this);
-        mBluetoothAdapter = myPrinterPlusManager.getBluetoothAdapter();
-        if (mBluetoothAdapter == null) {
+        if (myPrinterPlusManager.getBluetoothAdapter() == null) {
             titleBar.setRightText(BLE_DEVICE_STATE.DEVICE_NO_SUPPORTED.toString());
         } else {
-            if (mBluetoothAdapter.isEnabled()) {
-                titleBar.setRightText(BLE_DEVICE_STATE.DEVICE_STATE_Discovery.toString());
-                discoveryDevice();//刷新当前设备列表
+            if (myPrinterPlusManager.isOpenBle()) {
+                titleBar.setRightText(BLE_DEVICE_STATE.DEVICE_STATE_SEARCH.toString());
+                initPairedList();
             } else {
                 titleBar.setRightText(BLE_DEVICE_STATE.DEVICE_OPENING.toString());
                 myPrinterPlusManager.openMyBle(this);//打开蓝牙
@@ -182,6 +183,23 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
+    /**
+     * 初始化已经配对的设备列表
+     */
+    private void initPairedList() {
+        Set<BluetoothDevice> deviceSetList = myPrinterPlusManager.getPaired();
+        if (deviceSetList.size() > 0) {
+            for (BluetoothDevice device : deviceSetList) {
+                deviceList.add(device);
+                BleDeviceInfo deviceInfo = new BleDeviceInfo();
+                deviceInfo.setAddress(device.getAddress());
+                deviceInfo.setName(device.getName());
+                deviceInfo.setStatus(MyPrinterPlusConnManager.CONN_STATE_PAIRED);
+                deviceInfoList.add(deviceInfo);
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -213,7 +231,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
             public void onItemClick(View view, int viewType, Object data, int position) {
                 myPrinterPlusManager.stopGetDeviceList();
                 //先断开连接
-                myPrinterPlusManager.disConnectToDevice(deviceList.get(position));
+                myPrinterPlusManager.disConnectToDevice();
                 //获取设备信息
                 BleDeviceInfo device = deviceInfoList.get(position);
                 //设备不一样则重新连接
@@ -221,6 +239,7 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                     //记录当前设备
                     currDevice = device;
                 }
+                isConnect = false;
                 //异步连接
                 myPrinterPlusManager.connect(deviceList.get(position));
             }
@@ -234,8 +253,11 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void discoveryDevice() {
         deviceList.clear();
+        deviceInfoList.clear();
+        initPairedList();
         mDeviceAdapter.notifyDataSetChanged();
         myPrinterPlusManager.getDeviceList();
+
     }
 
     /**
@@ -283,6 +305,8 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                     if (deviceList.size() == 0) {
                         ArtUtils.makeText(LabelPrintDeviceActivity.this, "未找到可用设备！");
                     }
+                    myPrinterPlusManager.stopGetDeviceList();
+                    titleBar.setRightText(BLE_DEVICE_STATE.DEVICE_STATE_SEARCH.toString());
                     break;
                 case MyPrinterPlusConnManager.ACTION_CONN_STATE:
                     int state = intent.getIntExtra(MyPrinterPlusManager.DEVICE_STATE, -1);
@@ -290,14 +314,20 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
                         currDevice.setStatus(state);
                     }
                     mDeviceAdapter.notifyDataSetChanged();
+                    switch (state) {
+                        case MyPrinterPlusConnManager.CONN_STATE_CONNECTED:
+                            isConnect = true;
+                            break;
+                        default:
+                            isConnect = false;
+                            break;
+                    }
                     break;
                 case MyPrinterPlusConnManager.ACTION_QUERY_PRINTER_STATE:
                     break;
             }
         }
     };
-
-
 
 
 //    public Handler mHandler = new Handler(new Handler.Callback() {
@@ -317,8 +347,10 @@ public class LabelPrintDeviceActivity extends BaseTitileActivity<ApiPresenter> {
         if (currDevice != null) {
             Intent intent = new Intent();
             intent.putExtra("device_name", currDevice.getName());
-            intent.putExtra("is_connect", true);
+            intent.putExtra("is_connect", isConnect);
             setResult(Activity.RESULT_OK, intent);
+            finish();
+        } else {
             finish();
         }
     }
