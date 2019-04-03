@@ -1,9 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mvp.ui.module.autograph.AutographActivity">
+    android:background="@color/dc_e5e5e5"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <include layout="@layout/layout_title_bar" />
+
+    <LinearLayout
+        style="@style/actionActivity.layout"
+        android:layout_marginTop="@dimen/dp_2">
+
+        <TextView
+            style="@style/actionActivity.autographTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="采样人签名:" />
+
+        <com.yinghe.whiteboardlib.view.SketchView
+            android:id="@+id/sketch_view_sampling"
+            style="@style/actionActivity.actionStyle" />
+
+        <ImageView
+            android:id="@+id/img_empty_sampling"
+            style="@style/actionActivity.imgEmpty"
+            android:src="@mipmap/ic_empty" />
+
+    </LinearLayout>
+
+    <View style="@style/actionActivity.viewLine" />
+
+    <LinearLayout style="@style/actionActivity.layout">
+
+        <TextView
+            style="@style/actionActivity.autographTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="校核人签名:" />
+
+
+        <com.yinghe.whiteboardlib.view.SketchView
+            android:id="@+id/sketch_view_check"
+            style="@style/actionActivity.actionStyle" />
+
+        <ImageView
+            android:id="@+id/img_empty_check"
+            style="@style/actionActivity.imgEmpty"
+            android:src="@mipmap/ic_empty" />
+    </LinearLayout>
+
+    <View style="@style/actionActivity.viewLine" />
+
+    <LinearLayout style="@style/actionActivity.layout">
+
+        <TextView
+            style="@style/actionActivity.autographTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="审核人签名:" />
+
+
+        <com.yinghe.whiteboardlib.view.SketchView
+            android:id="@+id/sketch_view_examine"
+            style="@style/actionActivity.actionStyle" />
+
+        <ImageView
+            android:id="@+id/img_empty_examine"
+            style="@style/actionActivity.imgEmpty"
+            android:src="@mipmap/ic_empty" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_24"
+        android:layout_marginBottom="@dimen/dp_16"
+        android:background="@color/dc_e5e5e5"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/shape_blue_submit"
+            android:paddingLeft="@dimen/dp_36"
+            android:paddingRight="@dimen/dp_36"
+            android:text="提交"
+            android:textColor="@color/colorWhite" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,1 +1,1 @@
-include ':app', ':lib', ':lib.Gprinter', ':whiteboardlib'
+include ':app', ':lib', ':lib.Gprinter', ':whiteboardlib', ':EasyLibrary'

@@ -1,6 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -382,6 +383,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 ft.replace(R.id.layout_container, mRepositoryFragment = new RepositoryFragment(), RepositoryFragment.class.getName());
                 break;
             case 4://视频
+                //startActivity(new Intent(this,Stream.c));
                 break;
             case 5://设置
                 ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());

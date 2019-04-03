@@ -42,6 +42,7 @@
         <item name="android:layout_marginLeft">@dimen/dp_18</item>
         <item name="android:layout_marginRight">@dimen/dp_18</item>
     </style>
+
     <style name="RightViewItemStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -51,6 +52,7 @@
         <item name="android:gravity">center|right</item>
         <item name="android:layout_weight">1</item>
     </style>
+
     <style name="RightViewItemHintStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
@@ -205,5 +207,48 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+    <!--签名界面——text提示框style-->
+    <style name="actionActivity.autographTextStyle">
+        <item name="android:textColor">@color/text2</item>
+        <item name="android:layout_height">@dimen/item_height_dp_52</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_21</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <!--签名界面——签名框style-->
+    <style name="actionActivity.actionStyle">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:layout_marginLeft">@dimen/dp_16</item>
+        <item name="android:layout_marginTop">@dimen/dp_6</item>
+        <item name="android:layout_marginBottom">@dimen/dp_6</item>
+        <item name="android:background">@drawable/ios_btn</item>
+        <item name="android:focusable">true</item>
+    </style>
 
+    <style name="actionActivity.layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:layout_marginTop">@dimen/dp_2</item>
+        <item name="android:layout_marginLeft">@dimen/dp_6</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="actionActivity.viewLine">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/dc_e5e5e5</item>
+    </style>
+    <style name="actionActivity.imgEmpty">
+        <item name="android:layout_width">@dimen/dp_20</item>
+        <item name="android:layout_height">@dimen/dp_20</item>
+        <item name="android:layout_gravity">top|left</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">@dimen/dp_2</item>
+        <item name="android:background">@drawable/control_btn_bg</item>
+    </style>
 </resources>

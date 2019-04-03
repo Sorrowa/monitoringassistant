@@ -11,6 +11,7 @@ import com.aries.ui.view.title.TitleBarView;
 import com.google.gson.Gson;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
+import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 import com.yinghe.whiteboardlib.MultiImageSelectorActivity;
 
 import org.simple.eventbus.EventBus;
@@ -219,7 +220,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onTabSelected(Tab tab, int position) {
                 if (tab.getTabName().equals("签名")) {
-                    startActivity(new Intent(WastewaterActivity.this,AutographActivity.class));
+                    startAutographAct();
                 } else {
                     openFragment(position);
                 }
@@ -243,6 +244,32 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
         viewPager.setOffscreenPageLimit(5);
+    }
+
+    /**
+     * 启动签名界面
+     */
+    private void startAutographAct() {
+        Intent intent = new Intent(WastewaterActivity.this, AutographActivity.class);
+        intent.putExtra(AutographActivity.AUTOGRAPH_ID, mSample.getId());
+        intent.putExtra(AutographActivity.INTENT_CHECK_PATH, "");
+        intent.putExtra(AutographActivity.INTENT_EXAMINE_PATH, "");
+        intent.putExtra(AutographActivity.INTENT_SAMPLING_PATH, "");
+        if (mSample.getStatus() == 0 || mSample.getStatus() == 4 || mSample.getStatus() == 9) {
+            //还没有上传 可以编辑
+            intent.putExtra(AutographActivity.INTENT_CAN_CHANGE, true);
+        } else {
+            intent.putExtra(AutographActivity.INTENT_CAN_CHANGE, false);
+        }
+        new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == RESULT_OK) {
+                    //todo 介绍签名文件进行处理
+                }
+            }
+        });
+
     }
 
 

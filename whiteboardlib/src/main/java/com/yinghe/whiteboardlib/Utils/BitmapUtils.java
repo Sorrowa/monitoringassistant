@@ -5,10 +5,18 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.yinghe.whiteboardlib.R;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by TangentLu on 2015/8/19.
@@ -17,7 +25,7 @@ public class BitmapUtils {
 
 
     public static boolean isLandScreen(Context context) {
-        int ori =context.getResources().getConfiguration().orientation;//获取屏幕方向
+        int ori = context.getResources().getConfiguration().orientation;//获取屏幕方向
         return ori == Configuration.ORIENTATION_LANDSCAPE;
     }
 
@@ -39,6 +47,7 @@ public class BitmapUtils {
         Log.e("xxx", bm.getByteCount() + "");
         return bm;
     }
+
     public static Bitmap decodeSampleBitMapFromResource(Context context, int resId, int reqWidth, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -82,6 +91,7 @@ public class BitmapUtils {
         options.inPreferredConfig = Bitmap.Config.RGB_565;
         return options;
     }
+
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -104,19 +114,68 @@ public class BitmapUtils {
 
         return inSampleSize;
     }
-    public static Bitmap getBitmapFromAssets(Context context,String path){
+
+    public static Bitmap getBitmapFromAssets(Context context, String path) {
         InputStream open = null;
         Bitmap bitmap = null;
         try {
-            String temp =  path;
+            String temp = path;
             open = context.getAssets().open(temp);
             BitmapFactory.Options options = new BitmapFactory.Options();
             options = sampleBitmapOptions(context, options, 10, 10);
             bitmap = BitmapFactory.decodeStream(open, null, options);
             return bitmap;
-        } catch (Exception e) {e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * drawableId
+     *
+     * @param context
+     * @param drawableId
+     * @return
+     */
+    public static Bitmap getBitmapForDrawable(Context context, int drawableId) {
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), drawableId);
+        return bmp;
+    }
+
+    /**
+     * 文件转Bitmap
+     * @param context
+     * @param filePath
+     * @return
+     */
+    public static Bitmap getBitmapForFile(Context context, String filePath) {
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        return bitmap;
+    }
+
+
+    /**
+     * url转Bitmap
+     * @param url
+     * @return
+     */
+    public static Bitmap returnBitMap(final String url) {
+        Bitmap bitmap = null;
+        URL imageUrl = null;
+
+        try {
+            imageUrl = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bitmap;
+    }
 }

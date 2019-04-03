@@ -165,4 +165,5 @@ dependencies {
     //                exclude module: 'gson'
     //            }
     implementation project(':whiteboardlib')
+    implementation project(':EasyLibrary')
 }

@@ -15,6 +15,7 @@ import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.PermissionUtil;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
