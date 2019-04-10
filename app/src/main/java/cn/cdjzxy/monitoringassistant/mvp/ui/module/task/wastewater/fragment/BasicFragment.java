@@ -141,7 +141,7 @@ public class BasicFragment extends BaseFragment {
     @BindView(R.id.more_gw)
     CheckedTextView more_gw;
 
-    private static final int request_Code = 20002;
+    private static final int PirView_request_Code = 20002;
 
     private List<SamplingFile> sampleFiles = new ArrayList<>();
     private SamplingFileAdapter sampleFileAdapter;
@@ -284,7 +284,7 @@ public class BasicFragment extends BaseFragment {
                 bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS, (ArrayList<SamplingFile>) list);
                 intent.putExtra(PreviewActivity.PREVIEW_PHOTOS, bundle);
                 intent.putExtra(PreviewActivity.POSITION, position);
-                getActivity().startActivityForResult(intent, request_Code);
+                getActivity().startActivityForResult(intent, PirView_request_Code);
             }
         });
         recyclerview.setAdapter(sampleFileAdapter);
@@ -318,7 +318,7 @@ public class BasicFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {//添加图片
             List<String> paths = Matisse.obtainPathResult(data);
             ArtUtils.makeText(getContext(), paths.toString());
             for (String path : paths) {
@@ -334,7 +334,8 @@ public class BasicFragment extends BaseFragment {
             }
             WastewaterActivity.mSample.setSamplingFiless(sampleFiles);
             sampleFileAdapter.notifyDataSetChanged();
-        } else if (requestCode == request_Code && resultCode == PreviewActivity.BACK_RESULT_CODE) {
+        } else if (requestCode == PirView_request_Code
+                && resultCode == PreviewActivity.BACK_RESULT_CODE) {//预览图片
             Bundle bundle = data.getBundleExtra(PreviewActivity.PREVIEW_PHOTOS);
             List<SamplingFile> list = bundle.getParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS);
             SamplingFile file = sampleFiles.get(0);

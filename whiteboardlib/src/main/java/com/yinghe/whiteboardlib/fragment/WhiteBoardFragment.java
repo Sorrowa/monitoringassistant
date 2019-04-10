@@ -799,7 +799,6 @@ public class WhiteBoardFragment extends Fragment implements SketchView.OnDrawCha
     private void showTextPopupWindow(View anchor, final StrokeRecord record) {
         strokeET.requestFocus();
         textPopupWindow.showAsDropDown(anchor, record.textOffX, record.textOffY - mSketchView.getHeight());
-        textPopupWindow.setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
         InputMethodManager imm = (InputMethodManager) activity
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);

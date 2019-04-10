@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -17,7 +18,9 @@ import com.yinghe.whiteboardlib.MultiImageSelectorActivity;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +50,9 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.AutographActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.fragment.AutographFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BasicFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BottleSplitDetailFragment;
@@ -85,6 +90,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     private BottleSplitDetailFragment mBottleSplitDetailFragment;
     private CollectionFragment mCollectionFragment;
     private CollectionDetailFragment mCollectionDetailFragment;
+    private AutographFragment autographFragment;
 
     private TitleBarView mTitleBarView;
 
@@ -98,7 +104,62 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                 onBack();
             }
         });
+        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArtUtils.startActivity(FormPrintActivity.class);
+            }
+        }));
 
+        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save
+                , new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSample.getIsCanEdit()) {
+                    if (!checkBaseInfo()) {
+                        return;
+                    }
+                    //保存文件
+                    if (!CheckUtil.isEmpty(mSample.getSamplingFiless())) {
+                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
+                        if (!CheckUtil.isEmpty(samplingFiles)) {
+                            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+                        }
+                        if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())) {
+                            //将补充位置的第一个图片去除,添加图片的标志
+                            mSample.getSamplingFiless().remove(0);
+                        }
+                        DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
+                    }
+                    //保存样品
+                    if (!CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
+                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
+                        if (!CheckUtil.isEmpty(samplingDetails)) {
+                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
+                        }
+                        DBHelper.get().getSamplingDetailDao().insertInTx(mSample.getSamplingDetailResults());
+                    }
+                    if (!CheckUtil.isEmpty(mSample.getAutographList())) {
+                        //todo  保存签名文件暂时等后台接口实现了在保存
+                    }
+                    //保存分瓶信息
+                    if (!CheckUtil.isEmpty(mSample.getSamplingFormStandResults())) {
+                        List<SamplingFormStand> samplingFormStands = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
+                        if (!CheckUtil.isEmpty(samplingFormStands)) {
+                            DBHelper.get().getSamplingFormStandDao().deleteInTx(samplingFormStands);
+                        }
+                        DBHelper.get().getSamplingFormStandDao().insertInTx(mSample.getSamplingFormStandResults());
+                    }
+
+                    mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
+                    mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+                    //保存基本信息
+                    saveBaseInfo();
+                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
+                    ArtUtils.makeText(getApplicationContext(), "数据保存成功");
+                }
+            }
+        }));
 
     }
 
@@ -153,60 +214,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
         }
 
-        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.startActivity(FormPrintActivity.class);
-            }
-        }));
-
-        if (mSample.getIsCanEdit()) {
-            mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save
-                    , new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!checkBaseInfo()) {
-                        return;
-                    }
-                    //保存文件
-                    if (!CheckUtil.isEmpty(mSample.getSamplingFiless())) {
-                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingFiles)) {
-                            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
-                        }
-                        if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())) {
-                            //将补充位置的第一个图片去除,添加图片的标志
-                            mSample.getSamplingFiless().remove(0);
-                        }
-                        DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
-                    }
-                    //保存样品
-                    if (!CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
-                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingDetails)) {
-                            DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetails);
-                        }
-                        DBHelper.get().getSamplingDetailDao().insertInTx(mSample.getSamplingDetailResults());
-                    }
-                    //保存分瓶信息
-                    if (!CheckUtil.isEmpty(mSample.getSamplingFormStandResults())) {
-                        List<SamplingFormStand> samplingFormStands = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingFormStands)) {
-                            DBHelper.get().getSamplingFormStandDao().deleteInTx(samplingFormStands);
-                        }
-                        DBHelper.get().getSamplingFormStandDao().insertInTx(mSample.getSamplingFormStandResults());
-                    }
-
-                    mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-                    mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
-                    //保存基本信息
-                    saveBaseInfo();
-                    EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
-                    ArtUtils.makeText(getApplicationContext(), "数据保存成功");
-                }
-            }));
-        }
-
         initTabData();
         openFragment(0);
     }
@@ -219,59 +226,47 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                if (tab.getTabName().equals("签名")) {
-                    startAutographAct();
-                } else {
-                    openFragment(position);
-                }
-
+                openFragment(position);
             }
         });
 
         mBasicFragment = new BasicFragment();
-        mBottleSplitFragment = new BottleSplitFragment();
-        mBottleSplitDetailFragment = new BottleSplitDetailFragment();
         mCollectionFragment = new CollectionFragment();
+        mBottleSplitFragment = new BottleSplitFragment();
+        autographFragment = new AutographFragment();
+
         mCollectionDetailFragment = new CollectionDetailFragment();
+        mBottleSplitDetailFragment = new BottleSplitDetailFragment();
+
 
         mFragments = new ArrayList<>();
-        mFragments.add(mBasicFragment);
-        mFragments.add(mCollectionFragment);
-        mFragments.add(mBottleSplitFragment);
-        mFragments.add(mCollectionDetailFragment);
-        mFragments.add(mBottleSplitDetailFragment);
+        mFragments.add(mBasicFragment);//0
+        mFragments.add(mCollectionFragment);//1;
+        mFragments.add(mBottleSplitFragment);//2
+        mFragments.add(autographFragment);//3
+        mFragments.add(mCollectionDetailFragment);//4
+        mFragments.add(mBottleSplitDetailFragment);//5
+
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
         viewPager.setOffscreenPageLimit(5);
     }
 
-    /**
-     * 启动签名界面
-     */
-    private void startAutographAct() {
-        Intent intent = new Intent(WastewaterActivity.this, AutographActivity.class);
-        intent.putExtra(AutographActivity.AUTOGRAPH_ID, mSample.getId());
-        intent.putExtra(AutographActivity.INTENT_CHECK_PATH, "");
-        intent.putExtra(AutographActivity.INTENT_EXAMINE_PATH, "");
-        intent.putExtra(AutographActivity.INTENT_SAMPLING_PATH, "");
-        if (mSample.getStatus() == 0 || mSample.getStatus() == 4 || mSample.getStatus() == 9) {
-            //还没有上传 可以编辑
-            intent.putExtra(AutographActivity.INTENT_CAN_CHANGE, true);
-        } else {
-            intent.putExtra(AutographActivity.INTENT_CAN_CHANGE, false);
-        }
-        new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {
-            @Override
-            public void onActivityResult(int resultCode, Intent data) {
-                if (resultCode == RESULT_OK) {
-                    //todo 介绍签名文件进行处理
-                }
-            }
-        });
 
+    private void addFile(String path) {
+        Log.e(TAG, "addFile: " + path);
+        SamplingFile sampling = new SamplingFile();
+        File file = new File(path);
+        sampling.setLocalId("LC-" + UUID.randomUUID().toString());
+        sampling.setId("");
+        sampling.setFilePath(path);
+        sampling.setFileName(file.getName());
+        sampling.setSamplingId(mSample.getId());
+        sampling.setUpdateTime(DateUtils.getTime(new Date().getTime()));
+        Log.e(TAG, "addFile: " + sampling.toString());
+        mSample.getSamplingFiless().add(sampling);
     }
-
 
     /**
      * 切换Fragment页面

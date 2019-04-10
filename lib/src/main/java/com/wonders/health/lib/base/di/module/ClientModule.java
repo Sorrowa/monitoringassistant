@@ -75,8 +75,11 @@ public abstract class ClientModule {
      */
     @Singleton
     @Provides
-    static Retrofit provideRetrofit(Application application, @Nullable RetrofitConfiguration configuration, Retrofit.Builder builder, OkHttpClient client
-            , HttpUrl httpUrl, Gson gson) {
+    static Retrofit provideRetrofit(Application application,
+                                    @Nullable RetrofitConfiguration configuration,
+                                    Retrofit.Builder builder,
+                                    OkHttpClient client,
+                                    HttpUrl httpUrl, Gson gson) {
         builder
                 .baseUrl(httpUrl)//域名
                 .client(client);//设置okhttp

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -39,41 +40,47 @@ import static com.yinghe.whiteboardlib.bean.StrokeRecord.STROKE_TYPE_CIRCLE;
 import static com.yinghe.whiteboardlib.bean.StrokeRecord.STROKE_TYPE_DRAW;
 
 public class AutographActivity extends BaseTitileActivity {
-    @BindView(R.id.sketch_view_sampling)
-    SketchView sketchViewSampling;//采样人签名
-    @BindView(R.id.sketch_view_check)
-    SketchView sketchViewCheck;//校核人签名
-    @BindView(R.id.sketch_view_examine)
-    SketchView sketchViewExamine;//审核人签名
-    @BindView(R.id.img_empty_check)
-    ImageView imgEmptyCheck;
-    @BindView(R.id.img_empty_examine)
-    ImageView imgEmptyExamine;
-    @BindView(R.id.img_empty_sampling)
-    ImageView imgEmptySampling;
+    @BindView(R.id.sketch_view)
+    SketchView sketchView;//采样人签名
+    //    @BindView(R.id.sketch_view_check)
+//    SketchView sketchViewCheck;//校核人签名
+//    @BindView(R.id.sketch_view_examine)
+//    SketchView sketchViewExamine;//审核人签名
+//    @BindView(R.id.img_empty_check)
+//    ImageView imgEmptyCheck;
+//    @BindView(R.id.img_empty_examine)
+//    ImageView imgEmptyExamine;
+    @BindView(R.id.img_empty)
+    ImageView imgEmpty;
+    @BindView(R.id.text_view_name)
+    TextView textViewName;
 
     private String autographPath;//保存签名文件的路径
     private String autographId;//表单id;
     public static final String AUTOGRAPH_ID = "autographId";
     private static final String AUTOGRAPH_PATH = "/AUTOGRAPH/";
-    private AutographType autographType;
+//    private AutographType autographType;
 
 
-    public static final String INTENT_SAMPLING_PATH = "SamplingPath";
-    public static final String INTENT_CHECK_PATH = "checkPath";
-    public static final String INTENT_EXAMINE_PATH = "examinePath";
+    //    public static final String INTENT_SAMPLING_PATH = "SamplingPath";
+//    public static final String INTENT_CHECK_PATH = "checkPath";
+//    public static final String INTENT_EXAMINE_PATH = "examinePath";
+    public static final String INTENT_AUTOGRAPH_PATH = "autograph_path";//签名文件路径
     public static final String INTENT_CAN_CHANGE = "isCanChange";
+    public static final String INTENT_AUTOGRAPH_NAME = "autograph_name";//签名文件名称
 
-    private String pngSamplingPath;
-    private String pngCheckPath;
-    private String pngExaminePath;
-    private boolean isCanChange = true;
+    //    private String pngSamplingPath;
+//    private String pngCheckPath;
+//    private String pngExaminePath;
+    private String pngAutographPath;
+    private String autographName;
+    private boolean isCanChange = true;//是否可以编辑
 
-    private enum AutographType {
-        sampling,
-        check,
-        examine
-    }
+//    private enum AutographType {
+//        sampling,
+//        check,
+//        examine
+//    }
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -95,10 +102,23 @@ public class AutographActivity extends BaseTitileActivity {
         if (getIntent() != null) {
             autographId = getIntent().getStringExtra(AUTOGRAPH_ID);
             autographPath = Constant.FILE_DIR + Constant.PNG_DIR + AUTOGRAPH_PATH;
-            pngCheckPath = getIntent().getStringExtra(INTENT_CHECK_PATH);
-            pngExaminePath = getIntent().getStringExtra(INTENT_EXAMINE_PATH);
-            pngSamplingPath = getIntent().getStringExtra(INTENT_SAMPLING_PATH);
+//            pngCheckPath = getIntent().getStringExtra(INTENT_CHECK_PATH);
+//            pngExaminePath = getIntent().getStringExtra(INTENT_EXAMINE_PATH);
+//            pngSamplingPath = getIntent().getStringExtra(INTENT_SAMPLING_PATH);
+            pngAutographPath = getIntent().getStringExtra(INTENT_AUTOGRAPH_PATH);
+            autographName = getIntent().getStringExtra(INTENT_AUTOGRAPH_NAME);
             isCanChange = getIntent().getBooleanExtra(INTENT_CAN_CHANGE, true);
+            switch (autographName) {
+                case "_SAMPLING.png":
+                    textViewName.setText("采样人签名");
+                    break;
+                case "_EXAMINE.png":
+                    textViewName.setText("校核人人签名");
+                    break;
+                case "_CHECK.png":
+                    textViewName.setText("审核人签名");
+                    break;
+            }
         }
     }
 
@@ -106,56 +126,64 @@ public class AutographActivity extends BaseTitileActivity {
      * 初始化画笔参数
      */
     private void initSketchView() {
-        SketchData newSketchSampling = new SketchData();
+//        SketchData newSketchSampling = new SketchData();
+//        SketchData newSketchExamine = new SketchData();
         SketchData newSketchCheck = new SketchData();
-        SketchData newSketchExamine = new SketchData();
-        if (pngSamplingPath != null && !pngSamplingPath.equals("")) {
-            newSketchSampling.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngSamplingPath);
-            sketchViewSampling.setSketchData(newSketchSampling);
-            sketchViewSampling.setEditMode(SketchView.EDIT_PHOTO);
+
+//        if (pngSamplingPath != null && !pngSamplingPath.equals("")) {
+//            newSketchSampling.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngSamplingPath);
+//            sketchViewSampling.setSketchData(newSketchSampling);
+//            sketchViewSampling.setEditMode(SketchView.EDIT_PHOTO);
+//        } else {
+//            sketchViewSampling.setSketchData(newSketchSampling);
+//            sketchViewSampling.setStrokeType(STROKE_TYPE_DRAW);
+//        }
+//        if (pngExaminePath != null && !pngExaminePath.equals("")) {
+//            newSketchExamine.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngExaminePath);
+//            sketchViewExamine.setSketchData(newSketchExamine);
+//            sketchViewExamine.setEditMode(SketchView.EDIT_PHOTO);
+//        } else {
+//            sketchViewExamine.setSketchData(newSketchExamine);
+//            sketchViewExamine.setStrokeType(STROKE_TYPE_DRAW);
+//        }
+//        if (pngCheckPath != null && !pngCheckPath.equals("")) {
+//            newSketchCheck.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngCheckPath);
+//            sketchViewCheck.setSketchData(newSketchCheck);
+//            sketchViewCheck.setEditMode(SketchView.EDIT_PHOTO);
+//        } else {
+//            sketchViewCheck.setSketchData(newSketchCheck);
+//            sketchViewCheck.setStrokeType(STROKE_TYPE_DRAW);
+//        }
+        if (pngAutographPath != null && !pngAutographPath.equals("")) {
+            newSketchCheck.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngAutographPath);
+            sketchView.setSketchData(newSketchCheck);
+            sketchView.setBackgroundByPath(pngAutographPath);
+            sketchView.setEditMode(SketchView.EDIT_PHOTO);
         } else {
-            sketchViewSampling.setSketchData(newSketchSampling);
-            sketchViewSampling.setStrokeType(STROKE_TYPE_DRAW);
-        }
-        if (pngExaminePath != null && !pngExaminePath.equals("")) {
-            newSketchExamine.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngExaminePath);
-            sketchViewExamine.setSketchData(newSketchExamine);
-            sketchViewExamine.setEditMode(SketchView.EDIT_PHOTO);
-        } else {
-            sketchViewExamine.setSketchData(newSketchExamine);
-            sketchViewExamine.setStrokeType(STROKE_TYPE_DRAW);
-        }
-        if (pngCheckPath != null && !pngCheckPath.equals("")) {
-            newSketchCheck.thumbnailBM = BitmapUtils.getBitmapForFile(this, pngCheckPath);
-            sketchViewCheck.setSketchData(newSketchCheck);
-            sketchViewCheck.setEditMode(SketchView.EDIT_PHOTO);
-        } else {
-            sketchViewCheck.setSketchData(newSketchCheck);
-            sketchViewCheck.setStrokeType(STROKE_TYPE_DRAW);
+            sketchView.setSketchData(newSketchCheck);
+            sketchView.setStrokeType(STROKE_TYPE_DRAW);
         }
         if (!isCanChange) {
-            imgEmptyCheck.setVisibility(View.GONE);
-            imgEmptyExamine.setVisibility(View.GONE);
-            imgEmptySampling.setVisibility(View.GONE);
+            imgEmpty.setVisibility(View.GONE);
         }
     }
 
 
-    @OnClick({R.id.img_empty_sampling, R.id.img_empty_examine, R.id.img_empty_check, R.id.btn_post})
+    @OnClick({R.id.img_empty, R.id.btn_post})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.img_empty_check:
-                sketchViewCheck.erase();
-                sketchViewCheck.setStrokeType(STROKE_TYPE_DRAW);
+//            case R.id.img_empty_check:
+//                sketchViewCheck.erase();
+//                sketchViewCheck.setStrokeType(STROKE_TYPE_DRAW);
+//                break;
+            case R.id.img_empty:
+                sketchView.erase();
+                sketchView.setStrokeType(STROKE_TYPE_DRAW);
                 break;
-            case R.id.img_empty_sampling:
-                sketchViewSampling.erase();
-                sketchViewSampling.setStrokeType(STROKE_TYPE_DRAW);
-                break;
-            case R.id.img_empty_examine:
-                sketchViewExamine.erase();
-                sketchViewExamine.setStrokeType(STROKE_TYPE_DRAW);
-                break;
+//            case R.id.img_empty_examine:
+//                sketchViewExamine.erase();
+//                sketchViewExamine.setStrokeType(STROKE_TYPE_DRAW);
+//                break;
             case R.id.btn_post:
                 postAutograph();
                 break;
@@ -166,28 +194,32 @@ public class AutographActivity extends BaseTitileActivity {
      * 保存签名
      */
     private void postAutograph() {
-        if (sketchViewSampling.getRecordCount() == 0//采样人没有签写
-                && sketchViewExamine.getRecordCount() == 0//审核人签名
-                && sketchViewCheck.getRecordCount() == 0) {//校核人签名
+        if (sketchView.getRecordCount() == 0//没有签名
+//                && sketchViewExamine.getRecordCount() == 0//审核人签名
+//                && sketchViewCheck.getRecordCount() == 0
+                ) {//校核人签名
             Toast.makeText(this, "您还没有进行任何签名", Toast.LENGTH_SHORT).show();
             return;
         } else {
-            String name;
-            if (sketchViewSampling.getRecordCount() != 0) {
-                name = autographId + "Sampling";
-                new SaveToFileTask().execute(name);
-                autographType = AutographType.sampling;
-            }
-            if (sketchViewCheck.getRecordCount() != 0) {
-                name = autographId + "Check";
-                new SaveToFileTask().execute(name);
-                autographType = AutographType.check;
-            }
-            if (sketchViewExamine.getRecordCount() != 0) {
-                name = autographId + "Examine";
-                new SaveToFileTask().execute(name);
-                autographType = AutographType.examine;
-            }
+            String name = autographId + autographName;
+            new SaveToFileTask().execute(name);
+            Log.e(TAG, "postAutograph:签名文件名称 " + name);
+
+//            if (sketchViewSampling.getRecordCount() != 0) {
+//                name = autographId + "Sampling";
+//                new SaveToFileTask().execute(name);
+//                autographType = AutographType.sampling;
+//            }
+//            if (sketchViewCheck.getRecordCount() != 0) {
+//                name = autographId + "Check";
+//                new SaveToFileTask().execute(name);
+//                autographType = AutographType.check;
+//            }
+//            if (sketchViewExamine.getRecordCount() != 0) {
+//                name = autographId + "Examine";
+//                new SaveToFileTask().execute(name);
+//                autographType = AutographType.examine;
+//            }
         }
 
     }
@@ -210,17 +242,19 @@ public class AutographActivity extends BaseTitileActivity {
             super.onPostExecute(file);
             if (file == null) return;
             if (file.exists()) {
-                switch (autographType) {
-                    case check:
-                        pngCheckPath = file.getPath();
-                        break;
-                    case examine:
-                        pngExaminePath = file.getPath();
-                        break;
-                    case sampling:
-                        pngSamplingPath = file.getPath();
-                        break;
-                }
+                pngAutographPath = file.getPath();
+                autographName = file.getName();
+//                switch (autographType) {
+//                    case check:
+//                        pngCheckPath = file.getPath();
+//                        break;
+//                    case examine:
+//                        pngExaminePath = file.getPath();
+//                        break;
+//                    case sampling:
+//                        pngSamplingPath = file.getPath();
+//                        break;
+//                }
                 Toast.makeText(AutographActivity.this, "成功保存", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(AutographActivity.this, "保存失败！", Toast.LENGTH_SHORT).show();
@@ -240,29 +274,27 @@ public class AutographActivity extends BaseTitileActivity {
      * create at 16/6/17 上午11:18
      */
     public File saveInOI(String filePath, String imgName, int compress) {
+//        Log.e(TAG, "saveInOI: " + String.format(" filePath:%d, imgName:%s ", filePath, imgName));
         if (!imgName.contains(".png")) {
             imgName += ".png";
         }
         Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
-        if (autographType == null) {
-            Log.e(TAG, "saveInOI: " + "autographType+异常为null");
-            return null;
-        }
-        Bitmap newBM;
-        switch (autographType) {
-            case check:
-                newBM = sketchViewCheck.getResultBitmap();
-                break;
-            case examine:
-                newBM = sketchViewExamine.getResultBitmap();
-                break;
-            case sampling:
-                newBM = sketchViewSampling.getResultBitmap();
-                break;
-            default:
-                newBM = sketchViewSampling.getResultBitmap();
-                break;
-        }
+
+        Bitmap newBM = sketchView.getResultBitmap();
+//        switch (autographType) {
+//            case check:
+//                newBM = sketchViewCheck.getResultBitmap();
+//                break;
+//            case examine:
+//                newBM = sketchViewExamine.getResultBitmap();
+//                break;
+//            case sampling:
+//                newBM = sketchViewSampling.getResultBitmap();
+//                break;
+//            default:
+//                newBM = sketchViewSampling.getResultBitmap();
+//                break;
+//        }
 
         Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
         try {
@@ -319,9 +351,11 @@ public class AutographActivity extends BaseTitileActivity {
 
     private void onBack() {
         Intent intent = new Intent();
-        intent.putExtra(INTENT_SAMPLING_PATH, pngSamplingPath);
-        intent.putExtra(INTENT_EXAMINE_PATH, pngExaminePath);
-        intent.putExtra(INTENT_CHECK_PATH, pngCheckPath);
+        intent.putExtra(INTENT_CAN_CHANGE, isCanChange);
+//        intent.putExtra(INTENT_SAMPLING_PATH, pngSamplingPath);
+//        intent.putExtra(INTENT_EXAMINE_PATH, pngExaminePath);
+//        intent.putExtra(INTENT_CHECK_PATH, pngCheckPath);
+        intent.putExtra(INTENT_AUTOGRAPH_PATH, pngAutographPath);
         setResult(RESULT_OK, intent);
         finish();
     }

@@ -2,7 +2,12 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.launch;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
@@ -32,6 +37,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
 import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.widgets.ClearEditText;
+import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -89,14 +95,34 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
     @Override
     protected void onResume() {
         super.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+            boolean isIgnoring = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+            if (!isIgnoring) {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                try {
+                    startActivity(intent);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                getUserInfo();
+            }
+        } else {
+            getUserInfo();
+        }
+
+    }
+
+    private void getUserInfo() {
         if (UserInfoHelper.get().isLogin()) {
             name = UserInfoHelper.get().getUserName();
-
+            pwd = UserInfoHelper.get().getPwd();
             //重新设置weburl
             mPresenter.resetWebUrl(null);
-
             initAppDataDir();
-            toMian();
+            toMain();
             return;
         }
     }
@@ -131,7 +157,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
                 break;
             case Message.RESULT_OK:
                 showMessage("登录成功");
-                toMian();
+                toMain();
                 break;
         }
     }
@@ -155,7 +181,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
 
 
         //        startRepositoeyDownload(name, pwd);
-        startRepositoeyDownload("renfang", "123456");
+
         mPresenter.login(Message.obtain(this, new Object()), name, pwd, this);
 
     }
@@ -169,6 +195,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         Constant.REPOSITORY_DIR = Constant.USER_DATA_DIR + "/Repository";//初始化知识库文件目录
         Constant.FILE_DIR = Constant.USER_DATA_DIR + "/Files";//初始化文件目录
         Constant.DATABASE_DIR = Constant.USER_DATA_DIR + "/Database";//初始化数据库
+        Constant.BAI_DU_TRAJECTORY_ENTITY_NAME = name;
         FileUtils.makeDir(Constant.USER_DATA_DIR);//创建APP根目录
         FileUtils.makeDir(Constant.LOG_DIR);//创建日志目录
         FileUtils.makeDir(Constant.REPOSITORY_DIR);//创建知识库文件目录
@@ -222,7 +249,10 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
                 , Manifest.permission.BLUETOOTH_ADMIN
                 , Manifest.permission.CAMERA
                 , Manifest.permission.INTERNET
-                , Manifest.permission.VIBRATE);
+                , Manifest.permission.VIBRATE
+                , Manifest.permission.ACCESS_FINE_LOCATION
+        );
+
 
     }
 
@@ -230,9 +260,19 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
     /**
      * 进入主界面
      */
-    private void toMian() {
+    private void toMain() {
+        startTraceServer();
+        //  app.startTrajectoryServer(this);
+        startRepositoeyDownload(name, pwd);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
+    /**
+     * 开启轨迹服务
+     */
+    private void startTraceServer() {
+        Intent intent = new Intent(this, TrajectoryServer.class);
+        startService(intent);
+    }
 }

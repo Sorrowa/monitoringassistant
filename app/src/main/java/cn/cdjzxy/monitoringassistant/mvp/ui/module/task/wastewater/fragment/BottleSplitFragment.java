@@ -125,7 +125,7 @@ public class BottleSplitFragment extends BaseFragment {
             case R.id.btn_add_blank:
                 editor.putInt("bottleListPosition", -1);
                 editor.commit();
-                EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_COLLECTION);
+                EventBus.getDefault().post(5, EventBusTags.TAG_WASTEWATER_COLLECTION);
                 break;
 
         }

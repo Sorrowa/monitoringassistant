@@ -3,11 +3,13 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -95,11 +97,16 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
         getData();
 
         //初始化导航
-        if (initDirs()) {
-            initNavi();
+        try {
+            if (initDirs()) {
+                initNavi();
+            }
+            //初始化定位
+            initLocation();
+        } catch (Exception e) {
+            Log.e(TAG, "initData: " + e.toString());
         }
-        //初始化定位
-        initLocation();
+
     }
 
     /**
@@ -112,7 +119,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if (mProject.getCanSamplingEidt()) {
-                //if (!mProject.getCanSamplingEidt()) {
+                    //if (!mProject.getCanSamplingEidt()) {
                     Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
                     intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
                     intent.putExtra("projectId", projectId);

@@ -14,7 +14,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 public class UserInfoHelper {
 
     private static final String KEY_USER_LOGIN = "user_login";
-    private static final String KEY_USER_INFO  = "user_info";
+    private static final String KEY_USER_INFO = "user_info";
 
     private static UserInfoHelper sUserInfoHelper;
 
@@ -46,6 +46,11 @@ public class UserInfoHelper {
     public String getUserName() {
         UserInfo userInfo = getUserInfo();
         return null == userInfo ? "" : userInfo.getWorkNo();
+    }
+
+    public String getPwd() {
+        UserInfo userInfo = getUserInfo();
+         return null == userInfo ? "" : userInfo.getPwd();
     }
 
 

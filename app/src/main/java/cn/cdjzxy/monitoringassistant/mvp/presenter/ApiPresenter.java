@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import cn.cdjzxy.monitoringassistant.BuildConfig;
+import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.app.rx.RxObserver;
 import cn.cdjzxy.monitoringassistant.app.rx.RxUtils;
 import cn.cdjzxy.monitoringassistant.mvp.model.ApiRepository;
@@ -204,6 +206,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         UserInfoHelper.get().saveUserLoginStatee(true);
                         UserInfoHelper.get().saveUserInfo(userInfo);
                         HawkUtil.putBoolean("isUpdated", false);
+                        Constant.BAI_DU_TRAJECTORY_ENTITY_NAME = userInfo.getName();
 
                         //重新设置weburl
                         resetWebUrl(userInfo);
@@ -245,7 +248,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             msg.handleMessageToTarget();
         } else {
             UserInfoHelper.get().saveUserLoginStatee(true);
-
+            Constant.BAI_DU_TRAJECTORY_ENTITY_NAME = userInfo.getName();
             //重新设置weburl
             resetWebUrl(userInfo);
 
@@ -800,6 +803,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     /**
      * 获得与我相关的任务
      * 添加：判断时间先后保留信息
+     *
      * @param msg
      */
     public void getMyTasks(final Message msg) {
@@ -811,17 +815,17 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             List<Project> projects = baseResponse.getData();//所有与我相关的任务
                             //todo:找出时间后于服务器的数据
-                            ProjectDao dao=DBHelper.get().getProjectDao();
+                            ProjectDao dao = DBHelper.get().getProjectDao();
                             //日期转化
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            for (Project project : projects){
+                            for (Project project : projects) {
 
-                                Project old=dao.queryBuilder()
+                                Project old = dao.queryBuilder()
                                         .where(ProjectDao.Properties.Id.eq(project.getId()))
                                         .build()
                                         .unique();
                                 /**如果没有冲突，那么直接插入**/
-                                if (old==null){
+                                if (old == null) {
                                     List<ProjectDetial> projectDetials = project.getProjectDetials();
                                     if (!CheckUtil.isEmpty(projectDetials)) {
                                         DBHelper.get()
@@ -834,8 +838,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                 /**有冲突，比较时间先后，暂时默认相同时间使用服务器版本**/
                                 try {
                                     Date remoteDate = sdf.parse(project.getUpdateTime());
-                                    Date localDate= sdf.parse(old.getUpdateTime());
-                                    if (remoteDate.compareTo(localDate)>=0){
+                                    Date localDate = sdf.parse(old.getUpdateTime());
+                                    if (remoteDate.compareTo(localDate) >= 0) {
                                         //服务端后更新,以及相等情况
                                         //更新本地的记录
                                         dao.update(project);
@@ -958,6 +962,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     /**
      * 获取所有采样单信息(支持批量)
+     *
      * @param msg
      */
     public void getSampling(final Message msg, List<String> projectIds) {
@@ -1058,7 +1063,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
         //删除对应的SamplingDetail
         List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).build().list();
-        if (!CheckUtil.isEmpty(samplingDetailList)){
+        if (!CheckUtil.isEmpty(samplingDetailList)) {
             DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
         }
         //新增SamplingDetail

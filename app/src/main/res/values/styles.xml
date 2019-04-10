@@ -243,12 +243,25 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/dc_e5e5e5</item>
     </style>
+
     <style name="actionActivity.imgEmpty">
-        <item name="android:layout_width">@dimen/dp_20</item>
-        <item name="android:layout_height">@dimen/dp_20</item>
+        <item name="android:layout_width">@dimen/dp_32</item>
+        <item name="android:layout_height">@dimen/dp_32</item>
         <item name="android:layout_gravity">top|left</item>
         <item name="android:clickable">true</item>
         <item name="android:padding">@dimen/dp_2</item>
         <item name="android:background">@drawable/control_btn_bg</item>
+    </style>
+
+    <style name="autographTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textColor">@color/text_color_333333</item>
+        <item name="android:textSize">@dimen/text_size_21</item>
+        <item name="android:layout_marginTop">@dimen/dp_6</item>
+        <item name="android:layout_marginBottom">@dimen/dp_6</item>
+        <item name="android:drawableRight">@mipmap/ic_has_next</item>
     </style>
 </resources>

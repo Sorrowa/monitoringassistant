@@ -205,7 +205,7 @@ public class CollectionFragment extends BaseFragment {
                 }
                 editor.putInt("fsListPosition", -1);
                 editor.commit();
-                EventBus.getDefault().post(3, EventBusTags.TAG_WASTEWATER_COLLECTION);
+                EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_COLLECTION);
                 break;
             default:
                 break;
@@ -232,7 +232,7 @@ public class CollectionFragment extends BaseFragment {
         mWasteWaterCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                EventBus.getDefault().post(3, EventBusTags.TAG_WASTEWATER_COLLECTION);
+                EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_COLLECTION);
                 editor.putInt("fsListPosition", position);
                 editor.commit();
             }

@@ -26,6 +26,7 @@
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name="com.wonders.health.lib.base.base.BaseApplication"
@@ -205,25 +206,27 @@
         <activity
             android:name=".mvp.ui.module.preview.PreviewActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-
-        <activity android:name=".mvp.ui.module.autograph.AutographActivity"
-            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".mvp.ui.module.autograph.AutographActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <service android:name=".services.RepositoryService" />
 
         <!-- 佳博蓝牙打印 -->
-        <!--<service-->
-            <!--android:name="com.gprinter.service.GpPrintService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true"-->
-            <!--android:label="GpPrintService">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.gprinter.aidl.GpPrintService" />-->
-            <!--</intent-filter>-->
-        <!--</service>-->
-        <!--<service android:name="com.gprinter.service.AllService" />-->
+        <!-- <service -->
+        <!-- android:name="com.gprinter.service.GpPrintService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" -->
+        <!-- android:label="GpPrintService"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.gprinter.aidl.GpPrintService" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
+        <!-- <service android:name="com.gprinter.service.AllService" /> -->
+
 
         <!-- 自动蓝牙配对 -->
         <receiver android:name=".mvp.ui.module.task.print.PairingRequest">
@@ -236,8 +239,18 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
+        <!--<service android:name=".services.RepositoryService"></service>-->
+        <service android:name=".trajectory.TrajectoryServer" />
+        <service
+            android:name="com.baidu.trace.LBSTraceService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote" />
 
-
+        <activity
+            android:name=".mvp.ui.module.easy.EasyPusherActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>

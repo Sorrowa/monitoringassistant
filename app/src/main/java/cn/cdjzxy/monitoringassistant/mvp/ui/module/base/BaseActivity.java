@@ -25,18 +25,12 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
 
-import org.simple.eventbus.EventBus;
-import org.simple.eventbus.Subscriber;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
@@ -47,14 +41,15 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
  */
 public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivity implements IActivity<P> {
     protected final String TAG = this.getClass().getSimpleName();
-    private   Cache<String, Object> mCache;
-    private   Unbinder              mUnbinder;
-    protected P                     mPresenter;
+    private Cache<String, Object> mCache;
+    private Unbinder mUnbinder;
+    protected P mPresenter;
 
     protected View mContentView;
 
 
     private Dialog dialog;
+
 
     @NonNull
     @Override
@@ -77,7 +72,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O && isTranslucentOrFloating()) {
             boolean result = fixOrientation();
         }
-
         super.onCreate(savedInstanceState);
         try {
             int layoutResID = initView(savedInstanceState);
@@ -111,11 +105,11 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
 
-    private boolean fixOrientation(){
+    private boolean fixOrientation() {
         try {
             Field field = Activity.class.getDeclaredField("mActivityInfo");
             field.setAccessible(true);
-            ActivityInfo o = (ActivityInfo)field.get(this);
+            ActivityInfo o = (ActivityInfo) field.get(this);
             o.screenOrientation = -1;
             field.setAccessible(false);
             return true;
@@ -125,14 +119,14 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         return false;
     }
 
-    private boolean isTranslucentOrFloating(){
+    private boolean isTranslucentOrFloating() {
         boolean isTranslucentOrFloating = false;
         try {
-            int [] styleableRes = (int[]) Class.forName("com.android.internal.R$styleable").getField("Window").get(null);
+            int[] styleableRes = (int[]) Class.forName("com.android.internal.R$styleable").getField("Window").get(null);
             final TypedArray ta = obtainStyledAttributes(styleableRes);
             Method m = ActivityInfo.class.getMethod("isTranslucentOrFloating", TypedArray.class);
             m.setAccessible(true);
-            isTranslucentOrFloating = (boolean)m.invoke(null, ta);
+            isTranslucentOrFloating = (boolean) m.invoke(null, ta);
             m.setAccessible(false);
         } catch (Exception e) {
             e.printStackTrace();

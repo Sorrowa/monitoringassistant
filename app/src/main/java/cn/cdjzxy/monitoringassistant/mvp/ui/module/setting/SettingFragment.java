@@ -4,15 +4,14 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.setting;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
@@ -25,13 +24,11 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
-import cn.cdjzxy.monitoringassistant.utils.DialogUtil;
+import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
@@ -44,6 +41,7 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 public class SettingFragment extends BaseFragment<ApiPresenter> implements IView {
 
     Unbinder unbinder;
+    private TrajectoryServer trajectoryServer;
 
     public SettingFragment() {
     }
@@ -55,12 +53,12 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-
+        trajectoryServer = new TrajectoryServer();
     }
 
     @Nullable
     @Override
-    public ApiPresenter obtainPresenter( ) {
+    public ApiPresenter obtainPresenter() {
         return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(getContext()));
     }
 
@@ -161,6 +159,7 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
                         //                        DBHelper.getInstance().dropAllTables();
                         FileUtils.clearDir(Constant.USER_DATA_DIR);
                         ArtUtils.startActivity(LoginActivity.class);
+                        trajectoryServer.onClearCacheTrack();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
 
@@ -200,5 +199,6 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
     private void logout() {
         UserInfoHelper.get().saveUserLoginStatee(false);
         ArtUtils.startActivity(LoginActivity.class);
+        getActivity().stopService(new Intent(getContext(), TrajectoryServer.class));
     }
 }

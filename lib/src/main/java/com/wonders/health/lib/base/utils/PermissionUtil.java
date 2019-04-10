@@ -2,6 +2,12 @@
 package com.wonders.health.lib.base.utils;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
 
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -13,6 +19,8 @@ import io.reactivex.annotations.NonNull;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
 import timber.log.Timber;
+
+import static android.content.Context.POWER_SERVICE;
 
 /**
  * ================================================
@@ -88,12 +96,12 @@ public class PermissionUtil {
                                 requestPermission.onRequestPermissionFailure(failurePermissions);
                             }
 
-                            if (askNeverAgainPermissions.size() > 0){
+                            if (askNeverAgainPermissions.size() > 0) {
                                 Timber.tag(TAG).d("Request permissions failure with ask never again");
                                 requestPermission.onRequestPermissionFailureWithAskNeverAgain(askNeverAgainPermissions);
                             }
 
-                            if (failurePermissions.size() == 0 && askNeverAgainPermissions.size() == 0){
+                            if (failurePermissions.size() == 0 && askNeverAgainPermissions.size() == 0) {
                                 Timber.tag(TAG).d("Request permissions success");
                                 requestPermission.onRequestPermissionSuccess();
                             }
@@ -143,5 +151,39 @@ public class PermissionUtil {
         requestPermission(requestPermission, rxPermissions, errorHandler, Manifest.permission.READ_PHONE_STATE);
     }
 
+    public static void isIgnoringBattery(Context context, PowerManager powerManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String packageName = context.getPackageName();
+            boolean isIgnoring = powerManager.isIgnoringBatteryOptimizations(packageName);
+            if (!isIgnoring) {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                try {
+                    context.startActivity(intent);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void isIgnoringBattery(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String packageName = context.getPackageName();
+
+            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+
+            boolean isIgnoring = powerManager.isIgnoringBatteryOptimizations(packageName);
+            if (!isIgnoring) {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                try {
+                    context.startActivity(intent);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
 }
 

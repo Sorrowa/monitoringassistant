@@ -25,6 +25,7 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
+import com.wonders.health.lib.base.utils.PermissionUtil;
 import com.wonders.health.lib.base.widget.badgeview.BadgeView;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
@@ -46,6 +47,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.MainTabAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.easy.EasyPusherActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.msg.MsgActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.pointMap.PointMapFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.repository.RepositoryFragment;
@@ -54,6 +56,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.PwdModifyFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
+import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
@@ -161,6 +164,16 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         } else {
             mBadgeView.setVisibility(View.GONE);
         }
+
+      //  startTraceServer();
+    }
+
+    /**
+     * 开启轨迹服务
+     */
+    private void startTraceServer() {
+        Intent intent = new Intent(this, TrajectoryServer.class);
+        startService(intent);
     }
 
     @Override
@@ -221,11 +234,11 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         }
 
         progress += addValue;
-        if(progress>100) {
+        if (progress > 100) {
             progress = 100;
         }
 
-        mNumberProgressBar.setProgress((int)progress);
+        mNumberProgressBar.setProgress((int) progress);
 
         if (progress >= 100) {
             mDialogPlus.dismiss();
@@ -299,7 +312,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 tab.setResId(R.mipmap.ic_setting_nor);
                 tab.setSelectedResId(R.mipmap.ic_setting_hov);
                 tab.setSelected(false);
-            }else if (i == 5) {
+            } else if (i == 5) {
                 tab.setTabName("设置");
                 tab.setResId(R.mipmap.ic_setting_nor);
                 tab.setSelectedResId(R.mipmap.ic_setting_hov);
@@ -383,7 +396,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 ft.replace(R.id.layout_container, mRepositoryFragment = new RepositoryFragment(), RepositoryFragment.class.getName());
                 break;
             case 4://视频
-                //startActivity(new Intent(this,Stream.c));
+                startActivity(new Intent(this, EasyPusherActivity.class));
                 break;
             case 5://设置
                 ft.replace(R.id.layout_container, mSettingFragment = new SettingFragment(), SettingFragment.class.getName());
@@ -447,7 +460,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     /**
      * 从服务端更新数据
      */
-    private void updateDataFromNetwork(){
+    private void updateDataFromNetwork() {
         if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
             progress = 5;
             showDialog();

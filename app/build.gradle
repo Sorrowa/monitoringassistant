@@ -27,7 +27,7 @@ android {
         multiDexEnabled true
 
         ndk {
-            abiFilters "armeabi"
+            abiFilters "armeabi", "armeabi-v7a"
         }
     }
 
@@ -51,6 +51,7 @@ android {
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             buildConfigField "boolean", "IS_RELEASE", "false"
+            buildConfigField "long", "BAI_DU_TRAJECTORY_SERVER_ID", "211193"
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.release
@@ -65,7 +66,8 @@ android {
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             buildConfigField "boolean", "IS_RELEASE", "true"
-            signingConfig signingConfigs.release
+            buildConfigField "long", "BAI_DU_TRAJECTORY_SERVER_ID", "211193"
+                    signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -104,11 +106,11 @@ android {
         }
     }
 
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ['libs']
-//        }
-//    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 
 }
 
@@ -135,6 +137,7 @@ dependencies {
     implementation rootProject.ext.dependencies["pickerview"]
     implementation rootProject.ext.dependencies["photoview"]
     implementation rootProject.ext.dependencies["glide"]
+    implementation rootProject.ext.dependencies["okhttp3"]
     //便于搜索的拼音框架
     implementation rootProject.ext.dependencies["tinyPinyin"]
     annotationProcessor(rootProject.ext.dependencies["dagger2-compiler"]) {
@@ -152,7 +155,7 @@ dependencies {
     implementation files('libs/poi-scratchpad-3.9-20121203.jar')
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
     implementation(name: 'onsdk_all', ext: 'aar')
-    //implementation files('libs/BaiduLBS_Android.jar')
+    implementation files('libs/BaiduLBS_Android.jar')
     implementation 'id.zelory:compressor:2.1.0'
     //下拉刷新库
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-21'
@@ -166,4 +169,7 @@ dependencies {
     //            }
     implementation project(':whiteboardlib')
     implementation project(':EasyLibrary')
+    implementation files('libs/BaiduTraceSDK_v3_0_8.jar')
+    // implementation files('libs/okhttp-3.8.1.jar')
+
 }

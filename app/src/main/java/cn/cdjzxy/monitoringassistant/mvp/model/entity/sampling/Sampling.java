@@ -158,6 +158,8 @@ public class Sampling {
     private String layTableCheckbox;
     private String DeleteFiles;//删除的文件ID集合字符串，格式：ID1,ID2,ID3
 
+
+
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> SamplingUserResults;
     @Transient
@@ -176,7 +178,8 @@ public class Sampling {
     private JSONObject PrivateJsonData;
     @Transient
     private List<SamplingFile> HasFile;
-
+    @Transient
+    private List<SamplingFile> autographList;//签名文件集合
     @Keep()
     public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, int Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults) {
         this.Id = Id;
@@ -572,6 +575,15 @@ public class Sampling {
         this.PrivateData = PrivateData;
         //重置json对象
         this.PrivateJsonData = null;
+    }
+
+    public List<SamplingFile> getAutographList() {
+        if (autographList == null) autographList = new ArrayList<>();
+        return autographList;
+    }
+
+    public void setAutographList(List<SamplingFile> autographList) {
+        this.autographList = autographList;
     }
 
     public String getSamplingUserId() {
@@ -972,6 +984,7 @@ public class Sampling {
 
     /**
      * 获取提交的删除文件ID集合
+     *
      * @return
      */
     public List<String> getSubmitDeleteFileIdList() {
