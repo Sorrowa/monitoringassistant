@@ -1482,4 +1482,74 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             super.onPostExecute(result);
         }
     }
+
+
+    /**
+     * 获取流转任务列表
+     *
+     * @param map
+     * @param msg
+     */
+    public void getWanderTaskList(Map<String, String> map, Message msg) {
+
+        mModel.getWanderTaskList(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Project>> response) {
+                        if (response.getCode() == 200) {
+                            msg.what = Message.RESULT_OK;
+                            msg.obj = response.getData();
+                        } else {
+                            msg.what = Message.RESULT_FAILURE;
+                            msg.obj = response.getMessage();
+                        }
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int code) {
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.obj = message;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
+    /**
+     * 获取流转任务列表
+     *
+     * @param map             流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
+     * @param msg
+     * @param status@true下拉加载 @false下拉刷新
+     */
+    public void getSampleStorageProject(Map<String, String> map, Message msg, boolean status) {
+        mModel.getSampleStorageProject(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Project>> response) {
+                        if (response.getCode() == 200) {
+                            if (status) {
+                                msg.what = Message.RESULT_OK;
+                                msg.obj = response.getData();
+                            } else {
+                                msg.what = 1001;
+                                msg.obj = response.getData();
+                            }
+
+                        } else {
+                            msg.what = Message.RESULT_FAILURE;
+                            msg.obj = response.getMessage();
+                        }
+                        msg.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int code) {
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.obj = message;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
+
 }

@@ -239,7 +239,7 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-        <!--<service android:name=".services.RepositoryService"></service>-->
+        <!-- <service android:name=".services.RepositoryService"></service> -->
         <service android:name=".trajectory.TrajectoryServer" />
         <service
             android:name="com.baidu.trace.LBSTraceService"
@@ -250,7 +250,8 @@
         <activity
             android:name=".mvp.ui.module.easy.EasyPusherActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".mvp.ui.module.wander.WanderTaskActivity"></activity>
     </application>
 
 </manifest>

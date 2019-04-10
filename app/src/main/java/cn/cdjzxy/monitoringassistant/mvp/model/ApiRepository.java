@@ -40,6 +40,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.functions.Function;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -667,6 +668,7 @@ public class ApiRepository implements IModel {
                 });
     }
 
+
     /**
      * 创建
      *
@@ -796,5 +798,36 @@ public class ApiRepository implements IModel {
                 });
     }
 
+    /**
+     * 获取流转任务列表
+     *
+     * @param status 流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
+     * @return
+     */
+    public Observable<BaseResponse<List<Project>>> getSampleStorageProject(Map<String,String> map) {
+        return Observable.just(mApiService.getSampleStorageProject(map))
+                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable;
+                    }
+                });
+    }
+
+    /**
+     * 获取流转任务列表
+     *
+     * @param map
+     * @return
+     */
+    public Observable<BaseResponse<List<Project>>> getWanderTaskList(Map<String, String> map) {
+        return Observable.just(mApiService.getSampleStorageList(map))
+                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable;
+                    }
+                });
+    }
 
 }

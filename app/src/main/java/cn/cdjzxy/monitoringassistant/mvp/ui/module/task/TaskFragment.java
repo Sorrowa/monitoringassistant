@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -53,6 +54,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.wander.WanderTaskActivity;
 
 /**
  * 任务
@@ -62,21 +64,21 @@ public class TaskFragment extends BaseFragment {
 
     Unbinder unbinder;
     @BindView(R.id.btn_month)
-    TextView  btnMonth;
+    TextView btnMonth;
     @BindView(R.id.btn_week)
-    TextView  btnWeek;
+    TextView btnWeek;
     @BindView(R.id.btn_day)
-    TextView  btnDay;
+    TextView btnDay;
     @BindView(R.id.bar_chart)
-    BarChart  barChart;
+    BarChart barChart;
     @BindView(R.id.pie_chart)
-    PieChart  pieChart;
+    PieChart pieChart;
     @BindView(R.id.line_chart)
     LineChart lineChart;
     @BindView(R.id.pie_chart1)
-    PieChart  pieChart1;
+    PieChart pieChart1;
     @BindView(R.id.btn_date)
-    TextView  btnDate;
+    TextView btnDate;
 
     private String[] barChartLabels = {"环境质量", "委托监测", "应急监测", "污染源监测"};
 
@@ -390,13 +392,31 @@ public class TaskFragment extends BaseFragment {
             case R.id.btn_wait_sampling:
                 ArtUtils.startActivity(TaskActivity.class);
                 break;
-            case R.id.btn_receive:
-                ArtUtils.makeText(getContext(), "功能开发中");
+            case R.id.btn_receive://流转已收样
+                startWanderTask(true);
+//                ArtUtils.makeText(getContext(), "功能开发中");
                 break;
-            case R.id.btn_wait_receive:
-                ArtUtils.makeText(getContext(), "功能开发中");
+            case R.id.btn_wait_receive://流转待收样
+                startWanderTask(false);
+//                ArtUtils.makeText(getContext(), "功能开发中");
                 break;
         }
+    }
+
+    /**
+     * 跳转到流转任务界面
+     *
+     * @param b @true 已收样流转 @false 待收样流转
+     */
+    private void startWanderTask(boolean b) {
+        Intent intent = new Intent();
+        intent.setClass(getContext(), WanderTaskActivity.class);
+        if (b) {
+            intent.putExtra(WanderTaskActivity.INTENT_WANDER_FROM, WanderTaskActivity.INTENT_FROM_ALREADY);
+        } else {
+            intent.putExtra(WanderTaskActivity.INTENT_WANDER_FROM, WanderTaskActivity.INTENT_FROM_WAIT);
+        }
+        startActivity(intent);
     }
 
     private SpannableString getSpannableString(String text) {

@@ -2,6 +2,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.api.service;
 
 
+import com.baidu.navisdk.ui.routeguide.mapmode.subview.M;
+
 import java.util.List;
 import java.util.Map;
 
@@ -158,14 +160,19 @@ public interface ApiService {
     Observable<BaseResponse> putProjectContent(@Body ProjectPlan projectPlan);
 
     @GET(Api.GET_SAMPLE_STORAGE)
-    Observable<BaseResponse<List<Project>>> getSampleStorageProject();
+    Observable<BaseResponse<List<Project>>> getSampleStorageProject(@Body Map<String, String> map);
 
     //*******************流转******************
     @GET(Api.GET_SAMPLE_STORAGE_LIST)
-    Observable<BaseResponse<List<Project>>> getSampleStorageList();
+    Observable<BaseResponse<List<Project>>> getSampleStorageList(@Body Map<String, String> map);
+
+    @GET(Api.GET_SAMPLE_STORAGE_ALL_LIST)
+    Observable<BaseResponse<List<Project>>> getSampleStorageAllList();
 
     @PUT(Api.PUT_SAMPLE_STORAGE)
     Observable<BaseResponse> putVerifySampleStorage();
+
+
 
 
     //*******************采样******************
@@ -202,7 +209,7 @@ public interface ApiService {
     //*******************文件******************
     @Multipart
     @POST(Api.UPLOAD_FILE)
-    Observable<Response<UploadFileResponse<List<FileInfoData>>>> uploadFile(@Part() List<MultipartBody.Part> parts, @PartMap Map<String,RequestBody> params);
+    Observable<Response<UploadFileResponse<List<FileInfoData>>>> uploadFile(@Part() List<MultipartBody.Part> parts, @PartMap Map<String, RequestBody> params);
 
     @DELETE(Api.DELETE_FILE)
     Observable<BaseResponse> deleteFile();

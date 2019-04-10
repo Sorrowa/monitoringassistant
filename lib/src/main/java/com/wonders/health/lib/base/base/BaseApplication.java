@@ -87,8 +87,10 @@ public class BaseApplication extends MultiDexApplication implements App {
     @NonNull
     @Override
     public AppComponent getAppComponent() {
-        Preconditions.checkNotNull(mAppDelegate, "%s cannot be null", AppDelegate.class.getName());
-        Preconditions.checkState(mAppDelegate instanceof App, "%s must be implements %s", AppDelegate.class.getName(), App.class.getName());
+        Preconditions.checkNotNull(mAppDelegate, "%s cannot be null",
+                AppDelegate.class.getName());
+        Preconditions.checkState(mAppDelegate instanceof App, "%s must be implements %s",
+                AppDelegate.class.getName(), App.class.getName());
         return ((App) mAppDelegate).getAppComponent();
     }
 
