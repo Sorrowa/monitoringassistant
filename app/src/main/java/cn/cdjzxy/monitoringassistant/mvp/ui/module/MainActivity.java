@@ -100,6 +100,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private double progress = 0.0;
 
 
+
+
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         this.mTitleBarView = titleBar;

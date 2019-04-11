@@ -58,6 +58,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
@@ -1524,29 +1525,36 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      */
     public void getSampleStorageProject(Map<String, String> map, Message msg, boolean status) {
         mModel.getSampleStorageProject(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
-                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<ProjectSampleStorage>>() {
                     @Override
-                    public void onSuccess(BaseResponse<List<Project>> response) {
-                        if (response.getCode() == 200) {
-                            if (status) {
-                                msg.what = Message.RESULT_OK;
-                                msg.obj = response.getData();
-                            } else {
-                                msg.what = 1001;
-                                msg.obj = response.getData();
-                            }
-
+                    public void onSuccess(BaseResponse<ProjectSampleStorage> response) {
+                        if (status) {
+                            msg.what = Message.RESULT_OK;
+                            msg.obj = response.getData().getData();
                         } else {
-                            msg.what = Message.RESULT_FAILURE;
-                            msg.obj = response.getMessage();
+                            msg.what = 1001;
+                            msg.obj = response.getData().getData();
                         }
+//                        if (response.getCode() == 200) {
+//
+//                            if (status) {
+//                                msg.what = Message.RESULT_OK;
+//                                msg.obj = response.getData().getData();
+//                            } else {
+//                                msg.what = 1001;
+//                                msg.obj = response.getData().getData();
+//                            }
+//                        } else {
+//                            msg.what = Message.RESULT_FAILURE;
+//                            msg.obj = response.getMessage();
+//                        }
                         msg.handleMessageToTarget();
                     }
 
                     @Override
                     public void onFailure(int Type, String message, int code) {
                         msg.what = Message.RESULT_FAILURE;
-                        msg.obj = message;
+                        msg.str = message;
                         msg.handleMessageToTarget();
                     }
                 }));

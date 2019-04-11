@@ -13,6 +13,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
@@ -160,7 +161,7 @@ public interface ApiService {
     Observable<BaseResponse> putProjectContent(@Body ProjectPlan projectPlan);
 
     @GET(Api.GET_SAMPLE_STORAGE)
-    Observable<BaseResponse<List<Project>>> getSampleStorageProject(@Body Map<String, String> map);
+    Observable<BaseResponse<ProjectSampleStorage>> getSampleStorageProject(@QueryMap Map<String, String> map);
 
     //*******************流转******************
     @GET(Api.GET_SAMPLE_STORAGE_LIST)

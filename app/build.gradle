@@ -140,6 +140,8 @@ dependencies {
     implementation rootProject.ext.dependencies["okhttp3"]
     //便于搜索的拼音框架
     implementation rootProject.ext.dependencies["tinyPinyin"]
+    //用于上拉加载下拉刷新的框架
+    implementation rootProject.ext.dependencies["SmartRefreshLayout"]
     annotationProcessor(rootProject.ext.dependencies["dagger2-compiler"]) {
         exclude module: 'support-annotations'
     }
@@ -171,5 +173,4 @@ dependencies {
     implementation project(':EasyLibrary')
     implementation files('libs/BaiduTraceSDK_v3_0_8.jar')
     // implementation files('libs/okhttp-3.8.1.jar')
-    implementation project(':LRecyclerview_library')
 }

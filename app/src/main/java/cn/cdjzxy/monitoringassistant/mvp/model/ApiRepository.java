@@ -29,6 +29,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
@@ -803,12 +804,17 @@ public class ApiRepository implements IModel {
      *
      * @return
      */
-    public Observable<BaseResponse<List<Project>>> getSampleStorageProject(Map<String,String> map) {
+    public Observable<BaseResponse<ProjectSampleStorage>> getSampleStorageProject(Map<String, String> map) {
         return Observable.just(mApiService.getSampleStorageProject(map))
-                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                .flatMap(new Function<Observable<BaseResponse<ProjectSampleStorage>>, ObservableSource<BaseResponse<ProjectSampleStorage>>>() {
                     @Override
-                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
-                        return baseResponseObservable;
+                    public ObservableSource<BaseResponse<ProjectSampleStorage>> apply(Observable<BaseResponse<ProjectSampleStorage>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<ProjectSampleStorage>, BaseResponse<ProjectSampleStorage>>() {
+                            @Override
+                            public BaseResponse<ProjectSampleStorage> apply(BaseResponse<ProjectSampleStorage> projectSampleStorageBaseResponse) throws Exception {
+                                return projectSampleStorageBaseResponse;
+                            }
+                        });
                     }
                 });
     }

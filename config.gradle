@@ -148,9 +148,10 @@ ext {
             "fileprovider"             : "com.zhy.base:fileprovider:1.0.0",
             "numberprogressbar"        : "com.daimajia.numberprogressbar:library:1.4@aar",
             "matisse"                  : "com.zhihu.android:matisse:0.5.2-beta4",
+            "SmartRefreshLayout"       : "com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-20",
 
             //汉字转拼音  便于搜索
-            "tinyPinyin"               :"com.github.promeg:tinypinyin-lexicons-android-cncity:${version["tinyPinyinVirsion"]}"
+            "tinyPinyin"               : "com.github.promeg:tinypinyin-lexicons-android-cncity:${version["tinyPinyinVirsion"]}"
 
     ]
 
