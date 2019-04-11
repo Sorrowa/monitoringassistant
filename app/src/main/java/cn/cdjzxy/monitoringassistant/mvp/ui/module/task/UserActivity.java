@@ -115,26 +115,47 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
 
         List<String> userIds = project.getSamplingUser();
-        List<User> users = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(userIds)).list();
-
+        List<User> users = DBHelper.get().getUserDao().queryBuilder()
+                .where(UserDao.Properties.Id.in(userIds)).list();
+        mUsersSelected.clear();
+        mUsers.clear();
         if (!CheckUtil.isEmpty(users)) {
-            mUsers.clear();
-            mUsers.addAll(users);
-        }
-        mUserAdapter.notifyDataSetChanged();
-
-        //填充选中的用户
-        if (!TextUtils.isEmpty(selectUserIds)) {
-            String[] selectUserIdArr = selectUserIds.split(",");
-            if (selectUserIdArr != null && selectUserIdArr.length > 0) {
-                List<User> selectUsers = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(selectUserIdArr)).list();
-                if (!CheckUtil.isEmpty(selectUsers)) {
-                    mUsersSelected.clear();
-                    mUsersSelected.addAll(selectUsers);
+            for (User user:users){
+                if (!TextUtils.isEmpty(selectUserIds)) {
+                    if (selectUserIds.contains(user.getId())){
+                        user.setSelected(true);
+                        mUsersSelected.add(user);
+                    }
+                    mUsers.add(user);
+                }else {
+                    mUsers.addAll(users);
+                    return;
                 }
-                mUserSelectedAdapter.notifyDataSetChanged();
             }
         }
+
+//        if (!CheckUtil.isEmpty(users)) {
+//            mUsers.clear();
+//            mUsers.addAll(users);
+//        }
+//        mUserAdapter.notifyDataSetChanged();
+//
+//        //填充选中的用户
+//        if (!TextUtils.isEmpty(selectUserIds)) {
+//            String[] selectUserIdArr = selectUserIds.split(",");
+//            if (selectUserIdArr != null && selectUserIdArr.length > 0) {
+//                List<User> selectUsers = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(selectUserIdArr)).list();
+//                if (!CheckUtil.isEmpty(selectUsers)) {
+//                    mUsersSelected.clear();
+//                    for (User user:selectUsers){
+//                        user.setSelected(true);
+//                    }
+//
+//                    mUsersSelected.addAll(selectUsers);
+//                }
+//                mUserSelectedAdapter.notifyDataSetChanged();
+//            }
+//        }
     }
 
 

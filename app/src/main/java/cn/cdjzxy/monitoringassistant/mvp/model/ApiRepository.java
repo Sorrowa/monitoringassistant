@@ -801,7 +801,6 @@ public class ApiRepository implements IModel {
     /**
      * 获取流转任务列表
      *
-     * @param status 流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
      * @return
      */
     public Observable<BaseResponse<List<Project>>> getSampleStorageProject(Map<String,String> map) {

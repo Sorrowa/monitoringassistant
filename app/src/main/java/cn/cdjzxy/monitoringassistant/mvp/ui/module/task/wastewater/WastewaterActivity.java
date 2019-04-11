@@ -294,12 +294,12 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void onBack() {
         if (viewPager.getCurrentItem() == 4) {
-            openFragment(2);
+            openFragment(1);
             return;
         }
 
-        if (viewPager.getCurrentItem() == 3) {
-            openFragment(1);
+        if (viewPager.getCurrentItem() == 5) {
+            openFragment(2);
             return;
         }
         finish();

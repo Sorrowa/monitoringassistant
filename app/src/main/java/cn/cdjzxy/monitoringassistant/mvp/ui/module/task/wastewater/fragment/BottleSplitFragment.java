@@ -149,7 +149,7 @@ public class BottleSplitFragment extends BaseFragment {
             public void onItemClick(View view, int viewType, Object data, int position) {
                 editor.putInt("bottleListPosition", position);
                 editor.commit();
-                EventBus.getDefault().post(4, EventBusTags.TAG_WASTEWATER_BOTTLE);
+                EventBus.getDefault().post(5, EventBusTags.TAG_WASTEWATER_BOTTLE);
             }
         });
         recyclerview.setAdapter(mWasteWaterBottleAdapter);

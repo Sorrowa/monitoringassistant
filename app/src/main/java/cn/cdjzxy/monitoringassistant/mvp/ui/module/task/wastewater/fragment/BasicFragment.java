@@ -491,6 +491,7 @@ public class BasicFragment extends BaseFragment {
     private void showSamplingUser() {
         Intent intent = new Intent(getContext(), UserActivity.class);
         intent.putExtra("projectId", WastewaterActivity.mSample.getProjectId());
+        intent.putExtra("selectUserIds", WastewaterActivity.mSample.getSamplingUserId());
         new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {

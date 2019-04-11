@@ -154,7 +154,9 @@
         <activity
             android:name=".mvp.ui.module.task.point.MonItemActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden"
+             />
         <activity
             android:name=".mvp.ui.module.task.device.DeviceActivity"
             android:configChanges="orientation|keyboardHidden"
