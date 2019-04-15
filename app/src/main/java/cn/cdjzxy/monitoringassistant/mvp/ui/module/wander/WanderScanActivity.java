@@ -27,6 +27,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.scanCode.ScanCodeFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
@@ -37,7 +38,7 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 /**
  * 任务二维码扫描界面
  */
-public class WanderScanActivity extends BaseTitleActivity<ApiPresenter> implements IView {
+public class WanderScanActivity extends BaseTitileActivity<ApiPresenter> implements IView {
     @BindView(R.id.qr)
     ZXingView mQR;
 
@@ -55,8 +56,9 @@ public class WanderScanActivity extends BaseTitleActivity<ApiPresenter> implemen
             @Override
             public void onScanQRCodeSuccess(String result) {
                 vibrate();
-                //todo:验证内容,扫描到的内容都没有问题
-                mPresenter.getQrInfo(Message.obtain(WanderScanActivity.this, new Object()), result);
+                showLoading();
+                mQR.startSpotDelay(2 * 1000);
+                mPresenter.getQrInfo(Message.obtain(WanderScanActivity.this, new Object()), result);//服务器验证二维码是否存在
             }
 
             @Override
@@ -135,24 +137,25 @@ public class WanderScanActivity extends BaseTitleActivity<ApiPresenter> implemen
     @Override
     public void handleMessage(@NonNull Message message) {
         checkNotNull(message);
+        hideLoading();
         switch (message.what) {
             case Message.RESULT_OK:
                 QrMoreInfo qrMoreInfo = (QrMoreInfo) message.obj;
-
                 if (!CheckUtil.isNull(qrMoreInfo)) {
                     Intent intent = new Intent(this, WebActivity.class);
-
                     if (qrMoreInfo.getType() == 2) {
                         //获取用户信息
                         UserInfo user = UserInfoHelper.get().getUserInfo();
                         //相对路径
-                        //intent.putExtra(WebFragment.URL_KEY, user.getWebUrl() + qrMoreInfo.getContent() + "&userId=" + user.getId());
+                        String url = user.getWebUrl() + qrMoreInfo.getContent() + "&userId=" + user.getId();
+                        intent.putExtra(WebFragment.URL_KEY, url);
                     } else if (qrMoreInfo.getType() == 3) {
                         //绝对路径
                         intent.putExtra(WebFragment.URL_KEY, qrMoreInfo.getContent());
                     }
 
                     startActivity(intent);
+                    finish();
                 }
                 break;
             case Message.RESULT_FAILURE:
@@ -162,6 +165,16 @@ public class WanderScanActivity extends BaseTitleActivity<ApiPresenter> implemen
                 mQR.showScanRect();
                 break;
         }
+    }
+
+    @Override
+    public void showLoading() {
+        showLoadingDialog("正在验证二维码，请稍后。。。", false);
+    }
+
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
     }
 
     private void vibrate() {

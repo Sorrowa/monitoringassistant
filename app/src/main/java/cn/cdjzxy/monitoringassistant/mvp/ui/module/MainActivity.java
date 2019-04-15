@@ -366,7 +366,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
         Bundle mBundle = new Bundle();
         switch (position) {
-
             case 0://任务
                 ft.replace(R.id.layout_container, mTaskFragment = new TaskFragment(), TaskFragment.class.getName());
                 break;
