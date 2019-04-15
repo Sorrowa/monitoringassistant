@@ -12,6 +12,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
@@ -165,7 +166,7 @@ public interface ApiService {
 
     //*******************流转******************
     @GET(Api.GET_SAMPLE_STORAGE_LIST)
-    Observable<BaseResponse<List<Project>>> getSampleStorageList(@Body Map<String, String> map);
+    Observable<BaseResponse<List<WanderSampleStorage>>> getSampleStorageList(@QueryMap Map<String, String> map);
 
     @GET(Api.GET_SAMPLE_STORAGE_ALL_LIST)
     Observable<BaseResponse<List<Project>>> getSampleStorageAllList();

@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.wander;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,26 +8,18 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
-
-import com.scwang.smartrefresh.layout.api.RefreshFooter;
-import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
-import com.scwang.smartrefresh.layout.listener.OnMultiPurposeListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
-import com.wonders.health.lib.base.base.activity.BaseTitleActivity;
-import com.wonders.health.lib.base.di.component.AppComponent;
+import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
+
+import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,26 +28,25 @@ import java.util.Map;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WanderTaskAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 /**
- * 流转任务activity 包含流转已收样和 流转待收样界面
+ * 流转列表 包含流转已收样{@INTENT_FROM_WAIT} 和 流转待收样{@INTENT_FROM_ALREADY}界面
  */
-public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implements IView {
+public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> implements IView {
     @BindView(R.id.refreshLayout)
     RefreshLayout mRefreshLayout;
     @BindView(R.id.header)
     BezierRadarHeader mRefreshHeader;
-    @BindView(R.id.recyclerView)
+    @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private WanderTaskAdapter adapter;
 
@@ -62,8 +54,8 @@ public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implemen
     public static final String INTENT_FROM_ALREADY = "0";//流转待收样
     public static final String INTENT_FROM_WAIT = "1";//流转已收样
     private String intentWanderFrom;//流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
-    private AppComponent mAppComponent;
-    private int page = 0;
+    private int page = 1;
+    private boolean isRefresh = true;
     private List<ProjectSampleStorage.DataBean> list;
     private TitleBarView mTitleBarView;
 
@@ -85,18 +77,28 @@ public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implemen
         } else if (intentWanderFrom.equals(INTENT_FROM_WAIT)) {
             mTitleBarView.setTitleMainText("收样记录");
         }
-
-        mTitleBarView.addRightAction(titleBar.new ViewAction(getTitleRightView()));
-
+        mTitleBarView.setOnLeftTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_scan_hov, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setClass(WanderTaskActivity.this,WanderScanActivity.class);
+                startActivity(intent);
+            }
+        }));
+        mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_search_white, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArtUtils.startActivity(WanderTaskSearchActivity.class);
+            }
+        }));
     }
 
-
-    private View getTitleRightView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.view_wander_title_right, null);
-        ImageView imgScan=view.findViewById(R.id.img_scan);//二维码扫描
-//        ImageView
-        return view;
-    }
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -107,7 +109,11 @@ public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implemen
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         list = new ArrayList<>();
-     //   mRefreshLayout.autoRefresh();//第一次进入触发自动刷新，演示效果
+        page = 1;
+        isRefresh = true;
+        showLoading();
+        getData();//第一次不执行刷新动画，直接请求数据
+        //mRefreshLayout.autoRefresh();//第一次进入触发自动刷新，演示效果
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRefreshLayout.setEnableHeaderTranslationContent(true);//内容跟随偏移
         mRefreshLayout.setEnableLoadMore(true);//是否启用上拉加载功能
@@ -116,29 +122,34 @@ public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implemen
         adapter = new WanderTaskAdapter(list);
         mRecyclerView.setAdapter(adapter);
         initLister();
-        getData();
-
 
     }
 
     private void initLister() {
-//        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-//
-//            }
-//        });
-//        mRefreshLayout.setOnLoadMoreListener(new OnRefreshLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-//
-//            }
-//
-//            @Override
-//            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-//
-//            }
-//        });
+        mRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                page += 1;
+                isRefresh = false;
+                getData();
+            }
+
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                page = 1;
+                isRefresh = true;
+                getData();
+            }
+        });
+        adapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onItemClick(View view, int viewType, Object data, int position) {
+                Intent intent = new Intent();
+                intent.setClass(WanderTaskActivity.this, WanderTaskListDetailActivity.class);
+                intent.putExtra(WanderTaskListDetailActivity.INTENT_PROJECT_ID, list.get(position).getId());
+                startActivity(intent);
+            }
+        });
     }
 
     private void getData() {
@@ -146,8 +157,9 @@ public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implemen
             Map<String, String> map = new HashMap<>();
             map.put("sampleStorageProjectParam.status", intentWanderFrom);
             map.put("sampleStorageProjectParam.page", page + "");
-            mPresenter.getSampleStorageProject(map, Message.obtain(this, new Object()), true);
+            mPresenter.getSampleStorageProject(map, Message.obtain(this, new Object()), isRefresh);
         } else {
+            hideLoading();
             showMessage("无网络，请检查您的网络是否正常");
         }
     }
@@ -166,36 +178,56 @@ public class WanderTaskActivity extends BaseTitleActivity<ApiPresenter> implemen
     @Override
     public void handleMessage(@NonNull Message message) {
         checkNotNull(message);
+        hideLoading();
+        ProjectSampleStorage sampleStorage = (ProjectSampleStorage) message.obj;
         switch (message.what) {
             case Message.RESULT_FAILURE://加载失败
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadMore();
+                if (isRefresh) {
+                    mRefreshLayout.finishRefresh(page);
+                } else {
+                    mRefreshLayout.finishLoadMore(page);
+                }
+                page--;
                 showMessage(message.str);
                 break;
             case Message.RESULT_OK://下拉刷新
-                mRefreshLayout.finishRefresh();
+                mRefreshLayout.finishRefresh(page);
                 if (list != null) {
                     list.clear();
                 } else {
                     list = new ArrayList<>();
                 }
-                if (message.obj != null) {
-                    list.addAll((ArrayList<ProjectSampleStorage.DataBean>) message.obj);
+                if (sampleStorage != null) {
+                    list.addAll(sampleStorage.getData());
+                    adapter.notifyDataSetChanged();
+                    if (page == sampleStorage.getPagerInfo().getPageSize()) {
+                        mRefreshLayout.setEnableLoadMore(false);
+                    }
                 }
-                adapter.notifyDataSetChanged();
                 break;
             case 1001://上拉加载
-                mRefreshLayout.finishLoadMore();
+                mRefreshLayout.finishLoadMore(page);
                 if (list == null) {
                     list = new ArrayList<>();
                 }
-                if (message.obj != null) {
-                    list.addAll((ArrayList<ProjectSampleStorage.DataBean>) message.obj);
+                if (sampleStorage != null) {
+                    list.addAll(sampleStorage.getData());
+                    adapter.notifyDataSetChanged();
+                    if (page == sampleStorage.getPagerInfo().getPageSize()) {//没有下一页了
+                        mRefreshLayout.setEnableLoadMore(false);
+                    }
                 }
-                adapter.notifyDataSetChanged();
                 break;
         }
     }
 
+    @Override
+    public void showLoading() {
+        showLoadingDialog("正在加载请稍后。。。", false);
+    }
 
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
+    }
 }

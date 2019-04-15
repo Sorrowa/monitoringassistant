@@ -49,21 +49,26 @@ public class WanderTaskHolder extends BaseHolder<ProjectSampleStorage.DataBean> 
         mIvTaskType.setVisibility(View.VISIBLE);
         mTvTaskName.setText(data.getName());
 
-        if (CheckUtil.isEmpty(data.getPlanBeginTime()) || CheckUtil.isEmpty(data.getPlanEndTime())) {
-            mTvTaskTimeRange.setText("未设置采样计划");
-        } else {
-            String currentTime = DateUtils.getDate();
-            String endTime = data.getPlanEndTime();
-            int lastDays = DateUtils.getLastDays(currentTime, endTime.split(" ")[0]);
-            if (lastDays <= 1 && lastDays>=0) {
-                mTvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
-            } else if (lastDays <= 3 && lastDays>1) {
-                mTvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
-            } else {
-                mTvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
-            }
-
-            mTvTaskTimeRange.setText(data.getPlanBeginTime().split(" ")[0].replace("-", "/") + "~" + data.getPlanEndTime().split(" ")[0].replace("-", "/"));
+//        if (CheckUtil.isEmpty(data.getPlanBeginTime()) || CheckUtil.isEmpty(data.getPlanEndTime())) {
+//            mTvTaskTimeRange.setText("未设置采样计划");
+//        } else {
+//            String currentTime = DateUtils.getDate();
+//            String endTime = data.getPlanEndTime();
+//            int lastDays = DateUtils.getLastDays(currentTime, endTime.split(" ")[0]);
+//            if (lastDays <= 1 && lastDays>=0) {
+//                mTvTaskTimeRange.setTextColor(Color.parseColor("#ff0000"));
+//            } else if (lastDays <= 3 && lastDays>1) {
+//                mTvTaskTimeRange.setTextColor(Color.parseColor("#ffbe00"));
+//            } else {
+//                mTvTaskTimeRange.setTextColor(Color.parseColor("#333333"));
+//            }
+//
+//            mTvTaskTimeRange.setText(data.getPlanBeginTime().split(" ")[0].replace("-", "/") + "~" + data.getPlanEndTime().split(" ")[0].replace("-", "/"));
+//        }
+        if (data.isFinishState()){
+            mTvTaskTimeRange.setText("采样已完结");
+        }else {
+            mTvTaskTimeRange.setText("采样未完结");
         }
 
         StringBuilder users = new StringBuilder("");
@@ -111,9 +116,9 @@ public class WanderTaskHolder extends BaseHolder<ProjectSampleStorage.DataBean> 
         mTvTaskType.setText("样品性质:" + data.getMonType());
         mTvTaskPerson.setText("人员：" + users.toString());
         if (CheckUtil.isEmpty(data.getAssignDate())) {
-            mTvTaskStartTime.setText("下达:" + "未设置");
+            mTvTaskStartTime.setText("下达时间:" + "未设置");
         } else {
-            mTvTaskStartTime.setText("下达:" + data.getAssignDate().split(" ")[0].replace("-", "/"));
+            mTvTaskStartTime.setText("下达时间:" + data.getAssignDate().split(" ")[0].replace("-", "/"));
         }
     }
 

@@ -19,20 +19,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aries.ui.view.title.TitleBarView;
-import com.wonders.health.lib.base.base.activity.BaseTitleActivity;
 import com.wonders.health.lib.base.mvp.IPresenter;
 
 import org.easydarwin.push.MediaStream;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import io.reactivex.Single;
 import io.reactivex.functions.Consumer;
 
 /**
  * 用于直播的activity
  */
-public class EasyPusherActivity extends BaseTitleActivity {
+public class EasyPusherActivity extends BaseTitileActivity {
     @BindView(R.id.pushing_state)
     TextView tvPushState;
     @BindView(R.id.check_push)

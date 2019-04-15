@@ -54,6 +54,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
@@ -1490,20 +1491,28 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      *
      * @param map
      * @param msg
+     * @param isRefresh true 刷新 false  加载
      */
-    public void getWanderTaskList(Map<String, String> map, Message msg) {
+    public void getSampleStorageList(Map<String, String> map, Message msg, boolean isRefresh) {
 
-        mModel.getWanderTaskList(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
-                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
+        mModel.getSampleStorageList(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<WanderSampleStorage>>>() {
                     @Override
-                    public void onSuccess(BaseResponse<List<Project>> response) {
-                        if (response.getCode() == 200) {
+                    public void onSuccess(BaseResponse<List<WanderSampleStorage>> response) {
+//                        if (response.getCode() == 200) {
+//                            msg.what = Message.RESULT_OK;
+//                            msg.obj = response.getData();
+//                        } else {
+//                            msg.what = Message.RESULT_FAILURE;
+//                            msg.obj = response.getMessage();
+//                        }
+//                        msg.what = Message.RESULT_OK;
+                        if (isRefresh) {
                             msg.what = Message.RESULT_OK;
-                            msg.obj = response.getData();
                         } else {
-                            msg.what = Message.RESULT_FAILURE;
-                            msg.obj = response.getMessage();
+                            msg.what = 1001;
                         }
+                        msg.obj = response.getData();
                         msg.handleMessageToTarget();
                     }
 
@@ -1521,7 +1530,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      *
      * @param map             流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
      * @param msg
-     * @param status@true下拉加载 @false下拉刷新
+     * @param status@true下拉刷新 @false 上拉加载
      */
     public void getSampleStorageProject(Map<String, String> map, Message msg, boolean status) {
         mModel.getSampleStorageProject(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
@@ -1530,10 +1539,10 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     public void onSuccess(BaseResponse<ProjectSampleStorage> response) {
                         if (status) {
                             msg.what = Message.RESULT_OK;
-                            msg.obj = response.getData().getData();
+                            msg.obj = response.getData();
                         } else {
                             msg.what = 1001;
-                            msg.obj = response.getData().getData();
+                            msg.obj = response.getData();
                         }
 //                        if (response.getCode() == 200) {
 //

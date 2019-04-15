@@ -100,8 +100,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private double progress = 0.0;
 
 
-
-
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         this.mTitleBarView = titleBar;
@@ -166,16 +164,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         } else {
             mBadgeView.setVisibility(View.GONE);
         }
-
-      //  startTraceServer();
-    }
-
-    /**
-     * 开启轨迹服务
-     */
-    private void startTraceServer() {
-        Intent intent = new Intent(this, TrajectoryServer.class);
-        startService(intent);
     }
 
     @Override
@@ -348,7 +336,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         } else {
             mTitleBarView.setTitleMainText(mTabs.get(position).getTabName());
         }
-
     }
 
 

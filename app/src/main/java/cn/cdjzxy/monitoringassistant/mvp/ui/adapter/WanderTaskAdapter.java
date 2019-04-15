@@ -23,6 +23,6 @@ public class WanderTaskAdapter extends DefaultAdapter<ProjectSampleStorage.DataB
 
     @Override
     public int getLayoutId(int viewType) {
-        return R.layout.item_task;
+        return R.layout.item_wander_task;
     }
 }

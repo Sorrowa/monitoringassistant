@@ -64,6 +64,7 @@
         <activity
             android:name=".mvp.ui.module.MainActivity"
             android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape" />
         <activity
             android:name=".mvp.ui.module.task.TaskActivity"
@@ -155,8 +156,7 @@
             android:name=".mvp.ui.module.task.point.MonItemActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden"
-             />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".mvp.ui.module.task.device.DeviceActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -253,7 +253,20 @@
             android:name=".mvp.ui.module.easy.EasyPusherActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".mvp.ui.module.wander.WanderTaskActivity"></activity>
+        <activity
+            android:name=".mvp.ui.module.wander.WanderTaskActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".mvp.ui.module.wander.WanderTaskSearchActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".mvp.ui.module.wander.WanderTaskListDetailActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".mvp.ui.module.wander.WanderScanActivity" />
+        <activity android:name=".mvp.ui.module.wander.WanderTaskDetailActivity"></activity>
     </application>
 
 </manifest>

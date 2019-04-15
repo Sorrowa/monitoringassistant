@@ -27,6 +27,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Rights;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
@@ -825,12 +826,17 @@ public class ApiRepository implements IModel {
      * @param map
      * @return
      */
-    public Observable<BaseResponse<List<Project>>> getWanderTaskList(Map<String, String> map) {
+    public Observable<BaseResponse<List<WanderSampleStorage>>> getSampleStorageList(Map<String, String> map) {
         return Observable.just(mApiService.getSampleStorageList(map))
-                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                .flatMap(new Function<Observable<BaseResponse<List<WanderSampleStorage>>>, ObservableSource<BaseResponse<List<WanderSampleStorage>>>>() {
                     @Override
-                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
-                        return baseResponseObservable;
+                    public ObservableSource<BaseResponse<List<WanderSampleStorage>>> apply(Observable<BaseResponse<List<WanderSampleStorage>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<WanderSampleStorage>>, BaseResponse<List<WanderSampleStorage>>>() {
+                            @Override
+                            public BaseResponse<List<WanderSampleStorage>> apply(BaseResponse<List<WanderSampleStorage>> listBaseResponse) throws Exception {
+                                return listBaseResponse;
+                            }
+                        });
                     }
                 });
     }
