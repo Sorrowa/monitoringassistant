@@ -2,7 +2,6 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.launch;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,13 +19,13 @@ import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.PermissionUtil;
 
-import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -117,8 +116,9 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
 
     private void getUserInfo() {
         if (UserInfoHelper.get().isLogin()) {
-            name = UserInfoHelper.get().getUserName();
-            pwd = UserInfoHelper.get().getPwd();
+            UserInfo userInfo = UserInfoHelper.get().getUserInfo();
+            name = userInfo.getName();
+            pwd = userInfo.getPwd();
             //重新设置weburl
             mPresenter.resetWebUrl(null);
             initAppDataDir();
@@ -157,6 +157,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
                 break;
             case Message.RESULT_OK:
                 showMessage("登录成功");
+
                 toMain();
                 break;
         }
@@ -195,7 +196,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
         Constant.REPOSITORY_DIR = Constant.USER_DATA_DIR + "/Repository";//初始化知识库文件目录
         Constant.FILE_DIR = Constant.USER_DATA_DIR + "/Files";//初始化文件目录
         Constant.DATABASE_DIR = Constant.USER_DATA_DIR + "/Database";//初始化数据库
-        Constant.BAI_DU_TRAJECTORY_ENTITY_NAME = name;
+
         FileUtils.makeDir(Constant.USER_DATA_DIR);//创建APP根目录
         FileUtils.makeDir(Constant.LOG_DIR);//创建日志目录
         FileUtils.makeDir(Constant.REPOSITORY_DIR);//创建知识库文件目录

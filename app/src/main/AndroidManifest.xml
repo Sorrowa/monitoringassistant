@@ -266,7 +266,14 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".mvp.ui.module.wander.WanderScanActivity" />
-        <activity android:name=".mvp.ui.module.wander.WanderTaskDetailActivity"></activity>
+        <activity
+            android:name=".mvp.ui.module.wander.WanderTaskDetailActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".mvp.ui.module.task.noise.activity.NoiseFactoryActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

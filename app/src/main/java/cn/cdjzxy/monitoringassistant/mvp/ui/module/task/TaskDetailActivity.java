@@ -12,7 +12,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
-import com.baidu.mapframework.commonlib.utils.JSONUtils;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSerializer;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
@@ -74,7 +69,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FormAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterSamplingActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -146,10 +141,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
 
     /**
-     * 仪器法表单路径/路径
+     *工业企业厂界噪声监测记录
      */
-//    public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
-//    public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
+    public static final String PATH_NOISE_FACTORY="/FormTemplate/FILL_GYZS_VOICE_XD";
+    public static final String NAME_NOISE_FACTORY="工业企业厂界噪声监测记录";
 
     /**
      * 最大文件上传大小，单位（KB）
@@ -265,7 +260,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 List<SamplingFile> updateFiles = new ArrayList<>();
                 List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.IsUploaded.eq(false)).list();
                 for (SamplingFile sf : samplingFiles) {
-                    if(!sf.getIsUploaded()){
+                    if (!sf.getIsUploaded()) {
                         sf.setIsUploaded(true);
                         updateFiles.add(sf);
                     }
@@ -304,7 +299,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private void initTask() {
         mProject = DBHelper.get().getProjectDao().queryBuilder().
                 where(ProjectDao.Properties.Id.eq(getIntent().
-                getStringExtra("taskId"))).unique();
+                        getStringExtra("taskId"))).unique();
         bindView(mProject);
     }
 
@@ -489,37 +484,35 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onClick(View view, int position) {
-                if (PATH_PRECIPITATION.equals(mSamplings.get(position).getFormPath())) {
-                    //降水采样及样品交接记录（新都）
-                    Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
-                    intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("samplingId", mSamplings.get(position).getId());
-                    intent.putExtra("isNewCreate", false);
-                    ArtUtils.startActivity(intent);
-                } else if (PATH_WASTEWATER.equals(mSamplings.get(position).getFormPath())) {
-                    //水和废水样品采集与交接记录（新都）
-                    Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
-                    intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("samplingId", mSamplings.get(position).getId());
-                    intent.putExtra("isNewCreate", false);
-                    ArtUtils.startActivity(intent);
-                } else if (PATH_INSTRUMENTAL.equals(mSamplings.get(position).getFormPath())) {
-                    //现场监测仪器法
-                    Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
-                    intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("samplingId", mSamplings.get(position).getId());
-                    intent.putExtra("isNewCreate", false);
-                    ArtUtils.startActivity(intent);
-                } else {
-                    //水样采集与交接记录
-                    ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
-//                    Intent intent = new Intent(TaskDetailActivity.this,
-//                            WasteWaterSamplingActivity.class);
-//                    intent.putExtra("projectId", mProject.getId());
-//                    intent.putExtra("samplingId", mSamplings.get(position).getId());
-//                    intent.putExtra("isNewCreate", false);
-//                    ArtUtils.startActivity(intent);
+                //这里改用switch
+                Intent intent = new Intent();
+                switch (mSamplings.get(position).getFormPath()) {
+                    case PATH_PRECIPITATION:
+                        //降水采样及样品交接记录（新都）
+                        intent.setClass(TaskDetailActivity.this, PrecipitationActivity.class);
+                        intent.putExtra("samplingId", mSamplings.get(position).getId());
+                        break;
+                    case PATH_WASTEWATER:
+                        //水和废水样品采集与交接记录（新都）
+                        intent.setClass(TaskDetailActivity.this, WastewaterActivity.class);
+                        intent.putExtra("samplingId", mSamplings.get(position).getId());
+                        break;
+                    case PATH_INSTRUMENTAL:
+                        //现场监测仪器法
+                        intent.setClass(TaskDetailActivity.this, InstrumentalActivity.class);
+                        intent.putExtra("samplingId", mSamplings.get(position).getId());
+                        break;
+                    case PATH_NOISE_FACTORY://工业企业厂界噪声监测记录
+                        intent.setClass(TaskDetailActivity.this, NoiseFactoryActivity.class);
+                        intent.putExtra("samplingId", mSamplings.get(position).getId());
+                        break;
+                    default:
+                        ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
+                        return;
                 }
+                intent.putExtra("projectId", mProject.getId());
+                intent.putExtra("isNewCreate", false);
+                ArtUtils.startActivity(intent);
             }
 
             @Override
@@ -564,6 +557,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     /**
      * 判断当前表单是否是本人的
+     *
      * @return@true本人表单，@false他人表单
      */
     public static boolean isMySampling(Sampling mSample) {
@@ -686,33 +680,36 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mFormAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                if (PATH_PRECIPITATION.equals(mDialogFormSelects.get(position).getPath())) {
-                    //降水采样及样品交接记录（新都）
-                    Intent intent = new Intent(TaskDetailActivity.this, PrecipitationActivity.class);
-                    intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
-                    intent.putExtra("isNewCreate", true);
-                    ArtUtils.startActivity(intent);
-                } else if (PATH_WASTEWATER.equals(mDialogFormSelects.get(position).getPath())) {
-                    //水和废水样品采集与交接记录（新都）
-                    Intent intent = new Intent(TaskDetailActivity.this, WastewaterActivity.class);
-                    intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
-                    intent.putExtra("isNewCreate", true);
-                    ArtUtils.startActivity(intent);
-                } else if (PATH_INSTRUMENTAL.equals(mDialogFormSelects.get(position).getPath())) {
-                    //现场监测仪器法
-                    Intent intent = new Intent(TaskDetailActivity.this, InstrumentalActivity.class);
-                    intent.putExtra("projectId", mProject.getId());
-                    intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
-                    intent.putExtra("isNewCreate", true);
-                    ArtUtils.startActivity(intent);
-                } else {
-                    //todo:
-//
-                    ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
+                //这里改用switch
+                Intent intent = new Intent();
+                switch (mDialogFormSelects.get(position).getPath()) {
+                    case PATH_PRECIPITATION:
+                        //降水采样及样品交接记录（新都）
+                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                        intent.setClass(TaskDetailActivity.this, PrecipitationActivity.class);
+                        break;
+                    case PATH_WASTEWATER:
+                        //水和废水样品采集与交接记录（新都）
+                        intent.setClass(TaskDetailActivity.this, WastewaterActivity.class);
+                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                        break;
+                    case PATH_INSTRUMENTAL:
+                        //现场监测仪器法
+                        intent.setClass(TaskDetailActivity.this, InstrumentalActivity.class);
+                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                        break;
+                    case PATH_NOISE_FACTORY://工业企业厂界噪声监测记录
+                        intent.setClass(TaskDetailActivity.this, NoiseFactoryActivity.class);
+                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
+                        break;
+                    default:
+                        ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
+                        return;
                 }
                 mDialogPlus.dismiss();
+                intent.putExtra("projectId", mProject.getId());
+                intent.putExtra("isNewCreate", true);
+                ArtUtils.startActivity(intent);
             }
         });
         mRecyclerView.setAdapter(mFormAdapter);
@@ -1114,7 +1111,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void uploadSamplingFiles(Sampling sampling, FileUploadHandler handler) {
         //从数据库加载数据
-        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq(""),SamplingFileDao.Properties.IsUploaded.eq(false)).list();
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq(""), SamplingFileDao.Properties.IsUploaded.eq(false)).list();
         if (CheckUtil.isEmpty(samplingFiles)) {
             if (handler != null) {
                 handler.onSuccess();

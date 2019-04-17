@@ -208,7 +208,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         UserInfoHelper.get().saveUserLoginStatee(true);
                         UserInfoHelper.get().saveUserInfo(userInfo);
                         HawkUtil.putBoolean("isUpdated", false);
-                        Constant.BAI_DU_TRAJECTORY_ENTITY_NAME = userInfo.getName();
 
                         //重新设置weburl
                         resetWebUrl(userInfo);
@@ -250,7 +249,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             msg.handleMessageToTarget();
         } else {
             UserInfoHelper.get().saveUserLoginStatee(true);
-            Constant.BAI_DU_TRAJECTORY_ENTITY_NAME = userInfo.getName();
             //重新设置weburl
             resetWebUrl(userInfo);
 
@@ -1098,7 +1096,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 for (SamplingFile dbFile : dbFiles) {
                     if (!new File(dbFile.getFilePath()).exists()) {
                         //本地图片不存在了，重新下载图片
-                        donwloadSamplingFile(dbFile, samplingFile, sampling.getId());
+                        downloadSamplingFile(dbFile, samplingFile, sampling.getId());
                     } else if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
                             null && !dbFile.getSamplingId().equals(sampling.getId()))) {
                         dbFile.setSamplingId(sampling.getId());
@@ -1108,7 +1106,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                 //数据库中未找到，直接下载
                 if (dbFiles.size() == 0) {
-                    donwloadSamplingFile(null, samplingFile, sampling.getId());
+                    downloadSamplingFile(null, samplingFile, sampling.getId());
                 }
             }
         }
@@ -1142,7 +1140,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      * @param samplingId
      * @return
      */
-    private void donwloadSamplingFile(SamplingFile samplingFile, SamplingFile remoteFile, String samplingId) {
+    private void downloadSamplingFile(SamplingFile samplingFile, SamplingFile remoteFile, String samplingId) {
         DonwloadParams params = new DonwloadParams();
         params.remoteFile = remoteFile;
         params.samplingFile = samplingFile;

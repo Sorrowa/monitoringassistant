@@ -51,8 +51,8 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
     private WanderTaskAdapter adapter;
 
     public static final String INTENT_WANDER_FROM = "intent_from";
-    public static final String INTENT_FROM_ALREADY = "0";//流转待收样
-    public static final String INTENT_FROM_WAIT = "1";//流转已收样
+    public static final String INTENT_FROM_WAIT = "0";//流转待收样
+    public static final String INTENT_FROM_ALREADY = "1";//流转已收样
     private String intentWanderFrom;//流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
     private int page = 1;
     private boolean isRefresh = true;
@@ -86,8 +86,8 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_scan_hov, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(WanderTaskActivity.this,WanderScanActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(WanderTaskActivity.this, WanderScanActivity.class);
                 startActivity(intent);
             }
         }));
@@ -147,6 +147,7 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
                 Intent intent = new Intent();
                 intent.setClass(WanderTaskActivity.this, WanderTaskListDetailActivity.class);
                 intent.putExtra(WanderTaskListDetailActivity.INTENT_PROJECT_ID, list.get(position).getId());
+                intent.putExtra(INTENT_WANDER_FROM, intentWanderFrom);
                 startActivity(intent);
             }
         });
@@ -179,7 +180,7 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
     public void handleMessage(@NonNull Message message) {
         checkNotNull(message);
         hideLoading();
-        ProjectSampleStorage sampleStorage = (ProjectSampleStorage) message.obj;
+        ProjectSampleStorage sampleStorage;
         switch (message.what) {
             case Message.RESULT_FAILURE://加载失败
                 if (isRefresh) {
@@ -191,6 +192,7 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
                 showMessage(message.str);
                 break;
             case Message.RESULT_OK://下拉刷新
+                sampleStorage = (ProjectSampleStorage) message.obj;
                 mRefreshLayout.finishRefresh(page);
                 if (list != null) {
                     list.clear();
@@ -206,6 +208,7 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
                 break;
             case 1001://上拉加载
+                sampleStorage = (ProjectSampleStorage) message.obj;
                 mRefreshLayout.finishLoadMore(page);
                 if (list == null) {
                     list = new ArrayList<>();

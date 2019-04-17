@@ -27,7 +27,7 @@ android {
         multiDexEnabled true
 
         ndk {
-            abiFilters "armeabi"/*, "armeabi-v7a"*/
+            abiFilters "armeabi", "armeabi-v7a"
         }
     }
 
@@ -153,11 +153,8 @@ dependencies {
     annotationProcessor rootProject.ext.dependencies["lombok"]
     implementation project(':lib')
     implementation project(':lib.Gprinter')
-    implementation files('libs/poi-3.9-20121203.jar')
-    implementation files('libs/poi-scratchpad-3.9-20121203.jar')
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
     implementation(name: 'onsdk_all', ext: 'aar')
-    implementation files('libs/BaiduLBS_Android.jar')
     implementation 'id.zelory:compressor:2.1.0'
     //下拉刷新库
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-21'
@@ -171,6 +168,4 @@ dependencies {
     //            }
     implementation project(':whiteboardlib')
     implementation project(':EasyLibrary')
-    implementation files('libs/BaiduTraceSDK_v3_0_8.jar')
-    // implementation files('libs/okhttp-3.8.1.jar')
 }

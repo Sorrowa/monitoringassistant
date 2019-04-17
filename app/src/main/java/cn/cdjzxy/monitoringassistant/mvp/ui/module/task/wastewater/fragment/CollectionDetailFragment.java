@@ -122,7 +122,7 @@ public class CollectionDetailFragment extends BaseFragment {
     private Dialog dialog;
     private TextView dialogTextView;
 
-    private static ArrayList<SamplingFormStand> oldMonitemIds=new ArrayList<>();
+    private static ArrayList<SamplingFormStand> oldMonitemIds = new ArrayList<>();
 
 
     public CollectionDetailFragment() {
@@ -230,7 +230,7 @@ public class CollectionDetailFragment extends BaseFragment {
             sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
             /**设置检测项目简介**/
             //这里把MonitemName内容去除重复
-            String res=MakeDeferenceGone(samplingDetail.getMonitemName());
+            String res = MakeDeferenceGone(samplingDetail.getMonitemName());
             samplingDetail.setMonitemName(res);
             sample_monitor_items.setText(res);
             /**设置现场项目简介**/
@@ -289,25 +289,26 @@ public class CollectionDetailFragment extends BaseFragment {
 
     /**
      * 将monitemName中的重复项去除
+     *
      * @param monitemName 需要去重的字符串
      * @return 去重结果
      */
     private String MakeDeferenceGone(String monitemName) {
-        if (monitemName==null||monitemName.equals("")){
+        if (monitemName == null || monitemName.equals("")) {
             return monitemName;
         }
 
-        List<String> aimList=new ArrayList<>();
-        List<String> itemList=Arrays.asList(monitemName.split(","));
+        List<String> aimList = new ArrayList<>();
+        List<String> itemList = Arrays.asList(monitemName.split(","));
 
-        for (String item:itemList){
-            if (!aimList.contains(item)){
+        for (String item : itemList) {
+            if (!aimList.contains(item)) {
                 aimList.add(item);
             }
         }
-        StringBuilder builder=new StringBuilder();
-        for (String item:aimList){
-            builder.append(item+",");
+        StringBuilder builder = new StringBuilder();
+        for (String item : aimList) {
+            builder.append(item + ",");
         }
         builder.deleteCharAt(builder.lastIndexOf(","));
         return builder.toString();
@@ -667,9 +668,9 @@ public class CollectionDetailFragment extends BaseFragment {
         String currentMonitemIds = samplingDetail.getMonitemId();
         String[] monitemIds = currentMonitemIds.split(",");
         //更新数据库所存的分瓶信息
-        if (oldMonitemIds!=null&&oldMonitemIds.size()!=0){
-            SamplingFormStandDao dao=DBHelper.get().getSamplingFormStandDao();
-            for (SamplingFormStand item : oldMonitemIds ){
+        if (oldMonitemIds != null && oldMonitemIds.size() != 0) {
+            SamplingFormStandDao dao = DBHelper.get().getSamplingFormStandDao();
+            for (SamplingFormStand item : oldMonitemIds) {
                 dao.deleteByKey(item.getId());
             }
         }
@@ -1269,7 +1270,7 @@ public class CollectionDetailFragment extends BaseFragment {
 
     }
 
-    private void closeLoadingDialog_gai(){
+    private void closeLoadingDialog_gai() {
         dialog.dismiss();
         dialog = null;
     }

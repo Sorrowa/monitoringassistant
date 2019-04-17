@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/btn_back"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_height_dp_52"
+            android:background="#F5F5F5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:drawableRight="@mipmap/ic_has_next"
+                android:drawablePadding="@dimen/dp_16"
+                android:gravity="center_vertical"
+                android:text="监测点位"
+                android:textColor="#303030"
+                android:textSize="@dimen/text_size_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:gravity="center_vertical"
+                android:text="编辑"
+                android:textColor="#676767"
+                android:textSize="@dimen/text_size_14" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="测试编号" />
+
+            <EditText
+                android:id="@+id/edit_point_id"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="测点位置" />
+
+            <EditText
+                android:id="@+id/edit_point_address"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="功能区类别" />
+
+            <EditText
+                android:id="@+id/edit_point_category"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_weight="1"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="备注" />
+
+            <EditText
+                android:id="@+id/edit_point_comment"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_weight="1"
+                android:maxLength="100" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line" />
+    </LinearLayout>
+
+    <include layout="@layout/view_line" />
+
+    <include layout="@layout/item_noise_bottom_save_or_delete"/>
+</LinearLayout>

@@ -61,7 +61,7 @@ public class WanderDetailHolder extends BaseHolder<WanderSampleStorage> {
         mTvStatus.setText(data.getStatusName());
         mTvName.setText(data.getFormName());
         if (data.getReceiveTime() == null || data.getReceiveTime().equals("")) {
-            mSubmitTime.setText("收样时间：" + "");
+            mSubmitTime.setText("收样时间：" + "暂无");
         } else {
             mSubmitTime.setText("收样时间：" + data.getReceiveTime());
         }

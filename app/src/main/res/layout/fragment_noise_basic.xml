@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="采样单编号" />
+
+            <TextView
+                android:id="@+id/base_sample_no"
+                style="@style/RightViewItemStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="项目名称" />
+
+            <TextView
+                android:id="@+id/text_view_name"
+                style="@style/RightViewItemStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测性质" />
+
+            <TextView
+                android:id="@+id/text_view_nature"
+                style="@style/RightViewItemStyle" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测日期" />
+
+            <TextView
+                android:id="@+id/text_view_date"
+                style="@style/RightViewItemHintStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="企业名称" />
+
+
+            <TextView
+                android:id="@+id/text_view_factory_name"
+                style="@style/RightViewItemStyle"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edit_factory_name"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="企业地址"
+                android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/text_view_factory_address"
+                style="@style/RightViewItemStyle"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edit_factory_address"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_gravity="center" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="生产工况"
+                android:textColor="#333333" />
+
+            <EditText
+                android:id="@+id/edit_factory_info"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="生产设备"
+                android:textColor="#333333" />
+
+            <EditText
+                android:id="@+id/edit_factory_device"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:layout_gravity="center"
+                android:text="天气" />
+
+            <TextView
+                android:id="@+id/text_weather_state"
+                style="@style/RightViewItemHintStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="风速（m/s）" />
+
+            <EditText
+                android:id="@+id/edit_wind_speed"
+                style="@style/BasicInfoItemEditTextStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="测前校准值【dB(A)】" />
+
+            <EditText
+                android:id="@+id/edit_calibration_front"
+                style="@style/BasicInfoItemEditTextStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="测后校准值【dB(A)】" />
+
+            <EditText
+                android:id="@+id/edit_calibration_after"
+                style="@style/BasicInfoItemEditTextStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测方法及来源" />
+
+            <TextView
+                android:id="@+id/text_view_monitor_from"
+                style="@style/RightViewItemHintStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="风速仪型号及编号" />
+
+            <TextView
+                android:id="@+id/text_view_device_number"
+                style="@style/RightViewItemHintStyle" />
+
+        </LinearLayout>
+
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="监测仪器名称、型号及编号(溯源信息)" />
+
+            <TextView
+                android:id="@+id/text_view_monitor_device_name"
+                style="@style/RightViewItemHintStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="校准方法" />
+
+            <EditText
+                android:id="@+id/edit_calibration_method"
+                style="@style/BasicInfoItemEditTextStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+
+        <LinearLayout style="@style/BasicInfoItemStyle">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="校准仪器名称、型号及编号(溯源信息)" />
+
+            <TextView
+                android:id="@+id/text_view_calibration_number"
+                style="@style/RightViewItemHintStyle" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/BasicInfoItemNameStyle"
+                android:text="备注" />
+
+            <EditText
+                android:id="@+id/edit_remarks"
+                style="@style/BasicInfoItemEditTextStyle"
+                android:layout_weight="1"
+                android:maxLength="100" />
+
+        </LinearLayout>
+
+        <include layout="@layout/view_line_basic_info" />
+
+
+    </LinearLayout>
+
+</ScrollView>

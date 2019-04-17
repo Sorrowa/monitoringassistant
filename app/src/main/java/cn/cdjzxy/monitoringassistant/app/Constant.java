@@ -9,5 +9,4 @@ public class Constant {
     public static String PNG_DIR = "/png";    //图片路径
     public static String BAI_DU_TRAJECTORY_AK = "";//百度鹰眼ak
     public static String BAI_DU_TRAJECTORY_SERVER_ID = "";//百度鹰眼服务ID
-    public static String BAI_DU_TRAJECTORY_ENTITY_NAME = "";//百度鹰眼终端name
 }

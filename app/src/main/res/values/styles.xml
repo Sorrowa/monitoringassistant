@@ -89,17 +89,18 @@
 
     <!-- 基础信息ItemEditTextStyle-->
     <style name="BasicInfoItemEditTextStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:background">@null</item>
         <item name="android:hint">请填写</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:textColor">@color/text_color_333333</item>
         <item name="android:textColorHint">@color/text_color_999999</item>
         <item name="android:textSize">@dimen/text_size_14</item>
         <item name="android:minWidth">200dp</item>
-        <item name="android:gravity">right</item>
+        <item name="android:gravity">center|right</item>
     </style>
 
     <style name="BasicInfoItemEditTextStyle_gai">
@@ -263,5 +264,13 @@
         <item name="android:layout_marginTop">@dimen/dp_6</item>
         <item name="android:layout_marginBottom">@dimen/dp_6</item>
         <item name="android:drawableRight">@mipmap/ic_has_next</item>
+    </style>
+
+    <style name="noiseBottomStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/btn_height_dp_52</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_size_21</item>
     </style>
 </resources>

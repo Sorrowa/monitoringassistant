@@ -45,6 +45,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.trajectory.receiver.TrackReceiver;
 import cn.cdjzxy.monitoringassistant.utils.DateUtil;
@@ -117,6 +119,11 @@ public class TrajectoryServer extends Service {
      */
     public long serviceId = 211193;
 
+    /**
+     * 轨迹服务名称
+     */
+    public String name;
+
 
     public boolean isRegisterReceiver = false;
 
@@ -149,7 +156,9 @@ public class TrajectoryServer extends Service {
      */
     private void init() {
         mClient = new LBSTraceClient(getApplicationContext());
-        mTrace = new Trace(serviceId, Constant.BAI_DU_TRAJECTORY_ENTITY_NAME);
+        UserInfo userInfo = UserInfoHelper.get().getUserInfo();
+        name = userInfo.getName() + "(" + userInfo.getWorkNo() + ")";
+        mTrace = new Trace(serviceId, name);
         mTrace.setNotification(notification);
         trackConf = getSharedPreferences("track_conf", MODE_PRIVATE);
         locRequest = new LocRequest(serviceId);
@@ -482,7 +491,7 @@ public class TrajectoryServer extends Service {
                 && isTraceStarted
                 && isGatherStarted) {
             LatestPointRequest request = new LatestPointRequest(getTag(),
-                    serviceId, Constant.BAI_DU_TRAJECTORY_ENTITY_NAME);
+                    serviceId, name);
             ProcessOption processOption = new ProcessOption();
             processOption.setNeedDenoise(true);
             processOption.setRadiusThreshold(100);
@@ -563,7 +572,7 @@ public class TrajectoryServer extends Service {
         mClient.clearCacheTrack(request, new OnTrackListener() {
             @Override
             public void onClearCacheTrackCallback(ClearCacheTrackResponse clearCacheTrackResponse) {
-                Log.e(TAG, "onClearCacheTrackCallback: "+clearCacheTrackResponse.toString());
+                Log.e(TAG, "onClearCacheTrackCallback: " + clearCacheTrackResponse.toString());
                 super.onClearCacheTrackCallback(clearCacheTrackResponse);
             }
         });

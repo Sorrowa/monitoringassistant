@@ -34,14 +34,19 @@ import cn.cdjzxy.monitoringassistant.R;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WanderSampleStorageAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.wander.WanderTaskActivity.INTENT_WANDER_FROM;
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 /**
@@ -61,6 +66,7 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
     private List<Tags> mTags = new ArrayList<>();
     public static final String INTENT_PROJECT_ID = "intent_project_id";
     private String projectId;
+    private String state;
     private List<WanderSampleStorage> list;
     private WanderSampleStorageAdapter adapter;
 
@@ -75,6 +81,7 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
         page = 1;
         isRefresh = true;
         projectId = getIntent().getStringExtra(INTENT_PROJECT_ID);
+        state = getIntent().getStringExtra(INTENT_WANDER_FROM);
         initTabLayout();
         getAllSampleStorageData();
         initRefresh();
@@ -110,8 +117,17 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
         adapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
+//                Intent intent = new Intent();
+//
+//                intent.setClass(WanderTaskListDetailActivity.this, WanderTaskDetailActivity.class);
+//                startActivity(intent);
+
                 Intent intent = new Intent();
-                intent.setClass(WanderTaskListDetailActivity.this, WanderTaskDetailActivity.class);
+                intent.setClass(WanderTaskListDetailActivity.this, WebActivity.class);
+                UserInfo user = UserInfoHelper.get().getUserInfo();
+                String url = user.getWebUrl() + "/DevExtend/SampleBill?samplingID=" +
+                        list.get(position).getSamplingId() + "&userId=" + user.getId();
+                intent.putExtra(WebFragment.URL_KEY, url);
                 startActivity(intent);
             }
         });
@@ -126,6 +142,7 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
             Map<String, String> map = new HashMap<>();
             map.put("SampleStorageParam.projectId", projectId);//项目id
             map.put("SampleStorageParam.page", page + "");
+            map.put("SampleStorageParam.status", state);
             mPresenter.getSampleStorageList(map, Message.obtain(this, new Object()), isRefresh);
         } else {
             showMessage("无网络，请检查您的网络是否正常");
@@ -142,6 +159,7 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
             map.put("SampleStorageParam.projectId", projectId);//项目id
             map.put("SampleStorageParam.tagId", tagId);
             map.put("SampleStorageParam.page", page + "");
+            map.put("SampleStorageParam.status", state);
             mPresenter.getSampleStorageList(map, Message.obtain(this, new Object()), isRefresh);
         } else {
             showMessage("无网络，请检查您的网络是否正常");
@@ -264,8 +282,8 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
         titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_scan_hov, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(WanderTaskListDetailActivity.this,WanderScanActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(WanderTaskListDetailActivity.this, WanderScanActivity.class);
                 startActivity(intent);
             }
         }));

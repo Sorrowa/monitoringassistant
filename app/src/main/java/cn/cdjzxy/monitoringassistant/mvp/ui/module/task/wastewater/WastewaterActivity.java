@@ -62,6 +62,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.Coll
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -189,7 +190,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         if (isNewCreate) {
-            mSample = createSample();
+            mSample = SamplingUtil.createSample(projectId,formSelectId);
         } else {
             mSample = DBHelper.get().getSamplingDao().queryBuilder().
                     where(SamplingDao.Properties.Id.eq(samplingId)).unique();
@@ -306,70 +307,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
 
-    /**
-     * 创建采样单
-     *
-     * @return
-     */
-    private Sampling createSample() {
-        Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-        FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
-        Sampling sampling = new Sampling();
-        sampling.setId(UUID.randomUUID().toString());//唯一标志
-        sampling.setSamplingNo(createSamplingNo());
-        sampling.setProjectId(project.getId());
-        sampling.setProjectName(project.getName());
-        sampling.setProjectNo(project.getProjectNo());
-        //sampling.setTagId(formSelect.getTagId());
-        //sampling.setMontype(project.getMonType() + "");
-        sampling.setMontype(project.getTypeCode());
-        //sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
-        sampling.setFormType(formSelect.getTagParentId());
-//        sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
-        sampling.setFormTypeName("水");//Tip:毛阳说写死
-        sampling.setFormName(formSelect.getFormName());
-        sampling.setFormPath(formSelect.getPath());
-        //        sampling.setFormFlows(formSelect.getFormFlows().toString());
-        sampling.setParentTagId(formSelect.getTagParentId());
-        sampling.setStatusName("进行中");
-        sampling.setStatus(0);
-        sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
-        sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
-        sampling.setSamplingTimeBegin(DateUtils.getDate());
-        sampling.setSamplingDetailResults(new ArrayList<>());
-        sampling.setSamplingContentResults(new ArrayList<>());
-        sampling.setIsLocal(true);
-        sampling.setIsUpload(false);
-        sampling.setIsCanEdit(true);
-        return sampling;
-    }
 
-    /**
-     * 创建采样单编号:年月日+账号+流水号
-     *
-     * @return
-     */
-    private String createSamplingNo() {
-        StringBuilder samplingNo = new StringBuilder("");
-        String dateStr = DateUtils.getDate().replace("-", "").substring(2);
-        samplingNo.append(dateStr);
-        samplingNo.append(UserInfoHelper.get().getUser().getIntId());
-//        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%")).orderAsc(SamplingDao.Properties.SamplingNo).list();
-
-        if (CheckUtil.isEmpty(samplings)) {
-            samplingNo.append(StringUtil.autoGenericCode(1, 2));
-        } else {
-            String lastSamlingNo = samplings.get(samplings.size() - 1).getSamplingNo();
-            if (!CheckUtil.isEmpty(lastSamlingNo)) {
-                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2)) + 1;
-                samplingNo.append(StringUtil.autoGenericCode(serialNumber, 2));
-            } else {
-                samplingNo.append(StringUtil.autoGenericCode(1, 2));
-            }
-        }
-        return samplingNo.toString();
-    }
 
     /**
      * 基本信息校验
