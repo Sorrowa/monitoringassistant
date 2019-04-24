@@ -1,19 +1,29 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.google.gson.Gson;
+import com.micheal.print.thread.ThreadPool;
+import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
+import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
@@ -46,9 +56,11 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePoin
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseMonitorListFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseOtherFileFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePointListFragment;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePonintSketchMap;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceEditFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceListFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -77,20 +89,46 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
 
+    //噪声fragment对应值
+    public static final int NOISE_FRAGMENT_INT_BASIC = 0;
+    public static final int NOISE_FRAGMENT_INT_SOURCE = 1;
+    public static final int NOISE_FRAGMENT_INT_SOURCE_EDIT = 2;
+    public static final int NOISE_FRAGMENT_INT_POINT = 3;
+    public static final int NOISE_FRAGMENT_INT_POINT_EDIT = 4;
+    public static final int NOISE_FRAGMENT_INT_MONITOR = 5;
+    public static final int NOISE_FRAGMENT_INT_MONITOR_EDIT = 6;
+    public static final int NOISE_FRAGMENT_INT_MAP = 7;
+    public static final int NOISE_FRAGMENT_INT_OTHER_FILE = 8;
 
-    @Subscriber(tag = EventBusTags.TAG_NOISE_FRAGMENT_TYPE_SOURCE_EDIT)
-    public void upSourceFragment(int position) {
+
+    //SharedPreferences
+    public static final String NOISE_FRAGMENT_SOURCE_SHARE = "sourceShare";
+    public static final String NOISE_FRAGMENT_POINT_SHARE = "pointShare";
+    public static final String NOISE_FRAGMENT_MONITOR_SHARE = "monitorShare";
+    public static final String NOISE_FRAGMENT_SHARE = "noiseShare";
+    private NoiseBasicFragment mBasicFragment;
+    NoiseSourceListFragment sourceListFragment;
+    NoisePointListFragment pointListFragment;
+    NoiseMonitorListFragment monitorListFragment;
+    NoiseOtherFileFragment otherFileFragment;
+    public static boolean isNeedSave = false;
+    private FragmentManager mFragmentManager;
+
+
+    @Subscriber(tag = EventBusTags.TAG_NOISE_FRAGMENT_TYPE)
+    public void upFragment(int position) {
         openFragment(position);
     }
 
-    @Subscriber(tag = EventBusTags.TAG_NOISE_FRAGMENT_TYPE_POINT_EDIT)
-    public void upPointFragment(int position) {
-        openFragment(position);
-    }
-    @Subscriber(tag = EventBusTags.TAG_NOISE_FRAGMENT_TYPE_MONITOR_EDIT)
-    public void upMonitorFragment(int position) {
-        openFragment(position);
-    }
+//    @Subscriber(tag = EventBusTags.TAG_NOISE_FRAGMENT_TYPE_POINT_EDIT)
+//    public void upPointFragment(int position) {
+//        openFragment(position);
+//    }
+//
+//    @Subscriber(tag = EventBusTags.TAG_NOISE_FRAGMENT_TYPE_MONITOR_EDIT)
+//    public void upMonitorFragment(int position) {
+//        openFragment(position);
+//    }
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -109,24 +147,83 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                back();
             }
         });
-        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
+
+        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMessage("待开发");
             }
         }));
+        titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveMySample(false);
+            }
+        }));
+
     }
 
 
+    private void showSaveDataDialog() {
+        final Dialog dialog = new AlertDialog.Builder(this)
+                .setMessage("有数据更改，是否本地保存？")
+                .setPositiveButton("保存", new DialogInterface.OnClickListener() {// 积极
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveMySample(true);
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    @Override
+
+    public void onBackPressed() {
+        back();
+    }
+
+    private void back() {
+        hideSoftInput();
+        if (viewPager.getCurrentItem() == NOISE_FRAGMENT_INT_SOURCE_EDIT) {
+            openFragment(1);
+        } else if (viewPager.getCurrentItem() == NOISE_FRAGMENT_INT_POINT_EDIT) {
+            openFragment(2);
+        } else if (viewPager.getCurrentItem() == NOISE_FRAGMENT_INT_MONITOR_EDIT) {
+            openFragment(3);
+        } else if (isNeedSave) {
+            showSaveDataDialog();
+        } else {
+            finish();
+        }
+    }
+
+    /**
+     * 动态隐藏软键盘
+     */
+    public void hideSoftInput() {
+        View view = getCurrentFocus();
+        if (view == null) view = new View(this);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        mFragmentManager = this.getSupportFragmentManager();
         getIntentData();
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         if (isNewCreate) {
-            mSample = SamplingUtil.createSample(projectId, formSelectId);
+            mSample = SamplingUtil.createNoiseSample(projectId, formSelectId);
             mPrivateData = new NoisePrivateData();
         } else {
             mSample = DBHelper.get().getSamplingDao().queryBuilder().
@@ -156,7 +253,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
             }
         }
         initTabData();
-        openFragment(0);
+
 
     }
 
@@ -174,36 +271,101 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
      * 初始化Tab数据
      */
     private void initTabData() {
-        tabView.setTabs("基本信息", "主要噪声源", "监听点位", "监测数据", "附件");
+        List<Tab> tabs = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            Tab tab = new Tab();
+            if (i == 0) {
+                tab.setTabName("基本信息");
+                tab.setSelected(true);
+                tab.setResId(R.mipmap.icon_basic);
+            } else if (i == 1) {
+                tab.setTabName("主要噪声源");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_source);
+            } else if (i == 2) {
+                tab.setTabName("监听点位");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_point);
+            } else if (i == 3) {
+                tab.setTabName("监测数据");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_monotor);
+            } else if (i == 4) {
+                tab.setTabName("测点示意图");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_sketch_map);
+            } else if (i == 5) {
+                tab.setTabName("附件");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_other);
+            }
+            tabs.add(tab);
+        }
+        tabView.setTabs(tabs);
         tabView.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                openFragment(position);
+                switch (position) {
+                    case 0:
+                        openFragment(NOISE_FRAGMENT_INT_BASIC);
+                        break;
+                    case 1:
+                        openFragment(NOISE_FRAGMENT_INT_SOURCE);
+                        break;
+                    case 2:
+                        openFragment(NOISE_FRAGMENT_INT_POINT);
+                        break;
+                    case 3:
+                        openFragment(NOISE_FRAGMENT_INT_MONITOR);
+                        break;
+                    case 4:
+                        openFragment(NOISE_FRAGMENT_INT_MAP);
+                        break;
+                    case 5:
+                        openFragment(NOISE_FRAGMENT_INT_OTHER_FILE);
+                        break;
+                }
             }
         });
 
-        NoiseBasicFragment mBasicFragment = new NoiseBasicFragment();
-        NoiseSourceListFragment sourceListFragment = new NoiseSourceListFragment();
-        NoisePointListFragment pointListFragment = new NoisePointListFragment();
-        NoiseMonitorListFragment monitorListFragment = new NoiseMonitorListFragment();
-        NoiseOtherFileFragment otherFileFragment = new NoiseOtherFileFragment();
+        mBasicFragment = new NoiseBasicFragment();
+        sourceListFragment = new NoiseSourceListFragment();
+        pointListFragment = new NoisePointListFragment();
+        monitorListFragment = new NoiseMonitorListFragment();
+        otherFileFragment = new NoiseOtherFileFragment();
         NoiseSourceEditFragment sourceEditFragment = new NoiseSourceEditFragment();
         NoisePointEditFragment pointEditFragment = new NoisePointEditFragment();
         NoiseMonitorEditFragment monitorEditFragment = new NoiseMonitorEditFragment();
+        NoisePonintSketchMap sketchMap = new NoisePonintSketchMap();
+
 
         mFragments = new ArrayList<>();
         mFragments.add(mBasicFragment);//0
         mFragments.add(sourceListFragment);//1
-        mFragments.add(pointListFragment);//2
-        mFragments.add(monitorListFragment);//3
-        mFragments.add(otherFileFragment);//4
-        mFragments.add(sourceEditFragment);//5
-        mFragments.add(pointEditFragment);//6
-        mFragments.add(monitorEditFragment);
+        mFragments.add(sourceEditFragment);//2
+        mFragments.add(pointListFragment);//3
+        mFragments.add(pointEditFragment);//4
+        mFragments.add(monitorListFragment);//5
+        mFragments.add(monitorEditFragment);//6
+        mFragments.add(sketchMap);//7
+        mFragments.add(otherFileFragment);//8
+
+//        mFragments = new ArrayList<>();
+//        mFragments.add(mBasicFragment);//0
+//        mFragments.add(sourceListFragment);//1
+//        mFragments.add(pointListFragment);//3
+//        mFragments.add(monitorListFragment);//5
+//        mFragments.add(sketchMap);//7
+//        mFragments.add(otherFileFragment);//8
+//        mFragments.add(sourceEditFragment);//2
+//        mFragments.add(pointEditFragment);//4
+//        mFragments.add(monitorEditFragment);//6
+
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
         viewPager.setOffscreenPageLimit(0);
+        openFragment(0);
     }
 
     /**
@@ -213,6 +375,48 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
      */
     private void openFragment(int position) {
         viewPager.setCurrentItem(position);
+//        FragmentTransaction ft = mFragmentManager.beginTransaction();
+//        Bundle mBundle = new Bundle();
+//        switch (position) {
+//            case NOISE_FRAGMENT_INT_BASIC:
+//                ft.replace(R.id.frame_layout, mBasicFragment = new NoiseBasicFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_INT_SOURCE:
+//                ft.replace(R.id.frame_layout, sourceListFragment = new NoiseSourceListFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_INT_POINT:
+//                ft.replace(R.id.frame_layout, pointListFragment = new NoisePointListFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_INT_MONITOR:
+//                ft.replace(R.id.frame_layout, monitorListFragment = new NoiseMonitorListFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_ING_MAP:
+//                ft.replace(R.id.frame_layout, new NoisePonintSketchMap(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//
+//            case NOISE_FRAGMENT_INT_OTHER_FILE:
+//                ft.replace(R.id.frame_layout, otherFileFragment = new NoiseOtherFileFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_INT_SOURCE_EDIT:
+//                ft.replace(R.id.frame_layout, new NoiseSourceEditFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_INT_POINT_EDIT:
+//                ft.replace(R.id.frame_layout, new NoisePointEditFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//            case NOISE_FRAGMENT_INT_MONITOR_EDIT:
+//                ft.replace(R.id.frame_layout, new NoiseMonitorEditFragment(), NoiseBasicFragment.class.getName());
+//                ft.commit();
+//                break;
+//        }
+
     }
 
     @Override
@@ -222,6 +426,98 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
 
     @Override
     public void handleMessage(@NonNull Message message) {
+    }
 
+    public void saveMySample(boolean isFinish) {
+        showLoadingDialog("正在保存，请稍等");
+        ThreadPool.getInstantiation().addTask(new Runnable() {
+            @Override
+            public void run() {
+                mBasicFragment.savePrivateData();
+                sourceListFragment.savePrivateData();
+                pointListFragment.savePrivateData();
+                monitorListFragment.savePrivateData();
+                otherFileFragment.savePrivateData();
+                saveMySample();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showMessage("保存成功");
+                        isNeedSave = false;
+                        hideLoading();
+                        if (isFinish) {
+                            finish();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
+    }
+
+    public void showLoading(String msg) {
+        showLoadingDialog(msg);
+    }
+
+    /**
+     * 判断采样单是否完成
+     *
+     * @param mSample
+     * @return
+     */
+    public static boolean isSamplingFinish(Sampling mSample) {
+        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getTagId())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getMethodId())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 保存数据
+     */
+    public static void saveMySample() {
+        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
+        mSample.setIsFinish(isSamplingFinish(mSample));
+        if (sampling != null) {
+            DBHelper.get().getSamplingDao().update(mSample);
+        } else {
+            DBHelper.get().getSamplingDao().insertOrReplace(mSample);
+        }
+        if (!CheckUtil.isEmpty(mSample.getSamplingFiless())) {
+            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().
+                    queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
+            if (!CheckUtil.isEmpty(samplingFiles)) {
+                DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+            }
+            DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
+        }
+        updateData();
+    }
+
+    /**
+     * 更新保存的数据
+     */
+    private static void updateData() {
+        mSample = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
+        Gson gson = new Gson();
+        mPrivateData = gson.fromJson(mSample.getPrivateData(), NoisePrivateData.class);
+        if (mPrivateData == null) {
+            mPrivateData = new NoisePrivateData();
+        }
     }
 }

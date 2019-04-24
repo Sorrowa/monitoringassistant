@@ -27,7 +27,7 @@ android {
         multiDexEnabled true
 
         ndk {
-            abiFilters "armeabi", "armeabi-v7a"
+            abiFilters "armeabi"//, "armeabi-v7a"
         }
     }
 
@@ -44,7 +44,7 @@ android {
         debug {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "true"
-            //buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
+            //buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8091\""
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
             buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
@@ -61,8 +61,8 @@ android {
             buildConfigField "boolean", "LOG_DEBUG", "false"
             //buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             buildConfigField "boolean", "IS_RELEASE", "true"

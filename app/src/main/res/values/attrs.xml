@@ -17,4 +17,15 @@
         <attr name="scv_Gradient" format="reference|boolean" />
     </declare-styleable>
 
+    <declare-styleable name="MyDrawableLinearLayout">
+        <attr name="leftText" format="string|reference|dimension" />
+        <attr name="leftHasDataDrawable" format="reference|integer" />
+        <attr name="leftNoDataDrawable" format="reference|integer" />
+        <attr name="isShowRightTextView" format="reference|boolean" />
+        <attr name="rightText" format="string|reference" />
+        <attr name="rightTextHint" format="reference|string" />
+        <attr name="rightEditTextHint" format="reference|string" />
+        <attr name="drawableRight" format="reference" />
+    </declare-styleable>
+
 </resources>

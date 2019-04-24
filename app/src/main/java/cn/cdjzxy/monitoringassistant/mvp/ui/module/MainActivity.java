@@ -363,7 +363,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      */
     private void openFragment(int position) {
         FragmentTransaction ft = mFragmentManager.beginTransaction();
-
         Bundle mBundle = new Bundle();
         switch (position) {
             case 0://任务

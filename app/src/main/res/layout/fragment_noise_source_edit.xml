@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -39,76 +40,49 @@
 
         <include layout="@layout/view_line" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_source"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="主要声源"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="主要声源" />
+        <include layout="@layout/view_line_basic_info" />
 
-            <EditText
-                android:id="@+id/edit_source"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <include layout="@layout/view_line" />
-
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="名称" />
-
-            <EditText
-                android:id="@+id/edit_source_name"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1" />
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_source_name"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="名称"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="数量" />
-
-            <EditText
-                android:id="@+id/edit_source_num"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1"
-                android:inputType="number" />
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_source_num"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="数量"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_source_date"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="运行时间与情况"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="运行时间与情况" />
-
-            <TextView
-                android:id="@+id/tv_source_date"
-                style="@style/BasicInfoItemTextViewStyle"
-                android:layout_weight="1" />
-
-        </LinearLayout>
+        <include layout="@layout/view_line" />
 
         <include layout="@layout/view_line" />
     </LinearLayout>

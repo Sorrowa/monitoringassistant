@@ -177,7 +177,7 @@ public class HelpUtil {
             return false;
         }
         Gson gson = new Gson();
-        FsExtends fsExtends = gson.fromJson(WastewaterActivity.mSample.getPrivateData(), FsExtends.class);
+        FsExtends fsExtends = gson.fromJson(mSample.getPrivateData(), FsExtends.class);
         if (CheckUtil.isEmpty(mSample.getMethodId())) {
             return false;
         }

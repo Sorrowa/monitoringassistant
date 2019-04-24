@@ -26,6 +26,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
@@ -58,6 +59,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.WeatherDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormFlowDao;
@@ -99,6 +101,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig weatherDaoConfig;
     private final DaoConfig msgDaoConfig;
     private final DaoConfig projectDaoConfig;
+    private final DaoConfig projectContentDaoConfig;
     private final DaoConfig projectDetialDaoConfig;
     private final DaoConfig formDaoConfig;
     private final DaoConfig formFlowDaoConfig;
@@ -131,6 +134,7 @@ public class DaoSession extends AbstractDaoSession {
     private final WeatherDao weatherDao;
     private final MsgDao msgDao;
     private final ProjectDao projectDao;
+    private final ProjectContentDao projectContentDao;
     private final ProjectDetialDao projectDetialDao;
     private final FormDao formDao;
     private final FormFlowDao formFlowDao;
@@ -203,6 +207,9 @@ public class DaoSession extends AbstractDaoSession {
         projectDaoConfig = daoConfigMap.get(ProjectDao.class).clone();
         projectDaoConfig.initIdentityScope(type);
 
+        projectContentDaoConfig = daoConfigMap.get(ProjectContentDao.class).clone();
+        projectContentDaoConfig.initIdentityScope(type);
+
         projectDetialDaoConfig = daoConfigMap.get(ProjectDetialDao.class).clone();
         projectDetialDaoConfig.initIdentityScope(type);
 
@@ -260,6 +267,7 @@ public class DaoSession extends AbstractDaoSession {
         weatherDao = new WeatherDao(weatherDaoConfig, this);
         msgDao = new MsgDao(msgDaoConfig, this);
         projectDao = new ProjectDao(projectDaoConfig, this);
+        projectContentDao = new ProjectContentDao(projectContentDaoConfig, this);
         projectDetialDao = new ProjectDetialDao(projectDetialDaoConfig, this);
         formDao = new FormDao(formDaoConfig, this);
         formFlowDao = new FormFlowDao(formFlowDaoConfig, this);
@@ -292,6 +300,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Weather.class, weatherDao);
         registerDao(Msg.class, msgDao);
         registerDao(Project.class, projectDao);
+        registerDao(ProjectContent.class, projectContentDao);
         registerDao(ProjectDetial.class, projectDetialDao);
         registerDao(Form.class, formDao);
         registerDao(FormFlow.class, formFlowDao);
@@ -326,6 +335,7 @@ public class DaoSession extends AbstractDaoSession {
         weatherDaoConfig.clearIdentityScope();
         msgDaoConfig.clearIdentityScope();
         projectDaoConfig.clearIdentityScope();
+        projectContentDaoConfig.clearIdentityScope();
         projectDetialDaoConfig.clearIdentityScope();
         formDaoConfig.clearIdentityScope();
         formFlowDaoConfig.clearIdentityScope();
@@ -411,6 +421,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public ProjectDao getProjectDao() {
         return projectDao;
+    }
+
+    public ProjectContentDao getProjectContentDao() {
+        return projectContentDao;
     }
 
     public ProjectDetialDao getProjectDetialDao() {

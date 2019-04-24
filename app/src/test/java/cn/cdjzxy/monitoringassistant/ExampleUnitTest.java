@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant;
 
+import android.util.Log;
+
 import org.junit.Test;
 
 import java.io.BufferedInputStream;
@@ -9,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -20,8 +24,9 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        saveUrlAs("https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0282c44e9c45d688bc02b4a494c37dab/4b90f603738da977f86d8b56be51f8198618e309.jpg",
-                "C:/Users/10708/Desktop", "GET","test.png");
+//        saveUrlAs("https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0282c44e9c45d688bc02b4a494c37dab/4b90f603738da977f86d8b56be51f8198618e309.jpg",
+//                "C:/Users/10708/Desktop", "GET","test.png");
+        delete();
     }
 
     /**
@@ -81,6 +86,25 @@ public class ExampleUnitTest {
 
         return file;
 
+    }
+
+    public void delete() {
+        List<Integer> list = new ArrayList<>();
+        list.add(0);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        list.add(6);
+        list.add(7);
+        for (int i = 0; i < list.size(); i++) {
+            System.out.print(list.get(i) + "\n");
+        }
+        list.remove(new Integer(8));
+        for (int i = 0; i < list.size(); i++) {
+            System.out.print(list.get(i) + "\n");
+        }
     }
 
 }

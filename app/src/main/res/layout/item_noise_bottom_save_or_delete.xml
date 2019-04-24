@@ -1,5 +1,5 @@
 <LinearLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/btn_height_dp_56"
     android:gravity="center"
     android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -11,10 +11,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/item_close_delete"
+            android:drawableLeft="@mipmap/item_close_delete"
             android:drawablePadding="@dimen/dp_6"
             android:gravity="center"
             android:text="删除"
+            android:textSize="18sp"
             android:textColor="@color/indianred" />
     </LinearLayout>
 
@@ -30,8 +31,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/item_close_add"
+            android:drawableLeft="@mipmap/icon_add"
             android:drawablePadding="@dimen/dp_6"
+            android:textSize="18sp"
             android:gravity="center"
             android:text="保存"
             android:textColor="#2F9AFF" />

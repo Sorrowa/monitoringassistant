@@ -39,6 +39,7 @@ public class DaoMaster extends AbstractDaoMaster {
         WeatherDao.createTable(db, ifNotExists);
         MsgDao.createTable(db, ifNotExists);
         ProjectDao.createTable(db, ifNotExists);
+        ProjectContentDao.createTable(db, ifNotExists);
         ProjectDetialDao.createTable(db, ifNotExists);
         FormDao.createTable(db, ifNotExists);
         FormFlowDao.createTable(db, ifNotExists);
@@ -74,6 +75,7 @@ public class DaoMaster extends AbstractDaoMaster {
         WeatherDao.dropTable(db, ifExists);
         MsgDao.dropTable(db, ifExists);
         ProjectDao.dropTable(db, ifExists);
+        ProjectContentDao.dropTable(db, ifExists);
         ProjectDetialDao.dropTable(db, ifExists);
         FormDao.dropTable(db, ifExists);
         FormFlowDao.dropTable(db, ifExists);
@@ -123,6 +125,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(WeatherDao.class);
         registerDaoClass(MsgDao.class);
         registerDaoClass(ProjectDao.class);
+        registerDaoClass(ProjectContentDao.class);
         registerDaoClass(ProjectDetialDao.class);
         registerDaoClass(FormDao.class);
         registerDaoClass(FormFlowDao.class);

@@ -141,10 +141,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
 
     /**
-     *工业企业厂界噪声监测记录
+     * 工业企业厂界噪声监测记录
      */
-    public static final String PATH_NOISE_FACTORY="/FormTemplate/FILL_GYZS_VOICE_XD";
-    public static final String NAME_NOISE_FACTORY="工业企业厂界噪声监测记录";
+    public static final String PATH_NOISE_FACTORY = "/FormTemplate/FILL_GYZS_VOICE_XD";
+    public static final String NAME_NOISE_FACTORY = "工业企业厂界噪声监测记录";
 
     /**
      * 最大文件上传大小，单位（KB）
@@ -573,9 +573,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_sampling_point:
-                Intent intent = new Intent(this, PointActivity.class);
-                intent.putExtra("projectId", mProject.getId());
-                ArtUtils.startActivity(intent);
+                showMessage("正在排除异常，请稍后");
+//                Intent intent = new Intent(this, PointActivity.class);
+//                intent.putExtra("projectId", mProject.getId());
+//                ArtUtils.startActivity(intent);
                 break;
             case R.id.btn_add_sampling:
                 showAddDialog();
@@ -685,22 +686,18 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 switch (mDialogFormSelects.get(position).getPath()) {
                     case PATH_PRECIPITATION:
                         //降水采样及样品交接记录（新都）
-                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                         intent.setClass(TaskDetailActivity.this, PrecipitationActivity.class);
                         break;
                     case PATH_WASTEWATER:
                         //水和废水样品采集与交接记录（新都）
                         intent.setClass(TaskDetailActivity.this, WastewaterActivity.class);
-                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                         break;
                     case PATH_INSTRUMENTAL:
                         //现场监测仪器法
                         intent.setClass(TaskDetailActivity.this, InstrumentalActivity.class);
-                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                         break;
                     case PATH_NOISE_FACTORY://工业企业厂界噪声监测记录
                         intent.setClass(TaskDetailActivity.this, NoiseFactoryActivity.class);
-                        intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                         break;
                     default:
                         ArtUtils.makeText(TaskDetailActivity.this, "功能开发中");
@@ -709,6 +706,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 mDialogPlus.dismiss();
                 intent.putExtra("projectId", mProject.getId());
                 intent.putExtra("isNewCreate", true);
+                intent.putExtra("formSelectId", mDialogFormSelects.get(position).getFormId());
                 ArtUtils.startActivity(intent);
             }
         });
@@ -1061,6 +1059,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     preciptationSampForm = SubmitDataUtil.setUpFSData(sampling);
                 } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
                     preciptationSampForm = SubmitDataUtil.setUpYQFData(sampling);
+                } else if (PATH_NOISE_FACTORY.equals(sampling.getFormPath())) {
+                    preciptationSampForm = SubmitDataUtil.setNoiseIndustralData(sampling);
                 }
 
                 //错误处理
@@ -1111,7 +1111,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      */
     private void uploadSamplingFiles(Sampling sampling, FileUploadHandler handler) {
         //从数据库加载数据
-        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.eq(""), SamplingFileDao.Properties.IsUploaded.eq(false)).list();
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().
+                where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()),
+                        SamplingFileDao.Properties.Id.eq(""),
+                        SamplingFileDao.Properties.IsUploaded.eq(false)).list();
         if (CheckUtil.isEmpty(samplingFiles)) {
             if (handler != null) {
                 handler.onSuccess();

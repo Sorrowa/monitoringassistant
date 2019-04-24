@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -15,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_height_dp_52"
             android:background="#F5F5F5">
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -39,58 +41,36 @@
 
         <include layout="@layout/view_line" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="测试编号" />
-
-            <EditText
-                android:id="@+id/edit_point_id"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1" />
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_point_id"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="测点编号"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="测点位置" />
-
-            <EditText
-                android:id="@+id/edit_point_address"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1" />
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_point_address"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="测点位置"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="功能区类别" />
-
-            <EditText
-                android:id="@+id/edit_point_category"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:layout_weight="1"
-                android:inputType="number" />
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_point_category"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="功能区类别"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line" />
 
@@ -116,5 +96,5 @@
 
     <include layout="@layout/view_line" />
 
-    <include layout="@layout/item_noise_bottom_save_or_delete"/>
+    <include layout="@layout/item_noise_bottom_save_or_delete" />
 </LinearLayout>

@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
+import com.micheal.print.thread.ThreadPool;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +37,14 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_INT_POINT_EDIT;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_POINT_SHARE;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_SHARE;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_SOURCE_SHARE;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
+
+
 /**
  * 噪声——监测点位列表
  */
@@ -49,6 +57,7 @@ public class NoisePointListFragment extends BaseFragment implements IView {
     RecyclerView recyclerView;
     private List<NoisePrivateData.MianNioseAddrBean> list;
     private NoisePointAdapter adapter;
+    public List<String> selectList;//选中的集合
 
 
     @Override
@@ -56,19 +65,46 @@ public class NoisePointListFragment extends BaseFragment implements IView {
         return inflater.inflate(R.layout.fragment_noise_source_list, null);
     }
 
+    public void showLoading(String msg) {
+        showLoadingDialog(msg);
+    }
+
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
+    }
+
+
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initListData("");
+        initRecyclerView();
+    }
+
+    @Subscriber(tag = NOISE_FRAGMENT_POINT_SHARE)
+    private void initListData(String l) {
         list = new ArrayList<>();
-
+        selectList = new ArrayList<>();
         if (!CheckUtil.isNull(mSample)) {
-            Gson gson = new Gson();
-
-            if (mPrivateData.getMianNioseSource() != null && mPrivateData.getMianNioseSource().size() > 0) {
+            if (mPrivateData.getMianNioseAddr() != null && mPrivateData.getMianNioseAddr().size() > 0) {
                 list.addAll(mPrivateData.getMianNioseAddr());
             }
         }
-        initRecyclerView();
+        for (NoisePrivateData.MianNioseAddrBean addrBean : list) {
+            if (addrBean.isIsChecked()) {
+                selectList.add(addrBean.getGuid());
+            }
+        }
+        if (adapter != null) adapter.refreshInfos(list);
     }
+
+
     private void initRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), VERTICAL));
@@ -76,18 +112,47 @@ public class NoisePointListFragment extends BaseFragment implements IView {
         adapter = new NoisePointAdapter(list, new NoisePointAdapter.ItemClickListener() {
             @Override
             public void onSelected(View view, int position) {
-                showMessage(position+"");
+                upListSelectState(position);
             }
 
             @Override
             public void onClick(View view, int position) {
-                EventBus.getDefault().post(6, EventBusTags.TAG_NOISE_FRAGMENT_TYPE_POINT_EDIT);
-                getActivity().getSharedPreferences("noise", 0).edit()
-                        .putInt(EventBusTags.TAG_NOISE_FRAGMENT_TYPE_POINT_EDIT, position).commit();
+                getActivity().getSharedPreferences(NOISE_FRAGMENT_SHARE, 0).edit()
+                        .putInt(NOISE_FRAGMENT_POINT_SHARE, position).commit();
+                EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT_EDIT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
             }
         });
         recyclerView.setAdapter(adapter);
     }
+
+    /**
+     * 更新选择状态
+     *
+     * @param position
+     */
+    private void upListSelectState(int position) {
+        if (list.get(position) != null) {
+            if (list.get(position).isIsChecked()) {
+                list.get(position).setIsChecked(false);
+                if (selectList != null && selectList.size() > 0) {
+                    if (selectList.contains(list.get(position).getGuid())) {
+                        selectList.remove(list.get(position).getGuid());
+                    }
+                }
+            } else {
+                list.get(position).setIsChecked(true);
+                if (selectList == null) {
+                    selectList = new ArrayList<>();
+                }
+                if (!selectList.contains(list.get(position).getGuid())) {
+                    selectList.add(list.get(position).getGuid());
+                }
+
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     @Nullable
     @Override
     public IPresenter obtainPresenter() {
@@ -117,13 +182,65 @@ public class NoisePointListFragment extends BaseFragment implements IView {
 
     @OnClick({R.id.linear_delete, R.id.linear_add})
     public void onClick(View v) {
+        hideSoftInput();
         switch (v.getId()) {
             case R.id.linear_delete:
-                showMessage("待开发");
+                deleteSelect();
                 break;
             case R.id.linear_add:
-                showMessage("待开发");
+                getActivity().getSharedPreferences(NOISE_FRAGMENT_SHARE, 0).edit()
+                        .putInt(NOISE_FRAGMENT_POINT_SHARE, -1).commit();
+                EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT_EDIT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
                 break;
         }
+    }
+
+    private void deleteSelect() {
+        if (list == null || list.size() == 0) {
+            showMessage("暂无可删除列表");
+            return;
+        }
+        if (selectList.size() == 0) {
+            showMessage("请选择删除选项");
+            return;
+        }
+        showLoading("正在删除");
+        ThreadPool.getInstantiation().addTask(new Runnable() {
+            @Override
+            public void run() {
+                for (String guId : selectList) {
+                    for (int i = 0; i < list.size(); i++) {
+                        if (guId.equals(list.get(i).getGuid())) {
+                            list.remove(i);
+                            mPrivateData.getMianNioseAddr().remove(i);
+                        }
+                    }
+                }
+                selectList.clear();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        hideLoading();
+                    }
+                });
+
+            }
+        });
+    }
+
+    /**
+     * 保存信息
+     *
+     * @return
+     */
+    public void savePrivateData() {
+        if (mPrivateData != null && mSample != null) {
+            mPrivateData.setMianNioseAddr(list);
+            Gson gson = new Gson();
+            String jsonStr = gson.toJson(mPrivateData);
+            mSample.setPrivateData(jsonStr);
+        }
+        hideLoading();
     }
 }

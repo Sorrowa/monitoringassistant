@@ -31,5 +31,4 @@
             tool:text="测试" />
     </LinearLayout>
 
-    <include layout="@layout/view_line" />
 </LinearLayout>

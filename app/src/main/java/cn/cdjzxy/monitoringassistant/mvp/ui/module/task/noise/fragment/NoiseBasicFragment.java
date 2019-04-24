@@ -1,22 +1,29 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.google.gson.Gson;
-import com.wonders.health.lib.base.base.fragment.BaseFragment;
+
 import com.wonders.health.lib.base.mvp.IPresenter;
+import com.wonders.health.lib.base.mvp.IView;
+import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
@@ -26,56 +33,63 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.WeatherActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.saveMySample;
 
-public class NoiseBasicFragment extends BaseFragment {
+public class NoiseBasicFragment extends BaseFragment implements IView {
 
-    @BindView(R.id.base_sample_no)
-    TextView tvSampleNo;//采样点编号
-    @BindView(R.id.text_view_name)
-    TextView tvSampleName;//项目名称
-    @BindView(R.id.text_view_nature)
-    TextView tvNature;//监测性质
-    @BindView(R.id.text_view_date)
-    TextView tvDate;//监测日期
-    @BindView(R.id.edit_factory_name)
-    EditText edFactoryName;//企业名称
-    @BindView(R.id.text_view_factory_name)
-    TextView tvFactoryName;//企业名称 用于展示（不可编辑）
-    @BindView(R.id.edit_factory_address)
-    EditText edFactoryAddress;//企业地址
-    @BindView(R.id.text_view_factory_address)
-    TextView tvFactoryAddress;//企业地址 用于展示（不可编辑）
-    @BindView(R.id.edit_factory_info)
-    EditText edFactoryInfo;//企业生产工况
-    @BindView(R.id.text_weather_state)
-    TextView tvWeatherState;//天气情况
-    @BindView(R.id.edit_wind_speed)
-    EditText edWingSpeed;//风速
-    @BindView(R.id.edit_calibration_front)
-    EditText edCalibrationFront;//测前校准值
-    @BindView(R.id.edit_calibration_after)
-    EditText edCalibrationAfter;//测后校准值
-    @BindView(R.id.text_view_device_number)
-    TextView tvDeviceNumber;//风速仪型号及编号
-    @BindView(R.id.text_view_monitor_from)
-    TextView tvMonitorForm;//监测方法及来源
-    @BindView(R.id.text_view_monitor_device_name)
-    TextView tvMonitorDeviceName;//监测仪器名称
-    @BindView(R.id.edit_calibration_method)
-    EditText edCalibrationMethod;//校准方法
-    @BindView(R.id.text_view_calibration_number)
-    TextView tvCalibrationNumber;//校准仪器名称
+    @BindView(R.id.my_layout_number)
+    MyDrawableLinearLayout tvSampleNo;//采样点编号
+    @BindView(R.id.my_layout_name)
+    MyDrawableLinearLayout tvSampleName;//项目名称
+    @BindView(R.id.my_layout_nature)
+    MyDrawableLinearLayout tvNature;//监测性质
+    @BindView(R.id.my_layout_date)
+    MyDrawableLinearLayout tvDate;//监测日期
+    @BindView(R.id.my_layout_factory_name)
+    MyDrawableLinearLayout edFactoryName;//企业名称
+    //    @BindView(R.id.text_view_factory_name)
+//    TextView tvFactoryName;//企业名称 用于展示（不可编辑）
+    @BindView(R.id.my_layout_factory_address)
+    MyDrawableLinearLayout edFactoryAddress;//企业地址
+    //    @BindView(R.id.text_view_factory_address)
+//    TextView tvFactoryAddress;//企业地址 用于展示（不可编辑）
+    @BindView(R.id.my_layout_factory_info)
+    MyDrawableLinearLayout edFactoryInfo;//企业生产工况
+    @BindView(R.id.my_layout_weather_state)
+    MyDrawableLinearLayout tvWeatherState;//天气情况
+    @BindView(R.id.my_layout_wind_speed)
+    MyDrawableLinearLayout edWingSpeed;//风速
+    @BindView(R.id.my_layout_calibration_front)
+    MyDrawableLinearLayout edCalibrationFront;//测前校准值
+    @BindView(R.id.my_layout_calibration_after)
+    MyDrawableLinearLayout edCalibrationAfter;//测后校准值
+    @BindView(R.id.my_layout_device_number)
+    MyDrawableLinearLayout tvDeviceNumber;//风速仪型号及编号
+    @BindView(R.id.my_layout_monitor_from)
+    MyDrawableLinearLayout tvMonitorForm;//监测方法及来源
+    @BindView(R.id.my_layout_device_name)
+    MyDrawableLinearLayout tvMonitorDeviceName;//监测仪器名称
+    @BindView(R.id.my_layout_calibration_method)
+    MyDrawableLinearLayout edCalibrationMethod;//校准方法
+    @BindView(R.id.my_layout_calibration_number)
+    MyDrawableLinearLayout tvCalibrationNumber;//校准仪器名称
     @BindView(R.id.edit_remarks)
     EditText edeRemarks;//备注
+    @BindView(R.id.linear_delete)
+    LinearLayout linearDelete;
+    @BindView(R.id.linear_save)
+    LinearLayout linearSave;
 
 
     @Override
@@ -85,25 +99,40 @@ public class NoiseBasicFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        if (!CheckUtil.isNull(mSample)) {
-            tvSampleNo.setText(mSample.getSamplingNo());
-            tvSampleName.setText(mSample.getProjectName());
-            tvNature.setText(mProject.getMonType());
-            tvDate.setText(mSample.getSamplingTimeBegin());
-            edFactoryName.setText(mPrivateData.getClientName());
-            edFactoryAddress.setText(mPrivateData.getClientAddr());
-            edFactoryInfo.setText(mPrivateData.getProductionCondition());
-            tvWeatherState.setText(mSample.getWeather());
-            edWingSpeed.setText(mSample.getWindSpeed());
-            edCalibrationFront.setText(mPrivateData.getCalibrationBefore());
-            edCalibrationAfter.setText(mPrivateData.getCalibrationAfter());
-            tvDeviceNumber.setText(mPrivateData.getWindDevName());
-            tvMonitorForm.setText(mSample.getMethodName());
-            tvMonitorDeviceName.setText(mSample.getDeviceName());
-            edCalibrationMethod.setText(mPrivateData.getCalibrationMethodName());
-            tvCalibrationNumber.setText(mPrivateData.getCalibrationDeviceName());
-            edeRemarks.setText(mSample.getComment());
+        //setViewData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setViewData();
+    }
+
+    private void setViewData() {
+        tvSampleNo.setRightTextStr(mSample.getSamplingNo());
+        tvSampleName.setRightTextStr(mSample.getProjectName());
+        tvNature.setRightTextStr(mProject.getMonType());
+        tvDate.setRightTextStr(mSample.getSamplingTimeBegin());
+        tvWeatherState.setRightTextStr(mSample.getWeather());
+        edWingSpeed.setEditTextStr(mSample.getWindSpeed());
+        tvMonitorForm.setRightTextStr(mSample.getMethodName());
+        tvMonitorDeviceName.setRightTextStr(mSample.getDeviceName());
+        edeRemarks.setText(mSample.getComment());
+        if (mPrivateData != null && mPrivateData.getClientName() != null) {
+            edFactoryName.setEditTextStr(mPrivateData.getClientName());
+        } else {
+            edFactoryName.setEditTextStr(mProject.getClientName());
+            // edFactoryAddress.setText(mProject.getc());
         }
+        edFactoryAddress.setEditTextStr(mPrivateData.getClientAddr());
+        edFactoryInfo.setEditTextStr(mPrivateData.getProductionCondition());
+
+        edCalibrationFront.setEditTextStr(mPrivateData.getCalibrationBefore());
+        edCalibrationAfter.setEditTextStr(mPrivateData.getCalibrationAfter());
+        tvDeviceNumber.setRightTextStr(mPrivateData.getWindDevName());
+
+        edCalibrationMethod.setEditTextStr(mPrivateData.getCalibrationMethodName());
+        tvCalibrationNumber.setRightTextStr(mPrivateData.getCalibrationDeviceName());
     }
 
     /**
@@ -111,46 +140,51 @@ public class NoiseBasicFragment extends BaseFragment {
      *
      * @return
      */
-    public void saveSampling() {
-        mSample.setWindSpeed(edWingSpeed.getText().toString());
+    public void savePrivateData() {
+        mSample.setWindSpeed(edWingSpeed.getEditTextStr());
         if (mPrivateData != null && mSample != null) {
-            mPrivateData.setClientName(tvFactoryName.getText().toString());
-            mPrivateData.setClientAddr(tvFactoryAddress.getText().toString());
-            mPrivateData.setProductionCondition(edFactoryInfo.getText().toString());
-            mPrivateData.setCalibrationBefore(edCalibrationFront.getText().toString());
-            mPrivateData.setCalibrationAfter(edCalibrationAfter.getText().toString());
-            mPrivateData.setWindDevName(tvDeviceNumber.getText().toString());
-            mPrivateData.setCalibrationMethodName(edCalibrationMethod.getText().toString());
-            mPrivateData.setCalibrationDeviceName(tvCalibrationNumber.getText().toString());
-
-            Gson gson = new Gson();
-            String jsonStr = gson.toJson(mPrivateData);
+            mPrivateData.setClientName(edFactoryName.getEditTextStr());
+            mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
+            mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());
+            mPrivateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
+            mPrivateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
+            mPrivateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
+            mPrivateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
+            mPrivateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
+            String jsonStr = new Gson().toJson(mPrivateData);
             mSample.setPrivateData(jsonStr);
+            mProject.setClientName(edFactoryName.getEditTextStr());
+            saveMySample();
         }
     }
 
-    @OnClick({R.id.text_view_date, R.id.text_weather_state, R.id.text_view_device_number,
-            R.id.text_view_monitor_from, R.id.text_view_monitor_device_name,
-            R.id.text_view_calibration_number})
+    @OnClick({R.id.my_layout_date, R.id.my_layout_weather_state, R.id.my_layout_device_number,
+            R.id.my_layout_monitor_from, R.id.my_layout_device_name,
+            R.id.my_layout_calibration_number, R.id.linear_delete, R.id.linear_save
+    })
     public void onClick(View v) {
+        hideSoftInput();
         switch (v.getId()) {
-            case R.id.text_view_date://日期
-                showDateSelectDialog(tvDate);
+            case R.id.my_layout_date://日期
+                showDateSelectDialog(tvDate.getRightTextView());
                 break;
-            case R.id.text_weather_state://天气
+            case R.id.my_layout_weather_state://天气
                 showWeatherChoose();
                 break;
-            case R.id.text_view_device_number://风速仪型号及编号
+            case R.id.my_layout_device_number://风速仪型号及编号
                 getDevice(tvDeviceNumber, 1);
                 break;
-            case R.id.text_view_monitor_from://监测方法及来源
+            case R.id.my_layout_monitor_from://监测方法及来源
                 showSamplingMethods(tvMonitorForm);
                 break;
-            case R.id.text_view_monitor_device_name://监测仪器名称,型号及编号
+            case R.id.my_layout_device_name://监测仪器名称,型号及编号
                 getDevice(tvMonitorDeviceName, 2);
                 break;
-            case R.id.text_view_calibration_number://校准仪器名称、型号及编号(溯源信息)
+            case R.id.my_layout_calibration_number://校准仪器名称、型号及编号(溯源信息)
                 getDevice(tvCalibrationNumber, 3);
+                break;
+            case R.id.linear_delete:
+            case R.id.linear_save:
                 break;
         }
     }
@@ -158,12 +192,12 @@ public class NoiseBasicFragment extends BaseFragment {
     /**
      * 获取设备名称及编号
      *
-     * @param tvDeviceNumber 显示的tv
-     * @param type           {@int1风速仪型号及编号
+     * @param myDrawableLinearLayout 显示的tv
+     * @param type                   {@int1风速仪型号及编号
      * @int2监测仪器名称、型号及编号(溯源信息)
      * @int3校准仪器名称、型号及编号(溯源信息) }
      */
-    private void getDevice(TextView tvDeviceNumber, int type) {
+    private void getDevice(MyDrawableLinearLayout myDrawableLinearLayout, int type) {
         Intent intent = new Intent();
         intent.setClass(getContext(), DeviceActivity.class);
         intent.putExtra("methodId", mSample.getMethodId() == null ? "" : mSample.getMethodId());
@@ -177,7 +211,6 @@ public class NoiseBasicFragment extends BaseFragment {
                     String sourceWay = data.getStringExtra("SourceWay");
                     String expireDate = data.getStringExtra("ExpireDate");
                     String deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
-
                     switch (type) {
                         case 1:
                             mSample.setPrivateDataStringValue("WindDevName", deviceName);
@@ -185,6 +218,8 @@ public class NoiseBasicFragment extends BaseFragment {
                         case 2:
                             mSample.setDeviceId(deviceId);
                             mSample.setDeviceName(deviceName);
+                            mSample.setPrivateDataStringValue("SourceWay", sourceWay);
+                            mSample.setPrivateDataStringValue("SourceDate", expireDate);
                             break;
                         case 3:
                             mSample.setPrivateDataStringValue("CalibrationDeviceName", deviceName);
@@ -192,7 +227,7 @@ public class NoiseBasicFragment extends BaseFragment {
                             break;
                     }
 
-                    tvDeviceNumber.setText(deviceText);
+                    myDrawableLinearLayout.setRightTextStr(deviceText);
                 }
             }
         });
@@ -201,7 +236,7 @@ public class NoiseBasicFragment extends BaseFragment {
     /**
      * 选择采样方法
      */
-    private void showSamplingMethods(TextView tv) {
+    private void showSamplingMethods(MyDrawableLinearLayout myDrawableLinearLayout) {
         if (CheckUtil.isEmpty(mSample.getFormType())) {
             ArtUtils.makeText(getContext(), "请先设置表单类型");
             return;
@@ -214,7 +249,7 @@ public class NoiseBasicFragment extends BaseFragment {
                 if (resultCode == Activity.RESULT_OK) {
                     mSample.setMethodName(data.getStringExtra("MethodName"));
                     mSample.setMethodId(data.getStringExtra("MethodId"));
-                    tv.setText(mSample.getMethodName());
+                    myDrawableLinearLayout.setRightTextStr(mSample.getMethodName());
                 }
             }
         });
@@ -246,10 +281,22 @@ public class NoiseBasicFragment extends BaseFragment {
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
                     mSample.setWeather(data.getStringExtra("weather"));
-                    tvWeatherState.setText(mSample.getWeather());
+                    tvWeatherState.setRightTextStr(mSample.getWeather());
                 }
             }
         });
+    }
+
+
+    @SuppressLint("NewApi")
+    public void textDataDrawable(String s, TextView textView) {
+        Drawable drawable;
+        if (s == null || s.equals("")) {
+            drawable = getActivity().getDrawable(R.mipmap.icon_no_data);
+        } else {
+            drawable = getActivity().getDrawable(R.mipmap.icon_yes_data);
+        }
+        textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null);
     }
 
     @Nullable
@@ -263,4 +310,13 @@ public class NoiseBasicFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void showMessage(@NonNull String message) {
+
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message message) {
+
+    }
 }

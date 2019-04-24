@@ -74,6 +74,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/text_color_333333</item>
+        <item name="android:drawablePadding">@dimen/dp_12</item>
         <item name="android:textSize">@dimen/text_size_14</item>
     </style>
 
@@ -272,5 +273,19 @@
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/text_size_21</item>
+    </style>
+
+    <style name="noiseBottomTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawablePadding">@dimen/dp_6</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#2F9AFF</item>
+    </style>
+
+    <style name="MyDrawableLinearLayoutItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/btn_height_dp_56</item>
+
     </style>
 </resources>

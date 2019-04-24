@@ -157,7 +157,7 @@ public class TrajectoryServer extends Service {
     private void init() {
         mClient = new LBSTraceClient(getApplicationContext());
         UserInfo userInfo = UserInfoHelper.get().getUserInfo();
-        name = userInfo.getName() + "(" + userInfo.getWorkNo() + ")";
+        name = userInfo.getName() + "-" + userInfo.getWorkNo();
         mTrace = new Trace(serviceId, name);
         mTrace.setNotification(notification);
         trackConf = getSharedPreferences("track_conf", MODE_PRIVATE);

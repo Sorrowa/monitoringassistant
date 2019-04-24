@@ -401,7 +401,14 @@ public class DateUtils {
         return new SimpleDateFormat("HH:mm:ss").format(date);
     }
 
-
+    /**
+     * 返回时间
+     * @param date
+     * @return
+     */
+    public static String getTimeNoMinute(Date date) {
+        return new SimpleDateFormat("HH:mm").format(date);
+    }
     /**
      * 获取当前年月日
      *

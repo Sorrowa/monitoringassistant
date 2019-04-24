@@ -12,6 +12,7 @@ public class NoiseMonitorPrivateData {
      * YCorrectedValue : 6786
      */
 
+    private String id;
     private String TimeInterval;
     private String ZTestTime;
     private String ZEndTestTime;
@@ -20,6 +21,41 @@ public class NoiseMonitorPrivateData {
     private String YBackgroundValue;
     private String YCorrectedValue;
     private boolean isChecked;
+    private String AddressName;
+    private String value;
+    private String addressId;
+
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getAddressName() {
+        return AddressName;
+    }
+
+    public void setAddressName(String addressName) {
+        AddressName = addressName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public boolean isChecked() {
         return isChecked;
@@ -38,6 +74,7 @@ public class NoiseMonitorPrivateData {
     }
 
     public String getZTestTime() {
+        if (ZTestTime == null) ZTestTime = "";
         return ZTestTime;
     }
 

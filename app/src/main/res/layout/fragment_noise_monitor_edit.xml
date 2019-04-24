@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -45,36 +46,41 @@
 
             <include layout="@layout/view_line" />
 
-            <LinearLayout
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_monitor_address"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="测点位置"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
+
+            <include layout="@layout/view_line" />
+
+            <RelativeLayout
+                android:id="@+id/relate_layout"
                 style="@style/BasicInfoItemStyle"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
                     style="@style/BasicInfoItemNameStyle"
-                    android:text="测点位置" />
+                    android:text="等效声级测量值" />
 
-                <TextView
-                    android:id="@+id/text_monitor_address"
-                    style="@style/BasicInfoItemTextViewStyle"
-                    android:layout_marginLeft="@dimen/dp_20"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                <ImageButton
+                    android:id="@+id/btn_is_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:background="@null"
+                    android:src="@drawable/selector_btn_open" />
+            </RelativeLayout>
 
-            <include layout="@layout/view_line" />
-
-            <TextView
-                android:id="@+id/text_is_open"
-                style="@style/BasicInfoItemStyle"
-                android:drawableRight="@drawable/selector_btn_open"
-                android:gravity="center|start"
-                android:text="等效声级测量值"
-                android:textColor="@color/text_color_333333"
-                android:textSize="@dimen/text_size_14" />
 
             <include layout="@layout/view_line" />
 
             <LinearLayout
+                android:id="@+id/linear_open"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -83,114 +89,92 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <LinearLayout
-                    style="@style/BasicInfoItemStyle"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BasicInfoItemNameStyle"
-                        android:text="监测时段" />
-
-                    <TextView
-                        android:id="@+id/tv_monitor_date"
-                        style="@style/BasicInfoItemTextViewStyle"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_weight="1" />
-                </LinearLayout>
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_date"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="false"
+                    app:leftText="监测时段"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line" />
 
-                <LinearLayout
-                    style="@style/BasicInfoItemStyle"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BasicInfoItemNameStyle"
-                        android:text="监测时间" />
-
-                    <TextView
-                        android:id="@+id/tv_monitor_time_first"
-                        style="@style/BasicInfoItemTextViewStyle"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_weight="1" />
-                </LinearLayout>
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_time_first_start"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="true"
+                    app:leftText="监测开始时间"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line" />
 
-                <LinearLayout
-                    style="@style/BasicInfoItemStyle"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BasicInfoItemNameStyle"
-                        android:text="测量值" />
-
-                    <EditText
-                        android:id="@+id/edit_monitor_data"
-                        style="@style/BasicInfoItemEditTextStyle"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_weight="1"
-                        android:inputType="number" />
-                </LinearLayout>
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_time_first_end"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="true"
+                    app:leftText="监测结束时间"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line" />
 
-                <LinearLayout
-                    style="@style/BasicInfoItemStyle"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BasicInfoItemNameStyle"
-                        android:text="监测时间" />
-
-                    <TextView
-                        android:id="@+id/tv_monitor_time"
-                        style="@style/BasicInfoItemTextViewStyle"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_weight="1" />
-                </LinearLayout>
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_data"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="false"
+                    app:leftText="测量值"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line" />
 
-                <LinearLayout
-                    style="@style/BasicInfoItemStyle"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/BasicInfoItemNameStyle"
-                        android:text="背景值" />
-
-                    <EditText
-                        android:id="@+id/edit_monitor_bg_data"
-                        style="@style/BasicInfoItemEditTextStyle"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_weight="1"
-                        android:inputType="number" />
-                </LinearLayout>
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_time_start"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="true"
+                    app:leftText="监测开始时间"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line" />
 
-                <LinearLayout
-                    style="@style/BasicInfoItemStyle"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_time_end"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="true"
+                    app:leftText="监测结束时间"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
-                    <TextView
-                        style="@style/BasicInfoItemNameStyle"
-                        android:text="修正值" />
+                <include layout="@layout/view_line" />
 
-                    <EditText
-                        android:id="@+id/edit_monitor_edit_data"
-                        style="@style/BasicInfoItemEditTextStyle"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:layout_weight="1"
-                        android:inputType="number" />
-                </LinearLayout>
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_bg_data"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="false"
+                    app:leftText="背景值"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
+
+
+                <include layout="@layout/view_line" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_monitor_edit_data"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:drawableRight="@mipmap/ic_has_next"
+                    app:isShowRightTextView="false"
+                    app:leftText="修正值"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line" />
 

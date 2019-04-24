@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/BasicInfoItemStyle"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/text_view_left"
+        style="@style/BasicInfoItemNameStyle"
+        android:text="企业名称" />
+
+
+    <TextView
+        android:id="@+id/text_view"
+        style="@style/RightViewItemStyle"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/edit_text"
+        style="@style/BasicInfoItemEditTextStyle"
+        android:layout_gravity="center" />
+
+</LinearLayout>

@@ -24,8 +24,10 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -38,6 +40,10 @@ import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
+/**
+ * 点位选择 如果采样的监测性质是环境质量{@montype=3} 则在环境质量点位里面查
+ *
+ */
 public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.recyclerView_point)
@@ -121,11 +127,23 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
     private void getPointData(boolean isRelationPoint) {
         List<String> pointIds = new ArrayList<>();
         //List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId),ProjectDetialDao.Properties.TagId.eq(tagId)).list();
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
-        if (!CheckUtil.isEmpty(projectDetials)) {
-            for (ProjectDetial projectDetial : projectDetials) {
-                pointIds.add(projectDetial.getAddressId());
-                Log.d(TAG,projectDetial.getAddressId()+":"+projectDetial.getAddress());
+//        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
+//        if (!CheckUtil.isEmpty(projectDetials)) {
+//            for (ProjectDetial projectDetial : projectDetials) {
+//                pointIds.add(projectDetial.getAddressId());
+//                Log.d(TAG,projectDetial.getAddressId()+":"+projectDetial.getAddress());
+//            }
+//        }
+        //List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId),ProjectDetialDao.Properties.TagId.eq(tagId)).list();
+        //获取立项点位
+        List<ProjectContent> projectContentList = DBHelper.get().getProjectContentDao().queryBuilder().where(ProjectContentDao.Properties.ProjectId.eq(projectId)).list();
+        if (!CheckUtil.isEmpty(projectContentList)) {
+            for (ProjectContent content : projectContentList) {
+                for (String s : content.getAddressIds().split(",")) {
+                    pointIds.add(s);
+                    Log.d(TAG, s);
+                }
+
             }
         }
 

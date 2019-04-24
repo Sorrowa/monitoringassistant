@@ -31,6 +31,7 @@ public class RxObserver<T> implements Observer<T> {
     public static final int TYPE_TIME_OUT = 0;//请求超时
     public static final int TYPE_NO_NETWORK = 1;//网络错误
     public static final int TYPE_TOKEN_EXPIRED = 2;//Token错误
+    public static final int TYPE_CONNECT_EXPIRED = 3;//连接异常
     public static final int TYPE_ERROR = 3;//错误
     public static final int TYPE_EMPTY = 4;//数据为空
     public static final int CODE_DEFAULT = 100000;//默认的code值
@@ -84,9 +85,12 @@ public class RxObserver<T> implements Observer<T> {
         Timber.tag("Catch-Error").w(t.getMessage());
         String msg = "未知错误";
         int type = TYPE_ERROR;
-        if (t instanceof UnknownHostException || t instanceof ConnectException) {
+        if (t instanceof UnknownHostException) {
             msg = "网络连接异常，请稍后再试";
             type = TYPE_NO_NETWORK;
+        } else if (t instanceof ConnectException) {
+            msg = "服务器无响应,请稍后重试";
+            type = TYPE_CONNECT_EXPIRED;
         } else if (t instanceof SocketTimeoutException) {
             msg = "请求网络超时";
             type = TYPE_TIME_OUT;

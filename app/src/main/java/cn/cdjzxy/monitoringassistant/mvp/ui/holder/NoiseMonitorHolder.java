@@ -39,7 +39,7 @@ public class NoiseMonitorHolder extends BaseHolder<NoiseMonitorPrivateData> {
                 }
             }
         });
-        tvName.setText(data.getTimeInterval());
+        tvName.setText(data.getAddressName());
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

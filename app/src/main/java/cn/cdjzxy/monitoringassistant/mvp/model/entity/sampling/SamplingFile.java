@@ -19,10 +19,11 @@ public class SamplingFile implements Parcelable {
     private String FilePath;
     private String UpdateTime;
     private boolean IsUploaded;
+
     @Keep()
     public SamplingFile(String LocalId, String Id, String SamplingId,
-            String FileName, String FilePath, String UpdateTime,
-            boolean IsUploaded) {
+                        String FileName, String FilePath, String UpdateTime,
+                        boolean IsUploaded, boolean isSelect) {
         this.LocalId = LocalId;
         this.Id = Id;
         this.SamplingId = SamplingId;
@@ -31,48 +32,63 @@ public class SamplingFile implements Parcelable {
         this.UpdateTime = UpdateTime;
         this.IsUploaded = IsUploaded;
     }
+
     @Keep()
     public SamplingFile() {
     }
+
     public String getId() {
         return this.Id;
     }
+
     public void setId(String Id) {
         this.Id = Id;
     }
+
     public String getSamplingId() {
         return this.SamplingId;
     }
+
     public void setSamplingId(String SamplingId) {
         this.SamplingId = SamplingId;
     }
+
     public String getFileName() {
         return this.FileName;
     }
+
     public void setFileName(String FileName) {
         this.FileName = FileName;
     }
+
     public String getFilePath() {
         return this.FilePath;
     }
+
     public void setFilePath(String FilePath) {
         this.FilePath = FilePath;
     }
+
     public String getLocalId() {
         return this.LocalId;
     }
+
     public void setLocalId(String LocalId) {
         this.LocalId = LocalId;
     }
+
     public String getUpdateTime() {
         return this.UpdateTime;
     }
+
     public void setUpdateTime(String UpdateTime) {
         this.UpdateTime = UpdateTime;
     }
+
     public boolean getIsUploaded() {
         return this.IsUploaded;
     }
+
     public void setIsUploaded(boolean IsUploaded) {
         this.IsUploaded = IsUploaded;
     }
@@ -102,6 +118,18 @@ public class SamplingFile implements Parcelable {
         this.FilePath = in.readString();
         this.UpdateTime = in.readString();
         this.IsUploaded = in.readByte() != 0;
+    }
+
+    @Generated(hash = 1777992089)
+    public SamplingFile(String LocalId, String Id, String SamplingId, String FileName,
+            String FilePath, String UpdateTime, boolean IsUploaded) {
+        this.LocalId = LocalId;
+        this.Id = Id;
+        this.SamplingId = SamplingId;
+        this.FileName = FileName;
+        this.FilePath = FilePath;
+        this.UpdateTime = UpdateTime;
+        this.IsUploaded = IsUploaded;
     }
 
     public static final Creator<SamplingFile> CREATOR = new Creator<SamplingFile>() {

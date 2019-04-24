@@ -58,6 +58,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
@@ -569,6 +570,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             DBHelper.get().getEnterRelatePointDao().deleteAll();
                             DBHelper.get().getEnterRelatePointDao().insertInTx(baseResponse.getData());
+
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
@@ -814,12 +816,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     public void onSuccess(BaseResponse<List<Project>> baseResponse) {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             List<Project> projects = baseResponse.getData();//所有与我相关的任务
-                            //todo:找出时间后于服务器的数据
+                            //
                             ProjectDao dao = DBHelper.get().getProjectDao();
                             //日期转化
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             for (Project project : projects) {
-
                                 Project old = dao.queryBuilder()
                                         .where(ProjectDao.Properties.Id.eq(project.getId()))
                                         .build()
@@ -831,6 +832,12 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         DBHelper.get()
                                                 .getProjectDetialDao()
                                                 .insertInTx(projectDetials);
+                                    }
+                                    List<ProjectContent> projectContentList=project.getProjectContents();
+                                    if (!CheckUtil.isEmpty(projectContentList)) {
+                                        DBHelper.get()
+                                                .getProjectContentDao()
+                                                .insertInTx(projectContentList);
                                     }
                                     dao.insert(project);
                                     continue;
@@ -850,6 +857,13 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                                     .getProjectDetialDao()
                                                     .updateInTx(projectDetials);
                                         }
+                                        List<ProjectContent> projectContentList=project.getProjectContents();
+                                        if (!CheckUtil.isEmpty(projectContentList)) {
+                                            DBHelper.get()
+                                                    .getProjectContentDao()
+                                                    .updateInTx(projectContentList);
+                                        }
+
                                     }
                                     //如果是客户端后更新,那么不用任何操作,因为存储的就是最新的
                                 } catch (ParseException e) {

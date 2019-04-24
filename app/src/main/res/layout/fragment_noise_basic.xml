@@ -12,282 +12,198 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样单编号" />
-
-            <TextView
-                android:id="@+id/base_sample_no"
-                style="@style/RightViewItemStyle" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_number"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="采样单编号"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_name"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="项目名称"
+            app:rightEditTextHint="请输入"
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="项目名称" />
-
-            <TextView
-                android:id="@+id/text_view_name"
-                style="@style/RightViewItemStyle" />
-
-        </LinearLayout>
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_nature"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="监测性质"
+            app:rightEditTextHint="请输入"
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测性质" />
-
-            <TextView
-                android:id="@+id/text_view_nature"
-                style="@style/RightViewItemStyle" />
-        </LinearLayout>
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_date"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="监测日期"
+            app:rightEditTextHint="请输入"
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测日期" />
-
-            <TextView
-                android:id="@+id/text_view_date"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_factory_name"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="企业名称"
+            app:rightEditTextHint="请输入"
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="企业名称" />
-
-
-            <TextView
-                android:id="@+id/text_view_factory_name"
-                style="@style/RightViewItemStyle"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/edit_factory_name"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="企业地址"
-                android:textColor="#333333" />
-
-            <TextView
-                android:id="@+id/text_view_factory_address"
-                style="@style/RightViewItemStyle"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/edit_factory_address"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_gravity="center" />
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_factory_address"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="false"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择"
+            app:leftText="企业地址" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_factory_info"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="生产工况"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="生产工况"
-                android:textColor="#333333" />
+        <include layout="@layout/view_line_basic_info"
+            android:visibility="gone"/>
 
-            <EditText
-                android:id="@+id/edit_factory_info"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="生产设备"
-                android:textColor="#333333" />
-
-            <EditText
-                android:id="@+id/edit_factory_device"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:layout_gravity="center"
-                android:text="天气" />
-
-            <TextView
-                android:id="@+id/text_weather_state"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="风速（m/s）" />
-
-            <EditText
-                android:id="@+id/edit_wind_speed"
-                style="@style/BasicInfoItemEditTextStyle" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="测前校准值【dB(A)】" />
-
-            <EditText
-                android:id="@+id/edit_calibration_front"
-                style="@style/BasicInfoItemEditTextStyle" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="测后校准值【dB(A)】" />
-
-            <EditText
-                android:id="@+id/edit_calibration_after"
-                style="@style/BasicInfoItemEditTextStyle" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测方法及来源" />
-
-            <TextView
-                android:id="@+id/text_view_monitor_from"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="风速仪型号及编号" />
-
-            <TextView
-                android:id="@+id/text_view_device_number"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_factory_device"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="生产设备"
+            android:visibility="gone"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测仪器名称、型号及编号(溯源信息)" />
-
-            <TextView
-                android:id="@+id/text_view_monitor_device_name"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_weather_state"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="天气"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="校准方法" />
-
-            <EditText
-                android:id="@+id/edit_calibration_method"
-                style="@style/BasicInfoItemEditTextStyle" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_wind_speed"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="风速（m/s）"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_calibration_front"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="测前校准值【dB(A)】"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle">
+        <include layout="@layout/view_line_basic_info" />
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="校准仪器名称、型号及编号(溯源信息)" />
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_calibration_after"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="测后校准值【dB(A)】"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-            <TextView
-                android:id="@+id/text_view_calibration_number"
-                style="@style/RightViewItemHintStyle" />
+        <include layout="@layout/view_line_basic_info" />
 
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_monitor_from"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="监测方法及来源"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
+
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_device_number"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="风速仪型号及编号"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_device_name"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="监测仪器名称、型号及编号(溯源信息)"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_calibration_method"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="校准方法"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
+
+        <include layout="@layout/view_line_basic_info" />
+
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_calibration_number"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="校准仪器名称、型号及编号(溯源信息)"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
@@ -297,6 +213,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/calibration_number"
                 style="@style/BasicInfoItemNameStyle"
                 android:text="备注" />
 
@@ -311,6 +228,9 @@
         <include layout="@layout/view_line_basic_info" />
 
 
+        <include
+            layout="@layout/item_noise_bottom_save_or_delete"
+            android:visibility="gone" />
     </LinearLayout>
 
 </ScrollView>

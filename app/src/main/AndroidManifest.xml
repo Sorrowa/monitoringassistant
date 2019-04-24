@@ -274,6 +274,10 @@
             android:name=".mvp.ui.module.task.noise.activity.NoiseFactoryActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".mvp.ui.module.task.point.EnterRelatePointSelectActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

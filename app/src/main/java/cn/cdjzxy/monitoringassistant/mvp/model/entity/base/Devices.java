@@ -32,30 +32,31 @@ public class Devices {
      * SourceWay : 检定
      */
     @Id
-    private String  Id;
-    private String  Name;
-    private String  Specification;
-    private String  SystemCode;
-    private String  DevCode;
-    private String  DepartmentId;
-    private String  DepartmentName;
-    private String  Company;
-    private String  PurchasingDate;
-    private float   RePrice;
-    private String  StoreLoaction;
-    private String  ExpireDate;
-    private String  Manager;
-    private int     State;
+    private String Id;
+    private String Name;
+    private String Specification;
+    private String SystemCode;
+    private String DevCode;
+    private String DepartmentId;
+    private String DepartmentName;
+    private String Company;
+    private String PurchasingDate;
+    private float RePrice;
+    private String StoreLoaction;
+    private String ExpireDate;
+    private String Manager;
+    private int State;
     private boolean IsForceChecked;
-    private String  CertCode;
-    private String  SourceWay;
+    private String CertCode;
+    private String SourceWay;
+    private String sourceDate;
 
     @Keep()
     public Devices(String Id, String Name, String Specification, String SystemCode,
                    String DevCode, String DepartmentId, String DepartmentName,
                    String Company, String PurchasingDate, float RePrice,
                    String StoreLoaction, String ExpireDate, String Manager, int State,
-                   boolean IsForceChecked, String CertCode, String SourceWay) {
+                   boolean IsForceChecked, String CertCode, String SourceWay,String sourceDate) {
         this.Id = Id;
         this.Name = Name;
         this.Specification = Specification;
@@ -73,6 +74,7 @@ public class Devices {
         this.IsForceChecked = IsForceChecked;
         this.CertCode = CertCode;
         this.SourceWay = SourceWay;
+        this.sourceDate=sourceDate;
     }
 
     @Keep()
@@ -215,5 +217,11 @@ public class Devices {
         this.SourceWay = SourceWay;
     }
 
+    public String getSourceDate() {
+        return sourceDate;
+    }
 
+    public void setSourceDate(String sourceDate) {
+        this.sourceDate = sourceDate;
+    }
 }

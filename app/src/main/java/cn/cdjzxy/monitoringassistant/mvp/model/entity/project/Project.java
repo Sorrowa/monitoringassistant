@@ -46,42 +46,44 @@ public class Project {
      */
 
     @Id
-    private String              Id;
-    private String              UpdateTime;
-    private String              Name;
-    private String              ProjectNo;
-    private String              Urgency;
-    private String              ContractCode;
-    private String              Type;
-    private int                 TypeCode;
-    private String              MonType;
-    private String              ClientName;
-    private String              ClientId;
-    private String              CreaterId;
-    private String              CreaterName;
-    private String              RcvId;
-    private String              RcvName;
-    private String              StartDate;
-    private String              EndDate;
-    private String              CurrentNodeType;
-    private String              Status;
-    private String              AssignDate;
-    private String              CreateDate;
-    private boolean             FinishState;
-    private String              FinishDate;
-    private String              PlanBeginTime;
-    private String              PlanEndTime;
-    private boolean             CanSamplingEidt;//是否允许修改方案
-    private boolean             isSamplingEidt;//是否修改方案
+    private String Id;
+    private String UpdateTime;
+    private String Name;
+    private String ProjectNo;
+    private String Urgency;
+    private String ContractCode;
+    private String Type;
+    private int TypeCode;
+    private String MonType;
+    private String ClientName;
+    private String ClientId;
+    private String CreaterId;
+    private String CreaterName;
+    private String RcvId;
+    private String RcvName;
+    private String StartDate;
+    private String EndDate;
+    private String CurrentNodeType;
+    private String Status;
+    private String AssignDate;
+    private String CreateDate;
+    private boolean FinishState;
+    private String FinishDate;
+    private String PlanBeginTime;
+    private String PlanEndTime;
+    private boolean CanSamplingEidt;//是否允许修改方案
+    private boolean isSamplingEidt;//是否修改方案wo
 
     @Convert(columnType = String.class, converter = StringConverter.class)
-    private List<String>        SamplingUser;
+    private List<String> SamplingUser;
     @Transient
     private List<ProjectDetial> ProjectDetials;
+    @Transient
+    private List<ProjectContent> ProjectContent;
 
     @Keep()
     public Project(String Id, String UpdateTime, String Name, String ProjectNo, String Urgency, String ContractCode, String Type, int TypeCode, String MonType, String ClientName, String ClientId, String CreaterId, String CreaterName, String RcvId, String RcvName, String StartDate, String EndDate, String CurrentNodeType, String Status, String AssignDate, String CreateDate, boolean FinishState, String FinishDate, String PlanBeginTime, String PlanEndTime, boolean CanSamplingEidt,
-            boolean isSamplingEidt, List<String> SamplingUser) {
+                   boolean isSamplingEidt, List<String> SamplingUser) {
         this.Id = Id;
         this.UpdateTime = UpdateTime;
         this.Name = Name;
@@ -117,13 +119,20 @@ public class Project {
     }
 
 
-
     public List<ProjectDetial> getProjectDetials() {
         return ProjectDetials;
     }
 
     public void setProjectDetials(List<ProjectDetial> projectDetials) {
         ProjectDetials = projectDetials;
+    }
+
+    public List<ProjectContent> getProjectContents() {
+        return ProjectContent;
+    }
+
+    public void setProjectContents(List<ProjectContent> projectContents) {
+        ProjectContent = projectContents;
     }
 
     public String getId() {
@@ -349,7 +358,6 @@ public class Project {
     public void setSamplingUser(List<String> SamplingUser) {
         this.SamplingUser = SamplingUser;
     }
-
 
 
 }

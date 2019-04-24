@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
 
 import com.fanneng.android.web.IWebLayout;
@@ -42,7 +43,7 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
 
     protected SuperWebX5 mSuperWebX5;
     public static final String URL_KEY = "url_key";
-    public static final String TAG     = WebFragment.class.getSimpleName();
+    public static final String TAG = WebFragment.class.getSimpleName();
     private MiddleWareWebChromeBase mMiddleWareWebChrome;
     private MiddleWareWebClientBase mMiddleWareWebClient;
 
@@ -77,13 +78,13 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
                 .setReceivedTitleCallback(mCallback)
                 .setPermissionInterceptor(mPermissionInterceptor)
                 .setNotifyIcon(R.mipmap.download)
-                .addJavascriptInterface("Android", new WebViewJavaScriptFunction() {
-                    @Override
-                    public void onBack() {
-                        //返回
-                        WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK,null);
-                    }
-                })
+//                .addJavascriptInterface("Android", new WebViewJavaScriptFunction() {
+//                    @Override
+//                    public void onBack() {
+//                        //返回
+//                        WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
+//                    }
+//                })
                 .useMiddleWareWebChrome(getMiddleWareWebChrome())
                 .useMiddleWareWebClient(getMiddleWareWebClient())
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
@@ -94,7 +95,17 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
                 .createSuperWeb()
                 .ready()
                 .go(getUrl());
+
+        mSuperWebX5.getJsInterfaceHolder().addJavaObject("Android", new AndroidInterface(new AndroidInterface.Back() {
+            @Override
+            public void onBack() {
+                WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
+            }
+        }));
+
     }
+
+
 
     /**
      * 权限拦截器

@@ -13,12 +13,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
+import com.micheal.print.thread.ThreadPool;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +31,18 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoiseMonitorPrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.NoiseMonitorAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.NoisePointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_INT_MONITOR_EDIT;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_MONITOR_SHARE;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_SHARE;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
+
 
 /**
  * 噪声监测数据列表
@@ -47,28 +54,63 @@ public class NoiseMonitorListFragment extends BaseFragment implements IView {
     LinearLayout linearAdd;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    public static List<NoiseMonitorPrivateData> mPrivateDataList;
+    private List<NoiseMonitorPrivateData> mPrivateDataList;
     private NoiseMonitorAdapter adapter;
+    public List<String> selectList;//选中的集合
 
     @Override
     public View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_noise_source_list, null);
     }
 
+    public void showLoading(String msg) {
+        showLoadingDialog(msg);
+    }
+
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
+    }
+
+
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initListData("");
+        initRecyclerView();
+    }
+
+    @Subscriber(tag = NOISE_FRAGMENT_MONITOR_SHARE)
+    private void initListData(String s) {
         mPrivateDataList = new ArrayList<>();
-        if (mPrivateData != null && mSample != null) {
-            if (mSample.getSamplingContentResults() != null && mSample.getSamplingContentResults().size() > 0) {
+        selectList = new ArrayList<>();
+        if (mSample != null) {
+            if (mSample.getSamplingDetailResults() != null && mSample.getSamplingDetailResults().size() > 0) {
                 Gson gson = new Gson();
-                for (SamplingContent content : mSample.getSamplingContentResults()) {
+                for (SamplingDetail content : mSample.getSamplingDetailResults()) {
                     NoiseMonitorPrivateData privateData = gson.fromJson(content.getPrivateData(),
                             NoiseMonitorPrivateData.class);
+                    privateData.setId(content.getId());
+                    privateData.setAddressName(content.getAddressName());
+                    privateData.setValue(content.getValue());
+                    privateData.setChecked(content.isSelected());
                     mPrivateDataList.add(privateData);
                 }
             }
         }
-        initRecyclerView();
+        for (NoiseMonitorPrivateData privateData : mPrivateDataList) {
+            if (privateData.isChecked()) {
+                selectList.add(privateData.getId());
+            }
+        }
+        if (adapter != null) adapter.refreshInfos(mPrivateDataList);
+
     }
 
     private void initRecyclerView() {
@@ -78,17 +120,46 @@ public class NoiseMonitorListFragment extends BaseFragment implements IView {
         adapter = new NoiseMonitorAdapter(mPrivateDataList, new NoiseMonitorAdapter.ItemClickListener() {
             @Override
             public void onSelected(View view, int position) {
-                showMessage(position + "");
+                upListSelectState(position);
             }
 
             @Override
             public void onClick(View view, int position) {
-                EventBus.getDefault().post(7, EventBusTags.TAG_NOISE_FRAGMENT_TYPE_MONITOR_EDIT);
-                getActivity().getSharedPreferences("noise", 0).edit()
-                        .putInt(EventBusTags.TAG_NOISE_FRAGMENT_TYPE_MONITOR_EDIT, position).commit();
+                getActivity().getSharedPreferences(NOISE_FRAGMENT_SHARE, 0).edit()
+                        .putInt(NOISE_FRAGMENT_MONITOR_SHARE, position).commit();
+                EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR_EDIT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
             }
         });
         recyclerView.setAdapter(adapter);
+    }
+
+
+    /**
+     * 更新选择状态
+     *
+     * @param position
+     */
+    private void upListSelectState(int position) {
+        if (mPrivateDataList.get(position) != null) {
+            if (mPrivateDataList.get(position).isChecked()) {
+                mPrivateDataList.get(position).setChecked(false);
+                if (selectList != null && selectList.size() > 0) {
+                    if (selectList.contains(mPrivateDataList.get(position).getId())) {
+                        selectList.remove(mPrivateDataList.get(position).getId());
+                    }
+                }
+            } else {
+                mPrivateDataList.get(position).setChecked(true);
+                if (selectList == null) {
+                    selectList = new ArrayList<>();
+                }
+                if (!selectList.contains(mPrivateDataList.get(position).getId())) {
+                    selectList.add(mPrivateDataList.get(position).getId());
+                }
+
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Nullable
@@ -114,13 +185,69 @@ public class NoiseMonitorListFragment extends BaseFragment implements IView {
 
     @OnClick({R.id.linear_delete, R.id.linear_add})
     public void onClick(View v) {
+        hideSoftInput();
         switch (v.getId()) {
             case R.id.linear_delete:
-                showMessage("待开发");
+                deleteSelect();
                 break;
             case R.id.linear_add:
-                showMessage("待开发");
+                if (mPrivateData == null || mPrivateData.getMianNioseAddr().size() == 0) {
+                    showMessage("请先选择监测点位信息");
+                } else {
+                    getActivity().getSharedPreferences(NOISE_FRAGMENT_SHARE, 0).edit()
+                            .putInt(NOISE_FRAGMENT_MONITOR_SHARE, -1).commit();
+                    EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR_EDIT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
+                }
                 break;
+        }
+    }
+
+    private void deleteSelect() {
+        if (mPrivateDataList == null || mPrivateDataList.size() == 0) {
+            showMessage("暂无可删除列表");
+            return;
+        }
+        if (selectList.size() == 0) {
+            showMessage("请选择删除选项");
+            return;
+        }
+        showLoading("正在删除");
+        ThreadPool.getInstantiation().addTask(new Runnable() {
+            @Override
+            public void run() {
+                for (String id : selectList) {
+                    for (int i = 0; i < mPrivateDataList.size(); i++) {
+                        if (id.equals(mPrivateDataList.get(i).getId())) {
+                            mPrivateDataList.remove(i);
+                            for (int j = 0; j < mSample.getSamplingDetailResults().size(); j++) {
+                                if (id.equals(mSample.getSamplingDetailResults().get(j).getId())) {
+                                    mSample.getSamplingDetailResults().remove(j);
+                                }
+                            }
+                        }
+                    }
+                }
+                selectList.clear();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        hideLoading();
+                    }
+                });
+            }
+        });
+    }
+
+
+    /**
+     * 保存信息
+     *
+     * @return
+     */
+    public void savePrivateData() {
+        if (mSample != null) {
+
         }
     }
 }

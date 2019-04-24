@@ -15,6 +15,7 @@
  */
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.base;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -127,5 +129,14 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
         }
     }
 
-
+    /**
+     * 动态隐藏软键盘
+     *
+     */
+    public void hideSoftInput() {
+        View view = getActivity().getCurrentFocus();
+        if (view == null) view = new View(getActivity());
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

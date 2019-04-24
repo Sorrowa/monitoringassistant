@@ -62,6 +62,6 @@
     <dimen name="btn_height_dp_36">36dp</dimen>
     <dimen name="btn_height_dp_40">40dp</dimen>
     <dimen name="btn_height_dp_52">52dp</dimen>
-
+    <dimen name="btn_height_dp_56">56dp</dimen>
 
 </resources>

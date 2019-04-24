@@ -40,15 +40,19 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingContent> {
     @Override
     public void setData(SamplingContent detail, int position) {
         collect_frequency.setText("频次：" + detail.getFrequecyNo());
-        collect_date.setText(CheckUtil.isEmpty(detail.getSamplingTime())?"-":detail.getSamplingTime());
+        collect_date.setText(CheckUtil.isEmpty(detail.getSamplingTime()) ? "-" : detail.getSamplingTime());
         collect_sample_count.setText("样品数量：" + detail.getSamplingCount());
         String monitorIdsStr = detail.getMonitemId();
         if (!CheckUtil.isEmpty(monitorIdsStr) && monitorIdsStr.length() > 0) {
             collect_monitor_project.setText("监测项目（" + monitorIdsStr.split(",").length + "）：" + detail.getMonitemName());
+        } else {
+            collect_monitor_project.setText("监测项目（0）：");
         }
         String monitorStr = detail.getSenceMonitemId();
         if (!CheckUtil.isEmpty(monitorStr) && monitorStr.length() > 0) {
             collect_live_measure.setText("现场监测（" + monitorStr.split(",").length + "）：" + detail.getSenceMonitemName());
+        }else {
+            collect_live_measure.setText("现场监测（0）：");
         }
 
         if (detail.getSamplingType() == 0) {
@@ -58,7 +62,7 @@ public class WasteWaterCollectHolder extends BaseHolder<SamplingContent> {
         } else if (detail.getSamplingType() == 2) {
             collect_operate.setText(Constants.SAMPLING_TYPE_KB);
             //String frequency=detail.getFrequecyNo()==0?"--":detail.getFrequecyNo()+"";
-            String frequency="-";
+            String frequency = "-";
             collect_frequency.setText("频次：" + frequency);
         }
 

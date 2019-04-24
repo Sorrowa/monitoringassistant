@@ -53,14 +53,14 @@ public class SubmitDataUtil {
         List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList = setUpSamplingDetailDataList(sampling);
         if (!CheckUtil.isEmpty(detailsBeanList)) {
             sampFormBean.setSamplingDetails(detailsBeanList);
-        }else {
+        } else {
             sampFormBean.setSamplingDetails(new ArrayList<>());
         }
         //setUpBottleSplitDataList
         List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList = setUpBottleSplitDataList(sampling);
         if (!CheckUtil.isEmpty(bottleSplitDataList)) {
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
-        }else {
+        } else {
             sampFormBean.setSamplingFormStands(new ArrayList<>());
         }
 
@@ -94,7 +94,11 @@ public class SubmitDataUtil {
         sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeEnd());
         sampFormBean.setTagName(sampling.getTagName());
         sampFormBean.setTagId(sampling.getTagId());
-        sampFormBean.setAddressId(sampling.getAddressId());
+        if (sampling.getAddressId() == null || sampling.getAddressId().equals("")) {
+            sampFormBean.setAddressId("00000000-0000-0000-0000-000000000000");
+        } else {
+            sampFormBean.setAddressId(sampling.getAddressId());
+        }
         sampFormBean.setAddressName(sampling.getAddressName());
         sampFormBean.setAddressNo(sampling.getAddressNo());
         sampFormBean.setMonitemId(sampling.getMonitemId());
@@ -161,7 +165,7 @@ public class SubmitDataUtil {
                 samplingDetailsBean.setAddressName(sampling.getAddressName());
                 if (samplingDetail.getOrderIndex() == 0) {
                     samplingDetailsBean.setOrderIndex(count + "");
-                }else{
+                } else {
                     samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex() + "");
                 }
                 samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
@@ -192,6 +196,7 @@ public class SubmitDataUtil {
 
     /**
      * 降水SamplingDetail设置
+     *
      * @param sampling
      * @return
      */
@@ -285,7 +290,7 @@ public class SubmitDataUtil {
         List<PreciptationSampForm.SampFormBean.SamplingFileBean> result = new ArrayList<>();
 
         //从数据库加载数据
-        List<SamplingFile> dataList = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()),SamplingFileDao.Properties.Id.notEq(""),SamplingFileDao.Properties.IsUploaded.eq(false)).list();
+        List<SamplingFile> dataList = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.Id.notEq(""), SamplingFileDao.Properties.IsUploaded.eq(false)).list();
         if (CheckUtil.isEmpty(dataList)) {
             return result;
         }
@@ -346,6 +351,33 @@ public class SubmitDataUtil {
     }
 
     /**
+     * 组织噪声 工业企业界提交数据
+     *
+     * @return
+     */
+    public static PreciptationSampForm setNoiseIndustralData(Sampling sampling) {
+        PreciptationSampForm preciptationSampForm = new PreciptationSampForm();
+        preciptationSampForm.setIsAdd(true);
+        preciptationSampForm.setIsSubmit(true);
+        PreciptationSampForm.SampFormBean sampFormBean = setUpSampFormBean(sampling);
+        List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList = setUpJsSamplingDetailDataList(sampling);
+        if (!CheckUtil.isEmpty(detailsBeanList)) {
+            sampFormBean.setSamplingDetails(detailsBeanList);
+        } else {
+            sampFormBean.setSamplingDetails(new ArrayList<>());
+        }
+        List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList = setUpBottleSplitDataList(sampling);
+        if (!CheckUtil.isEmpty(bottleSplitDataList)) {
+            sampFormBean.setSamplingFormStands(bottleSplitDataList);
+        } else {
+            sampFormBean.setSamplingFormStands(new ArrayList<>());
+        }
+        preciptationSampForm.setSampForm(sampFormBean);
+        sampFormBean.setSamplingDetailYQFs(new ArrayList<>());
+        return preciptationSampForm;
+    }
+
+    /**
      * 设置提交的降水数据
      *
      * @param sampling
@@ -363,17 +395,17 @@ public class SubmitDataUtil {
         //设置SampFormBean数据
         PreciptationSampForm.SampFormBean sampFormBean = setUpSampFormBean(sampling);
         //setSamplingDetails
-        List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList=setUpJsSamplingDetailDataList(sampling);
-        if (!CheckUtil.isEmpty(detailsBeanList)){
+        List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> detailsBeanList = setUpJsSamplingDetailDataList(sampling);
+        if (!CheckUtil.isEmpty(detailsBeanList)) {
             sampFormBean.setSamplingDetails(detailsBeanList);
-        }else {
+        } else {
             sampFormBean.setSamplingDetails(new ArrayList<>());
         }
         //setUpBottleSplitDataList
-        List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList=setUpBottleSplitDataList(sampling);
-        if (!CheckUtil.isEmpty(bottleSplitDataList)){
+        List<PreciptationSampForm.SampFormBean.SamplingFormStandsBean> bottleSplitDataList = setUpBottleSplitDataList(sampling);
+        if (!CheckUtil.isEmpty(bottleSplitDataList)) {
             sampFormBean.setSamplingFormStands(bottleSplitDataList);
-        }else {
+        } else {
             sampFormBean.setSamplingFormStands(new ArrayList<>());
         }
         preciptationSampForm.setSampForm(sampFormBean);
@@ -384,9 +416,10 @@ public class SubmitDataUtil {
 
     /**
      * 设置采样方案数据
+     *
      * @return
      */
-    public static ProjectPlan setUpProjectPlan(Project project){
+    public static ProjectPlan setUpProjectPlan(Project project) {
         List<ProjectDetial> mProjectDetials = new ArrayList<>();
         Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
@@ -491,7 +524,7 @@ public class SubmitDataUtil {
                 projectContent.setAddressArr(addressArrs);
                 projectContent.setAddressCount(addressArrs.size());
                 //projectContent.setProjectDetials(new ArrayList<>());
-                List<ProjectDetial> projectDetialsList=generateProjectDetials(projectDetial.getMonItemId(),project);
+                List<ProjectDetial> projectDetialsList = generateProjectDetials(projectDetial.getMonItemId(), project);
                 projectContent.setProjectDetials(projectDetialsList);
                 projectContents.add(projectContent);
             }
@@ -508,16 +541,17 @@ public class SubmitDataUtil {
 
     /**
      * 修改采样方案数据组装
+     *
      * @return
      */
-    private static List<ProjectDetial> generateProjectDetials(String monitorIds, Project project){
-        List<ProjectDetial> dataList=new ArrayList<>();
-        if (!CheckUtil.isEmpty(monitorIds)){
-            String[] monitorIdArray=monitorIds.split(",");
-            if (!CheckUtil.isEmpty(monitorIdArray)){
-                for (String monitorId:monitorIdArray){
-                    ProjectDetial projectDetial=getProjectDetials(monitorId,project);
-                    if (!CheckUtil.isNull(projectDetial)){
+    private static List<ProjectDetial> generateProjectDetials(String monitorIds, Project project) {
+        List<ProjectDetial> dataList = new ArrayList<>();
+        if (!CheckUtil.isEmpty(monitorIds)) {
+            String[] monitorIdArray = monitorIds.split(",");
+            if (!CheckUtil.isEmpty(monitorIdArray)) {
+                for (String monitorId : monitorIdArray) {
+                    ProjectDetial projectDetial = getProjectDetials(monitorId, project);
+                    if (!CheckUtil.isNull(projectDetial)) {
                         dataList.add(projectDetial);
                     }
                 }
@@ -526,18 +560,20 @@ public class SubmitDataUtil {
         return dataList;
     }
 
-    private static ProjectDetial getProjectDetials(String monitorId,Project project){
+    private static ProjectDetial getProjectDetials(String monitorId, Project project) {
         List<ProjectDetial> projectDetialsList = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
-        ProjectDetial projectDetial=null;
-        if (!CheckUtil.isEmpty(projectDetialsList)){
-            for (ProjectDetial projectDetial1:projectDetialsList){
-                String monitorIdStr=projectDetial1.getMonItemId();
-                if (!CheckUtil.isEmpty(monitorIdStr) && !CheckUtil.isEmpty(monitorId) && monitorIdStr.equals(monitorId)){
-                    projectDetial=projectDetial1;
+        ProjectDetial projectDetial = null;
+        if (!CheckUtil.isEmpty(projectDetialsList)) {
+            for (ProjectDetial projectDetial1 : projectDetialsList) {
+                String monitorIdStr = projectDetial1.getMonItemId();
+                if (!CheckUtil.isEmpty(monitorIdStr) && !CheckUtil.isEmpty(monitorId) && monitorIdStr.equals(monitorId)) {
+                    projectDetial = projectDetial1;
                     break;
                 }
             }
         }
         return projectDetial;
     }
+
+
 }

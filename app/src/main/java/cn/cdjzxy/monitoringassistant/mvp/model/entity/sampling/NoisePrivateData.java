@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -156,6 +157,7 @@ public class NoisePrivateData {
     }
 
     public List<MianNioseSourceBean> getMianNioseSource() {
+        if (MianNioseSource == null) MianNioseSource = new ArrayList<>();
         return MianNioseSource;
     }
 
@@ -164,6 +166,7 @@ public class NoisePrivateData {
     }
 
     public List<MianNioseAddrBean> getMianNioseAddr() {
+        if (MianNioseAddr == null) MianNioseAddr = new ArrayList<>();
         return MianNioseAddr;
     }
 
@@ -332,5 +335,7 @@ public class NoisePrivateData {
             this.guid = guid;
         }
     }
+
+
 }
 

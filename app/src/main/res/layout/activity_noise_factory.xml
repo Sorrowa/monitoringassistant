@@ -27,9 +27,8 @@
 
             <cn.cdjzxy.monitoringassistant.widgets.CustomTab
                 android:id="@+id/tab_view"
-                android:layout_width="258dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_4" />
+                android:layout_width="166dp"
+                android:layout_height="match_parent" />
 
             <View
                 android:layout_width="@dimen/division_line"
@@ -39,8 +38,11 @@
             <cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_4" />
+                android:layout_height="match_parent" />
+            <!--<FrameLayout-->
+            <!--android:id="@+id/frame_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
 
         </LinearLayout>
 
