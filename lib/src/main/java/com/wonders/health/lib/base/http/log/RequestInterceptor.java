@@ -80,11 +80,11 @@ public class RequestInterceptor implements Interceptor {
 
         if (logRequest) {
             //打印请求信息
-            if (request.body() != null && isParseable(request.body().contentType())) {
+            /*if (request.body() != null && isParseable(request.body().contentType())) {
                 mPrinter.printJsonRequest(request, parseParams(request));
             } else {
                 mPrinter.printFileRequest(request);
-            }
+            }*/
         }
 
         boolean logResponse = printLevel == Level.ALL || (printLevel != Level.NONE && printLevel == Level.RESPONSE);
@@ -115,13 +115,13 @@ public class RequestInterceptor implements Interceptor {
             final String message = originalResponse.message();
             final String url = originalResponse.request().url().toString();
 
-            if (responseBody != null && isParseable(responseBody.contentType())) {
+            /*if (responseBody != null && isParseable(responseBody.contentType())) {
                 mPrinter.printJsonResponse(TimeUnit.NANOSECONDS.toMillis(t2 - t1), isSuccessful,
                         code, header, responseBody.contentType(), bodyString, segmentList, message, url);
             } else {
                 mPrinter.printFileResponse(TimeUnit.NANOSECONDS.toMillis(t2 - t1),
                         isSuccessful, code, header, segmentList, message, url);
-            }
+            }*/
 
         }
 

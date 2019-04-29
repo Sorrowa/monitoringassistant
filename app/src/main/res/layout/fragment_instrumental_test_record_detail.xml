@@ -1,186 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:orientation="vertical">
 
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
     <LinearLayout
-        android:id="@+id/btn_back"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height_dp_52"
-        android:background="#F5F5F5">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:drawablePadding="@dimen/dp_16"
-            android:drawableRight="@mipmap/ic_has_next"
-            android:gravity="center_vertical"
-            android:text="监测结果"
-            android:textColor="#303030"
-            android:textSize="@dimen/text_size_14" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:text="监测详情"
-            android:textColor="#676767"
-            android:textSize="@dimen/text_size_14" />
-
-
-    </LinearLayout>
-
-    <include layout="@layout/view_line" />
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="样品编码" />
-
-        <TextView
-            android:id="@+id/tv_sample_code"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:drawableRight="@null"
-            android:hint="" />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="频次" />
-
-        <TextView
-            android:id="@+id/tv_frequency"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:drawableRight="@null"
-            android:hint=""
-            />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="点位" />
-
-        <TextView
-            android:id="@+id/tv_point"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:drawableRight="@null"
-            android:hint=""
-            />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="内控" />
-
-        <TextView
-            android:id="@+id/tv_control"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:drawableRight="@null"
-            android:hint=""
-            />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="监测日期" />
-
-        <TextView
-            android:id="@+id/tv_test_time"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:drawableRight="@null"
-            android:hint=""
-            />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <LinearLayout style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="分析时间" />
-
-        <TextView
-            android:id="@+id/tv_analyse_time"
-            android:layout_height="match_parent"
-            style="@style/RightViewItemHintStyle" />
-
-    </LinearLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <LinearLayout style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="分析结果" />
-
-        <EditText
-            android:id="@+id/et_analyse_result"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:layout_height="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="right|center"
-            android:inputType="numberDecimal"
-            android:maxLength="64" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/btn_back"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_height_dp_52"
+                android:background="#F5F5F5">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:drawableRight="@mipmap/ic_has_next"
+                    android:drawablePadding="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:text="监测结果"
+                    android:textColor="#303030"
+                    android:textSize="@dimen/text_size_14" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:text="监测详情"
+                    android:textColor="#676767"
+                    android:textSize="@dimen/text_size_14" />
+
+
+            </LinearLayout>
+
+            <include layout="@layout/view_line" />
+
+            <RelativeLayout style="@style/BasicInfoItemStyle">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="样品编码" />
+
+                <TextView
+                    android:id="@+id/tv_sample_code"
+                    style="@style/BasicInfoItemTextViewStyle"
+                    android:drawableRight="@null"
+                    android:hint="" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <RelativeLayout style="@style/BasicInfoItemStyle">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="频次" />
+
+                <TextView
+                    android:id="@+id/tv_frequency"
+                    style="@style/BasicInfoItemTextViewStyle"
+                    android:drawableRight="@null"
+                    android:hint="" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <RelativeLayout style="@style/BasicInfoItemStyle">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="点位" />
+
+                <TextView
+                    android:id="@+id/tv_point"
+                    style="@style/BasicInfoItemTextViewStyle"
+                    android:drawableRight="@null"
+                    android:hint="" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <RelativeLayout style="@style/BasicInfoItemStyle">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="内控" />
+
+                <TextView
+                    android:id="@+id/tv_control"
+                    style="@style/BasicInfoItemTextViewStyle"
+                    android:drawableRight="@null"
+                    android:hint="" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <RelativeLayout style="@style/BasicInfoItemStyle">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="监测日期" />
+
+                <TextView
+                    android:id="@+id/tv_test_time"
+                    style="@style/BasicInfoItemTextViewStyle"
+                    android:drawableRight="@null"
+                    android:hint="" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <LinearLayout
+                style="@style/BasicInfoItemStyle"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="分析时间" />
+
+                <TextView
+                    android:id="@+id/tv_analyse_time"
+                    style="@style/RightViewItemHintStyle"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <LinearLayout
+                style="@style/BasicInfoItemStyle"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="分析结果" />
+
+                <EditText
+                    android:id="@+id/et_analyse_result"
+                    style="@style/BasicInfoItemEditTextStyle"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="right|center"
+                    android:inputType="numberDecimal"
+                    android:maxLength="64" />
+
+            </LinearLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <LinearLayout
+                style="@style/BasicInfoItemStyle"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="结果单位" />
+
+                <TextView
+                    android:id="@+id/tv_test_unit"
+                    style="@style/RightViewItemHintStyle"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center" />
+
+            </LinearLayout>
+
+            <include layout="@layout/view_line_basic_info" />
+        </LinearLayout>
+
+
+
 
     </LinearLayout>
-
+</ScrollView>
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="结果单位" />
-
-        <TextView
-            android:id="@+id/tv_test_unit"
-            android:layout_height="match_parent"
-            android:gravity="right|center"
-            style="@style/RightViewItemHintStyle" />
-
-    </LinearLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -192,10 +210,10 @@
         <RelativeLayout
             android:id="@+id/btn_delete"
             android:layout_width="0dp"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/tv_delete"
@@ -257,5 +275,5 @@
 
     </LinearLayout>
 
-
 </LinearLayout>
+

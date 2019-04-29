@@ -3,7 +3,6 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -57,8 +56,8 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     private PointAdapter mPointAdapter;
 
     private Project mProject;
-    private List<ProjectDetial> mProjectDetials = new ArrayList<>();
-    private Map<String, ProjectDetial> mStringProjectDetialMap = new HashMap<>();
+    private List<ProjectDetial> mProjectDetials;
+    private Map<String, ProjectDetial> mStringProjectDetialMap;
 
 
     private static final int authBaseRequestCode = 1;
@@ -93,20 +92,16 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-        initPointData();
         getData();
+        initPointData();
+
 
         //初始化导航
-        try {
-            if (initDirs()) {
-                initNavi();
-            }
-            //初始化定位
-            initLocation();
-        } catch (Exception e) {
-            Log.e(TAG, "initData: " + e.toString());
+        if (initDirs()) {
+            initNavi();
         }
-
+        //初始化定位
+        initLocation();
     }
 
     /**
@@ -119,10 +114,9 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if (mProject.getCanSamplingEidt()) {
-                    //if (!mProject.getCanSamplingEidt()) {
                     Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
-                    intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
                     intent.putExtra("projectId", projectId);
+                    intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
                     ArtUtils.startActivity(intent);
                 }
 
@@ -138,13 +132,16 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void getData() {
-        mProjectDetials.clear();
-        mStringProjectDetialMap.clear();
+        if (mProjectDetials == null) mProjectDetials = new ArrayList<>();
+        else mProjectDetials.clear();
+        if (mStringProjectDetialMap == null) mStringProjectDetialMap = new HashMap<>();
+        else mStringProjectDetialMap.clear();
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
                 if (CheckUtil.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
-                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
+                    //mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
+                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), newAsameProjectDetial(projectDetial));
                 } else {
                     ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
 
@@ -167,8 +164,39 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
             }
 
         }
-        mPointAdapter.refreshInfos(mProjectDetials);
+        if (mPointAdapter != null) {
+            mPointAdapter.refreshInfos(mProjectDetials);
+        }
+
         //mPointAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * copy a new ProjectDetial
+     *
+     * @param projectDetials
+     * @return
+     */
+    private ProjectDetial newAsameProjectDetial(ProjectDetial projectDetials) {
+        ProjectDetial newProjectDetial = new ProjectDetial();
+        newProjectDetial.setUpdateTime(projectDetials.getUpdateTime());
+        newProjectDetial.setTagParentName(projectDetials.getTagParentName());
+        newProjectDetial.setTagParentId(projectDetials.getTagParentId());
+        newProjectDetial.setTagName(projectDetials.getTagName());
+        newProjectDetial.setTagId(projectDetials.getTagId());
+        newProjectDetial.setProjectId(projectDetials.getProjectId());
+        newProjectDetial.setProjectContentId(projectDetials.getProjectContentId());
+        newProjectDetial.setPeriod(projectDetials.getPeriod());
+        newProjectDetial.setMonItemId(projectDetials.getMonItemId());
+        newProjectDetial.setMonItemName(projectDetials.getMonItemName());
+        newProjectDetial.setMethodName(projectDetials.getMethodName());
+        newProjectDetial.setMethodId(projectDetials.getMethodId());
+        newProjectDetial.setDays(projectDetials.getDays());
+        newProjectDetial.setComment(projectDetials.getComment());
+        newProjectDetial.setId(projectDetials.getId());
+        newProjectDetial.setAddressId(projectDetials.getAddressId());
+        newProjectDetial.setAddress(projectDetials.getAddress());
+        return newProjectDetial;
     }
 
 
@@ -216,7 +244,9 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
                         } else {
                             result = "key校验失败, " + msg;
                         }
-                        ArtUtils.makeText(PointActivity.this, result);
+//                        ArtUtils.makeText(PointActivity.this, result);
+                        Log.e(TAG, "onAuthResult: " + result);
+                        Log.i(TAG, "onAuthResult: " + result);
                     }
 
                     @Override

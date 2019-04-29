@@ -65,6 +65,11 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterAct
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
+
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mSampling;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
+import static cn.cdjzxy.monitoringassistant.utils.SamplingUtil.isMySampling;
+
 /**
  * 基本信息
  */
@@ -133,39 +138,39 @@ public class BasicFragment extends BaseFragment {
     public void initData(@Nullable Bundle savedInstanceState) {
         mPrivateData = new PreciptationPrivateData();
         mSamplingFiles.add(new SamplingFile());
-        if (!CheckUtil.isNull(PrecipitationActivity.mSampling)) {
-            tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
-            tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
-            tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
-            tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
-            tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
-            if (!CheckUtil.isEmpty(PrecipitationActivity.mSampling.getPrivateData())) {
-                mPrivateData = JSONObject.parseObject(PrecipitationActivity.mSampling.getPrivateData(), PreciptationPrivateData.class);
+        if (!CheckUtil.isNull(mSampling)) {
+            tvSamplingDate.setText(mSampling.getSamplingTimeBegin());
+            tvSamplingUser.setText(mSampling.getSamplingUserName());
+            tvSamplingType.setText(mSampling.getTagName());
+            tvSamplingPoint.setText(mSampling.getAddressName());
+            tvSamplingNo.setText(mSampling.getAddressNo());
+            if (!CheckUtil.isEmpty(mSampling.getPrivateData())) {
+                mPrivateData = JSONObject.parseObject(mSampling.getPrivateData(), PreciptationPrivateData.class);
                 if (!CheckUtil.isNull(mPrivateData)) {
                     tvSamplingHeight.setText(mPrivateData.getSampHight());
                     etSamplingArea.setText(mPrivateData.getSampArea());
                 }
             }
-            tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
-            tvSamplingDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
-            tvFlowMethod.setText(PrecipitationActivity.mSampling.getTransfer());
-            tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
-            tv_receive_date.setText(PrecipitationActivity.mSampling.getReciveTime());
-            tvComment.setText(PrecipitationActivity.mSampling.getComment());
-            mSamplingFiles.addAll(PrecipitationActivity.mSampling.getSamplingFiless());
+            tvSamplingMethod.setText(mSampling.getMethodName());
+            tvSamplingDevice.setText(mSampling.getDeviceName());
+            tvFlowMethod.setText(mSampling.getTransfer());
+            tvFlowDate.setText(mSampling.getSendSampTime());
+            tv_receive_date.setText(mSampling.getReciveTime());
+            tvComment.setText(mSampling.getComment());
+            mSamplingFiles.addAll(mSampling.getSamplingFiless());
 
-            tvSamplingDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingUser.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingType.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingPoint.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingNo.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingHeight.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            etSamplingArea.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvSamplingDevice.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvFlowMethod.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvFlowDate.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
-            tvComment.setEnabled(PrecipitationActivity.mSampling.getIsCanEdit());
+            tvSamplingDate.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingUser.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingType.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingPoint.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingNo.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingHeight.setEnabled(mSampling.getIsCanEdit());
+            etSamplingArea.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingMethod.setEnabled(mSampling.getIsCanEdit());
+            tvSamplingDevice.setEnabled(mSampling.getIsCanEdit());
+            tvFlowMethod.setEnabled(mSampling.getIsCanEdit());
+            tvFlowDate.setEnabled(mSampling.getIsCanEdit());
+            tvComment.setEnabled(mSampling.getIsCanEdit());
         }
 
         //点位编号
@@ -182,11 +187,11 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
                 }
-                PrecipitationActivity.mSampling.setAddressNo(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+                mSampling.setAddressNo(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
                 //点位编号修改后依据新的点位编号重新生成采样单编号
                 String snPointPosition = "采样点位编号未填写";
                 if (!CheckUtil.isEmpty(s.toString())) {
@@ -194,7 +199,7 @@ public class BasicFragment extends BaseFragment {
                 }
 
                 String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-                for (SamplingDetail samplingDetail : PrecipitationActivity.mSampling.getSamplingDetailResults()) {
+                for (SamplingDetail samplingDetail : mSampling.getSamplingDetailResults()) {
                     String[] sampingCode = samplingDetail.getSampingCode().split("-");
                     samplingDetail.setSampingCode(sampingCode[0] + "-" + snPointPosition + snUserId + "-" + sampingCode[2]);
                 }
@@ -215,7 +220,7 @@ public class BasicFragment extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 mPrivateData.setSampHight(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
-                PrecipitationActivity.mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
+                mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
             }
         });
 
@@ -232,12 +237,12 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
                 }
                 mPrivateData.setSampArea(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
-                PrecipitationActivity.mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
+                mSampling.setPrivateData(JSONObject.toJSONString(mPrivateData));
             }
         });
 
@@ -254,11 +259,11 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
                 }
-                PrecipitationActivity.mSampling.setTransfer(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+                mSampling.setTransfer(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
             }
         });
 
@@ -275,11 +280,11 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
                 }
-                PrecipitationActivity.mSampling.setComment(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
+                mSampling.setComment(CheckUtil.isEmpty(s.toString()) ? "" : s.toString());
             }
         });
 
@@ -295,7 +300,7 @@ public class BasicFragment extends BaseFragment {
         mSamplingFileAdapter = new SamplingFileAdapter(mSamplingFiles, new SamplingFileAdapter.OnSamplingFileListener() {
             @Override
             public void onChoosePhoto() {
-                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
                 }
@@ -304,7 +309,7 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void onDeletePhoto(int position) {
-                if (PrecipitationActivity.mSampling == null && !TaskDetailActivity.isMySampling(PrecipitationActivity.mSampling)) {
+                if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
                 }
@@ -312,10 +317,10 @@ public class BasicFragment extends BaseFragment {
 
                 //记录删除的文件，提交给服务端
                 if (samplingFile != null) {
-                    PrecipitationActivity.mSampling.addDeleteFiles(samplingFile.getId());
+                    mSampling.addDeleteFiles(samplingFile.getId());
                 }
 
-                PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
+                mSampling.setSamplingFiless(mSamplingFiles);
                 mSamplingFileAdapter.notifyDataSetChanged();
             }
 
@@ -323,8 +328,11 @@ public class BasicFragment extends BaseFragment {
             public void onPirViewPhoto(int position) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 Bundle bundle = new Bundle();
+                List<SamplingFile> list = new ArrayList<>();
+                list.addAll(mSamplingFiles);
+                list.remove(0);
                 bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS
-                        , (ArrayList<SamplingFile>) mSamplingFiles);
+                        , (ArrayList<SamplingFile>) list);
                 intent.putExtra(PreviewActivity.PREVIEW_PHOTOS, bundle);
                 intent.putExtra(PreviewActivity.POSITION, position);
                 getActivity().startActivityForResult(intent, request_Code);
@@ -379,15 +387,21 @@ public class BasicFragment extends BaseFragment {
                 samplingFile.setId("");
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
-                samplingFile.setSamplingId(PrecipitationActivity.mSampling.getId());
+                samplingFile.setSamplingId(mSampling.getId());
                 samplingFile.setUpdateTime(DateUtils.getTime(new Date().getTime()));
                 mSamplingFiles.add(samplingFile);
             }
-
-            PrecipitationActivity.mSampling.setSamplingFiless(mSamplingFiles);
+            mSampling.setSamplingFiless(mSamplingFiles);
             mSamplingFileAdapter.notifyDataSetChanged();
-        } else if (requestCode == request_Code && requestCode == PreviewActivity.BACK_RESULT_CODE) {
-            mSamplingFiles = data.getParcelableArrayListExtra(PreviewActivity.PREVIEW_PHOTOS);
+        } else if (requestCode == request_Code && resultCode == PreviewActivity.BACK_RESULT_CODE) {
+            Bundle bundle = data.getBundleExtra(PreviewActivity.PREVIEW_PHOTOS);
+            List<SamplingFile> list = bundle.getParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS);
+            SamplingFile file = mSamplingFiles.get(0);
+            mSamplingFiles.clear();
+            mSamplingFiles.add(file);
+            mSamplingFiles.addAll(list);
+            mSampling.setSamplingFiless(mSamplingFiles);
+            mSamplingFileAdapter.notifyDataSetChanged();
         }
     }
 
@@ -431,86 +445,86 @@ public class BasicFragment extends BaseFragment {
                 break;
             case R.id.tv_sampling_type:
                 Intent intent = new Intent(getContext(), TypeActivity.class);
-                intent.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
+                intent.putExtra("tagId", mSampling.getParentTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            PrecipitationActivity.mSampling.setTagId(data.getStringExtra("TagId"));
-                            PrecipitationActivity.mSampling.setTagName(data.getStringExtra("TagName"));
-                            tvSamplingType.setText(PrecipitationActivity.mSampling.getTagName());
+                            mSampling.setTagId(data.getStringExtra("TagId"));
+                            mSampling.setTagName(data.getStringExtra("TagName"));
+                            tvSamplingType.setText(mSampling.getTagName());
                         }
                     }
                 });
                 break;
             case R.id.tv_sampling_user:
                 Intent intent1 = new Intent(getContext(), UserActivity.class);
-                intent1.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
-                intent1.putExtra("selectUserIds",PrecipitationActivity.mSampling.getSamplingUserId());
+                intent1.putExtra("projectId", mSampling.getProjectId());
+                intent1.putExtra("selectUserIds", mSampling.getSamplingUserId());
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            PrecipitationActivity.mSampling.setSamplingUserId(data.getStringExtra("UserId"));
-                            PrecipitationActivity.mSampling.setSamplingUserName(data.getStringExtra("UserName"));
-                            tvSamplingUser.setText(PrecipitationActivity.mSampling.getSamplingUserName());
+                            mSampling.setSamplingUserId(data.getStringExtra("UserId"));
+                            mSampling.setSamplingUserName(data.getStringExtra("UserName"));
+                            tvSamplingUser.setText(mSampling.getSamplingUserName());
                         }
                     }
                 });
                 break;
             case R.id.tv_sampling_point:
-                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getTagId())) {
+                if (CheckUtil.isEmpty(mSampling.getTagId())) {
                     ArtUtils.makeText(getContext(), "请先选择降水类型");
                     return;
                 }
                 Intent intent2 = new Intent(getContext(), PointSelectActivity.class);
-                intent2.putExtra("projectId", PrecipitationActivity.mSampling.getProjectId());
-                intent2.putExtra("tagId", PrecipitationActivity.mSampling.getTagId());
+                intent2.putExtra("projectId", mSampling.getProjectId());
+                intent2.putExtra("tagId", mSampling.getTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent2, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            PrecipitationActivity.mSampling.setAddressName(data.getStringExtra("Address"));
-                            PrecipitationActivity.mSampling.setAddressId(data.getStringExtra("AddressId"));
-                            PrecipitationActivity.mSampling.setAddressNo(data.getStringExtra("AddressNo"));
-                            tvSamplingPoint.setText(PrecipitationActivity.mSampling.getAddressName());
-                            tvSamplingNo.setText(PrecipitationActivity.mSampling.getAddressNo());
+                            mSampling.setAddressName(data.getStringExtra("Address"));
+                            mSampling.setAddressId(data.getStringExtra("AddressId"));
+                            mSampling.setAddressNo(data.getStringExtra("AddressNo"));
+                            tvSamplingPoint.setText(mSampling.getAddressName());
+                            tvSamplingNo.setText(mSampling.getAddressNo());
                         }
                     }
                 });
                 break;
             case R.id.tv_sampling_method:
-                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getParentTagId())) {
+                if (CheckUtil.isEmpty(mSampling.getParentTagId())) {
                     ArtUtils.makeText(getContext(), "请先选择降水类型");
                     return;
                 }
                 Intent intent3 = new Intent(getContext(), MethodActivity.class);
-                intent3.putExtra("tagId", PrecipitationActivity.mSampling.getParentTagId());
+                intent3.putExtra("tagId", mSampling.getParentTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent3, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            PrecipitationActivity.mSampling.setMethodName(data.getStringExtra("MethodName"));
-                            PrecipitationActivity.mSampling.setMethodId(data.getStringExtra("MethodId"));
-                            tvSamplingMethod.setText(PrecipitationActivity.mSampling.getMethodName());
+                            mSampling.setMethodName(data.getStringExtra("MethodName"));
+                            mSampling.setMethodId(data.getStringExtra("MethodId"));
+                            tvSamplingMethod.setText(mSampling.getMethodName());
                         }
                     }
                 });
                 break;
             case R.id.tv_sampling_device:
-                if (CheckUtil.isEmpty(PrecipitationActivity.mSampling.getMethodId())) {
+                if (CheckUtil.isEmpty(mSampling.getMethodId())) {
                     ArtUtils.makeText(getContext(), "请先选择方法");
                     return;
                 }
                 Intent intent4 = new Intent(getContext(), DeviceActivity.class);
-                intent4.putExtra("methodId", PrecipitationActivity.mSampling.getMethodId());
+                intent4.putExtra("methodId", mSampling.getMethodId());
                 new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            PrecipitationActivity.mSampling.setDeviceName(data.getStringExtra("DeviceName"));
-                            PrecipitationActivity.mSampling.setDeviceId(data.getStringExtra("DeviceId"));
-                            tvSamplingDevice.setText(PrecipitationActivity.mSampling.getDeviceName());
+                            mSampling.setDeviceName(data.getStringExtra("DeviceName"));
+                            mSampling.setDeviceId(data.getStringExtra("DeviceId"));
+                            tvSamplingDevice.setText(mSampling.getDeviceName());
                         }
                     }
                 });
@@ -523,8 +537,8 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                PrecipitationActivity.mSampling.setSamplingTimeBegin(DateUtils.getDate(date));
-                tvSamplingDate.setText(PrecipitationActivity.mSampling.getSamplingTimeBegin());
+                mSampling.setSamplingTimeBegin(DateUtils.getDate(date));
+                tvSamplingDate.setText(mSampling.getSamplingTimeBegin());
             }
         }).build();
         pvTime.setDate(Calendar.getInstance());
@@ -536,8 +550,8 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                PrecipitationActivity.mSampling.setSendSampTime(DateUtils.getTime(date.getTime()));
-                tvFlowDate.setText(PrecipitationActivity.mSampling.getSendSampTime());
+                mSampling.setSendSampTime(DateUtils.getTime(date.getTime()));
+                tvFlowDate.setText(mSampling.getSendSampTime());
             }
         }).setType(new boolean[]{true, true, true, true, true, true})
                 .isCyclic(true)

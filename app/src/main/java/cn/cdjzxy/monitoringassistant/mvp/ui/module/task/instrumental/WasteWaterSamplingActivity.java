@@ -42,6 +42,8 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.Te
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity.mSampling;
+
 public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter> {
 
 
@@ -84,9 +86,9 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        projectId = InstrumentalActivity.mSampling.getProjectId();
-        monitemId = InstrumentalActivity.mSampling.getMonitemId();
-        currSampling.addAll(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
+        projectId = mSampling.getProjectId();
+        monitemId = mSampling.getMonitemId();
+
 
         //初始化水和废水样品数据
         initSamplingDetailsData();
@@ -103,6 +105,7 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             }
         });
 
+        initCurrSamplings();
         //获取项目中所有的样品，过滤已添加的样品
         getSampling(TaskDetailActivity.PATH_WASTEWATER);
 
@@ -137,13 +140,28 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
         recyclerViewMonite.setAdapter(mWasteWaterSamplingAdapter);
     }
 
+    private void initCurrSamplings() {
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.ProjectId.eq(projectId),
+                        SamplingDao.Properties.FormPath.eq(TaskDetailActivity.PATH_INSTRUMENTAL)).list();
+        if (CheckUtil.isEmpty(samplings)) {
+            return;
+        }
+        for (Sampling item : samplings) {
+            if (item.getSamplingDetailYQFs() != null)
+                currSampling.addAll(item.getSamplingDetailYQFs());
+        }
+    }
+
     /**
      * 获取水和废水采样单
      *
      * @param path
      */
     private void getSampling(String path) {
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(projectId), SamplingDao.Properties.FormPath.eq(path)).orderDesc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.ProjectId.eq(projectId),
+                        SamplingDao.Properties.FormPath.eq(path)).orderDesc(SamplingDao.Properties.SamplingNo).list();
         if (CheckUtil.isEmpty(samplings)) {
             return;
         }
@@ -191,7 +209,8 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
     private boolean isExists(SamplingContent detail) {
         for (SamplingDetail item : currSampling) {
             //重复项：样品类型一致（样品、平行），样品编码一致
-            if (item.getSamplingType() == detail.getSamplingType() && item.getSampingCode().equals(detail.getSampingCode())) {
+            if (item.getSamplingType() == detail.getSamplingType() && item.getSampingCode().
+                    equals(detail.getSampingCode())) {
                 return true;
             }
         }
@@ -208,10 +227,10 @@ public class WasteWaterSamplingActivity extends BaseTitileActivity<ApiPresenter>
             return false;
         }
 
-        Sampling mSampling = InstrumentalActivity.mSampling;
 
         //先保存采样单
-        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.
+                Properties.Id.eq(mSampling.getId())).unique();
         if (CheckUtil.isNull(sampling)) {
             DBHelper.get().getSamplingDao().insert(mSampling);
         }

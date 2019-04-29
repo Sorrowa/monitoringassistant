@@ -94,7 +94,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
     @Override
     protected void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//请求电源管理
             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
             boolean isIgnoring = powerManager.isIgnoringBatteryOptimizations(getPackageName());
             if (!isIgnoring) {
@@ -105,13 +105,9 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            } else {
-                getUserInfo();
             }
-        } else {
-            getUserInfo();
         }
-
+        getUserInfo();
     }
 
     private void getUserInfo() {
@@ -262,7 +258,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
      * 进入主界面
      */
     private void toMain() {
-       // startTraceServer();//开启轨迹服务
+        // startTraceServer();//开启轨迹服务
         //  app.startTrajectoryServer(this);
         startRepositoeyDownload(name, pwd);
         startActivity(new Intent(this, MainActivity.class));

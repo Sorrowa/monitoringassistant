@@ -94,7 +94,9 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_search_white, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArtUtils.startActivity(WanderTaskSearchActivity.class);
+                Intent intent = new Intent();
+                intent.setClass(WanderTaskActivity.this, WanderTaskSearchActivity.class);
+                startActivity(intent);
             }
         }));
     }

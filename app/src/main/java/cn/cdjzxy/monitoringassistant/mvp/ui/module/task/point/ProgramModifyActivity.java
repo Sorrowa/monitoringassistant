@@ -122,8 +122,10 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         btnAddNew.setVisibility(View.GONE);
         tvAddParallel.setText("删除");
         tvAddBlank.setText("保存");
-        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
-        mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
+        mProject = DBHelper.get().getProjectDao().queryBuilder().
+                where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
+        mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().
+                where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
         oldMontorIds=mProjectDetial.getMethodId();
         bindView(mProjectDetial);
     }

@@ -40,6 +40,8 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapte
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterSamplingActivity;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity.mSampling;
+
 public class TestRecordFragment extends BaseFragment {
 
     Unbinder unbinder;
@@ -146,7 +148,7 @@ public class TestRecordFragment extends BaseFragment {
                 addPxItem();
                 break;
             case R.id.btn_add_blank:
-                if (TextUtils.isEmpty(InstrumentalActivity.mSampling.getMonitemId())) {
+                if (TextUtils.isEmpty(mSampling.getMonitemId())) {
                     ArtUtils.makeText(getContext(), "请选择项目！");
                     return;
                 }
@@ -168,13 +170,13 @@ public class TestRecordFragment extends BaseFragment {
     }
 
     private void initRecyclerViewData() {
-        if (!InstrumentalActivity.mSampling.getIsCanEdit()) {
+        if (!mSampling.getIsCanEdit()) {
             btnAddParallel.setVisibility(View.GONE);
             btnAddBlank.setVisibility(View.GONE);
         }
 
-        if (InstrumentalActivity.mSampling.getSamplingDetailYQFs() == null) {
-            InstrumentalActivity.mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
+        if (mSampling.getSamplingDetailYQFs() == null) {
+            mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
         }
 
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
@@ -185,22 +187,22 @@ public class TestRecordFragment extends BaseFragment {
         });
 
         //检查平行数据，决定是否可选中
-        checkPxData(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
+        checkPxData(mSampling.getSamplingDetailYQFs());
 
         //排序
-        Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
+        Collections.sort(mSampling.getSamplingDetailYQFs(), new DetailComparator());
 
 
-        mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(InstrumentalActivity.mSampling.getSamplingDetailYQFs());
+        mInstrumentalTestRecordAdapter = new InstrumentalTestRecordAdapter(mSampling.getSamplingDetailYQFs());
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
 
-                if (position < 0 || position >= InstrumentalActivity.mSampling.getSamplingDetailYQFs().size()) {
+                if (position < 0 || position >= mSampling.getSamplingDetailYQFs().size()) {
                     return;
                 }
 
-                SamplingDetail item = InstrumentalActivity.mSampling.getSamplingDetailYQFs().get(position);
+                SamplingDetail item = mSampling.getSamplingDetailYQFs().get(position);
                 if (item == null) {
                     return;
                 }
@@ -292,14 +294,14 @@ public class TestRecordFragment extends BaseFragment {
         DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
 
         //添加到样品记录的下一行
-        InstrumentalActivity.mSampling.getSamplingDetailYQFs().add(samplingDetail);
+        mSampling.getSamplingDetailYQFs().add(samplingDetail);
 
         currSelectDetails.setCanSelect(false);
         currSelectDetails.setSelected(false);
         currSelectDetails = null;
 
         //排序
-        Collections.sort(InstrumentalActivity.mSampling.getSamplingDetailYQFs(), new DetailComparator());
+        Collections.sort(mSampling.getSamplingDetailYQFs(), new DetailComparator());
 
         //更新列表
         mInstrumentalTestRecordAdapter.notifyDataSetChanged();

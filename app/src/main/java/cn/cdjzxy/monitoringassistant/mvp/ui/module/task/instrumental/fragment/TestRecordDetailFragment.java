@@ -398,7 +398,14 @@ public class TestRecordDetailFragment extends BaseFragment {
 
             if (detail.getSamplingType() == 0) {
                 //均值计算公式：（样品含量+平行样含量）/2
-                detail.setValue(calcAvg(value, targetValue) + "");
+                double valueDouble = calcAvg(value, targetValue);
+                int size = 0;
+                if (value > targetValue) {
+                    size = calcNumberNumOfBits(value);
+                } else if (targetValue > value) {
+                    size = calcNumberNumOfBits(targetValue);
+                }
+                detail.setValue(size > 0 ? valueDouble + "" : (int) valueDouble + "");
                 //原样数据，标记做了平行
                 detail.setPrivateDataBooleanValue("HasPX", true);
             }
@@ -421,7 +428,7 @@ public class TestRecordDetailFragment extends BaseFragment {
         int value2NumOfBits = calcNumberNumOfBits(value2);
 
         //保留位数：取小数位数最大的
-        return NumberUtil.fourHomesSixEntries((value1 + value2) / 2, value1NumOfBits > value2NumOfBits ? value1NumOfBits : value2NumOfBits);
+        return NumberUtil.fourHomesSixEntries((value1 + value2) / 2, value1 > value2 ? value1NumOfBits : value2NumOfBits);
     }
 
     /**

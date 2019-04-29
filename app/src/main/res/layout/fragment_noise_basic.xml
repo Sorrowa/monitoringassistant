@@ -91,18 +91,18 @@
             app:rightEditTextHint="请输入"
             app:rightTextHint="请选择" />
 
-        <include layout="@layout/view_line_basic_info"
-            android:visibility="gone"/>
+        <!--<include layout="@layout/view_line_basic_info"-->
+            <!--android:visibility="gone"/>-->
 
-        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-            android:id="@+id/my_layout_factory_device"
-            style="@style/MyDrawableLinearLayoutItemStyle"
-            app:drawableRight="@mipmap/ic_has_next"
-            app:isShowRightTextView="false"
-            app:leftText="生产设备"
-            android:visibility="gone"
-            app:rightEditTextHint="请输入"
-            app:rightTextHint="请选择" />
+        <!--<cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout-->
+            <!--android:id="@+id/my_layout_factory_device"-->
+            <!--style="@style/MyDrawableLinearLayoutItemStyle"-->
+            <!--app:drawableRight="@mipmap/ic_has_next"-->
+            <!--app:isShowRightTextView="false"-->
+            <!--app:leftText="生产设备"-->
+            <!--android:visibility="gone"-->
+            <!--app:rightEditTextHint="请输入"-->
+            <!--app:rightTextHint="请选择" />-->
 
 
         <include layout="@layout/view_line_basic_info" />

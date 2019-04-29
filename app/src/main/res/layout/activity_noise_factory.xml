@@ -4,48 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_default_bg"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:context=".mvp.ui.module.task.noise.activity.NoiseFactoryActivity">
 
     <include layout="@layout/layout_title_bar" />
 
     <LinearLayout
-        android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/white"
+        android:fitsSystemWindows="true"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <cn.cdjzxy.monitoringassistant.widgets.CustomTab
+            android:id="@+id/tab_view"
+            android:layout_width="166dp"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="@dimen/division_line"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:fitsSystemWindows="true"
-            android:orientation="horizontal">
+            android:background="@color/dc_c1c1c1" />
 
-            <cn.cdjzxy.monitoringassistant.widgets.CustomTab
-                android:id="@+id/tab_view"
-                android:layout_width="166dp"
-                android:layout_height="match_parent" />
-
-            <View
-                android:layout_width="@dimen/division_line"
-                android:layout_height="match_parent"
-                android:background="@color/dc_c1c1c1" />
-
-            <cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            <!--<FrameLayout-->
-            <!--android:id="@+id/frame_layout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent" />-->
-
-        </LinearLayout>
-
+        <cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <!--<FrameLayout-->
+        <!--android:id="@+id/frame_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
     </LinearLayout>
 

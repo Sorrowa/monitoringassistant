@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.adapter;
 
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,7 +12,7 @@ import java.util.List;
 public class FragmentAdapter extends FragmentPagerAdapter {
 
     private FragmentManager mFragmentManager;
-    private List<Fragment>  mFragments;
+    private List<Fragment> mFragments;
     private List<String> tags = new ArrayList<>();
 
     public FragmentAdapter(FragmentManager fm, List<Fragment> fragments) {
@@ -58,5 +59,10 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     public interface UpdateAble {
         void update();
+    }
+
+    @Override
+    public void restoreState(Parcelable state, ClassLoader loader) {
+        super.restoreState(state, loader);
     }
 }

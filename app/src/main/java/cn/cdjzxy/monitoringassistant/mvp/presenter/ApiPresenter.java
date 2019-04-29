@@ -904,7 +904,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     }
 
 
-    /**
+    /**获取采样规范
      * @param msg
      */
     public void getSamplingStantd(final Message msg) {

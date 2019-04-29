@@ -120,12 +120,12 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                     if (!checkBaseInfo()) {
                         return;
                     }
+                    List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
+                    if (!CheckUtil.isEmpty(samplingFiles)) {
+                        DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+                    }
                     //保存文件
                     if (!CheckUtil.isEmpty(mSample.getSamplingFiless())) {
-                        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
-                        if (!CheckUtil.isEmpty(samplingFiles)) {
-                            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
-                        }
                         if (CheckUtil.isNull(mSample.getSamplingFiless().get(0).getId())) {
                             //将补充位置的第一个图片去除,添加图片的标志
                             mSample.getSamplingFiless().remove(0);
@@ -190,7 +190,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         if (isNewCreate) {
-            mSample = SamplingUtil.createSample(projectId,formSelectId);
+            mSample = SamplingUtil.createSample(projectId, formSelectId);
         } else {
             mSample = DBHelper.get().getSamplingDao().queryBuilder().
                     where(SamplingDao.Properties.Id.eq(samplingId)).unique();
@@ -223,7 +223,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化Tab数据
      */
     private void initTabData() {
-        tabview.setTabs("基本信息", "样品采集", "分瓶信息", "签名");
+        tabview.setTabs("基本信息", "样品采集", "分瓶信息");
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
@@ -305,8 +305,6 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         }
         finish();
     }
-
-
 
 
     /**

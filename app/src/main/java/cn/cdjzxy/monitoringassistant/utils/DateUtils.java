@@ -199,7 +199,7 @@ public class DateUtils {
 
     public static String getHour(long time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             Date date = new Date();
             date.setTime(time);
             return sdf.format(date);
@@ -383,17 +383,22 @@ public class DateUtils {
         return new SimpleDateFormat("yyyy-MM-dd").format(date).toString();
     }
 
+    public static String getYears(Date date) {
+        return new SimpleDateFormat("yyyy-mm").format(date).toString();
+    }
+
     /**
      * 获取当前年月日
      *
      * @return 当前年月日
      */
     public static String getWholeDate() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:MM:ss").format(new Date()).toString();
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()).toString();
     }
 
     /**
      * 返回时间
+     *
      * @param date
      * @return
      */
@@ -403,12 +408,14 @@ public class DateUtils {
 
     /**
      * 返回时间
+     *
      * @param date
      * @return
      */
     public static String getTimeNoMinute(Date date) {
         return new SimpleDateFormat("HH:mm").format(date);
     }
+
     /**
      * 获取当前年月日
      *

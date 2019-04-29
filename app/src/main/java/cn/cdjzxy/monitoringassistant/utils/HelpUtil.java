@@ -176,15 +176,15 @@ public class HelpUtil {
         if (CheckUtil.isEmpty(mSample.getAddressId())) {
             return false;
         }
-        Gson gson = new Gson();
-        FsExtends fsExtends = gson.fromJson(mSample.getPrivateData(), FsExtends.class);
-        if (CheckUtil.isEmpty(mSample.getMethodId())) {
-            return false;
-        }
-
-        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
-            return false;
-        }
+//        Gson gson = new Gson();
+//        FsExtends fsExtends = gson.fromJson(mSample.getPrivateData(), FsExtends.class);
+//        if (CheckUtil.isEmpty(mSample.getMethodId())) {
+//            return false;
+//        }
+//
+//        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
+//            return false;
+//        }
         return true;
     }
 

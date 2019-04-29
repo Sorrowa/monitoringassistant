@@ -116,7 +116,7 @@ public class PwdModifyFragment extends BaseFragment<ApiPresenter> implements IVi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_modify_back:
-                EventBus.getDefault().post(4, EventBusTags.TAG_MODIFY_PWD);
+                EventBus.getDefault().post(5, EventBusTags.TAG_MODIFY_PWD);
                 break;
             case R.id.btn_submit:
                 String oldPwd = etOldPwd.getText().toString();

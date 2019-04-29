@@ -51,6 +51,8 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterAct
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mSampling;
+
 /**
  * 样品收集
  */
@@ -78,6 +80,7 @@ public class CollectionFragment extends BaseFragment {
     private PrecipitationCollectAdapter mPrecipitationCollectAdapter;
     private SharedPreferences collectListSettings;
     private SharedPreferences.Editor editor;
+    private List<SamplingDetail> list;
 
     public CollectionFragment() {
     }
@@ -141,14 +144,15 @@ public class CollectionFragment extends BaseFragment {
 
     @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label})
     public void onClick(View view) {
+        hideSoftInput();
         switch (view.getId()) {
             case R.id.btn_add_parallel:
 
                 break;
             case R.id.btn_add_blank:
                 //添加空白
-                if (TextUtils.isEmpty(PrecipitationActivity.mSampling.getAddressNo())) {
-                    ArtUtils.makeText(getContext(), "请先选择采样点位");
+                if (TextUtils.isEmpty(mSampling.getAddressName())) {
+                    ArtUtils.makeText(getContext(), "请先选择采样点位或者采样编号");
                     return;
                 }
                 editor.putInt("listPosition", -1);
@@ -158,7 +162,7 @@ public class CollectionFragment extends BaseFragment {
             case R.id.btn_print_label:
                 Gson gson = new Gson();
                 //构建标签数据
-                String labelStr = gson.toJson(buildPrintLabelList(PrecipitationActivity.mSampling));
+                String labelStr = gson.toJson(buildPrintLabelList(mSampling));
                 //构建封条数据
                 String sealStr = gson.toJson(buildSealInfo(PrecipitationActivity.mProject));
 
@@ -171,31 +175,36 @@ public class CollectionFragment extends BaseFragment {
     }
 
     private void initRecyclerViewData() {
-
-        if (!PrecipitationActivity.mSampling.getIsCanEdit()) {
+        list = new ArrayList<>();
+        if (!mSampling.getIsCanEdit()) {
             btnAddParallel.setVisibility(View.GONE);
             //btnAddBlank.setVisibility(View.GONE);
             //btnPrintLabel.setVisibility(View.GONE);
             btnAddBlank.setEnabled(false);
             btnPrintLabel.setEnabled(true);
             btnAddBlank.setAlpha(0.5f);
-        }else {
+        } else {
             btnAddBlank.setEnabled(true);
             btnPrintLabel.setEnabled(true);
             btnAddBlank.setAlpha(1f);
         }
 
-        if (PrecipitationActivity.mSampling.getSamplingDetailResults() == null) {
+        if (mSampling.getSamplingDetailResults() == null) {
             return;
         }
+
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
                 return true;
             }
         });
-
-        mPrecipitationCollectAdapter = new PrecipitationCollectAdapter(PrecipitationActivity.mSampling.getSamplingDetailResults());
+        for (SamplingDetail detail : mSampling.getSamplingDetailResults()) {
+            if (detail.getMonitemName().equals("降水量")) {//毛杨说的这个表单  这个只有降水量
+                list.add(detail);
+            }
+        }
+        mPrecipitationCollectAdapter = new PrecipitationCollectAdapter(list);
         mPrecipitationCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
@@ -223,7 +232,7 @@ public class CollectionFragment extends BaseFragment {
             info.setNumber(sampling.getSamplingNo());
             info.setFrequecyNo("频次：" + item.getFrequecyNo());
             info.setType("降水");//项目类型固定“降水”
-            info.setMonitemName("降水量");//监测项目固定“降水量”
+            info.setMonitemName(item.getMonitemName());//监测项目固定“降水量”
             info.setSampingCode(item.getSampingCode());
             info.setRemark("");//保存方法
             info.setCb1("交接");

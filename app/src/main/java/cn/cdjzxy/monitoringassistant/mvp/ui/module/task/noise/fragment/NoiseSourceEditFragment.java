@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +66,7 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
     LinearLayout linearSave;
     private NoisePrivateData.MianNioseSourceBean sourceBean;
     private int position;
-
+    private boolean isStop = false;
 
     @Override
     public View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        isStop = false;
+        Log.e(TAG, "initData: ");
         edSource.setEditTextStr("");
         edSourceName.setEditTextStr("");
         edSourceNum.setEditTextStr("");
@@ -89,7 +92,7 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && !isStop) {
             setDataShow();
         }
     }
@@ -120,7 +123,6 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
 
     @Override
     public void setData(@Nullable Object data) {
-
 
     }
 
@@ -182,7 +184,7 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
             mSample.setPrivateData(new Gson().toJson(mPrivateData));
         }
         saveMySample();
-        EventBus.getDefault().post("1",NOISE_FRAGMENT_SOURCE_SHARE);
+        EventBus.getDefault().post("1", NOISE_FRAGMENT_SOURCE_SHARE);
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_SOURCE, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
 
     }
@@ -215,5 +217,18 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
                     }
                 }).create();
         dialog.show();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(TAG, "onStop: ");
+        isStop = true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "onDestroy: ");
     }
 }

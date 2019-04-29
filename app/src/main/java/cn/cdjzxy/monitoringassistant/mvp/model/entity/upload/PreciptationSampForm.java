@@ -618,6 +618,66 @@ public class PreciptationSampForm {
             Pressure = pressure;
         }
 
+        @Override
+        public String toString() {
+            return "SampFormBean{" +
+                    "Id='" + Id + '\'' +
+                    ", ProjectId='" + ProjectId + '\'' +
+                    ", FormPath='" + FormPath + '\'' +
+                    ", FormName='" + FormName + '\'' +
+                    ", ProjectName='" + ProjectName + '\'' +
+                    ", ProjectNo='" + ProjectNo + '\'' +
+                    ", Montype=" + Montype +
+                    ", ParentTagId='" + ParentTagId + '\'' +
+                    ", FormType='" + FormType + '\'' +
+                    ", FormTypeName='" + FormTypeName + '\'' +
+                    ", PrivateData='" + PrivateData + '\'' +
+                    ", SendSampTime='" + SendSampTime + '\'' +
+                    ", SamplingNo='" + SamplingNo + '\'' +
+                    ", SamplingTimeBegin='" + SamplingTimeBegin + '\'' +
+                    ", TagName='" + TagName + '\'' +
+                    ", TagId='" + TagId + '\'' +
+                    ", AddressId='" + AddressId + '\'' +
+                    ", AddressName='" + AddressName + '\'' +
+                    ", AddressNo='" + AddressNo + '\'' +
+                    ", MonitemId='" + MonitemId + '\'' +
+                    ", MonitemName='" + MonitemName + '\'' +
+                    ", MethodName='" + MethodName + '\'' +
+                    ", MethodId='" + MethodId + '\'' +
+                    ", DeviceId='" + DeviceId + '\'' +
+                    ", DeviceName='" + DeviceName + '\'' +
+                    ", Transfer='" + Transfer + '\'' +
+                    ", ReciveTime='" + ReciveTime + '\'' +
+                    ", file='" + file + '\'' +
+                    ", layTableCheckbox='" + layTableCheckbox + '\'' +
+                    ", SamplingUserId='" + SamplingUserId + '\'' +
+                    ", SamplingUserName='" + SamplingUserName + '\'' +
+                    ", SamplingTimeEnd='" + SamplingTimeEnd + '\'' +
+                    ", Comment='" + Comment + '\'' +
+                    ", FormFlows='" + FormFlows + '\'' +
+                    ", SubmitId='" + SubmitId + '\'' +
+                    ", SubmitName='" + SubmitName + '\'' +
+                    ", SubmitDate='" + SubmitDate + '\'' +
+                    ", MonitorPerson='" + MonitorPerson + '\'' +
+                    ", MonitorTime='" + MonitorTime + '\'' +
+                    ", Status=" + Status +
+                    ", StatusName='" + StatusName + '\'' +
+                    ", TransStatus=" + TransStatus +
+                    ", TransStatusName='" + TransStatusName + '\'' +
+                    ", CurUserId='" + CurUserId + '\'' +
+                    ", CurUserName='" + CurUserName + '\'' +
+                    ", AddTime='" + AddTime + '\'' +
+                    ", UpdateTime='" + UpdateTime + '\'' +
+                    ", Version=" + Version +
+                    ", SamplingDetails=" + SamplingDetails +
+                    ", SamplingFormStands=" + SamplingFormStands +
+                    ", SamplingDetailYQFs=" + SamplingDetailYQFs +
+                    ", Weather='" + Weather + '\'' +
+                    ", Temprature='" + Temprature + '\'' +
+                    ", Pressure='" + Pressure + '\'' +
+                    '}';
+        }
+
         public static class SamplingDetailsBean {
             public String getSampingCode() {
                 return SampingCode;
@@ -852,6 +912,35 @@ public class PreciptationSampForm {
             public void setSamplingOnTime(String samplingOnTime) {
                 SamplingOnTime = samplingOnTime;
             }
+
+            @Override
+            public String toString() {
+                return "SamplingDetailsBean{" +
+                        "SampingCode='" + SampingCode + '\'' +
+                        ", SamplingId='" + SamplingId + '\'' +
+                        ", ProjectId='" + ProjectId + '\'' +
+                        ", IsSenceAnalysis=" + IsSenceAnalysis +
+                        ", SampStandId='" + SampStandId + '\'' +
+                        ", MonitemId='" + MonitemId + '\'' +
+                        ", MonitemName='" + MonitemName + '\'' +
+                        ", AddresssId='" + AddresssId + '\'' +
+                        ", AddressName='" + AddressName + '\'' +
+                        ", PrivateData='" + PrivateData + '\'' +
+                        ", Value='" + Value + '\'' +
+                        ", OrderIndex='" + OrderIndex + '\'' +
+                        ", FrequecyNo='" + FrequecyNo + '\'' +
+                        ", Value1='" + Value1 + '\'' +
+                        ", Description='" + Description + '\'' +
+                        ", SamplingTime='" + SamplingTime + '\'' +
+                        ", SamplingType='" + SamplingType + '\'' +
+                        ", SamplingCount='" + SamplingCount + '\'' +
+                        ", Preservative='" + Preservative + '\'' +
+                        ", IsCompare=" + IsCompare +
+                        ", SampleCollection='" + SampleCollection + '\'' +
+                        ", SampleAcceptance='" + SampleAcceptance + '\'' +
+                        ", SamplingOnTime='" + SamplingOnTime + '\'' +
+                        '}';
+            }
         }
 
         public static class SamplingFormStandsBean {
@@ -998,6 +1087,7 @@ public class PreciptationSampForm {
             public void setMonItems(List<String> monItems) {
                 MonItems = monItems;
             }
+
         }
 
         public static class SamplingFileBean {
@@ -1029,5 +1119,20 @@ public class PreciptationSampForm {
                 UpdateTime = updateTime;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "PreciptationSampForm{" +
+                "IsAdd=" + IsAdd +
+                ", IsSubmit=" + IsSubmit +
+                ", isDevceForm=" + isDevceForm +
+                ", SampForm=" + SampForm +
+                ", UploadFiles=" + UploadFiles +
+                ", DelFiles=" + DelFiles +
+                ", isCompelSubmit=" + isCompelSubmit +
+                ", addTime='" + addTime + '\'' +
+                ", updateTime='" + updateTime + '\'' +
+                '}';
     }
 }

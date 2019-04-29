@@ -15,6 +15,7 @@
  */
 package com.wonders.health.lib.base.base.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.wonders.health.lib.base.base.delegate.IFragment;
 import com.wonders.health.lib.base.integration.cache.Cache;
@@ -82,5 +84,14 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     public boolean useEventBus() {
         return true;
     }
-
+    /**
+     * 动态隐藏软键盘
+     *
+     */
+    public void hideSoftInput() {
+        View view = getActivity().getCurrentFocus();
+        if (view == null) view = new View(getActivity());
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

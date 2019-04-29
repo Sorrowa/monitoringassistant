@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
@@ -72,8 +73,8 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
 
     @BindView(R.id.tab_view)
     CustomTab tabView;
-    @BindView(R.id.layout)
-    LinearLayout layout;
+    //    @BindView(R.id.layout)
+//    LinearLayout layout;
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
 
@@ -100,6 +101,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     public static final int NOISE_FRAGMENT_INT_MAP = 7;
     public static final int NOISE_FRAGMENT_INT_OTHER_FILE = 8;
 
+    private int NOISE_FRAGMENT_INT = 0;
 
     //SharedPreferences
     public static final String NOISE_FRAGMENT_SOURCE_SHARE = "sourceShare";
@@ -195,11 +197,11 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     private void back() {
         hideSoftInput();
         if (viewPager.getCurrentItem() == NOISE_FRAGMENT_INT_SOURCE_EDIT) {
-            openFragment(1);
+            openFragment(NOISE_FRAGMENT_INT_SOURCE);
         } else if (viewPager.getCurrentItem() == NOISE_FRAGMENT_INT_POINT_EDIT) {
-            openFragment(2);
+            openFragment(NOISE_FRAGMENT_INT_POINT);
         } else if (viewPager.getCurrentItem() == NOISE_FRAGMENT_INT_MONITOR_EDIT) {
-            openFragment(3);
+            openFragment(NOISE_FRAGMENT_INT_MONITOR);
         } else if (isNeedSave) {
             showSaveDataDialog();
         } else {
@@ -364,7 +366,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         viewPager.setAdapter(mFragmentAdapter);
-        viewPager.setOffscreenPageLimit(0);
+        viewPager.setOffscreenPageLimit(1);
         openFragment(0);
     }
 
@@ -375,6 +377,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
      */
     private void openFragment(int position) {
         viewPager.setCurrentItem(position);
+        NOISE_FRAGMENT_INT = position;
 //        FragmentTransaction ft = mFragmentManager.beginTransaction();
 //        Bundle mBundle = new Bundle();
 //        switch (position) {
@@ -425,26 +428,43 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        openFragment(NOISE_FRAGMENT_INT);
+    }
+
+    @Override
     public void handleMessage(@NonNull Message message) {
     }
 
+    @Override
+    public void showLoading() {
+        showLoadingDialog();
+    }
+
+
     public void saveMySample(boolean isFinish) {
-        showLoadingDialog("正在保存，请稍等");
+        showLoading("保存中，请稍后");
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                mBasicFragment.savePrivateData();
-                sourceListFragment.savePrivateData();
-                pointListFragment.savePrivateData();
-                monitorListFragment.savePrivateData();
-                otherFileFragment.savePrivateData();
+                try {
+                    mBasicFragment.savePrivateData();
+                    sourceListFragment.savePrivateData();
+                    pointListFragment.savePrivateData();
+                    monitorListFragment.savePrivateData();
+                    otherFileFragment.savePrivateData();
+                } catch (Exception e) {
+                    Log.e(TAG, "run: " + e);
+                }
+
                 saveMySample();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        hideLoading();
                         showMessage("保存成功");
                         isNeedSave = false;
-                        hideLoading();
                         if (isFinish) {
                             finish();
                         }
@@ -489,9 +509,12 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
      * 保存数据
      */
     public static void saveMySample() {
+
+        mSample.setIsFinish(isSamplingFinish(mSample));
+
         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
-        mSample.setIsFinish(isSamplingFinish(mSample));
+
         if (sampling != null) {
             DBHelper.get().getSamplingDao().update(mSample);
         } else {

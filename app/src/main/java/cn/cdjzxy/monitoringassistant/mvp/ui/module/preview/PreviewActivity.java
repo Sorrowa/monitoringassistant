@@ -8,9 +8,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.baidu.navisdk.ui.routeguide.mapmode.subview.P;
-import com.zhihu.matisse.internal.ui.adapter.PreviewPagerAdapter;
-import com.zhihu.matisse.internal.ui.widget.PreviewViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,6 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PreviewAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.widgets.PhotoViewPager;
 
 public class PreviewActivity extends AppCompatActivity {
@@ -70,13 +66,7 @@ public class PreviewActivity extends AppCompatActivity {
             case R.id.text_delete:
                 int i = photoViewPager.getCurrentItem();
                 if (i < list.size()) {
-                    //list.remove(i);
-                    SamplingFile samplingFile = list.remove(i);
-                    //记录删除的文件，提交给服务端
-                    if (samplingFile != null) {
-                        WastewaterActivity.mSample.addDeleteFiles(samplingFile.getId());
-                    }
-                    WastewaterActivity.mSample.setSamplingFiless(list);
+                    list.remove(i);
                 }
                 if (list.size() == 0) {
                     sendBackResult();

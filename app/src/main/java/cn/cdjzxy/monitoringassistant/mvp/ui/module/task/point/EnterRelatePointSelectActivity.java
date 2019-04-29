@@ -51,6 +51,7 @@ public class EnterRelatePointSelectActivity extends BaseTitileActivity implement
 
     private String projectId;
     private String mRcvId;
+    private String tagId;
 
 
     @Override
@@ -62,6 +63,7 @@ public class EnterRelatePointSelectActivity extends BaseTitileActivity implement
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
         mRcvId = getIntent().getStringExtra("rcvId");
+        tagId = getIntent().getStringExtra("tagId");
         list = new ArrayList<>();
         initTabData();
         initPointData();
@@ -130,11 +132,13 @@ public class EnterRelatePointSelectActivity extends BaseTitileActivity implement
         List<ProjectContent> projectContentList = DBHelper.get().getProjectContentDao().queryBuilder().where(ProjectContentDao.Properties.ProjectId.eq(projectId)).list();
         if (!CheckUtil.isEmpty(projectContentList)) {
             for (ProjectContent content : projectContentList) {
-                for (String s : content.getAddressIds().split(",")) {
-                    pointIds.add(s);
-                    Log.d(TAG, s);
+                if (content.getTagId().equals(tagId)) {
+                    for (String s : content.getAddressIds().split(",")) {
+                        pointIds.add(s);
+                        Log.d(TAG, s);
+                    }
+                    break;
                 }
-
             }
         }
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.WeatherActivity;
@@ -90,6 +92,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     LinearLayout linearDelete;
     @BindView(R.id.linear_save)
     LinearLayout linearSave;
+    private boolean isStop = false;
 
 
     @Override
@@ -99,13 +102,21 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        //setViewData();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setViewData();
+        if (mSample != null) {
+            Gson gson = new Gson();
+            mPrivateData = gson.fromJson(mSample.getPrivateData(), NoisePrivateData.class);
+            if (mPrivateData == null) {
+                mPrivateData = new NoisePrivateData();
+            }
+            setViewData();
+        }
+
     }
 
     private void setViewData() {
@@ -121,7 +132,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
         if (mPrivateData != null && mPrivateData.getClientName() != null) {
             edFactoryName.setEditTextStr(mPrivateData.getClientName());
         } else {
-            edFactoryName.setEditTextStr(mProject.getClientName());
+            edFactoryName.setEditTextStr(mProject.getRcvName());
             // edFactoryAddress.setText(mProject.getc());
         }
         edFactoryAddress.setEditTextStr(mPrivateData.getClientAddr());
@@ -141,8 +152,8 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
      * @return
      */
     public void savePrivateData() {
-        mSample.setWindSpeed(edWingSpeed.getEditTextStr());
         if (mPrivateData != null && mSample != null) {
+            mSample.setWindSpeed(edWingSpeed.getEditTextStr());
             mPrivateData.setClientName(edFactoryName.getEditTextStr());
             mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
             mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());
@@ -318,5 +329,25 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     @Override
     public void handleMessage(@NonNull Message message) {
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mPrivateData != null && mSample != null) {
+            mSample.setWindSpeed(edWingSpeed.getEditTextStr());
+            mPrivateData.setClientName(edFactoryName.getEditTextStr());
+            mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
+            mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());
+            mPrivateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
+            mPrivateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
+            mPrivateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
+            mPrivateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
+            mPrivateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
+            String jsonStr = new Gson().toJson(mPrivateData);
+            mSample.setPrivateData(jsonStr);
+            mProject.setClientName(edFactoryName.getEditTextStr());
+            Log.e(TAG, "onStop: " + "保存临时数据");
+        }
     }
 }

@@ -2,6 +2,8 @@ package cn.cdjzxy.monitoringassistant.utils;
 
 import android.text.TextUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,8 +92,8 @@ public class SubmitDataUtil {
         sampFormBean.setPrivateData(sampling.getPrivateData());
         sampFormBean.setSendSampTime(sampling.getSendSampTime());
         sampFormBean.setSamplingNo(sampling.getSamplingNo());
-        sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin());
-        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeEnd());
+        sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin() == null ? DateUtils.getDate(new Date()) : sampling.getSamplingTimeBegin());
+        sampFormBean.setSamplingTimeEnd(sampling.getSamplingTimeEnd() == null ? sampFormBean.getSamplingTimeBegin() : sampling.getSamplingTimeEnd());
         sampFormBean.setTagName(sampling.getTagName());
         sampFormBean.setTagId(sampling.getTagId());
         if (sampling.getAddressId() == null || sampling.getAddressId().equals("")) {
@@ -266,7 +268,9 @@ public class SubmitDataUtil {
                 samplingFormStandsBean.setPreservative(samplingFormStand.getPreservative());
                 samplingFormStandsBean.setSamplingId(samplingFormStand.getSamplingId());
                 samplingFormStandsBean.setSamplingAmount(samplingFormStand.getSamplingAmount());
-                samplingFormStandsBean.setSaveMehtod(samplingFormStand.getSaveMehtod());
+                String saveMethod = samplingFormStand.getSaveMehtod();
+                saveMethod = saveMethod.replaceAll("%(?![0-9a-fA-F]{2})", "百分之");
+                samplingFormStandsBean.setSaveMehtod(saveMethod);
                 samplingFormStandsBean.setSaveTimes(samplingFormStand.getSaveTimes());
                 samplingFormStandsBean.setStandNo(samplingFormStand.getStandNo());
                 samplingFormStandsBean.setUpdateTime(samplingFormStand.getUpdateTime());

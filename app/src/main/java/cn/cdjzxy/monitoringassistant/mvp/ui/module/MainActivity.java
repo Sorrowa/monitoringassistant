@@ -98,6 +98,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private SettingFragment mSettingFragment;
     //private ManagementFragment mManagementFragment;
     private double progress = 0.0;
+    private boolean isEasy = false;//是否进入直播界面
 
 
     @Override
@@ -164,6 +165,10 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         } else {
             mBadgeView.setVisibility(View.GONE);
         }
+        if (isEasy) {
+            updateTabStatus(0);
+            openFragment(0);
+        }
     }
 
     @Override
@@ -186,8 +191,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
     @Override
     public void hideLoading() {
-
     }
+
 
     @Override
     public void showMessage(@NonNull String message) {
@@ -364,6 +369,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private void openFragment(int position) {
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         Bundle mBundle = new Bundle();
+        isEasy = false;
         switch (position) {
             case 0://任务
                 ft.replace(R.id.layout_container, mTaskFragment = new TaskFragment(), TaskFragment.class.getName());
@@ -383,6 +389,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 ft.replace(R.id.layout_container, mRepositoryFragment = new RepositoryFragment(), RepositoryFragment.class.getName());
                 break;
             case 4://视频
+                isEasy = true;
                 startActivity(new Intent(this, EasyPusherActivity.class));
                 break;
             case 5://设置

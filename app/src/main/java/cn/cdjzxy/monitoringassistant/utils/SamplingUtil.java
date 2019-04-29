@@ -9,6 +9,7 @@ import java.util.UUID;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
@@ -25,6 +26,34 @@ public class SamplingUtil {
      */
     public static String getNumberForSampling() {
         return new SimpleDateFormat("yyyyMMdd").format(new Date()).toString();
+    }
+
+    /**
+     * 判断当前表单是否是本人的
+     *
+     * @return@true本人表单，@false他人表单
+     */
+    public static boolean isMySampling(String submitId) {
+        UserInfo user = UserInfoHelper.get().getUserInfo();
+        if (user.getId().equals(submitId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 判断表单是否提交
+     *
+     * @param status
+     * @return
+     */
+    public static boolean samplingIsSubmit(int status) {
+        if (status == 0 || status == 4 || status == 9) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

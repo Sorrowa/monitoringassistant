@@ -30,7 +30,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.EnterRelatePointSelectActivity;
@@ -169,13 +172,18 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
      */
     private void choicePoint() {
         Intent intent = new Intent();
-        if (mSample.getMontype() == 3) {//污染源
-            intent.setClass(getContext(), PointSelectActivity.class);
-            intent.putExtra("projectId", mSample.getProjectId());
-            intent.putExtra("tagId", mSample.getParentTagId());
-        } else {//环境质量
+
+        if (mSample.getMontype() == 3) {//环境质量 在环境质量点位中找
+//            intent.setClass(getContext(), PointSelectActivity.class);
+//            intent.putExtra("tagId", tags.getId());
+//            intent.putExtra("projectId", mSample.getProjectId());
+            showMessage("您选择的表单暂无环境质量监测点位");
+            return;
+        } else {//污染源 在企业点位中找
+            Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Name.eq("厂界噪声")).unique();
             intent.setClass(getContext(), EnterRelatePointSelectActivity.class);
             intent.putExtra("projectId", mSample.getProjectId());
+            intent.putExtra("tagId", tags.getId());
             intent.putExtra("rcvId", mProject.getRcvId());
         }
         new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
@@ -216,7 +224,7 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
             mSample.setPrivateData(new Gson().toJson(mPrivateData));
         }
         NoiseFactoryActivity.saveMySample();
-        EventBus.getDefault().post("",NOISE_FRAGMENT_POINT_SHARE);
+        EventBus.getDefault().post("", NOISE_FRAGMENT_POINT_SHARE);
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
     }
 

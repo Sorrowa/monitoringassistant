@@ -343,6 +343,7 @@ public class BasicFragment extends BaseFragment {
                 && resultCode == PreviewActivity.BACK_RESULT_CODE) {//预览图片
             Bundle bundle = data.getBundleExtra(PreviewActivity.PREVIEW_PHOTOS);
             List<SamplingFile> list = bundle.getParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS);
+            mSample.setSamplingFiless(list);
             SamplingFile file = sampleFiles.get(0);
             sampleFiles.clear();
             sampleFiles.add(file);
@@ -434,7 +435,7 @@ public class BasicFragment extends BaseFragment {
                 mSample.setSamplingTimeBegin(DateUtils.getDate(date));
                 dateTextView.setText(DateUtils.getDate(date));
             }
-        }).build();
+        }).setType(new boolean[]{true, true, false, false, false, false}).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
@@ -468,7 +469,7 @@ public class BasicFragment extends BaseFragment {
                 mSample.setReciveTime(DateUtils.getTime(date.getTime()));
                 dateTextView.setText(DateUtils.getTime(date.getTime()));
             }
-        }).setType(new boolean[]{true, true, true, true, true, true}).isCyclic(true).build();
+        }).isCyclic(true).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
@@ -482,10 +483,10 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                fsExtends.setBuildTime(DateUtils.getDate(date));
-                dateTextView.setText(DateUtils.getDate(date));
+                fsExtends.setBuildTime(DateUtils.getYears(date));
+                dateTextView.setText(DateUtils.getYears(date));
             }
-        }).build();
+        }).setType(new boolean[]{true, true, true, true, true, true}).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
@@ -539,14 +540,15 @@ public class BasicFragment extends BaseFragment {
             return;
         }
         Intent intent = new Intent();
-        if (mSample.getMontype() == 3) {//污染源
+        if (mSample.getMontype() == 3) {//环境质量
             intent.setClass(getContext(), PointSelectActivity.class);
             intent.putExtra("projectId", mSample.getProjectId());
-            intent.putExtra("tagId", mSample.getParentTagId());
-        } else {//环境质量
+            intent.putExtra("tagId", mSample.getTagId());
+        } else {//污染源
             intent.setClass(getContext(), EnterRelatePointSelectActivity.class);
             intent.putExtra("projectId", mSample.getProjectId());
             intent.putExtra("rcvId", mProject.getRcvId());
+            intent.putExtra("tagId", mSample.getTagId());
         }
 
         new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {

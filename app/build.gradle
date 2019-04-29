@@ -168,4 +168,5 @@ dependencies {
     //            }
     implementation project(':whiteboardlib')
     implementation project(':EasyLibrary')
+    implementation files('libs/galaxy_lite.jar')
 }

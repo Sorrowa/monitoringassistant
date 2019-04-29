@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -134,11 +135,10 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
         }
 
         ArtUtils.makeText(mContext, bdLocation.getLongitude() + "，" + bdLocation.getLatitude());
-
+        Log.i(TAG, "routeplanToNavi: +导航定位：\n经度"+bdLocation.getLongitude()+"\n纬度"+bdLocation.getLatitude());
 
         BNRoutePlanNode sNode = new BNRoutePlanNode(bdLocation.getLongitude(), bdLocation.getLatitude(), "", "", coType);
         BNRoutePlanNode eNode = new BNRoutePlanNode(pointSelect.getLongtitude(), pointSelect.getLatitude(), pointSelect.getName(), pointSelect.getName(), coType);
-
 
         List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
         list.add(sNode);
@@ -148,7 +148,7 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
 
         BaiduNaviManagerFactory.getRoutePlanManager().routeplanToNavi(
                 list,
-                IBNRoutePlanManager.RoutePlanPreference.ROUTE_PLAN_PREFERENCE_DEFAULT,
+                IBNRoutePlanManager.RoutePlanPreference.ROUTE_PLAN_PREFERENCE_TIME_FIRST,
                 null,
                 new Handler(Looper.getMainLooper()) {
                     @Override

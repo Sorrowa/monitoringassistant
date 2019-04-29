@@ -25,6 +25,7 @@ import org.easydarwin.push.MediaStream;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import io.reactivex.Single;
 import io.reactivex.functions.Consumer;
@@ -150,13 +151,13 @@ public class EasyPusherActivity extends BaseTitileActivity {
                     mediaStream.closeCameraPreview();
                 } else {                                // 启动预览和推送.
                     mediaStream.openCameraPreview();
-                    String id = PreferenceManager.getDefaultSharedPreferences(EasyPusherActivity.this).getString("caemra-id", null);
-                    if (id == null) {
-                        double v = Math.random() * 1000;
-                        id = "c_" + (int) v;
-                        PreferenceManager.getDefaultSharedPreferences(EasyPusherActivity.this).edit().putString("caemra-id", id).apply();
-                    }
-                    mediaStream.startStream(HOST, "10554", id);
+//                    String id = PreferenceManager.getDefaultSharedPreferences(EasyPusherActivity.this).getString("caemra-id", null);
+//                    if (id == null) {
+//                        double v = Math.random() * 1000;
+//                        id = "c_" + (int) v;
+//                        PreferenceManager.getDefaultSharedPreferences(EasyPusherActivity.this).edit().putString("caemra-id", id).apply();
+//                    }
+                    mediaStream.startStream(HOST, "10554", UserInfoHelper.get().getUserInfo().getId());
                 }
             }
         });

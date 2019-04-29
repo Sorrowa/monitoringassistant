@@ -78,13 +78,13 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
                 .setReceivedTitleCallback(mCallback)
                 .setPermissionInterceptor(mPermissionInterceptor)
                 .setNotifyIcon(R.mipmap.download)
-//                .addJavascriptInterface("Android", new WebViewJavaScriptFunction() {
-//                    @Override
-//                    public void onBack() {
-//                        //返回
-//                        WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
-//                    }
-//                })
+                .addJavascriptInterface("Android", new WebViewJavaScriptFunction() {
+                    @Override
+                    public void onBack() {
+                        //返回
+                        WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
+                    }
+                })
                 .useMiddleWareWebChrome(getMiddleWareWebChrome())
                 .useMiddleWareWebClient(getMiddleWareWebClient())
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)

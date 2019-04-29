@@ -92,9 +92,9 @@ public class TrajectoryServer extends Service {
     }
 
     // 打包回传周期(单位:秒) 频率可设置范围为：2~300秒
-    private static final int packInterval = 50;
+    private static final int packInterval = 60;
     // 定位周期(单位:秒) 频率可设置范围为：2~300秒
-    private static final int gatherInterval = 50;
+    private static final int gatherInterval = 60;
 
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
 

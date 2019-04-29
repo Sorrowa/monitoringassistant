@@ -109,6 +109,7 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
                 if (!CheckUtil.isEmpty(mEtSearch.getText().toString())) {
                     Map<String, String> map = new HashMap<>();
                     map.put("sampleStorageProjectParam.keyWord", mEtSearch.getText().toString());
+                    map.put("sampleStorageProjectParam.status", 20 + "");
                     search(map);
                     saveHistory(mEtSearch.getText().toString());
                     //search(mEtSearch.getText().toString());
@@ -158,6 +159,7 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
             public void onItemClick(View view, int viewType, Object data, int position) {
                 Map<String, String> map = new HashMap<>();
                 map.put("sampleStorageProjectParam.type", position + 1 + "");
+                map.put("sampleStorageProjectParam.status", 20 + "");
                 search(map);
             }
         });

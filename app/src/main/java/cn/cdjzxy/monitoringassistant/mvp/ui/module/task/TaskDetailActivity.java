@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -21,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
@@ -465,6 +468,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
     }
 
+
     /**
      * 初始化Tab数据
      */
@@ -555,28 +559,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     }
 
 
-    /**
-     * 判断当前表单是否是本人的
-     *
-     * @return@true本人表单，@false他人表单
-     */
-    public static boolean isMySampling(Sampling mSample) {
-        UserInfo user = UserInfoHelper.get().getUserInfo();
-        if (user.getId().equals(mSample.getSubmitId())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit, R.id.cb_all})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_sampling_point:
-                showMessage("正在排除异常，请稍后");
-//                Intent intent = new Intent(this, PointActivity.class);
-//                intent.putExtra("projectId", mProject.getId());
-//                ArtUtils.startActivity(intent);
+                // showMessage("正在排除异常，请稍后");
+                Intent intent = new Intent(this, PointActivity.class);
+                intent.putExtra("projectId", mProject.getId());
+                startActivity(intent);
                 break;
             case R.id.btn_add_sampling:
                 showAddDialog();
@@ -1082,9 +1072,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
 
                 preciptationSampForm.setCompelSubmit(isCompelSubmit);
-
+                Gson gson=new Gson();
+                String str=gson.toJson(preciptationSampForm);
+                PreciptationSampForm form=gson.fromJson(str,PreciptationSampForm.class);
                 //文件上传成功，上传采样单
-                mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), preciptationSampForm);
+                mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), form);
             }
 
             @Override
