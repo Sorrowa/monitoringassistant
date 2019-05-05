@@ -439,12 +439,6 @@ public class CollectionDetailFragment extends BaseFragment {
                         if (!CheckUtil.isNull(samplingDetail)) {
                             DBHelper.get().getSamplingContentDao().delete(samplingDetail);
                         }
-                        //删除分瓶信息
-                        deleteRelateBottle();
-
-                        if ((fsListPosition >= 0) && (fsListPosition < mSample.getSamplingContentResults().size())) {
-                            mSample.getSamplingContentResults().remove(fsListPosition);
-                        }
                         //删除平行样
                         if (!CheckUtil.isNull(samplingDetail) && samplingDetail.getSamplingType() == 0) {//删除普通样对应的平行样
                             SamplingContent parallelSamContent = DBHelper.get().getSamplingContentDao().
@@ -457,6 +451,13 @@ public class CollectionDetailFragment extends BaseFragment {
                                 mSample.getSamplingContentResults().remove(parallelSamContent);
                             }
                         }
+                        //删除分瓶信息
+                        deleteRelateBottle();
+
+                        if ((fsListPosition >= 0) && (fsListPosition < mSample.getSamplingContentResults().size())) {
+                            mSample.getSamplingContentResults().remove(fsListPosition);
+                        }
+
                         //删除对应的SamplingDetail
                         List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(currentDetail.getSamplingId()), SamplingDetailDao.Properties.SampingCode.eq(currentDetail.getSampingCode()), SamplingDetailDao.Properties.SamplingType.eq(currentDetail.getSamplingType())).build().list();
                         if (!CheckUtil.isEmpty(samplingDetailList)) {

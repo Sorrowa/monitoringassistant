@@ -95,7 +95,19 @@ public class CollectionFragment extends BaseFragment {
         btnAddParallel.setVisibility(View.GONE);
         btn_add_new.setVisibility(View.GONE);
         tvAddBlank.setText("添加");
+        getData();
         initRecyclerViewData();
+    }
+
+    private void getData() {
+        if (list == null) list = new ArrayList<>();
+        else list.clear();
+        for (SamplingDetail detail : mSampling.getSamplingDetailResults()) {
+            if (detail != null && detail.getMethodName() != null &&
+                    detail.getMonitemName().equals("降水量")) {//毛杨说的这个表单  这个只有降水量
+                list.add(detail);
+            }
+        }
     }
 
     @Nullable
@@ -133,6 +145,7 @@ public class CollectionFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            getData();
             if (mPrecipitationCollectAdapter != null) {
                 mPrecipitationCollectAdapter.notifyDataSetChanged();
             } else {
@@ -199,11 +212,7 @@ public class CollectionFragment extends BaseFragment {
                 return true;
             }
         });
-        for (SamplingDetail detail : mSampling.getSamplingDetailResults()) {
-            if (detail.getMonitemName().equals("降水量")) {//毛杨说的这个表单  这个只有降水量
-                list.add(detail);
-            }
-        }
+
         mPrecipitationCollectAdapter = new PrecipitationCollectAdapter(list);
         mPrecipitationCollectAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override

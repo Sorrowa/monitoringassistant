@@ -247,7 +247,6 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setValue(etPrecipitation.getText().toString());
                     samplingDetail.setValue1(etPrecipitation.getText().toString());
                     samplingDetail.setDescription(etRemark.getText().toString());
-
                     if (listPosition == -1) {
                         if (mSampling.getSamplingDetailResults() == null) {
                             mSampling.setSamplingDetailResults(new ArrayList<SamplingDetail>());

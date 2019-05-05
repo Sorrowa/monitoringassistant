@@ -281,7 +281,8 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
-        samplingDetail.setOrderIndex(currSelectDetails.getOrderIndex());//复制样品的行号
+        samplingDetail.setOrderIndex(mSampling.getSamplingDetailYQFs()
+                == null ? 0 : mSampling.getSamplingDetailYQFs().size());
         samplingDetail.setPrivateDataBooleanValue("HasPX", false);
         samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
         samplingDetail.setPrivateDataStringValue("CaleValue", "");

@@ -89,6 +89,8 @@ public class BasicFragment extends BaseFragment {
     TextView tvSamplingPoint;
     @BindView(R.id.tv_sampling_no)
     EditText tvSamplingNo;
+    @BindView(R.id.ed_monitor_name)
+    EditText edMonitorName;//监测项目
     @BindView(R.id.tv_sampling_height)
     EditText tvSamplingHeight;
     @BindView(R.id.et_sampling_area)
@@ -144,6 +146,7 @@ public class BasicFragment extends BaseFragment {
             tvSamplingType.setText(mSampling.getTagName());
             tvSamplingPoint.setText(mSampling.getAddressName());
             tvSamplingNo.setText(mSampling.getAddressNo());
+            edMonitorName.setText(mSampling.getMonitemName());
             if (!CheckUtil.isEmpty(mSampling.getPrivateData())) {
                 mPrivateData = JSONObject.parseObject(mSampling.getPrivateData(), PreciptationPrivateData.class);
                 if (!CheckUtil.isNull(mPrivateData)) {

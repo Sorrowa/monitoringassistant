@@ -304,8 +304,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 tab.setSelected(false);
             } else if (i == 4) {
                 tab.setTabName("视频直播");
-                tab.setResId(R.mipmap.ic_setting_nor);
-                tab.setSelectedResId(R.mipmap.ic_setting_hov);
+                tab.setResId(R.mipmap.ic_live_nor);
+                tab.setSelectedResId(R.mipmap.ic_live_hov);
                 tab.setSelected(false);
             } else if (i == 5) {
                 tab.setTabName("设置");

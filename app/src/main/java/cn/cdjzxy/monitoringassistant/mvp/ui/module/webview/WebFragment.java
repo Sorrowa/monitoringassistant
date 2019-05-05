@@ -99,12 +99,16 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
         mSuperWebX5.getJsInterfaceHolder().addJavaObject("Android", new AndroidInterface(new AndroidInterface.Back() {
             @Override
             public void onBack() {
-                WebFragment.this.onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
+                //传递按键到web层
+                boolean result = onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
+                //web层未处理返回操作，已返回到首页，则退出当前activity
+                if (!result) {
+                    getActivity().finish();
+                }
             }
         }));
 
     }
-
 
 
     /**

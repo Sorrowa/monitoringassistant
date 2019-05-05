@@ -212,10 +212,10 @@ public class TestRecordDetailFragment extends BaseFragment {
             btnDelete.setVisibility(View.GONE);
             btnSave.setVisibility(View.GONE);
 
-            tvTestTime.setEnabled(mSampling.getIsCanEdit());
-            tvAnalyseTime.setEnabled(mSampling.getIsCanEdit());
-            etAnalyseResult.setEnabled(mSampling.getIsCanEdit());
-            tvTestUnit.setEnabled(mSampling.getIsCanEdit());
+//            tvTestTime.setEnabled(mSampling.getIsCanEdit());
+//            tvAnalyseTime.setEnabled(mSampling.getIsCanEdit());
+//            etAnalyseResult.setEnabled(mSampling.getIsCanEdit());
+//            tvTestUnit.setEnabled(mSampling.getIsCanEdit());
         }
     }
 
@@ -237,7 +237,7 @@ public class TestRecordDetailFragment extends BaseFragment {
                 initTimePickerView(new OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date, View v) {
-                        tvAnalyseTime.setText(DateUtils.getTime(date.getTime()));
+                        tvAnalyseTime.setText(DateUtils.getTimeHour(date.getTime()));
                     }
                 });
 
@@ -452,9 +452,9 @@ public class TestRecordDetailFragment extends BaseFragment {
 
         //小数点后面的数值转换成整数
         int bitNum = Integer.parseInt(valueStr.substring(bitPos));
-        if (bitNum == 0) {
-            return 0;//小红点后面是填充的0
-        }
+//        if (bitNum == 0) {
+//            return 0;//小红点后面是填充的0
+//        }
 
         //字符串总长度减去小数点位置就是小数位数
         return valueStr.length() - bitPos;
@@ -473,7 +473,7 @@ public class TestRecordDetailFragment extends BaseFragment {
 
     private void initTimePickerView(OnTimeSelectListener listener) {
         //时间选择器
-        TimePickerView pvTime = new TimePickerBuilder(getActivity(), listener).setType(new boolean[]{true, true, true, true, true, true})
+        TimePickerView pvTime = new TimePickerBuilder(getActivity(), listener).setType(new boolean[]{false, false, false, true, true, false})
                 .isCyclic(true)
                 .build();
         pvTime.show();

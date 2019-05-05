@@ -148,7 +148,7 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
 
         BaiduNaviManagerFactory.getRoutePlanManager().routeplanToNavi(
                 list,
-                IBNRoutePlanManager.RoutePlanPreference.ROUTE_PLAN_PREFERENCE_TIME_FIRST,
+                IBNRoutePlanManager.RoutePlanPreference.ROUTE_PLAN_PREFERENCE_DEFAULT,
                 null,
                 new Handler(Looper.getMainLooper()) {
                     @Override
