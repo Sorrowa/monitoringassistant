@@ -57,7 +57,8 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePoin
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseMonitorListFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseOtherFileFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePointListFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePonintSketchMap;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePointSketchMapFragment;
+
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceEditFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceListFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
@@ -338,7 +339,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         NoiseSourceEditFragment sourceEditFragment = new NoiseSourceEditFragment();
         NoisePointEditFragment pointEditFragment = new NoisePointEditFragment();
         NoiseMonitorEditFragment monitorEditFragment = new NoiseMonitorEditFragment();
-        NoisePonintSketchMap sketchMap = new NoisePonintSketchMap();
+        NoisePointSketchMapFragment sketchMap = new NoisePointSketchMapFragment();
 
 
         mFragments = new ArrayList<>();

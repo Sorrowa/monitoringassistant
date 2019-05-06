@@ -73,6 +73,6 @@
     <!-- ios dialog -->
     <color name="ios_dialog_ll_backgroud">#D1D1D1</color>
     <color name="ios_dialog_btn_textcolor">#FF1E90FF</color>
-
+    <color name="transparent">#00000000</color>
 
 </resources>

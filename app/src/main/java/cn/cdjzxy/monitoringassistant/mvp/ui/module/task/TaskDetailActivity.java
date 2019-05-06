@@ -563,7 +563,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_sampling_point:
-                // showMessage("正在排除异常，请稍后");
                 Intent intent = new Intent(this, PointActivity.class);
                 intent.putExtra("projectId", mProject.getId());
                 startActivity(intent);

@@ -1,12 +1,15 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.project;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class ProjectDetial {
+public class ProjectDetial implements Parcelable {
 
     /**
      * Id : b1bf9d54-e497-47ca-9d38-0ea766c1dbaf
@@ -176,4 +179,61 @@ public class ProjectDetial {
         this.TagParentName = TagParentName;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.Id);
+        dest.writeString(this.ProjectId);
+        dest.writeString(this.UpdateTime);
+        dest.writeString(this.TagId);
+        dest.writeString(this.TagName);
+        dest.writeString(this.MonItemId);
+        dest.writeString(this.MethodId);
+        dest.writeString(this.AddressId);
+        dest.writeString(this.Address);
+        dest.writeString(this.Comment);
+        dest.writeString(this.MonItemName);
+        dest.writeString(this.MethodName);
+        dest.writeInt(this.Days);
+        dest.writeInt(this.Period);
+        dest.writeString(this.ProjectContentId);
+        dest.writeString(this.TagParentId);
+        dest.writeString(this.TagParentName);
+    }
+
+    protected ProjectDetial(Parcel in) {
+        this.Id = in.readString();
+        this.ProjectId = in.readString();
+        this.UpdateTime = in.readString();
+        this.TagId = in.readString();
+        this.TagName = in.readString();
+        this.MonItemId = in.readString();
+        this.MethodId = in.readString();
+        this.AddressId = in.readString();
+        this.Address = in.readString();
+        this.Comment = in.readString();
+        this.MonItemName = in.readString();
+        this.MethodName = in.readString();
+        this.Days = in.readInt();
+        this.Period = in.readInt();
+        this.ProjectContentId = in.readString();
+        this.TagParentId = in.readString();
+        this.TagParentName = in.readString();
+    }
+
+    public static final Creator<ProjectDetial> CREATOR = new Creator<ProjectDetial>() {
+        @Override
+        public ProjectDetial createFromParcel(Parcel source) {
+            return new ProjectDetial(source);
+        }
+
+        @Override
+        public ProjectDetial[] newArray(int size) {
+            return new ProjectDetial[size];
+        }
+    };
 }

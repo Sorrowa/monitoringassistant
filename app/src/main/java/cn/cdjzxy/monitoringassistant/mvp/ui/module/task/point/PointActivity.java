@@ -5,20 +5,30 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
+import com.baidu.navisdk.adapter.IBNRoutePlanManager;
 import com.baidu.navisdk.adapter.IBaiduNaviManager;
+import com.baidu.navisdk.ui.routeguide.mapmode.subview.G;
 import com.wonders.health.lib.base.base.DefaultAdapter;
+import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.Subscriber;
@@ -30,8 +40,10 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
@@ -40,17 +52,19 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.NavigationActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 /**
  * 采样点位
  */
 
-public class PointActivity extends BaseTitileActivity<ApiPresenter> {
+public class PointActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
-
+    @BindView(R.id.linear_add)
+    LinearLayout linearAdd;
     private String projectId;
 
     private PointAdapter mPointAdapter;
@@ -92,6 +106,11 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
+        if (mProject.getCanSamplingEidt()) {
+            linearAdd.setVisibility(View.VISIBLE);
+        } else {
+            linearAdd.setVisibility(View.GONE);
+        }
         getData();
         initPointData();
 
@@ -109,14 +128,21 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void initPointData() {
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
-        mPointAdapter = new PointAdapter(this, mProjectDetials, mProject.getCanSamplingEidt());
+        mPointAdapter = new PointAdapter(this, mProjectDetials, mProject.getCanSamplingEidt(),
+                new PointAdapter.ItemAdapterOnClickListener() {
+                    @Override
+                    public void onItemOnClick(EnvirPoint point) {
+                        routePlanToNavi(point);
+                    }
+                });
         mPointAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
                 if (mProject.getCanSamplingEidt()) {
                     Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
+                    intent.putExtra("isAdd", false);
                     intent.putExtra("projectId", projectId);
-                    intent.putExtra("projectDetailId", mProjectDetials.get(position).getId());
+                    intent.putExtra("projectDetail", mProjectDetials.get(position));
                     ArtUtils.startActivity(intent);
                 }
 
@@ -125,6 +151,18 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
         recyclerview.setAdapter(mPointAdapter);
     }
 
+    @OnClick({R.id.linear_add})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.linear_add:
+                Intent intent = new Intent();
+                intent.setClass(PointActivity.this, ProgramModifyActivity.class);
+                intent.putExtra("projectId", projectId);
+                intent.putExtra("isAdd", true);
+                ArtUtils.startActivity(intent);
+                break;
+        }
+    }
 
     @Subscriber(tag = EventBusTags.TAG_PROGRAM_MODIFY)
     private void updateData(boolean isModified) {
@@ -251,17 +289,23 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
 
                     @Override
                     public void initStart() {
-                        ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化开始");
+//                        ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化开始");
+                        System.out.print("百度导航引擎初始化开始");
+                        Log.i(TAG, "initStart: 百度导航引擎初始化开始");
                     }
 
                     @Override
                     public void initSuccess() {
-                        ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化成功");
+                        System.out.print("百度导航引擎初始化成功");
+                        Log.i(TAG, "initStart: 百度导航引擎初始化成功");
+                        // ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化成功");
                         //hasInitSuccess = true;
                     }
 
                     @Override
                     public void initFailed() {
+                        System.out.print("百度导航引擎初始化失败");
+                        Log.e(TAG, "initStart: 百度导航引擎初始化失败");
                         ArtUtils.makeText(PointActivity.this, "百度导航引擎初始化失败");
                     }
                 });
@@ -313,6 +357,27 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
 
+    public void showLoading(String msg) {
+        showLoadingDialog(msg);
+    }
+
+    @Override
+    public void hideLoading() {
+        closeLoadingDialog();
+    }
+
+    @Override
+    public void showMessage(@NonNull String message) {
+        hideLoading();
+        ArtUtils.makeText(this, message);
+    }
+
+    @Override
+    public void handleMessage(@NonNull com.wonders.health.lib.base.mvp.Message message) {
+
+    }
+
+
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
@@ -322,5 +387,75 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> {
         }
     }
 
+    /**
+     * 导航前往目标点位
+     *
+     * @param pointSelect
+     */
+    private void routePlanToNavi(EnvirPoint pointSelect) {
+        if (bdLocation == null) {
+//            ArtUtils.makeText(mContext, "未定位到当前位置，请重试");
+            showMessage("未定位到当前位置，请重试");
+            return;
+        }
+
+        showLoading("正在初始化导航，请稍后...");
+//        ArtUtils.makeText(mContext, "正在计算前往"+bdLocation.getLongitude() + "，" + bdLocation.getLatitude()+"线路");
+        Log.i(TAG, "routeplanToNavi: +导航定位：\n经度" + bdLocation.getLongitude() + "\n纬度" + bdLocation.getLatitude());
+
+        BNRoutePlanNode sNode = new BNRoutePlanNode(bdLocation.getLongitude(), bdLocation.getLatitude(), "",
+                "", BNRoutePlanNode.CoordinateType.BD09LL);
+        BNRoutePlanNode eNode = new BNRoutePlanNode(pointSelect.getLongtitude(),
+                pointSelect.getLatitude(), pointSelect.getName(), pointSelect.getName(),
+                BNRoutePlanNode.CoordinateType.BD09LL);
+
+        List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
+        list.add(sNode);
+        list.add(eNode);
+
+        final BNRoutePlanNode mStartNode = sNode;
+
+        BaiduNaviManagerFactory.getRoutePlanManager().routeplanToNavi(
+                list,
+                IBNRoutePlanManager.RoutePlanPreference.ROUTE_PLAN_PREFERENCE_DEFAULT,
+                null,
+                new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        switch (msg.what) {
+                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_START:
+//                                Toast.makeText(mContext, "算路开始", Toast.LENGTH_SHORT)
+//                                        .show();
+                                showMessage("算路开始");
+                                break;
+                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_SUCCESS:
+                                showMessage("算路成功");
+//                                Toast.makeText(mContext, "算路成功", Toast.LENGTH_SHORT)
+//                                        .show();
+                                break;
+                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_FAILED:
+//                                Toast.makeText(mContext, "算路失败", Toast.LENGTH_SHORT)
+//                                        .show();
+                                showMessage("算路失败");
+                                break;
+                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_TO_NAVI:
+//                                Toast.makeText(mContext, "算路成功准备进入导航", Toast.LENGTH_SHORT)
+//                                        .show();
+                                showMessage("算路成功准备进入导航");
+                                Intent intent = new Intent(mContext,
+                                        NavigationActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("endPoint", mStartNode);
+                                intent.putExtras(bundle);
+                                ArtUtils.startActivity(intent);
+                                break;
+                            default:
+                                hideLoading();
+                                // nothing
+                                break;
+                        }
+                    }
+                });
+    }
 
 }

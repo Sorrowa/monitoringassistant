@@ -25,15 +25,15 @@ public class EnterRelatePoint {
     private String EnterPriseId;
     private String Name;
     private String Code;
-    private String Longtitude;
-    private String Latitude;
+    private double Longtitude;
+    private double Latitude;
     private String TagId;
     private String TagName;
     private String UpdateTime;
 
     @Keep()
     public EnterRelatePoint(String Id, String EnterPriseId, String Name,
-                            String Code, String Longtitude, String Latitude, String TagId,
+                            String Code, double Longtitude, double Latitude, String TagId,
                             String TagName, String UpdateTime) {
         this.Id = Id;
         this.EnterPriseId = EnterPriseId;
@@ -82,19 +82,19 @@ public class EnterRelatePoint {
         this.Code = Code;
     }
 
-    public String getLongtitude() {
+    public double getLongtitude() {
         return this.Longtitude;
     }
 
-    public void setLongtitude(String Longtitude) {
+    public void setLongtitude(double Longtitude) {
         this.Longtitude = Longtitude;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return this.Latitude;
     }
 
-    public void setLatitude(String Latitude) {
+    public void setLatitude(double Latitude) {
         this.Latitude = Latitude;
     }
 

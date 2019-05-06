@@ -9,6 +9,27 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
+    <include layout="@layout/view_line" />
+
+    <LinearLayout
+        android:id="@+id/linear_add"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height_dp_56"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/icon_add"
+            android:drawablePadding="@dimen/dp_6"
+            android:gravity="center"
+            android:text="新增方案"
+            android:textColor="#2F9AFF"
+            android:textSize="18sp" />
+    </LinearLayout>
 </LinearLayout>

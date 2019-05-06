@@ -28,8 +28,8 @@ public class EnterRelatePointDao extends AbstractDao<EnterRelatePoint, String> {
         public final static Property EnterPriseId = new Property(1, String.class, "EnterPriseId", false, "ENTER_PRISE_ID");
         public final static Property Name = new Property(2, String.class, "Name", false, "NAME");
         public final static Property Code = new Property(3, String.class, "Code", false, "CODE");
-        public final static Property Longtitude = new Property(4, String.class, "Longtitude", false, "LONGTITUDE");
-        public final static Property Latitude = new Property(5, String.class, "Latitude", false, "LATITUDE");
+        public final static Property Longtitude = new Property(4, double.class, "Longtitude", false, "LONGTITUDE");
+        public final static Property Latitude = new Property(5, double.class, "Latitude", false, "LATITUDE");
         public final static Property TagId = new Property(6, String.class, "TagId", false, "TAG_ID");
         public final static Property TagName = new Property(7, String.class, "TagName", false, "TAG_NAME");
         public final static Property UpdateTime = new Property(8, String.class, "UpdateTime", false, "UPDATE_TIME");
@@ -52,8 +52,8 @@ public class EnterRelatePointDao extends AbstractDao<EnterRelatePoint, String> {
                 "\"ENTER_PRISE_ID\" TEXT," + // 1: EnterPriseId
                 "\"NAME\" TEXT," + // 2: Name
                 "\"CODE\" TEXT," + // 3: Code
-                "\"LONGTITUDE\" TEXT," + // 4: Longtitude
-                "\"LATITUDE\" TEXT," + // 5: Latitude
+                "\"LONGTITUDE\" REAL NOT NULL ," + // 4: Longtitude
+                "\"LATITUDE\" REAL NOT NULL ," + // 5: Latitude
                 "\"TAG_ID\" TEXT," + // 6: TagId
                 "\"TAG_NAME\" TEXT," + // 7: TagName
                 "\"UPDATE_TIME\" TEXT);"); // 8: UpdateTime
@@ -88,16 +88,8 @@ public class EnterRelatePointDao extends AbstractDao<EnterRelatePoint, String> {
         if (Code != null) {
             stmt.bindString(4, Code);
         }
- 
-        String Longtitude = entity.getLongtitude();
-        if (Longtitude != null) {
-            stmt.bindString(5, Longtitude);
-        }
- 
-        String Latitude = entity.getLatitude();
-        if (Latitude != null) {
-            stmt.bindString(6, Latitude);
-        }
+        stmt.bindDouble(5, entity.getLongtitude());
+        stmt.bindDouble(6, entity.getLatitude());
  
         String TagId = entity.getTagId();
         if (TagId != null) {
@@ -138,16 +130,8 @@ public class EnterRelatePointDao extends AbstractDao<EnterRelatePoint, String> {
         if (Code != null) {
             stmt.bindString(4, Code);
         }
- 
-        String Longtitude = entity.getLongtitude();
-        if (Longtitude != null) {
-            stmt.bindString(5, Longtitude);
-        }
- 
-        String Latitude = entity.getLatitude();
-        if (Latitude != null) {
-            stmt.bindString(6, Latitude);
-        }
+        stmt.bindDouble(5, entity.getLongtitude());
+        stmt.bindDouble(6, entity.getLatitude());
  
         String TagId = entity.getTagId();
         if (TagId != null) {
@@ -177,8 +161,8 @@ public class EnterRelatePointDao extends AbstractDao<EnterRelatePoint, String> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // EnterPriseId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // Name
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // Code
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // Longtitude
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // Latitude
+            cursor.getDouble(offset + 4), // Longtitude
+            cursor.getDouble(offset + 5), // Latitude
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // TagId
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // TagName
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // UpdateTime
@@ -192,8 +176,8 @@ public class EnterRelatePointDao extends AbstractDao<EnterRelatePoint, String> {
         entity.setEnterPriseId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLongtitude(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setLatitude(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setLongtitude(cursor.getDouble(offset + 4));
+        entity.setLatitude(cursor.getDouble(offset + 5));
         entity.setTagId(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setTagName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setUpdateTime(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));

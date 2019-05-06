@@ -32,6 +32,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointItemAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.NavigationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
@@ -59,12 +60,15 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
 
     private PointItemAdapter mPointItemAdapter;
 
+    private PointAdapter.ItemAdapterOnClickListener listener;
+
     private boolean isCanEdit;
 
-    public PointHolder(Context context, View itemView, boolean isCanEdit) {
+    public PointHolder(Context context, View itemView, boolean isCanEdit, PointAdapter.ItemAdapterOnClickListener listener) {
         super(itemView);
         this.mContext = context;
         this.isCanEdit = isCanEdit;
+        this.listener = listener;
     }
 
     @Override
@@ -117,70 +121,14 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
                 @Override
                 public void onItemClick(View view, int viewType, Object data, int position) {
                     EnvirPoint pointSelect = (EnvirPoint) data;
-                    routeplanToNavi(BNRoutePlanNode.CoordinateType.BD09LL, pointSelect);
-
+                    if (listener!=null){
+                        listener.onItemOnClick(pointSelect);
+                    }
                 }
             });
         }
 
     }
 
-    private void routeplanToNavi(final int coType, EnvirPoint pointSelect) {
 
-        PointActivity pointActivity = (PointActivity) mContext;
-        BDLocation bdLocation = pointActivity.bdLocation;
-        if (bdLocation == null) {
-            ArtUtils.makeText(mContext, "未定位到当前位置，请重试");
-            return;
-        }
-
-        ArtUtils.makeText(mContext, bdLocation.getLongitude() + "，" + bdLocation.getLatitude());
-        Log.i(TAG, "routeplanToNavi: +导航定位：\n经度"+bdLocation.getLongitude()+"\n纬度"+bdLocation.getLatitude());
-
-        BNRoutePlanNode sNode = new BNRoutePlanNode(bdLocation.getLongitude(), bdLocation.getLatitude(), "", "", coType);
-        BNRoutePlanNode eNode = new BNRoutePlanNode(pointSelect.getLongtitude(), pointSelect.getLatitude(), pointSelect.getName(), pointSelect.getName(), coType);
-
-        List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
-        list.add(sNode);
-        list.add(eNode);
-
-        final BNRoutePlanNode mStartNode = sNode;
-
-        BaiduNaviManagerFactory.getRoutePlanManager().routeplanToNavi(
-                list,
-                IBNRoutePlanManager.RoutePlanPreference.ROUTE_PLAN_PREFERENCE_DEFAULT,
-                null,
-                new Handler(Looper.getMainLooper()) {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        switch (msg.what) {
-                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_START:
-                                Toast.makeText(mContext, "算路开始", Toast.LENGTH_SHORT)
-                                        .show();
-                                break;
-                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_SUCCESS:
-                                Toast.makeText(mContext, "算路成功", Toast.LENGTH_SHORT)
-                                        .show();
-                                break;
-                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_FAILED:
-                                Toast.makeText(mContext, "算路失败", Toast.LENGTH_SHORT)
-                                        .show();
-                                break;
-                            case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_TO_NAVI:
-                                Toast.makeText(mContext, "算路成功准备进入导航", Toast.LENGTH_SHORT)
-                                        .show();
-                                Intent intent = new Intent(mContext,
-                                        NavigationActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("endPoint", mStartNode);
-                                intent.putExtras(bundle);
-                                ArtUtils.startActivity(intent);
-                                break;
-                            default:
-                                // nothing
-                                break;
-                        }
-                    }
-                });
-    }
 }

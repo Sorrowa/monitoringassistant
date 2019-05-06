@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
@@ -26,7 +24,6 @@ import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,12 +31,13 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
@@ -48,7 +46,6 @@ import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TagAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
@@ -59,46 +56,45 @@ import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.tv_tag)
-    TextView       tvTag;
+    TextView tvTag;
     @BindView(R.id.tv_point)
-    TextView       tvPoint;
+    TextView tvPoint;
     @BindView(R.id.tv_monitem)
-    TextView       tvMonitem;
+    TextView tvMonitem;
     @BindView(R.id.et_days)
-    EditText       etDays;
+    EditText etDays;
     @BindView(R.id.et_period)
-    EditText       etPeriod;
+    EditText etPeriod;
     @BindView(R.id.et_comment)
-    EditText       etComment;
+    EditText etComment;
     @BindView(R.id.tv_add_parallel)
-    TextView       tvAddParallel;
+    TextView tvAddParallel;
     @BindView(R.id.btn_add_parallel)
     RelativeLayout btnAddParallel;
     @BindView(R.id.tv_add_blank)
-    TextView       tvAddBlank;
+    TextView tvAddBlank;
     @BindView(R.id.btn_add_blank)
     RelativeLayout btnAddBlank;
     @BindView(R.id.btn_add_new)
     RelativeLayout btnAddNew;
     @BindView(R.id.tv_print_label)
-    TextView       tvPrintLabel;
+    TextView tvPrintLabel;
     @BindView(R.id.btn_print_label)
     RelativeLayout btnPrintLabel;
 
-    private Project       mProject;
+    private Project mProject;
     private ProjectDetial mProjectDetial;
 
     private DialogPlus mDialogPlus;
 
     private List<Tags> mFirstTags = new ArrayList<>();
-    private List<Tab>  mTagNames  = new ArrayList<>();
-    private List<Tags> mTags      = new ArrayList<>();
+    private List<Tab> mTagNames = new ArrayList<>();
+    private List<Tags> mTags = new ArrayList<>();
 
-    private CustomTab    mCustomTab;
+    private CustomTab mCustomTab;
     private RecyclerView mRecyclerView;
-    private TagAdapter   mTagAdapter;
-
-    private String oldMontorIds;
+    private TagAdapter mTagAdapter;
+    private boolean isAdd;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -122,11 +118,19 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         btnAddNew.setVisibility(View.GONE);
         tvAddParallel.setText("删除");
         tvAddBlank.setText("保存");
-        mProject = DBHelper.get().getProjectDao().queryBuilder().
-                where(ProjectDao.Properties.Id.eq(getIntent().getStringExtra("projectId"))).unique();
-        mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().
-                where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
-        oldMontorIds=mProjectDetial.getMethodId();
+        if (getIntent() != null) {
+            isAdd = getIntent().getBooleanExtra("isAdd", false);
+            mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.
+                    Id.eq(getIntent().getStringExtra("projectId"))).unique();
+        }
+        if (isAdd) {
+            mProjectDetial = new ProjectDetial();
+        } else {
+            mProjectDetial = getIntent().getParcelableExtra("projectDetail");
+        }
+//        mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().
+//                where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
+
         bindView(mProjectDetial);
     }
 
@@ -150,17 +154,29 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 showTagDialog();
                 break;
             case R.id.tv_point:
-                Intent intent = new Intent(this, PointSelectActivity.class);
-                //Intent intent = new Intent(this, ProgramPointSelectActivity.class);
-                intent.putExtra("projectId", mProjectDetial.getProjectId());
+                //Intent intent = new Intent(this, PointSelectActivity.class);
+                if (mProjectDetial == null || mProjectDetial.getTagId() == null) {
+                    ArtUtils.makeText(this, "请先选择采样点位");
+                    return;
+                }
+                Intent intent = new Intent(this, ProgramPointSelectActivity.class);
+                if (mProject.getTypeCode() != 3) {//污染源
+                    intent.putExtra("isRcv",true);
+                    intent.putExtra("rcvId", mProject.getRcvId());
+                }
                 intent.putExtra("tagId", mProjectDetial.getTagId());
+                intent.putExtra("projectId", mProject.getId());
+                intent.putExtra("addressId", mProjectDetial.getAddressId());
+                intent.putExtra("addressName", mProjectDetial.getAddress());
                 new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            mProjectDetial.setAddress(data.getStringExtra("Address"));
-                            mProjectDetial.setAddressId(data.getStringExtra("AddressId"));
-                            bindView(mProjectDetial);
+                            if (!CheckUtil.isEmpty(data.getStringExtra("AddressId")) && !CheckUtil.isEmpty(data.getStringExtra("Address"))) {
+                                mProjectDetial.setAddress(data.getStringExtra("Address"));
+                                mProjectDetial.setAddressId(data.getStringExtra("AddressId"));
+                                bindView(mProjectDetial);
+                            }
                         }
                     }
                 });
@@ -175,21 +191,18 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            mProjectDetial.setMonItemName(data.getStringExtra("MonItemName"));
-                            mProjectDetial.setMonItemId(data.getStringExtra("MonItemId"));
-                            bindView(mProjectDetial);
-//                            if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !
-//                                    CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-//
-//                            }
+                            if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
+                                mProjectDetial.setMonItemName(data.getStringExtra("MonItemName"));
+                                mProjectDetial.setMonItemId(data.getStringExtra("MonItemId"));
+                                bindView(mProjectDetial);
+                            }
                         }
                     }
                 });
                 break;
             case R.id.btn_add_parallel:
                 //根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
-                List<ProjectDetial> deleteProjectDetialsList = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId()),ProjectDetialDao.Properties.ProjectContentId.eq(mProjectDetial.getProjectContentId())).list();
-                DBHelper.get().getProjectDetialDao().deleteInTx(deleteProjectDetialsList);
+                deleteProgramPoitRowData();
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
@@ -197,14 +210,31 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 finish();
                 break;
             case R.id.btn_add_blank:
+                if (CheckUtil.isEmpty(mProjectDetial.getAddressId())) {
+                    ArtUtils.makeText(this, "采样点位不能为空");
+                    return;
+                }
+
+                if (CheckUtil.isEmpty(mProjectDetial.getMonItemId())) {
+                    ArtUtils.makeText(this, "监测项目不能为空");
+                    return;
+                }
+
                 mProjectDetial.setDays(Integer.parseInt(etDays.getText().toString()));
                 mProjectDetial.setPeriod(Integer.parseInt(etPeriod.getText().toString()));
                 mProjectDetial.setComment(etComment.getText().toString());
                 mProjectDetial.setUpdateTime(DateUtils.getWholeDate());
-                DBHelper.get().getProjectDetialDao().update(mProjectDetial);
-                //生成新的ProjectDetials
+                if (isAdd) {
+                    mProjectDetial.setProjectId(mProject.getId());
+                    mProjectDetial.setId(UUID.randomUUID().toString());
+                    DBHelper.get().getProjectDetialDao().insert(mProjectDetial);
+                } else {
+                    DBHelper.get().getProjectDetialDao().update(mProjectDetial);
+                    //删除之前旧的ProjectDetials
+                    deleteProgramPoitRowData();
+                    //生成新的ProjectDetials
+                }
                 generateProjectDetials();
-
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
@@ -277,8 +307,6 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 mProjectDetial.setTagName(tags.getName());
                 bindView(mProjectDetial);
 
-
-
                 mDialogPlus.dismiss();
             }
         });
@@ -289,7 +317,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void updateTags(String tagParentId) {
         mTags.clear();
-        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.ParentId.eq(tagParentId),TagsDao.Properties.Level.eq(1)).list();
+        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.ParentId.eq(tagParentId), TagsDao.Properties.Level.eq(1)).list();
         if (!CheckUtil.isEmpty(tags1)) {
             mTags.addAll(tags1);
         }
@@ -297,83 +325,46 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
 
-    private void generateProjectDetials(){
-        String monitorIds=mProjectDetial.getMonItemId();
-        List<String> montorIdList=new ArrayList<>();
-        if (!CheckUtil.isEmpty(monitorIds)){
-            String[] montorIdArray=monitorIds.split(",");
-            if (!CheckUtil.isEmpty(montorIdArray)){
-                montorIdList=Arrays.asList(montorIdArray);
-                for (String monitorId:montorIdArray){
-                    ProjectDetial projectDetial=getProjectDetial(monitorId);
-                    if (CheckUtil.isNull(projectDetial)){
-                        projectDetial=generateProjectDetial(monitorId);
-                        if (!CheckUtil.isNull(projectDetial)){
-                            DBHelper.get().getProjectDetialDao().insertOrReplace(projectDetial);
-                        }
-                    }
-
-                }
-
-            }
-        }
-
-        if (!CheckUtil.isEmpty(oldMontorIds)){
-            String[] oldMontorIdArray=oldMontorIds.split(",");
-            if (!CheckUtil.isEmpty(oldMontorIdArray)){
-                for (String monitorId:oldMontorIdArray){
-
-                    if (!CheckUtil.isEmpty(montorIdList) && !montorIdList.contains(monitorId)){
-                        ProjectDetial projectDetial=getProjectDetial(monitorId);
-                        if (!CheckUtil.isNull(projectDetial)){
-                            DBHelper.get().getProjectDetialDao().delete(projectDetial);
-                        }
+    private void generateProjectDetials() {
+        String monitorIds = mProjectDetial.getMonItemId();
+        String addressIds = mProjectDetial.getAddressId();
+        if (!CheckUtil.isEmpty(monitorIds) && !CheckUtil.isEmpty(addressIds)) {
+            String[] montorIdArray = monitorIds.split(",");
+            String[] addressIdArray = addressIds.split(",");
+            String monItemId = "";
+            ProjectDetial projectDetial = null;
+            for (String montorId : montorIdArray) {
+                monItemId = montorId;
+                for (String addressId : addressIdArray) {
+                    projectDetial = generateProjectDetial(monItemId, addressId);
+                    if (!CheckUtil.isNull(projectDetial)) {
+                        DBHelper.get().getProjectDetialDao().insertOrReplace(projectDetial);
                     }
                 }
-
             }
         }
 
     }
-
-    /**
-     * 判断是否存在ProjectDetial
-     * @param monitorId
-     * @return
-     */
-    private ProjectDetial getProjectDetial(String monitorId){
-        ProjectDetial projectDetial=null;
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject)).list();
-        if (!CheckUtil.isEmpty(projectDetials)){
-            for (ProjectDetial projectDetial1:projectDetials){
-                if (!CheckUtil.isEmpty(monitorId) && !CheckUtil.isEmpty(projectDetial1.getMethodId()) && projectDetial1.getMethodId().equals(monitorId) ){
-                    projectDetial=projectDetial1;
-                    break;
-                }
-            }
-
-        }
-        return projectDetial;
-    }
-
 
     /**
      * 生成ProjectDetial
-     * @param monitorId
+     *
+     * @param monItemId
+     * @param addressId
      * @return
      */
-    private ProjectDetial generateProjectDetial(String monitorId){
-        if (!CheckUtil.isNull(mProjectDetial)){
-            ProjectDetial projectDetial=new ProjectDetial();
+    private ProjectDetial generateProjectDetial(String monItemId, String addressId) {
+        if (!CheckUtil.isNull(mProjectDetial)) {
+            ProjectDetial projectDetial = new ProjectDetial();
             projectDetial.setId(UUID.randomUUID().toString());
-            projectDetial.setAddress(mProjectDetial.getAddress());
-            projectDetial.setAddressId(mProjectDetial.getAddressId());
+            projectDetial.setAddress(getEnvirPointAddressById(addressId));
+            projectDetial.setAddressId(addressId);
             projectDetial.setComment(mProjectDetial.getComment());
             projectDetial.setDays(mProjectDetial.getDays());
-            projectDetial.setMethodId(mProjectDetial.getMonItemId());
+            projectDetial.setMethodId(mProjectDetial.getMethodId());
             projectDetial.setMethodName(mProjectDetial.getMethodName());
-            projectDetial.setMonItemId(monitorId);
-            projectDetial.setMonItemName(getMonItemNameById(monitorId));
+            projectDetial.setMonItemId(monItemId);
+            projectDetial.setMonItemName(getMonItemNameById(monItemId));
             projectDetial.setPeriod(mProjectDetial.getPeriod());
             projectDetial.setProjectContentId(mProjectDetial.getProjectContentId());
             projectDetial.setProjectId(mProjectDetial.getProjectId());
@@ -387,12 +378,12 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         return null;
     }
 
-    private String getMonItemNameById(String itemId){
+    private String getMonItemNameById(String itemId) {
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mProjectDetial.getTagParentId())).unique();
         List<MonItems> monItems = tags.getMMonItems();
-        if (!CheckUtil.isEmpty(monItems)){
-            for (MonItems monItem:monItems){
-                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
+        if (!CheckUtil.isEmpty(monItems)) {
+            for (MonItems monItem : monItems) {
+                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)) {
                     return monItem.getName();
                 }
             }
@@ -400,5 +391,32 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         return "";
     }
 
+    /**
+     * 通过addressId获取name
+     *
+     * @param addressId
+     * @return
+     */
+    private String getEnvirPointAddressById(String addressId) {
+        List<EnvirPoint> envirPointList = DBHelper
+                .get()
+                .getEnvirPointDao()
+                .queryBuilder()
+                .where(EnvirPointDao.Properties.Id.eq(addressId))
+                .list();
+        if (!CheckUtil.isEmpty(envirPointList)) {
+            return envirPointList.get(0).getName();
+        }
+        return "";
+    }
+
+    /**
+     * 删除采样点位对应的一行数据
+     * 根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
+     */
+    private void deleteProgramPoitRowData() {
+        List<ProjectDetial> deleteProjectDetialsList = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId()), ProjectDetialDao.Properties.ProjectContentId.eq(mProjectDetial.getProjectContentId())).list();
+        DBHelper.get().getProjectDetialDao().deleteInTx(deleteProjectDetialsList);
+    }
 
 }
