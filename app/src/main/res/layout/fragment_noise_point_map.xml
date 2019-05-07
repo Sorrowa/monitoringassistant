@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linear"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="@dimen/dp_6">
 
         <com.yinghe.whiteboardlib.view.SketchView
             android:id="@+id/sketch_view"
@@ -18,6 +19,11 @@
             android:layout_gravity="center"
             android:focusable="true"
             android:focusableInTouchMode="true" />
+
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 
@@ -29,7 +35,8 @@
         android:layout_marginTop="@dimen/dp_12"
         android:layout_marginRight="@dimen/dp_12"
         android:background="@color/transparent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/text_noise_source"
@@ -47,7 +54,7 @@
             android:id="@+id/text_noise_monitor"
             style="@style/noiseFunctionTextStyle"
             android:drawableTop="@mipmap/ic_noise_monitor"
-            android:text="敏感点\n噪声监测点" />
+            android:text="期货\n噪声监测点" />
     </LinearLayout>
 
     <LinearLayout
@@ -97,6 +104,11 @@
                 android:drawableLeft="@mipmap/icon_delete"
                 android:text="清空标记" />
         </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/line" />
 
         <LinearLayout
             android:id="@+id/linear_save"

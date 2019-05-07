@@ -535,7 +535,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     /**
      * 更新保存的数据
      */
-    private static void updateData() {
+    public static void updateData() {
         mSample = DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
         Gson gson = new Gson();

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -53,6 +54,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoiseSamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
@@ -92,6 +95,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 /**
@@ -1071,9 +1075,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
 
                 preciptationSampForm.setCompelSubmit(isCompelSubmit);
-                Gson gson=new Gson();
-                String str=gson.toJson(preciptationSampForm);
-                PreciptationSampForm form=gson.fromJson(str,PreciptationSampForm.class);
+                Gson gson = new Gson();
+                String str = gson.toJson(preciptationSampForm);
+                PreciptationSampForm form = gson.fromJson(str, PreciptationSampForm.class);
                 //文件上传成功，上传采样单
                 mPresenter.createTable(Message.obtain(TaskDetailActivity.this, new Object()), form);
             }
@@ -1106,6 +1110,23 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()),
                         SamplingFileDao.Properties.Id.eq(""),
                         SamplingFileDao.Properties.IsUploaded.eq(false)).list();
+        //噪声表 测点示意图  图片
+        if (sampling.getFormPath().equals(PATH_NOISE_FACTORY) && sampling.getPrivateData() != null) {
+            NoisePrivateData privateData = new Gson().fromJson(sampling.getPrivateData(), NoisePrivateData.class);
+            if (privateData.getImageSYT() != null && !privateData.getImageSYT().equals("")
+                    && !privateData.getImageSYT().startsWith("/Upload")) {
+                NoiseSamplingFile samplingFile = new NoiseSamplingFile();
+                File file = new File(privateData.getImageSYT());
+                samplingFile.setLocalId("FS-" + UUID.randomUUID().toString());
+                samplingFile.setId("");
+                samplingFile.setFilePath(privateData.getImageSYT());
+                samplingFile.setFileName(file.getName());
+                samplingFile.setSamplingId(sampling.getId());
+                samplingFile.setUpdateTime(DateUtils.getTime(new Date().getTime()));
+                samplingFile.setIsSelect(false);
+                samplingFiles.add(samplingFile);
+            }
+        }
         if (CheckUtil.isEmpty(samplingFiles)) {
             if (handler != null) {
                 handler.onSuccess();
@@ -1137,6 +1158,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             //记录图片
             fileSet.put(sf.getFileName(), sf);
         }
+
 
         if (CheckUtil.isEmpty(sourceFiles)) {
             if (handler != null) {

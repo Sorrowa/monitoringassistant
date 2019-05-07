@@ -43,6 +43,7 @@ public class NoisePrivateData {
     private String ProductionEquipment;
     private List<MianNioseSourceBean> MianNioseSource;
     private List<MianNioseAddrBean> MianNioseAddr;
+    private String ImageSYT;
 
     public String getCalibrationBefore() {
         return CalibrationBefore;
@@ -174,6 +175,14 @@ public class NoisePrivateData {
         this.MianNioseAddr = MianNioseAddr;
     }
 
+    public String getImageSYT() {
+        return ImageSYT;
+    }
+
+    public void setImageSYT(String imageSYT) {
+        ImageSYT = imageSYT;
+    }
+
     public static class MianNioseSourceBean {
         /**
          * IsChecked : true
@@ -248,6 +257,8 @@ public class NoisePrivateData {
         public void setGuid(String guid) {
             this.guid = guid;
         }
+
+
     }
 
     public static class MianNioseAddrBean {

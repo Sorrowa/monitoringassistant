@@ -36,6 +36,7 @@ import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 
 
+import static cn.cdjzxy.monitoringassistant.utils.FileUtils.saveInOI;
 import static com.yinghe.whiteboardlib.bean.StrokeRecord.STROKE_TYPE_CIRCLE;
 import static com.yinghe.whiteboardlib.bean.StrokeRecord.STROKE_TYPE_DRAW;
 
@@ -234,7 +235,7 @@ public class AutographActivity extends BaseTitileActivity {
 
         @Override
         protected File doInBackground(String... photoName) {
-            return saveInOI(autographPath, photoName[0], 80);
+            return saveInOI(sketchView.getResultBitmap(), autographPath, photoName[0], 80);
         }
 
         @Override
@@ -263,69 +264,6 @@ public class AutographActivity extends BaseTitileActivity {
         }
     }
 
-    /**
-     * show 保存图片到本地文件，耗时操作
-     *
-     * @param filePath 文件保存路径
-     * @param imgName  文件名
-     * @param compress 压缩百分比1-100
-     * @return 返回保存的图片文件
-     * @author TangentLu
-     * create at 16/6/17 上午11:18
-     */
-    public File saveInOI(String filePath, String imgName, int compress) {
-//        Log.e(TAG, "saveInOI: " + String.format(" filePath:%d, imgName:%s ", filePath, imgName));
-        if (!imgName.contains(".png")) {
-            imgName += ".png";
-        }
-        Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
-
-        Bitmap newBM = sketchView.getResultBitmap();
-//        switch (autographType) {
-//            case check:
-//                newBM = sketchViewCheck.getResultBitmap();
-//                break;
-//            case examine:
-//                newBM = sketchViewExamine.getResultBitmap();
-//                break;
-//            case sampling:
-//                newBM = sketchViewSampling.getResultBitmap();
-//                break;
-//            default:
-//                newBM = sketchViewSampling.getResultBitmap();
-//                break;
-//        }
-
-        Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
-        try {
-            File dir = new File(filePath);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            File f = new File(filePath, imgName);
-            if (!f.exists()) {
-                f.createNewFile();
-            } else {
-                f.delete();
-            }
-            FileOutputStream out = new FileOutputStream(f);
-            Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
-
-            if (compress >= 1 && compress <= 100)
-                newBM.compress(Bitmap.CompressFormat.PNG, compress, out);
-            else {
-                newBM.compress(Bitmap.CompressFormat.PNG, 80, out);
-            }
-            Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
-
-            out.close();
-            newBM.recycle();
-            newBM = null;
-            return f;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     @Nullable
     @Override

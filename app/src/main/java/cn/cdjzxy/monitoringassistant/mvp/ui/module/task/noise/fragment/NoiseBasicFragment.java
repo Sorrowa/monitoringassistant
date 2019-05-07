@@ -153,18 +153,20 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
      */
     public void savePrivateData() {
         if (mPrivateData != null && mSample != null) {
+            NoisePrivateData privateData=mPrivateData;
             mSample.setWindSpeed(edWingSpeed.getEditTextStr());
-            mPrivateData.setClientName(edFactoryName.getEditTextStr());
-            mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
-            mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());
-            mPrivateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
-            mPrivateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
-            mPrivateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
-            mPrivateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
-            mPrivateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
-            String jsonStr = new Gson().toJson(mPrivateData);
-            mSample.setPrivateData(jsonStr);
             mProject.setClientName(edFactoryName.getEditTextStr());
+            privateData.setClientName(edFactoryName.getEditTextStr());
+            privateData.setClientAddr(edFactoryAddress.getEditTextStr());
+            privateData.setProductionCondition(edFactoryInfo.getEditTextStr());
+            privateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
+            privateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
+            privateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
+            privateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
+            privateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
+            String jsonStr = new Gson().toJson(privateData);
+            mSample.setPrivateData(jsonStr);
+
             saveMySample();
         }
     }

@@ -65,6 +65,7 @@ public class BaseApplication extends MultiDexApplication implements App {
         initFonts();
         if (mAppDelegate != null)
             this.mAppDelegate.onCreate(this);
+
     }
 
     /**

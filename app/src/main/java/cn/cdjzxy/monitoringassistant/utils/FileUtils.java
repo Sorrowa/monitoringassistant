@@ -1,12 +1,16 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
+    private static final String TAG = "FileUtils";
 
     /**
      * 获取目录下的文件及文件夹
@@ -86,4 +90,68 @@ public class FileUtils {
         return allFile;
     }
 
+    /**
+     * show 保存图片到本地文件，耗时操作
+     *
+     * @param bitmap   需要保存的图片
+     * @param filePath 文件保存路径
+     * @param imgName  文件名
+     * @param compress 压缩百分比1-100
+     * @return 返回保存的图片文件
+     * @author TangentLu
+     * create at 16/6/17 上午11:18
+     */
+    public static File saveInOI(Bitmap bitmap, String filePath, String imgName, int compress) {
+//        Log.e(TAG, "saveInOI: " + String.format(" filePath:%d, imgName:%s ", filePath, imgName));
+        if (!imgName.contains(".png")) {
+            imgName += ".png";
+        }
+        Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
+
+//        Bitmap newBM = sketchView.getResultBitmap();
+//        switch (autographType) {
+//            case check:
+//                newBM = sketchViewCheck.getResultBitmap();
+//                break;
+//            case examine:
+//                newBM = sketchViewExamine.getResultBitmap();
+//                break;
+//            case sampling:
+//                newBM = sketchViewSampling.getResultBitmap();
+//                break;
+//            default:
+//                newBM = sketchViewSampling.getResultBitmap();
+//                break;
+//        }
+
+        Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
+        try {
+            File dir = new File(filePath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File f = new File(filePath, imgName);
+            if (!f.exists()) {
+                f.createNewFile();
+            } else {
+                f.delete();
+            }
+            FileOutputStream out = new FileOutputStream(f);
+            Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
+
+            if (compress >= 1 && compress <= 100)
+                bitmap.compress(Bitmap.CompressFormat.PNG, compress, out);
+            else {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 80, out);
+            }
+            Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
+
+            out.close();
+            bitmap.recycle();
+            bitmap = null;
+            return f;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
