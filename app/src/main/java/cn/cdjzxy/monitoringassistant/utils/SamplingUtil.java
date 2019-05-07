@@ -1,14 +1,25 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+
+import com.google.gson.Gson;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoiseSamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
@@ -16,17 +27,45 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
+import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
+/**
+ * 2019年5月7日 嘉泽向昆杰   优化代码——进行中
+ */
 public class SamplingUtil {
 
     /**
-     * 获取当前年月日
-     *
-     * @return 当前年月日
+     * 降水表单路径/路径
      */
-    public static String getNumberForSampling() {
-        return new SimpleDateFormat("yyyyMMdd").format(new Date()).toString();
-    }
+    public static final String PATH_PRECIPITATION = "/FormTemplate/FILL_JS_GAS_XD";
+    public static final String NAME_PRECIPITATION = "降水采样及样品交接记录（新都）";
+
+    /**
+     * 废水表单路径/路径
+     */
+    public static final String PATH_WASTE_WATER = "/FormTemplate/FILL_WATER_NEW_XD";
+    public static final String NAME_WASTE_WATER = "水和废水样品采集与交接记录（新都）";
+
+    /**
+     * 仪器法表单路径/路径
+     */
+    public static final String PATH_INSTRUMENTAL = "/FormTemplate/FILL_YQF_WATER";
+    public static final String NAME_INSTRUMENTAL = "现场监测仪器法";
+
+    /**
+     * 工业企业厂界噪声监测记录
+     */
+    public static final String PATH_NOISE_FACTORY = "/FormTemplate/FILL_GYZS_VOICE_XD";
+    public static final String NAME_NOISE_FACTORY = "工业企业厂界噪声监测记录";
+
+    public static final int SAMPLING_MESSAGE = 1001;//采样点消息
 
     /**
      * 判断当前表单是否是本人的
@@ -57,7 +96,7 @@ public class SamplingUtil {
     }
 
     /**
-     * 创建采样单
+     * 创建采样单:水和废水
      *
      * @return
      */
@@ -94,6 +133,13 @@ public class SamplingUtil {
         return sampling;
     }
 
+    /**
+     * 创建采样单：噪声
+     *
+     * @param projectId
+     * @param formSelectId
+     * @return
+     */
     public static Sampling createNoiseSample(String projectId, String formSelectId) {
         Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
@@ -156,4 +202,73 @@ public class SamplingUtil {
         return samplingNo.toString();
     }
 
+
+    /**
+     * 上传采样单
+     *
+     * @param sampling       采样单
+     * @param isCompelSubmit 是否强制提交
+     */
+    public static void uploadSamplingData(Sampling sampling, boolean isCompelSubmit,
+                                          Context context, Message message) {
+        uploadSamplingFile(sampling, context, message);
+    }
+
+    /**
+     * 上传采样单文件
+     * 上传文件这里需要改一下：因为噪声表里面有测定示意图的图片 没有保存到文件集合，所以这里需要区别对待
+     *
+     * @param sampling 采样单
+     * @param context  @context
+     * @param message  回调
+     */
+    public static void uploadSamplingFile(Sampling sampling, Context context, Message message) {
+        if (sampling.getFormPath().equals(PATH_NOISE_FACTORY)) {
+            uploadSamplingNoiseFile(sampling, context, message);
+            return;
+        } else {
+
+        }
+
+    }
+
+    /**
+     * 上传噪声采样表文件：
+     * 第一步：先上传测点示意图的图片，第二步上传文件集合图片
+     *
+     * @param sampling
+     * @param message
+     */
+    private static void uploadSamplingNoiseFile(Sampling sampling, Context context,
+                                                Message message) {
+        if (sampling.getPrivateData() != null) {
+            NoisePrivateData privateData = new Gson().fromJson(sampling.getPrivateData(), NoisePrivateData.class);
+            if (privateData.getImageSYT() != null && !privateData.getImageSYT().equals("")
+                    && !privateData.getImageSYT().startsWith("/Upload")) {
+                File file = new File(privateData.getImageSYT());
+                List<File> list = new ArrayList<>();
+                list.add(file);
+                FileUtils.compressPic(list, context, message, new FileUtils.PictureCompressCallBack() {
+                    @Override
+                    public void onSuccess(List<File> list) {
+
+                    }
+
+                    @Override
+                    public void onFailed(String message) {
+
+                    }
+                });
+            }
+        }
+
+    }
+
+
+
+    public interface FileUploadHandler {
+        void onSuccess();
+
+        void onFailed(String message);
+    }
 }

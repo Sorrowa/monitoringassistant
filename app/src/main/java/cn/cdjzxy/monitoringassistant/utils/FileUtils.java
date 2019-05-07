@@ -1,6 +1,8 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -8,6 +10,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+import static cn.cdjzxy.monitoringassistant.utils.SamplingUtil.SAMPLING_MESSAGE;
 
 public class FileUtils {
     private static final String TAG = "FileUtils";
@@ -108,22 +117,6 @@ public class FileUtils {
         }
         Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
 
-//        Bitmap newBM = sketchView.getResultBitmap();
-//        switch (autographType) {
-//            case check:
-//                newBM = sketchViewCheck.getResultBitmap();
-//                break;
-//            case examine:
-//                newBM = sketchViewExamine.getResultBitmap();
-//                break;
-//            case sampling:
-//                newBM = sketchViewSampling.getResultBitmap();
-//                break;
-//            default:
-//                newBM = sketchViewSampling.getResultBitmap();
-//                break;
-//        }
-
         Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
         try {
             File dir = new File(filePath);
@@ -153,5 +146,66 @@ public class FileUtils {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * 压缩图片
+     *
+     * @param fileList 原图片集合
+     * @param context  context
+     * @param message  压缩状态
+     * @param callBack 压缩回调
+     */
+    public static void compressPic(List<File> fileList, Context context,
+                                   Message message, PictureCompressCallBack callBack) {
+        List<File> compressFiles = new ArrayList<>();
+        for (File source : fileList) {
+            //异步压缩图片
+            new Compressor(context)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(30)
+//                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                    .compressToFileAsFlowable(source)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<File>() {
+                        @Override
+                        public void accept(File file) {
+                            // 压缩成功后调用，返回压缩后的图片
+                            compressFiles.add(file);
+
+                            message.what = SAMPLING_MESSAGE;
+                            message.obj = String.format("正在压缩采样单图片[%d/%d]", compressFiles.size(), fileList.size());
+                            //全部压缩完成，上传图片
+                            if (compressFiles.size() >= fileList.size()) {
+                                if (callBack != null) {
+                                    callBack.onSuccess(compressFiles);
+                                }
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) {
+//                            throwable.printStackTrace();
+                            //当压缩过程出现问题时调用
+                            if (message != null) {
+                                message.what = SAMPLING_MESSAGE;
+                                message.obj = "图片压缩失败";
+
+                            }
+                            if (callBack != null) {
+                                callBack.onFailed("图片压缩失败");
+                            }
+
+                        }
+                    });
+        }
+    }
+
+    public interface PictureCompressCallBack {
+        void onSuccess(List<File> list);
+
+        void onFailed(String message);
     }
 }

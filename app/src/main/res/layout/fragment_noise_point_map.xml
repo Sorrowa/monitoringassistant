@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"
@@ -12,14 +13,6 @@
         android:layout_weight="1"
         android:padding="@dimen/dp_6">
 
-        <com.yinghe.whiteboardlib.view.SketchView
-            android:id="@+id/sketch_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:focusable="true"
-            android:focusableInTouchMode="true" />
-
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
@@ -27,35 +20,6 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/linear_noise"
-        android:layout_width="70dp"
-        android:layout_height="290dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/dp_12"
-        android:layout_marginRight="@dimen/dp_12"
-        android:background="@color/transparent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/text_noise_source"
-            style="@style/noiseFunctionTextStyle"
-            android:drawableTop="@mipmap/ic_noise_source"
-            android:text="噪声源" />
-
-        <TextView
-            android:id="@+id/text_noise_point"
-            style="@style/noiseFunctionTextStyle"
-            android:drawableTop="@mipmap/ic_noise_point"
-            android:text="敏感点\n噪声监测点" />
-
-        <TextView
-            android:id="@+id/text_noise_monitor"
-            style="@style/noiseFunctionTextStyle"
-            android:drawableTop="@mipmap/ic_noise_monitor"
-            android:text="期货\n噪声监测点" />
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linear"
@@ -102,23 +66,10 @@
             <TextView
                 style="@style/noiseBottomTextStyle"
                 android:drawableLeft="@mipmap/icon_delete"
-                android:text="清空标记" />
+                android:text="删除图片" />
         </LinearLayout>
 
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="@color/line" />
 
-        <LinearLayout
-            android:id="@+id/linear_save"
-            style="@style/noiseBottomStyle">
-
-            <TextView
-                style="@style/noiseBottomTextStyle"
-                android:drawableLeft="@mipmap/ic_save"
-                android:text="保存图片" />
-        </LinearLayout>
     </LinearLayout>
 
 

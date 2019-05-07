@@ -56,8 +56,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.AutographActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseMapActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoisePointPicActivity;
 import cn.cdjzxy.monitoringassistant.utils.BitmapUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
@@ -69,28 +71,24 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
     FrameLayout frameLayout;
     //    @BindView(R.id.image_view)
 //    ImageView imageView;
-    @BindView(R.id.sketch_view)
-    SketchView sketchView;
+//    @BindView(R.id.sketch_view)
+//    SketchView sketchView;
     @BindView(R.id.linear_add)
     LinearLayout layoutAdd;
     @BindView(R.id.linear_map)
     LinearLayout layoutMap;
     @BindView(R.id.linear_clean)
     LinearLayout layoutClean;
-    @BindView(R.id.linear_noise)
-    LinearLayout linearNoise;
-    @BindView(R.id.text_noise_source)
-    TextView tvNoiseSource;
-    @BindView(R.id.text_noise_point)
-    TextView tvNoisePoint;
-    @BindView(R.id.text_noise_monitor)
-    TextView tvNoiseMonitor;
+    //    @BindView(R.id.linear_noise)
+//    LinearLayout linearNoise;
+//    @BindView(R.id.text_noise_source)
+//    TextView tvNoiseSource;
+//    @BindView(R.id.text_noise_point)
+//    TextView tvNoisePoint;
+//    @BindView(R.id.text_noise_monitor)
+//    TextView tvNoiseMonitor;
     @BindView(R.id.image_view)
     ImageView imageView;
-
-
-    private static final int REQUEST_CODE = 1053;
-    private String FILE_PATH, FILE_NAME;
 
 
     @Override
@@ -100,14 +98,7 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        SketchData newSketchCheck = new SketchData();
-        sketchView.setSketchData(newSketchCheck);
-        sketchView.setEditMode(SketchView.EDIT_PHOTO);
-        FILE_PATH = Constant.FILE_DIR + Constant.PNG_DIR + "/noise";
         if (mPrivateData != null && mPrivateData.getImageSYT() != null) {
-            linearNoise.setVisibility(View.GONE);
-            sketchView.setVisibility(View.GONE);
-            imageView.setVisibility(View.VISIBLE);
             if (mPrivateData.getImageSYT().startsWith("/Upload")) {
                 Glide.with(getContext()).
                         load(UserInfoHelper.get().getUserInfo().getWebUrl() +
@@ -145,37 +136,69 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
 
     }
 
-    @OnClick({R.id.linear_add, R.id.linear_map, R.id.linear_clean, R.id.text_noise_source,
-            R.id.text_noise_point, R.id.text_noise_monitor, R.id.linear_save})
+    @OnClick({R.id.linear_add, R.id.linear_map, R.id.linear_clean})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.linear_add:
-                choosePhoto(REQUEST_CODE);
+                startPicAct();
                 break;
             case R.id.linear_map:
                 startMapAct();
                 break;
             case R.id.linear_clean:
-                sketchView.erase();
-                break;
-            case R.id.text_noise_monitor:
-                sketchView.addPhotoByBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_noise_monitor));
-                break;
-            case R.id.text_noise_source:
-                sketchView.addPhotoByBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_noise_source));
-                break;
-            case R.id.text_noise_point:
-                sketchView.addPhotoByBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_noise_point));
-                break;
-            case R.id.linear_save:
-                if (sketchView.getRecordCount() == 0) {
-                    showNoChangeSaveDialog();
+                if (mPrivateData.getImageSYT() == null && mPrivateData.getImageSYT().equals("")) {
+                    showDeleteHintPicDialog("请您先选择一张图片或者地图编辑后，在进行删除", false);
                 } else {
-                    showSavePicDialog();
+                    showDeleteHintPicDialog("请问您是否确定删除这张图片？", true);
                 }
                 break;
 
         }
+    }
+
+    /**
+     * 提示删除
+     */
+    private void showDeleteHintPicDialog(String msg, boolean isDelete) {
+        final Dialog dialog = new AlertDialog.Builder(getContext())
+                .setMessage(msg)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (isDelete) {
+                            saveSample("");
+                        }
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    /**
+     * 跳转测点示意图图片编辑界面
+     */
+    private void startPicAct() {
+        Intent intent = new Intent();
+        intent.setClass(getContext(), NoisePointPicActivity.class);
+        new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    String path = data.getStringExtra("filePngPath");
+                    if (path == null || path.equals("")) return;
+                    saveSample(path);
+                    imageView.setVisibility(View.VISIBLE);
+                    Glide.with(getContext()).
+                            load(path).
+                            into(imageView);
+                }
+            }
+        });
     }
 
     /**
@@ -191,9 +214,6 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
                     String path = data.getStringExtra("filePngPath");
                     if (path == null || path.equals("")) return;
                     saveSample(path);
-                    FILE_NAME = new File(path).getName();
-                    linearNoise.setVisibility(View.GONE);
-                    sketchView.setVisibility(View.GONE);
                     imageView.setVisibility(View.VISIBLE);
                     Glide.with(getContext()).
                             load(path).
@@ -201,118 +221,6 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
                 }
             }
         });
-    }
-
-    /**
-     * 显示没有做任何改变的保存dialog
-     */
-    private void showNoChangeSaveDialog() {
-        final Dialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("是否直接保存图片？")
-                .setMessage("您是想直接保存这张图片嘛？因为您没有添加任何噪声点")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        savePic();
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        dialog.show();
-    }
-
-    /**
-     * 显示保存图片的dialog
-     */
-    private void showSavePicDialog() {
-        final Dialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("是否确定保存本次所有编辑？")
-                .setMessage("本次保存后，无法修改，如果您需要修改，需要你点击“清空标记”，从新编辑！")
-                .setPositiveButton("保存", new DialogInterface.OnClickListener() {// 积极
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        savePic();
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        dialog.show();
-    }
-
-    private void savePic() {
-        showLoadingDialog("正在保存");
-        if (FILE_NAME == null || FILE_NAME.equals("")) {
-            FILE_NAME = System.currentTimeMillis() + ".png";
-        }
-        new saveToFileTask().execute(FILE_NAME);
-    }
-
-    private void choosePhoto(int requestCode) {
-        Matisse.from(this)
-                .choose(MimeType.ofImage())
-                .capture(true)
-                .captureStrategy(new CaptureStrategy(true,
-                        "cn.cdjzxy.monitoringassistant.android7.fileprovider",
-                        "MonitoringAssistant"))
-                .maxSelectable(1)
-                //.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                .showSingleMediaType(true)
-                .imageEngine(new Glide4Engine())
-                .originalEnable(true)
-                .autoHideToolbarOnSingleTap(true)
-                .forResult(requestCode);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {//添加图片
-            List<String> paths = Matisse.obtainPathResult(data);
-            if (paths != null && paths.size() > 0) {
-                FILE_NAME = new File(paths.get(0)).getName();
-                linearNoise.setVisibility(View.VISIBLE);
-                sketchView.setVisibility(View.VISIBLE);
-                imageView.setVisibility(View.GONE);
-                sketchView.setBackgroundByPath(paths.get(0));
-            }
-        }
-    }
-
-    class saveToFileTask extends AsyncTask<String, Void, File> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected File doInBackground(String... photoName) {
-            return saveInOI(sketchView.getResultBitmap(), FILE_PATH, photoName[0], 100);
-        }
-
-        @Override
-        protected void onPostExecute(File file) {
-            super.onPostExecute(file);
-            hideLoading();
-            if (file.exists())
-                Toast.makeText(getActivity(), "保存成功", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(getActivity(), "保存失败！", Toast.LENGTH_SHORT).show();
-            linearNoise.setVisibility(View.GONE);
-            sketchView.erase();
-            sketchView.setBackgroundByPath(file.getPath());
-            sketchView.setEditMode(SketchView.EDIT_PHOTO);
-            saveSample(file.getPath());
-
-        }
     }
 
     private void saveSample(String path) {

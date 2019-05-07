@@ -3,6 +3,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +48,8 @@ import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 
+import static cn.cdjzxy.monitoringassistant.utils.FileUtils.saveInOI;
+
 public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implements IView {
     @BindView(R.id.map_view)
     MapView mapView;
@@ -58,7 +61,7 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
      */
     private LatLng currentPt;
 
-    private String FILE_PATH, FILE_NAME, FILE_PNG_PATH;
+    private String FILE_PATH, FILE_NAME;
     private boolean isFirstLoc = true; // 是否首次定位
 
 
@@ -80,17 +83,17 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
         mLocClient.setLocOption(option);
         mLocClient.start();
         initListener();
-        FILE_PATH = Constant.FILE_DIR + Constant.PNG_DIR + "/noise";
+        FILE_PATH = Constant.FILE_DIR + Constant.PNG_DIR + "/noise/";
         FILE_NAME = System.currentTimeMillis() + ".png";
     }
 
     @Override
     public void beforeSetTitleBar(TitleBarView titleBar) {
-        titleBar.setTitleMainText("地图选点");
+        titleBar.setTitleMainText("测点示意图——地图");
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBack();
+                onBack("");
             }
         });
     }
@@ -165,6 +168,7 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
                 break;
             case R.id.linear_save:
                 showLoadingDialog("请稍等");
+
                 snapshot();
                 break;
         }
@@ -194,37 +198,38 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
     public void snapshot() {
         mapView.getMap().snapshot(new BaiduMap.SnapshotReadyCallback() {
             public void onSnapshotReady(Bitmap snapshot) {
-                File file = new File(FILE_PATH + FILE_NAME);
-                FileOutputStream out;
-                try {
-                    out = new FileOutputStream(file);
-                    if (snapshot.compress(
-                            Bitmap.CompressFormat.PNG, 100, out)) {
-                        out.flush();
-                        out.close();
-                    }
-                    FILE_PNG_PATH = file.getPath();
-                    closeLoadingDialog();
-                    onBack();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new SaveToFileTask().equals(snapshot);
+//                File file = new File(FILE_PATH + FILE_NAME);
+//                FileOutputStream out;
+//                try {
+//                    out = new FileOutputStream(file);
+//                    if (snapshot.compress(
+//                            Bitmap.CompressFormat.PNG, 100, out)) {
+//                        out.flush();
+//                        out.close();
+//                    }
+//                    FILE_PNG_PATH = file.getPath();
+//                    closeLoadingDialog();
+//                    onBack();
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
     }
 
-    public void onBack() {
+    public void onBack(String s) {
         Intent intent = new Intent();
-        intent.putExtra("filePngPath", FILE_PNG_PATH);
+        intent.putExtra("filePngPath", s);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        onBack();
+        onBack("");
     }
 
     @Override
@@ -270,4 +275,31 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
         public void onReceivePoi(BDLocation poiLocation) {
         }
     }
+
+    class SaveToFileTask extends AsyncTask<Bitmap, Void, File> {
+
+        @Override
+        protected File doInBackground(Bitmap... bitmaps) {
+             return saveInOI(bitmaps[0], FILE_PATH, FILE_NAME, 100);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+
+        @Override
+        protected void onPostExecute(File file) {
+            super.onPostExecute(file);
+            hideLoading();
+            if (file.exists())
+                showMessage("保存成功");
+            else
+                showMessage("保存失败!");
+            onBack(file.getPath());
+        }
+    }
+
 }

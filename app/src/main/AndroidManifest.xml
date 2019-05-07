@@ -281,6 +281,10 @@
         <activity android:name=".mvp.ui.module.task.noise.activity.NoiseMapActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".mvp.ui.module.task.noise.activity.NoisePointPicActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
     </application>
 
 </manifest>

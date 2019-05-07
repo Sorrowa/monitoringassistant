@@ -1323,6 +1323,17 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                             //获取文件信息
                             SamplingFile samplingFile = fileSet.get(item.getFileName());
                             //更新文件ID
+                            if (sampling.getFormPath().equals(PATH_NOISE_FACTORY) &&
+                                    sampling.getPrivateData() != null) {
+                                NoisePrivateData privateData = new Gson().fromJson(sampling.getPrivateData(), NoisePrivateData.class);
+                                if (privateData.getImageSYT() != null
+                                        && privateData.getImageSYT().equals(samplingFile.getFilePath())) {
+                                    privateData.setImageSYT(item.getFilePath());
+                                    sampling.setPrivateData(new Gson().toJson(privateData));
+                                    DBHelper.get().getSamplingDao().update(sampling);
+                                    continue;
+                                }
+                            }
                             samplingFile.setId(item.getId());
                             samplingFile.setIsUploaded(false);
 
@@ -1345,6 +1356,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             }
         }), parts, map);
     }
+
 
     /**
      * 判断是否有选中的单子
