@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.wonders.health.lib.base.di.component.AppComponent;
 import com.wonders.health.lib.base.mvp.BasePresenter;
@@ -65,6 +66,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormFlow;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
@@ -88,6 +90,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterAct
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
@@ -833,7 +836,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                                 .getProjectDetialDao()
                                                 .insertInTx(projectDetials);
                                     }
-                                    List<ProjectContent> projectContentList=project.getProjectContents();
+                                    List<ProjectContent> projectContentList = project.getProjectContents();
                                     if (!CheckUtil.isEmpty(projectContentList)) {
                                         DBHelper.get()
                                                 .getProjectContentDao()
@@ -857,7 +860,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                                     .getProjectDetialDao()
                                                     .updateInTx(projectDetials);
                                         }
-                                        List<ProjectContent> projectContentList=project.getProjectContents();
+                                        List<ProjectContent> projectContentList = project.getProjectContents();
                                         if (!CheckUtil.isEmpty(projectContentList)) {
                                             DBHelper.get()
                                                     .getProjectContentDao()
@@ -904,7 +907,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     }
 
 
-    /**获取采样规范
+    /**
+     * 获取采样规范
+     *
      * @param msg
      */
     public void getSamplingStantd(final Message msg) {
@@ -1057,23 +1062,15 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             sampling.setFormPath(TaskDetailActivity.PATH_WASTEWATER);
         } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_INSTRUMENTAL)) {
             sampling.setFormPath(TaskDetailActivity.PATH_INSTRUMENTAL);
+        } else if (!CheckUtil.isNull(formName) && formName.equals(TaskDetailActivity.NAME_NOISE_FACTORY)) {
+            sampling.setFormPath(TaskDetailActivity.PATH_NOISE_FACTORY);
         }
-
         //处理有相同SamplingNo不同id的情况
         List<Sampling> localSamplings = getLocalSamplingsByNo(sampling.getSamplingNo());
         if (!CheckUtil.isEmpty(localSamplings)) {
             DBHelper.get().getSamplingDao().deleteInTx(localSamplings);
         }
         //DBHelper.get().getSamplingDao().delete(sampling);
-
-        //删除本地对应的分瓶信息
-        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(sampling.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
-        DBHelper.get().getSamplingFormStandDao().deleteInTx(formStantdsList);
-        //新增分瓶信息
-        List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
-        if (!CheckUtil.isEmpty(samplingFormStands)) {
-            DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
-        }
 
         //删除对应的SamplingDetail
         List<SamplingDetail> samplingDetailList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).build().list();
@@ -1103,43 +1100,68 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
         //文件
         List<SamplingFile> samplingFileList = sampling.getHasFile();
-        if (samplingFileList != null) {
+        if (samplingFileList != null && samplingFileList.size() > 0) {
             for (SamplingFile samplingFile : samplingFileList) {
                 //从数据库查询对应的文件，Id由于是服务端提供的，所以不会变，但是SamplingId可能会变化，所以这里做一次更新
                 List<SamplingFile> dbFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.Id.eq(samplingFile.getId())).list();
-                for (SamplingFile dbFile : dbFiles) {
-                    if (!new File(dbFile.getFilePath()).exists()) {
-                        //本地图片不存在了，重新下载图片
-                        downloadSamplingFile(dbFile, samplingFile, sampling.getId());
-                    } else if ((dbFile.getSamplingId() == null && sampling.getId() != null) || (dbFile.getSamplingId() !=
-                            null && !dbFile.getSamplingId().equals(sampling.getId()))) {
-                        dbFile.setSamplingId(sampling.getId());
-                        DBHelper.get().getSamplingFileDao().update(dbFile);
+                //数据库中未找到，直接下载
+                if (dbFiles == null || dbFiles.size() == 0) {
+                    downloadSamplingFile(null, samplingFile, sampling.getId());
+                } else {
+                    for (SamplingFile dbFile : dbFiles) {
+                        if (!new File(dbFile.getFilePath()).exists()) {
+                            //本地图片不存在了，重新下载图片
+                            downloadSamplingFile(dbFile, samplingFile, sampling.getId());
+                        } else if ((dbFile.getSamplingId() == null &&
+                                sampling.getId() != null) ||
+                                (dbFile.getSamplingId() != null && !dbFile.getSamplingId().equals(sampling.getId()))) {
+                            dbFile.setSamplingId(sampling.getId());
+                            DBHelper.get().getSamplingFileDao().update(dbFile);
+                        }
                     }
                 }
-
-                //数据库中未找到，直接下载
-                if (dbFiles.size() == 0) {
-                    downloadSamplingFile(null, samplingFile, sampling.getId());
-                }
             }
         }
-
-        //同步仪器法监测结果
-        List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
-        if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
-            for (SamplingDetail samplingDetail : samplingDetailYQFs) {
-                QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
-                List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
-                //匹配采样单编号一样的数据或Id一样，覆盖。
+        switch (sampling.getFormPath()) {
+            case TaskDetailActivity.PATH_NOISE_FACTORY:    //噪声表在此下载测点示意图图片
+                if (sampling.getPrivateData() != null) {
+                    NoisePrivateData privateData = new Gson().
+                            fromJson(sampling.getPrivateData(), NoisePrivateData.class);
+                    if (privateData.getImageSYT() != null && !privateData.getImageSYT().equals("")) {
+                        new DownLoadNoiseAsyncTask(sampling).execute(privateData);
+                        return;
+                    }
+                }
+                break;
+            case TaskDetailActivity.PATH_INSTRUMENTAL:
+                //同步仪器法监测结果
+                List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
+                if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
+                    for (SamplingDetail samplingDetail : samplingDetailYQFs) {
+                        QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
+                        List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                        //匹配采样单编号一样的数据或Id一样，覆盖。
 //                List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().whereOr(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
-                if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
-                    DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
+                        if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
+                            DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
+                        }
+                    }
+                    DBHelper.get().getSamplingDetailDao().insertOrReplaceInTx(samplingDetailYQFs);
                 }
-            }
-            DBHelper.get().getSamplingDetailDao().insertOrReplaceInTx(samplingDetailYQFs);
+                break;
+            case TaskDetailActivity.PATH_WASTEWATER://水和废水
+                //删除本地对应的分瓶信息
+                List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().
+                        where(SamplingFormStandDao.Properties.SamplingId.eq(sampling.getId())).
+                        orderAsc(SamplingFormStandDao.Properties.Index).list();
+                DBHelper.get().getSamplingFormStandDao().deleteInTx(formStantdsList);
+                //新增分瓶信息
+                List<SamplingFormStand> samplingFormStands = sampling.getSamplingFormStandResults();
+                if (!CheckUtil.isEmpty(samplingFormStands)) {
+                    DBHelper.get().getSamplingFormStandDao().insertInTx(samplingFormStands);
+                }
+                break;
         }
-
         sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
                 && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
         sampling.setIsLocal(false);
@@ -1160,7 +1182,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         params.samplingFile = samplingFile;
         params.samplingId = samplingId;
 
-        new DonwloadAsyncTask().execute(params);
+        new DownloadAsyncTask().execute(params);
     }
 
 //    /**
@@ -1202,7 +1224,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      * @param fileAddr
      * @return 保存路径
      */
-    private String donwloadFile(String fileAddr, String fileName) {
+    private String downloadFile(String fileAddr, String fileName) {
 
         try {
             int lastIndex = fileAddr.lastIndexOf("/");
@@ -1437,7 +1459,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     }
 
     //异步下载的任务
-    class DonwloadAsyncTask extends AsyncTask<DonwloadParams, Void, Void> {
+    class DownloadAsyncTask extends AsyncTask<DonwloadParams, Void, Void> {
 
         //onPreExecute用于异步处理前的操作
         @Override
@@ -1462,7 +1484,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             File newFile = new File(cacheDir + "/" + remoteFile.getFileName());
             if (!newFile.exists()) {
                 //下载并保存文件
-                localPath = donwloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
+                localPath = downloadFile(remoteFile.getFilePath(), remoteFile.getFileName());
             } else {
                 localPath = newFile.getPath();
             }
@@ -1497,6 +1519,100 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
     }
 
+    class DownLoadNoiseAsyncTask extends AsyncTask<NoisePrivateData, Sampling, Sampling> {
+        Sampling sampling;
+
+        DownLoadNoiseAsyncTask(Sampling sampling) {
+            this.sampling = sampling;
+        }
+
+        @Override
+        protected Sampling doInBackground(NoisePrivateData... privateDatas) {
+            String path = downloadNoiseFile(privateDatas[0].getImageSYT());
+            if (path != null && !path.equals("")) {
+                privateDatas[0].setImageSYT(path);
+                sampling.setPrivateData(new Gson().toJson(privateDatas[0]));
+            }
+            sampling.setIsCanEdit((sampling.getStatus() == 0 ||
+                    sampling.getStatus() == 4 || sampling.getStatus() == 9)
+                    && sampling.getSamplingUserId().
+                    contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
+            sampling.setIsLocal(false);
+            if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
+                DBHelper.get().getSamplingDao().update(sampling);
+            } else {
+                DBHelper.get().getSamplingDao().insertOrReplace(sampling);
+            }
+            return sampling;
+        }
+
+
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param downloadUrl 下载路径
+     * @return 保存路径
+     */
+    private String downloadNoiseFile(String downloadUrl) {
+        String fileName = null;
+        try {
+            int lastIndex = downloadUrl.lastIndexOf("/");
+            if (lastIndex >= 0) {
+                String fn = downloadUrl.substring(lastIndex + 1);
+                fileName = fn;
+                //文件名手动编码
+                downloadUrl = downloadUrl.replace(fn, java.net.URLEncoder.encode(fn, "utf-8"));
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        String fileUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + downloadUrl;
+
+        try {
+            URL url = new URL(fileUrl);
+            URLConnection con = url.openConnection();
+            con.setReadTimeout(30000);
+            con.setConnectTimeout(15000);
+
+            InputStream is = con.getInputStream();//获取输入流
+            if (is == null) {
+                return null;
+            }
+
+            String cacheDir = Constant.FILE_DIR + Constant.PNG_DIR + "/noise/";
+            if (fileName == null || fileName.equals("")) {
+                fileName = System.currentTimeMillis() + ".png";
+            }
+            File newFile = new File(cacheDir + "/" + fileName);
+
+            FileOutputStream fileOutputStream = new FileOutputStream(newFile);//指定文件保存路径，代码看下一步
+
+            byte[] buf = new byte[1024 * 10];
+            int ch;
+            while ((ch = is.read(buf)) != -1) {
+                fileOutputStream.write(buf, 0, ch);//将获取到的流写入文件中
+            }
+
+            if (fileOutputStream != null) {
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            }
+
+            is.close();
+
+            Log.d("downloadNoiseFile", "donwload " + fileUrl + " to " + newFile.getPath() + " success!");
+
+            return newFile.getPath();
+        } catch (Exception e) {
+            Log.e("downloadNoiseFile", "Url:" + fileUrl + " Exc:" + e);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     /**
      * 获取流转任务列表
