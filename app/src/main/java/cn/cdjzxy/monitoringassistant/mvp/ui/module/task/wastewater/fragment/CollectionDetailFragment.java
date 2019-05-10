@@ -516,7 +516,7 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setSampingCode(sample_code.getText().toString());
                     samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getText().toString()));
                     samplingDetail.setDescription(sample_mark.getText().toString());
-                    samplingDetail.setSamplingTime(DateUtils.getWholeDate());
+                    // samplingDetail.setSamplingTime(DateUtils.getWholeDate());
                     //设置样品采集和样品验收
                     samplingDetail.setSampleCollection("");
                     samplingDetail.setSampleAcceptance("");
@@ -701,13 +701,13 @@ public class CollectionDetailFragment extends BaseFragment {
             List<String> oldItemIdList = Arrays.asList(oldItemId.split(","));
             if (oldItemIdList != null && oldItemIdList.size() > 0) {
                 for (String oldId : oldItemIdList) {
-                    deleteBottleByItemId(oldId);
+                    HelpUtil.deleteBottleByItemId(oldId, mSample);
                 }
             }
 
             if (monItemIds != null && monItemIds.size() > 0) {
                 for (String id : monItemIds)
-                    createAndUpdateBottle(id);
+                    HelpUtil.createAndUpdateBottle(id, mSample);
             }
         }
 
@@ -723,60 +723,6 @@ public class CollectionDetailFragment extends BaseFragment {
 
     }
 
-
-    /**
-     * 根据itemId创建或者更新分瓶信息
-     *
-     * @param itemId
-     */
-    private void createAndUpdateBottle(String itemId) {
-        //获取存在包含该itemId的分瓶信息
-        SamplingFormStand samplingFormStand = HelpUtil.isBottleExists(itemId, mSample.getId());
-        //获取与itemId同一个分瓶信息
-        SamplingFormStand theSameStandBottle = HelpUtil.getTheSameStandBottleByItemId(itemId, mSample);
-        //如果存在包含该itemId的分瓶信息则不用管
-        if (CheckUtil.isNull(samplingFormStand)) {
-            // 据itemId获取对应的name
-            String itemName = HelpUtil.getMonItemNameById(itemId, mSample);
-            //如果存在标准的分瓶信息  则跟新否则新增
-            if (CheckUtil.isNull(theSameStandBottle)) {
-                SamplingFormStand bottleSplit = new SamplingFormStand();
-                bottleSplit.setAnalysisSite("");
-                bottleSplit.setSaveTimes("");
-                bottleSplit.setMonitemIds(itemId);
-                bottleSplit.setId(UUID.randomUUID().toString());
-                bottleSplit.setMonitemName(itemName);
-                List<String> items = new ArrayList<>();
-                items.add(itemId);
-                bottleSplit.setMonItems(items);
-                bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
-                bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
-                bottleSplit.setSamplingId(mSample.getId());
-                bottleSplit.setUpdateTime(DateUtils.getWholeDate());
-                bottleSplit.setCount(1);
-
-                //获取包含itemId的标准，如果有则使用标准的信息新增，如果没有则用默认信息新增
-                SamplingStantd samplingStantd = HelpUtil.getSamplingStantdByMonItem(itemName, mSample.getTagId());
-                if (!CheckUtil.isNull(samplingStantd)) {
-                    bottleSplit.setContainer(samplingStantd.getContaner());
-                    bottleSplit.setSamplingAmount(samplingStantd.getCapacity());
-                    bottleSplit.setSaveMehtod(samplingStantd.getSaveDescription());
-                    // oldMonitemIds.add(bottleSplit);
-                } else {
-                    bottleSplit.setContainer("");
-                    bottleSplit.setSamplingAmount("");
-                    bottleSplit.setSaveMehtod("");
-                    // oldMonitemIds.add(bottleSplit);
-                }
-
-                DBHelper.get().getSamplingFormStandDao().insertInTx(bottleSplit);
-            } else {//存在则更新
-                theSameStandBottle.setMonitemIds(theSameStandBottle.getMonitemIds() + "," + itemId);
-                theSameStandBottle.setMonitemName(theSameStandBottle.getMonitemName() + "," + itemName);
-                DBHelper.get().getSamplingFormStandDao().updateInTx(theSameStandBottle);
-            }
-        }
-    }
 
     /**
      * 获去monItem 对应的 SamplingStantd
@@ -843,91 +789,9 @@ public class CollectionDetailFragment extends BaseFragment {
         String[] monItemIds = currentMonitemIds.split(",");
         if (monItemIds.length > 0) {
             for (String itemId : monItemIds) {
-                deleteBottleByItemId(itemId);
+                HelpUtil.deleteBottleByItemId(itemId, mSample);
             }
         }
-    }
-
-    /**
-     * 删除包含itemId的分瓶信息
-     * 19年4月26日 向昆杰更改  添加itemIdSize字段 itemIdSize=0的话 是当前样品采集的itemId 如果一共只出现了一次 就直接删除
-     * 如果大于1次 证明其他样品采集也有 可不用删除
-     *
-     * @param itemId
-     */
-    private void deleteBottleByItemId(String itemId) {
-        if (itemId == null || itemId.equals("")) return;
-        int itemIdSize = 0;//记录当前itemId出现的次数，如果只有一次就删除包含删除包含itemId的分瓶信息
-        List<SamplingContent> samplingContents = mSample.getSamplingContentResults();
-        if (!CheckUtil.isEmpty(samplingContents)) {
-            for (SamplingContent content : samplingContents) {
-                String monItemIds = content.getMonitemId();
-                if (!CheckUtil.isEmpty(monItemIds) && !CheckUtil.isEmpty(itemId) && monItemIds.contains(itemId)) {
-                    itemIdSize++;
-                    if (itemIdSize > 1) break;
-                }
-            }
-        }
-        //只出现了一次
-        if (itemIdSize <= 1) {
-            SamplingFormStand samplingFormStand = HelpUtil.isBottleExists(itemId, mSample.getId());
-            if (!CheckUtil.isNull(samplingFormStand)) {
-                String[] ids = samplingFormStand.getMonitemIds().split(",");
-                List<String> monItemIdList = new ArrayList<>();
-                List<String> monItemNameList = new ArrayList<>();
-                for (String id : ids) {
-                    if (!id.equals(itemId)) {
-                        monItemIdList.add(id);
-                        String itemName = HelpUtil.getMonItemNameById(id, mSample);
-                        if (CheckUtil.isEmpty(itemName)) {
-                            monItemNameList.add(" ");
-                        } else {
-                            monItemNameList.add(itemName);
-                        }
-                    }
-                }
-                samplingFormStand.setMonitemIds(HelpUtil.joinStringList(monItemIdList));
-                samplingFormStand.setMonitemName(HelpUtil.joinStringList(monItemNameList));
-                if (monItemIdList == null || monItemIdList.size() == 0)
-                    DBHelper.get().getSamplingFormStandDao().delete(samplingFormStand);
-                else
-                    DBHelper.get().getSamplingFormStandDao().update(samplingFormStand);
-            }
-        }
-//        List<SamplingFormStand> formStandsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where
-//                (SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
-//        if (!CheckUtil.isEmpty(formStandsList)) {
-//            for (SamplingFormStand formStand : formStandsList) {
-//                String monItemIds = formStand.getMonitemIds();
-//                if (!CheckUtil.isEmpty(monItemIds) && !CheckUtil.isEmpty(itemId) && monItemIds.contains(itemId)) {
-//                    itemIdSize += 1;
-//                    if (itemIdSize > 1) break;
-//                    if (monItemIds.equals(itemId)) {
-//                        DBHelper.get().getSamplingFormStandDao().deleteInTx(formStand);
-//                        break;
-//                    } else {
-//                        String[] ids = monItemIds.split(",");
-//                        List<String> monItemIdList = new ArrayList<>();
-//                        List<String> monItemNameList = new ArrayList<>();
-//                        for (String id : ids) {
-//                            if (!id.equals(itemId)) {
-//                                monItemIdList.add(id);
-//                                String itemName = HelpUtil.getMonItemNameById(id, mSample);
-//                                if (CheckUtil.isEmpty(itemName)) {
-//                                    monItemNameList.add(" ");
-//                                } else {
-//                                    monItemNameList.add(itemName);
-//                                }
-//                            }
-//                        }
-//                        formStand.setMonitemName(HelpUtil.joinStringList(monItemNameList));
-//                        formStand.setMonitemIds(HelpUtil.joinStringList(monItemIdList));
-//                        DBHelper.get().getSamplingFormStandDao().updateInTx(formStand);
-//                        break;
-//                    }
-//                }
-//
-//            }
     }
 
 

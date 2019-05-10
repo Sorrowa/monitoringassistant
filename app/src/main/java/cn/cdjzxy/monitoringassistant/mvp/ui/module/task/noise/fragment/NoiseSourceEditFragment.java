@@ -149,10 +149,15 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
     @OnClick({R.id.btn_back, R.id.linear_delete, R.id.linear_save})
     public void onClick(View v) {
         hideSoftInput();
+        if (v.getId()==R.id.btn_back){
+            EventBus.getDefault().post(NOISE_FRAGMENT_INT_SOURCE, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
+            return;
+        }
+        if (!mSample.getIsCanEdit()){
+            showMessage("提示：当前采样单，不支持编辑");
+            return;
+        }else
         switch (v.getId()) {
-            case R.id.btn_back:
-                EventBus.getDefault().post(NOISE_FRAGMENT_INT_SOURCE, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
-                break;
             case R.id.linear_delete:
                 deleteData();
                 break;
@@ -163,10 +168,14 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
     }
 
     private void saveData() {
-        isNeedSave = true;
         if (position == -1) {
+            if (edSourceName.getEditTextStr() == null || edSource.getEditTextStr() == null) {
+                showMessage("请填写声源信息");
+                return;
+            }
             sourceBean.setGuid(UUID.randomUUID().toString());
         }
+        isNeedSave = true;
         sourceBean.setName(edSourceName.getEditTextStr());
         sourceBean.setModel(edSource.getEditTextStr());
         sourceBean.setNum(edSourceNum.getEditTextStr());

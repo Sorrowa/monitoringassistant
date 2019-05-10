@@ -151,6 +151,8 @@ public class SamplingUtil {
         sampling.setProjectNo(project.getProjectNo());
         sampling.setTagId(formSelect.getTagId());
         sampling.setParentTagId(formSelect.getTagParentId());
+        sampling.setMonitemName("工业企业厂界噪声");
+        sampling.setMonitemId(DbHelpUtils.getMonItems("工业企业厂界噪声").getId());//为了检测方法
 //        sampling.setMontype(project.getMonType() + "");
         sampling.setMontype(project.getTypeCode());
         sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
@@ -202,7 +204,44 @@ public class SamplingUtil {
         return samplingNo.toString();
     }
 
+    /**
+     * 判断当前表单能否编辑
+     *
+     * @param sampling
+     * @return
+     */
+    public static boolean sampIsCanEdit(Sampling sampling) {
+        return (sampling.getStatus() == 0 ||
+                sampling.getStatus() == 4 || sampling.getStatus() == 9)
+                && sampling.getSamplingUserId().
+                contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false;
+    }
 
+
+
+    /**
+     * 判断噪声表是否采样完成
+     *
+     * @param sampling
+     * @return
+     */
+    public static boolean isNoiseFinsh(Sampling sampling) {
+        if (CheckUtil.isEmpty(sampling.getSamplingTimeBegin())) {//检测日期必填项
+            return false;
+        }
+
+        if (CheckUtil.isEmpty(sampling.getPrivateData()))//采样检测信息
+            return false;
+        NoisePrivateData privateData = new Gson().fromJson(sampling.getPrivateData(),
+                NoisePrivateData.class);
+        if (CheckUtil.isEmpty(privateData.getMianNioseAddr())) {
+            return false;
+        }
+
+        return true;
+
+    }
+/**********************************************************************************************/
     /**
      * 上传采样单
      *
@@ -263,7 +302,6 @@ public class SamplingUtil {
         }
 
     }
-
 
 
     public interface FileUploadHandler {

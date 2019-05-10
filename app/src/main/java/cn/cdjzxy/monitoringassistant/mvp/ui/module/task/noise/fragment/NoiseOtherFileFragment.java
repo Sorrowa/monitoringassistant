@@ -184,9 +184,17 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
         hideSoftInput();
         switch (v.getId()) {
             case R.id.linear_delete:
+                if (!mSample.getIsCanEdit()){
+                    showMessage("提示：当前采样单，不支持编辑");
+                    return;
+                }
                 deleteData();
                 break;
             case R.id.linear_add:
+                if (!mSample.getIsCanEdit()){
+                    showMessage("提示：当前采样单，不支持编辑");
+                    return;
+                }
                 choosePhoto(REQUEST_CODE);
                 break;
             case R.id.img_preview:

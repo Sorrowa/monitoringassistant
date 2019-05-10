@@ -435,7 +435,7 @@ public class BasicFragment extends BaseFragment {
                 mSample.setSamplingTimeBegin(DateUtils.getDate(date));
                 dateTextView.setText(DateUtils.getDate(date));
             }
-        }).setType(new boolean[]{true, true, false, false, false, false}).build();
+        }).setType(new boolean[]{true, true, true, false, false, false}).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }
@@ -486,7 +486,7 @@ public class BasicFragment extends BaseFragment {
                 fsExtends.setBuildTime(DateUtils.getYears(date));
                 dateTextView.setText(DateUtils.getYears(date));
             }
-        }).setType(new boolean[]{true, true, true, true, true, true}).build();
+        }).setType(new boolean[]{true, true, false, false, false, false}).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }

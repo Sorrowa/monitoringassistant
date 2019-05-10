@@ -24,6 +24,7 @@ import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 
 /**
  * 任务列表
@@ -72,7 +73,7 @@ public class TaskActivity extends BaseTitileActivity<ApiPresenter> {
      */
     private void initTaskData() {
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
-        final List<Project> projects = DBHelper.get().getProjectDao().queryBuilder().orderAsc(ProjectDao.Properties.PlanEndTime).list();
+        final List<Project> projects = DbHelpUtils.getProjectListDesc();
         if (!CheckUtil.isEmpty(projects)) {
             mTaskAdapter = new TaskAdapter(projects);
             mTaskAdapter.setOnItemClickListener((view, viewType, data, position) -> {

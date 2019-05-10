@@ -258,7 +258,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
      * 进入主界面
      */
     private void toMain() {
-        // startTraceServer();//开启轨迹服务
+         startTraceServer();//开启轨迹服务
         //  app.startTrajectoryServer(this);
         startRepositoeyDownload(name, pwd);
         startActivity(new Intent(this, MainActivity.class));

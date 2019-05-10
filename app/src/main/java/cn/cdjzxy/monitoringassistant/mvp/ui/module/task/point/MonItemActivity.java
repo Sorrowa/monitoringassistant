@@ -140,19 +140,14 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         if (!CheckUtil.isEmpty(monItems)) {
             mMonItems.clear();
             for (MonItems monItem : monItems) {
-                if (!CheckUtil.isEmpty(selectItemsStr)) {
-                    if (!selectItemsStr.contains(monItem.getId())) {
-                        monItem.setSelected(false);
-                        mMonItems.add(monItem);
-                    } else {
-                        monItem.setSelected(true);
-                        mMonItems.add(monItem);
-                        //设置选中的items
-                        mMonItemsSelected.add(monItem);
-                    }
-                } else {
+                if (!CheckUtil.isEmpty(selectItemsStr)&&!selectItemsStr.contains(monItem.getId())) {
                     monItem.setSelected(false);
-                    mMonItems.addAll(monItems);
+                    mMonItems.add(monItem);
+                } else {
+                    monItem.setSelected(true);
+                    mMonItems.add(monItem);
+                    //设置选中的items
+                    mMonItemsSelected.add(monItem);
                 }
             }
         }

@@ -77,6 +77,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
@@ -95,6 +96,7 @@ import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -862,9 +864,19 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         }
                                         List<ProjectContent> projectContentList = project.getProjectContents();
                                         if (!CheckUtil.isEmpty(projectContentList)) {
-                                            DBHelper.get()
-                                                    .getProjectContentDao()
-                                                    .updateInTx(projectContentList);
+                                            for (ProjectContent content : projectContentList) {
+                                                ProjectContent dbContent = DBHelper.get().getProjectContentDao().
+                                                        queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
+                                                if (dbContent!=null){
+                                                    DBHelper.get()
+                                                            .getProjectContentDao()
+                                                            .update(content);
+                                                }else {
+                                                    DBHelper.get()
+                                                            .getProjectContentDao()
+                                                            .insert(content);
+                                                }
+                                            }
                                         }
 
                                     }
@@ -1533,11 +1545,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 privateDatas[0].setImageSYT(path);
                 sampling.setPrivateData(new Gson().toJson(privateDatas[0]));
             }
-            sampling.setIsCanEdit((sampling.getStatus() == 0 ||
-                    sampling.getStatus() == 4 || sampling.getStatus() == 9)
-                    && sampling.getSamplingUserId().
-                    contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
+            sampling.setIsCanEdit(SamplingUtil.sampIsCanEdit(sampling));
             sampling.setIsLocal(false);
+            sampling.setIsFinish(SamplingUtil.isNoiseFinsh(sampling));
             if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
                 DBHelper.get().getSamplingDao().update(sampling);
             } else {
@@ -1550,7 +1560,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     }
 
     /**
-     * 下载文件
+     * 下载噪声测点示意图图片文件
      *
      * @param downloadUrl 下载路径
      * @return 保存路径

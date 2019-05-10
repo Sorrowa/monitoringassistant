@@ -37,10 +37,12 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MonItemMethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.WeatherActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
@@ -92,7 +94,6 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     LinearLayout linearDelete;
     @BindView(R.id.linear_save)
     LinearLayout linearSave;
-    private boolean isStop = false;
 
 
     @Override
@@ -115,6 +116,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
                 mPrivateData = new NoisePrivateData();
             }
             setViewData();
+
         }
 
     }
@@ -146,30 +148,6 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
         tvCalibrationNumber.setRightTextStr(mPrivateData.getCalibrationDeviceName());
     }
 
-    /**
-     * 保存信息
-     *
-     * @return
-     */
-    public void savePrivateData() {
-        if (mPrivateData != null && mSample != null) {
-            NoisePrivateData privateData=mPrivateData;
-            mSample.setWindSpeed(edWingSpeed.getEditTextStr());
-            mProject.setClientName(edFactoryName.getEditTextStr());
-            privateData.setClientName(edFactoryName.getEditTextStr());
-            privateData.setClientAddr(edFactoryAddress.getEditTextStr());
-            privateData.setProductionCondition(edFactoryInfo.getEditTextStr());
-            privateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
-            privateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
-            privateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
-            privateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
-            privateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
-            String jsonStr = new Gson().toJson(privateData);
-            mSample.setPrivateData(jsonStr);
-
-            saveMySample();
-        }
-    }
 
     @OnClick({R.id.my_layout_date, R.id.my_layout_weather_state, R.id.my_layout_device_number,
             R.id.my_layout_monitor_from, R.id.my_layout_device_name,
@@ -177,6 +155,10 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     })
     public void onClick(View v) {
         hideSoftInput();
+        if (!mSample.getIsCanEdit()) {
+            showMessage("提示：当前采样单，不支持编辑");
+            return;
+        }
         switch (v.getId()) {
             case R.id.my_layout_date://日期
                 showDateSelectDialog(tvDate.getRightTextView());
@@ -250,12 +232,9 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
      * 选择采样方法
      */
     private void showSamplingMethods(MyDrawableLinearLayout myDrawableLinearLayout) {
-        if (CheckUtil.isEmpty(mSample.getFormType())) {
-            ArtUtils.makeText(getContext(), "请先设置表单类型");
-            return;
-        }
-        Intent intent = new Intent(getContext(), MethodActivity.class);
-        intent.putExtra("tagId", mSample.getParentTagId());
+
+        Intent intent = new Intent(getContext(), MonItemMethodActivity.class);
+        intent.putExtra("MonItemId", mSample.getMonitemId());
         new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
@@ -278,6 +257,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
             public void onTimeSelect(Date date, View v) {
                 mSample.setSamplingTimeBegin(DateUtils.getDate(date));
                 dateTextView.setText(DateUtils.getDate(date));
+
             }
         }).build();
         pvTime.setDate(Calendar.getInstance());
@@ -301,17 +281,6 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     }
 
 
-    @SuppressLint("NewApi")
-    public void textDataDrawable(String s, TextView textView) {
-        Drawable drawable;
-        if (s == null || s.equals("")) {
-            drawable = getActivity().getDrawable(R.mipmap.icon_no_data);
-        } else {
-            drawable = getActivity().getDrawable(R.mipmap.icon_yes_data);
-        }
-        textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null);
-    }
-
     @Nullable
     @Override
     public IPresenter obtainPresenter() {
@@ -325,7 +294,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
 
     @Override
     public void showMessage(@NonNull String message) {
-
+        ArtUtils.makeText(getContext(), message);
     }
 
     @Override
@@ -336,20 +305,26 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     @Override
     public void onStop() {
         super.onStop();
+        if (!mSample.getIsCanEdit()) return;
         if (mPrivateData != null && mSample != null) {
-            mSample.setWindSpeed(edWingSpeed.getEditTextStr());
-            mPrivateData.setClientName(edFactoryName.getEditTextStr());
-            mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
-            mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());
-            mPrivateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
-            mPrivateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
-            mPrivateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
-            mPrivateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
-            mPrivateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
-            String jsonStr = new Gson().toJson(mPrivateData);
-            mSample.setPrivateData(jsonStr);
-            mProject.setClientName(edFactoryName.getEditTextStr());
+            saveData();
             Log.e(TAG, "onStop: " + "保存临时数据");
         }
+    }
+
+    private void saveData() {
+        mSample.setWindSpeed(edWingSpeed.getEditTextStr());
+        mProject.setClientName(edFactoryName.getEditTextStr());
+        mPrivateData.setClientName(edFactoryName.getEditTextStr());
+        mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
+        mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());
+        mPrivateData.setCalibrationBefore(edCalibrationFront.getEditTextStr());
+        mPrivateData.setCalibrationAfter(edCalibrationAfter.getEditTextStr());
+        mPrivateData.setWindDevName(tvDeviceNumber.getRightTextViewStr());
+        mPrivateData.setCalibrationMethodName(edCalibrationMethod.getEditTextStr());
+        mPrivateData.setCalibrationDeviceName(tvCalibrationNumber.getRightTextViewStr());
+        String jsonStr = new Gson().toJson(mPrivateData);
+        mSample.setPrivateData(jsonStr);
+        mProject.setClientName(edFactoryName.getEditTextStr());
     }
 }

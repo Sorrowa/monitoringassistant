@@ -83,6 +83,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.IosDialog;
@@ -261,6 +262,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 sampling.setSubmitDate(DateUtils.getDate());
                 sampling.setDeleteFiles("");//清空删除文件ID字符串
                 sampling.setSelected(false);
+                sampling.setIsCanEdit(SamplingUtil.sampIsCanEdit(sampling));
                 DBHelper.get().getSamplingDao().update(sampling);
 
                 //标记文件已上传

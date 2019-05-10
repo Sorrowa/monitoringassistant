@@ -118,7 +118,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser){
+        if (isVisibleToUser) {
             setViewData();
         }
     }
@@ -137,9 +137,11 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
             privateData.setAddressId(detail.getAddresssId());
         } else {
             privateData = new NoiseMonitorPrivateData();
+            privateData.setChecked(true);
         }
         if (privateData == null) {
             privateData = new NoiseMonitorPrivateData();
+            privateData.setChecked(true);
         }
         tvAddress.setRightTextStr(privateData.getAddressName());
         edMonitorDate.setEditTextStr(privateData.getTimeInterval());
@@ -195,36 +197,39 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
             R.id.my_layout_monitor_time_start, R.id.my_layout_monitor_time_end})
     public void onClick(View v) {
         hideSoftInput();
-        switch (v.getId()) {
-            case R.id.btn_back:
-                EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
-                break;
-            case R.id.linear_delete:
-                deleteData();
-                break;
-            case R.id.linear_save:
-                saveData();
-                break;
-            case R.id.relate_layout:
-                linearOpen.setVisibility(linearOpen.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                setBtnIsOpenImg();
-                break;
-            case R.id.my_layout_monitor_address:
-                choiceAddress();
-                break;
-            case R.id.my_layout_monitor_time_first_start:
-                showDateSelectDialog(tvMonitorTimeFirstStart);
-                break;
-            case R.id.my_layout_monitor_time_first_end:
-                showDateSelectDialog(tvMonitorTimeFirstEnd);
-                break;
-            case R.id.my_layout_monitor_time_start:
-                showDateSelectDialog(tvMonitorTimeStart);
-                break;
-            case R.id.my_layout_monitor_time_end:
-                showDateSelectDialog(tvMonitorTimeEnd);
-                break;
-        }
+        if (v.getId() == R.id.btn_back) {
+            EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
+            return;
+        } else if (v.getId() == R.id.relate_layout) {
+            linearOpen.setVisibility(linearOpen.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            setBtnIsOpenImg();
+            return;
+        } else if (!mSample.getIsCanEdit()) {
+            showMessage("提示：当前采样单，不支持编辑");
+        } else
+            switch (v.getId()) {
+                case R.id.linear_delete:
+                    deleteData();
+                    break;
+                case R.id.linear_save:
+                    saveData();
+                    break;
+                case R.id.my_layout_monitor_address:
+                    choiceAddress();
+                    break;
+                case R.id.my_layout_monitor_time_first_start:
+                    showDateSelectDialog(tvMonitorTimeFirstStart);
+                    break;
+                case R.id.my_layout_monitor_time_first_end:
+                    showDateSelectDialog(tvMonitorTimeFirstEnd);
+                    break;
+                case R.id.my_layout_monitor_time_start:
+                    showDateSelectDialog(tvMonitorTimeStart);
+                    break;
+                case R.id.my_layout_monitor_time_end:
+                    showDateSelectDialog(tvMonitorTimeEnd);
+                    break;
+            }
     }
 
     /**
@@ -271,6 +276,10 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
     }
 
     private void saveData() {
+        if (tvAddress.getRightTextViewStr() == null || tvAddress.getRightTextViewStr().equals("")) {
+            showMessage("请填写测点位置");
+            return;
+        }
         isNeedSave = true;
         showLoading("正在保存");
         privateData.setTimeInterval(edMonitorDate.getEditTextStr());
@@ -303,7 +312,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
         saveMySample();
         hideLoading();
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
-        EventBus.getDefault().post("",NOISE_FRAGMENT_MONITOR_SHARE);
+        EventBus.getDefault().post("", NOISE_FRAGMENT_MONITOR_SHARE);
     }
 
     public void setBtnIsOpenImg() {

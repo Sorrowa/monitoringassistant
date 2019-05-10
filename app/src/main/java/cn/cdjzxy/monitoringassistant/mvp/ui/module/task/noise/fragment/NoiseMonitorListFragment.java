@@ -186,6 +186,10 @@ public class NoiseMonitorListFragment extends BaseFragment implements IView {
     @OnClick({R.id.linear_delete, R.id.linear_add})
     public void onClick(View v) {
         hideSoftInput();
+        if (!mSample.getIsCanEdit()) {
+            showMessage("提示：当前采样单，不支持编辑");
+            return;
+        }
         switch (v.getId()) {
             case R.id.linear_delete:
                 deleteSelect();
@@ -240,14 +244,4 @@ public class NoiseMonitorListFragment extends BaseFragment implements IView {
     }
 
 
-    /**
-     * 保存信息
-     *
-     * @return
-     */
-    public void savePrivateData() {
-        if (mSample != null) {
-
-        }
-    }
 }

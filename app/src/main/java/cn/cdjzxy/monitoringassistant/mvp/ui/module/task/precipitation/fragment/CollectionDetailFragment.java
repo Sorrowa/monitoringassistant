@@ -64,26 +64,26 @@ public class CollectionDetailFragment extends BaseFragment {
 
     Unbinder unbinder;
     @BindView(R.id.tv_sample_code)
-    TextView       tvSampleCode;
+    TextView tvSampleCode;
     @BindView(R.id.tv_frequency)
-    TextView       tvFrequency;
+    TextView tvFrequency;
     @BindView(R.id.tv_start_time)
-    TextView       tvStartTime;
+    TextView tvStartTime;
     @BindView(R.id.tv_end_time)
-    TextView       tvEndTime;
+    TextView tvEndTime;
     @BindView(R.id.et_precipitation)
-    EditText       etPrecipitation;
+    EditText etPrecipitation;
     @BindView(R.id.et_rainwater_volume)
-    EditText       etRainwaterVolume;
+    EditText etRainwaterVolume;
     @BindView(R.id.et_remark)
-    EditText       etRemark;
+    EditText etRemark;
     @BindView(R.id.btn_delete)
     RelativeLayout btnDelete;
     @BindView(R.id.btn_save)
     RelativeLayout btnSave;
     private Sampling mSampling;
-    private boolean  isStartTime;
-    private int      listPosition;
+    private boolean isStartTime;
+    private int listPosition;
 
 
     public CollectionDetailFragment() {
@@ -147,22 +147,26 @@ public class CollectionDetailFragment extends BaseFragment {
             //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
             String samplingNo;
 
-            String snDate = DateUtils.getDate().replace("-", "").substring(2);
-            String snPointPosition = "采样点位编号未填写";
-            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
-                snPointPosition = mSampling.getAddressNo();
-            }
-            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-            int snFrequency = 1;
-            if (samplingDetailResults != null
-                    && samplingDetailResults.size() > 0) {
-                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
-            }
 
-            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" + StringUtil.autoGenericCode(snFrequency, 2);
+//            String snDate = DateUtils.getDate().replace("-", "").substring(2);
+//            String snPointPosition = "采样点位编号未填写";
+//            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
+//                snPointPosition = mSampling.getAddressNo();
+//            }
+//            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
+//            int snFrequency = 1;
+//            if (samplingDetailResults != null
+//                    && samplingDetailResults.size() > 0) {
+//                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
+//            }
+            //新的样品编码规范——————2019年5月10更改
+            //JS(样品性质——降水)——年月日——采样单流水号(时间相同就加一)采样人员系统编号——采样号
 
-            tvSampleCode.setText(samplingNo);
-            tvFrequency.setText(snFrequency + "");
+//            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" +
+//                    StringUtil.autoGenericCode(snFrequency, 2);
+//
+//            tvSampleCode.setText(samplingNo);
+//            tvFrequency.setText(snFrequency + "");
         } else {
             btnDelete.setVisibility(View.VISIBLE);
 
@@ -229,10 +233,10 @@ public class CollectionDetailFragment extends BaseFragment {
                     SamplingDetail samplingDetail;
                     if (listPosition == -1) {
                         samplingDetail = new SamplingDetail();
+                        samplingDetail.setMethodName("降水量");
                     } else {
                         samplingDetail = mSampling.getSamplingDetailResults().get(listPosition);
                     }
-
                     samplingDetail.setId("LC-" + UUID.randomUUID().toString());
                     samplingDetail.setSamplingId(PrecipitationActivity.mSampling.getId());
                     samplingDetail.setSampingCode(tvSampleCode.getText().toString());

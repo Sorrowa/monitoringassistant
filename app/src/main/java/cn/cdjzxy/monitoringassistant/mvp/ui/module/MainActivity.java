@@ -445,7 +445,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
         dialogPlusBuilder.setContentHolder(new ViewHolder(view));
         dialogPlusBuilder.setGravity(Gravity.CENTER);
-        dialogPlusBuilder.setCancelable(true);
+        dialogPlusBuilder.setCancelable(false);
         dialogPlusBuilder.setContentWidth(700);
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();

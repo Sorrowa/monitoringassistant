@@ -384,7 +384,7 @@ public class DateUtils {
     }
 
     public static String getYears(Date date) {
-        return new SimpleDateFormat("yyyy-mm").format(date).toString();
+        return new SimpleDateFormat("yyyy-MM").format(date).toString();
     }
 
     /**

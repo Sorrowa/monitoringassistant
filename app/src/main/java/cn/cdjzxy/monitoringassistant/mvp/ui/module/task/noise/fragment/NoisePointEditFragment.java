@@ -151,20 +151,24 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
     @OnClick({R.id.btn_back, R.id.linear_delete, R.id.linear_save, R.id.my_layout_point_address})
     public void onClick(View v) {
         hideSoftInput();
-        switch (v.getId()) {
-            case R.id.btn_back:
-                EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
-                break;
-            case R.id.linear_delete:
-                deleteData();
-                break;
-            case R.id.linear_save:
-                saveData();
-                break;
-            case R.id.my_layout_point_address:
-                choicePoint();
-                break;
-        }
+        if (v.getId() == R.id.btn_back) {
+            EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
+            return;
+        } else if (!mSample.getIsCanEdit()) {
+            showMessage("提示：当前采样单，不支持编辑");
+            return;
+        } else
+            switch (v.getId()) {
+                case R.id.linear_delete:
+                    deleteData();
+                    break;
+                case R.id.linear_save:
+                    saveData();
+                    break;
+                case R.id.my_layout_point_address:
+                    choicePoint();
+                    break;
+            }
     }
 
     /**

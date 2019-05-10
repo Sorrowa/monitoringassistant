@@ -15,11 +15,9 @@
         <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
             android:id="@+id/my_layout_number"
             style="@style/MyDrawableLinearLayoutItemStyle"
-            app:drawableRight="@mipmap/ic_has_next"
             app:isShowRightTextView="true"
             app:leftText="采样单编号"
-            app:rightEditTextHint="请输入"
-            app:rightTextHint="请选择" />
+            app:rightTextHint="系统自动生成" />
 
         <include layout="@layout/view_line_basic_info" />
 

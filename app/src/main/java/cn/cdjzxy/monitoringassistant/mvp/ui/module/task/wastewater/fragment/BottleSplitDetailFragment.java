@@ -27,6 +27,7 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
+import org.greenrobot.greendao.DbUtils;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -54,7 +55,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.PlaceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.BottleMonItemActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
+
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
 
 /**
  * 分瓶信息详情
@@ -82,11 +86,9 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
     Unbinder unbinder;
 
-    private Sampling mSample;
     private int bottleListPosition;
     private SamplingFormStand bottleSplit;
-
-    private String initMonitemIds;
+    private String monItemId;//未选中的itemId
 
 
     public BottleSplitDetailFragment() {
@@ -99,10 +101,10 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        if (!CheckUtil.isNull(WastewaterActivity.mSample) && !WastewaterActivity.mSample.getIsCanEdit()){
+        if (!CheckUtil.isNull(mSample) && !mSample.getIsCanEdit()) {
             operate_layout.setVisibility(View.INVISIBLE);
 
-        }else {
+        } else {
             operate_layout.setVisibility(View.VISIBLE);
         }
 
@@ -147,7 +149,6 @@ public class BottleSplitDetailFragment extends BaseFragment {
     }
 
     private void setBottleSplitDetail() {
-        mSample = WastewaterActivity.mSample;
         List<SamplingFormStand> samplingFormStandResults = mSample.getSamplingFormStandResults();
         SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
         bottleListPosition = collectListSettings.getInt("bottleListPosition", -1);
@@ -156,16 +157,16 @@ public class BottleSplitDetailFragment extends BaseFragment {
             bottleSplit.setId(UUID.randomUUID().toString());
         } else {
             bottleSplit = samplingFormStandResults.get(bottleListPosition);
-            sample_project.setText(CheckUtil.isEmpty(bottleSplit.getMonitemName())?"":bottleSplit.getMonitemName());
-            sample_quantity.setText(CheckUtil.isEmpty(bottleSplit.getSamplingAmount())?"":bottleSplit.getSamplingAmount());
-            sample_vessel.setText(CheckUtil.isEmpty(bottleSplit.getContainer())?"":bottleSplit.getContainer());
-            sample_number.setText(bottleSplit.getCount()+"");
-            sample_method.setText(CheckUtil.isEmpty(bottleSplit.getSaveMehtod())?"":bottleSplit.getSaveMehtod());
-            sample_date.setText(CheckUtil.isEmpty(bottleSplit.getSaveTimes())?"":bottleSplit.getSaveTimes());
-            sample_place.setText(CheckUtil.isEmpty(bottleSplit.getAnalysisSite())?"":bottleSplit.getAnalysisSite());
+            sample_project.setText(CheckUtil.isEmpty(bottleSplit.getMonitemName()) ? "" : bottleSplit.getMonitemName());
+            sample_quantity.setText(CheckUtil.isEmpty(bottleSplit.getSamplingAmount()) ? "" : bottleSplit.getSamplingAmount());
+            sample_vessel.setText(CheckUtil.isEmpty(bottleSplit.getContainer()) ? "" : bottleSplit.getContainer());
+            sample_number.setText(bottleSplit.getCount() + "");
+            sample_method.setText(CheckUtil.isEmpty(bottleSplit.getSaveMehtod()) ? "" : bottleSplit.getSaveMehtod());
+            sample_date.setText(CheckUtil.isEmpty(bottleSplit.getSaveTimes()) ? "" : bottleSplit.getSaveTimes());
+            sample_place.setText(CheckUtil.isEmpty(bottleSplit.getAnalysisSite()) ? "" : bottleSplit.getAnalysisSite());
         }
         //设置初始化的MonitemIds
-        initMonitemIds=new String(bottleSplit.getMonitemIds());
+
     }
 
     @OnClick({R.id.btn_back, R.id.sample_place, R.id.sample_project, R.id.btn_save, R.id.btn_delete})
@@ -251,29 +252,12 @@ public class BottleSplitDetailFragment extends BaseFragment {
     }
 
     /**
+     * 2019年5月10   这里的保存 应该这样做：最容易理解的逻辑
+     * 拿到用户选择后的监测项目组装一个分瓶里面 剩下的按照监测标准分瓶
      * save
      */
     private void operateSave() {
         if (isSaveChecked()) {
-            /*
-            List<String> initIdList=new ArrayList<>();
-            List<String> endIdList=new ArrayList<>();
-            if (!CheckUtil.isEmpty(initMonitemIds)){
-                initIdList=Arrays.asList(initMonitemIds.split(","));
-            }
-
-            if (!CheckUtil.isEmpty(bottleSplit.getMonitemIds())){
-                endIdList=Arrays.asList(bottleSplit.getMonitemIds().split(","));
-            }
-
-            //判断是合并还是拆分
-            if (initIdList.size()==endIdList.size() && initIdList.containsAll(endIdList)){
-                Log.d("","");
-            }else {
-                Log.d("","");
-            }
-            */
-
             bottleSplit.setSamplingId(mSample.getId());
             bottleSplit.setContainer(sample_vessel.getText().toString());
             bottleSplit.setCount(Integer.parseInt(sample_number.getText().toString()));
@@ -281,109 +265,43 @@ public class BottleSplitDetailFragment extends BaseFragment {
             bottleSplit.setSaveTimes(sample_date.getText().toString());
             bottleSplit.setAnalysisSite(sample_place.getText().toString());
             bottleSplit.setSamplingAmount(sample_quantity.getText().toString());
-
-            List<SamplingFormStand> formStandList=WastewaterActivity.mSample.getSamplingFormStandResults();
-            if (!CheckUtil.isEmpty(formStandList)){
-                formStandList.remove(bottleSplit);
-                String monitemIdsStr=bottleSplit.getMonitemIds();
-                if (!CheckUtil.isEmpty(monitemIdsStr)){
-                    String[] ids=monitemIdsStr.split(",");
-                    for (String id:ids){
-                        updateOrDeleteSplitBottle(id,formStandList);
-                    }
+            bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
+            bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
+            //生成分瓶信息
+            List<SamplingFormStand> list = DbHelpUtils.getSamplingFormStandListForSampId(mSample.getId());
+            if (!CheckUtil.isEmpty(list)) {
+                DBHelper.get().getSamplingFormStandDao().deleteInTx(list);
+            }
+            if (mSample.getSamplingFormStandResults() != null) {
+                mSample.getSamplingFormStandResults().clear();
+            }
+            if (monItemId != null && !monItemId.equals("")) {
+                String[] monItemIds = monItemId.split(",");
+                for (String s : monItemIds) {
+                    HelpUtil.createAndUpdateBottle(s, mSample);
                 }
             }
-            DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
-
+            DBHelper.get().getSamplingFormStandDao().insert(bottleSplit);
+            mSample.setSamplingFormStandResults(DbHelpUtils.getSamplingFormStandListForSampId(mSample.getId()));
             mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
             mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
-            Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
+            Sampling sampling = DbHelpUtils.getDbSampling(mSample.getId());
             if (CheckUtil.isNull(sampling)) {
                 mSample.setId(UUID.randomUUID().toString());
                 DBHelper.get().getSamplingDao().insert(mSample);
             } else {
                 DBHelper.get().getSamplingDao().update(mSample);
             }
-
-            //SamplingFormStand samplingBottleSplit = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.Id.eq(bottleSplit.getId())).unique();
-//            if (bottleListPosition == -1) {
-//                bottleSplit.setId(UUID.randomUUID().toString());
-//                DBHelper.get().getSamplingFormStandDao().insert(bottleSplit);
-//            }else {
-//                DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
-//            }
-
-           // DBHelper.get().getSamplingFormStandDao().updateInTx(bottleSplit);
-            //设置分瓶信息
-            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().
-                    queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
-                    orderAsc(SamplingFormStandDao.Properties.Index).list();
-            if (!CheckUtil.isEmpty(formStantdsList)){
-                WastewaterActivity.mSample.setSamplingFormStandResults(formStantdsList);
-            }else {
-                WastewaterActivity.mSample.setSamplingFormStandResults(new ArrayList<>());
-            }
-
             EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
             EventBus.getDefault().post(2, EventBusTags.TAG_WASTEWATER_BOTTLE);
             ArtUtils.makeText(getContext(), "保存成功");
         }
     }
 
-    /**
-     * 更新或者删除相应的分瓶信息
-     * @param monitId
-     * @param formStandList
-     */
-    private void updateOrDeleteSplitBottle(String monitId,List<SamplingFormStand> formStandList){
-        for (SamplingFormStand formStand:formStandList){
-            if (formStand.getMonitemIds().equals(monitId)){
-                DBHelper.get().getSamplingFormStandDao().deleteInTx(formStand);
-                continue;
-            }
-
-            if (formStand.getMonitemIds().contains(monitId)){
-                String[] ids=formStand.getMonitemIds().split(",");
-                StringBuilder  MonItemName = new StringBuilder("");
-                StringBuilder  MonItemId = new StringBuilder("");
-                List<String> MonItemList=formStand.getMonItems();
-                if (CheckUtil.isEmpty(MonItemList)){
-                    MonItemList=new ArrayList<>();
-                }else {
-                    MonItemList=new ArrayList<>(MonItemList);
-                }
-                for (String id:ids){
-                    if (!id.equals(monitId)){
-                        MonItemId.append(id + ",");
-                        String itemName=getMonItemNameById(id);
-                        if (CheckUtil.isEmpty(itemName)){
-                            MonItemName.append(" " + ",");
-                        }else {
-                            MonItemName.append(itemName + ",");
-                        }
-                    }else {
-                        MonItemList.remove(id);
-                    }
-                }
-
-                if (MonItemName.lastIndexOf(",") > 0) {
-                    MonItemName.deleteCharAt(MonItemName.lastIndexOf(","));
-                }
-
-                if (MonItemId.lastIndexOf(",") > 0) {
-                    MonItemId.deleteCharAt(MonItemId.lastIndexOf(","));
-                }
-                formStand.setMonitemIds(MonItemId.toString());
-                formStand.setMonitemName(MonItemName.toString());
-                formStand.setMonItems(MonItemList);
-                DBHelper.get().getSamplingFormStandDao().updateInTx(formStand);
-                continue;
-            }
-        }
-    }
 
     /**
      * 判断状态是否可保存
+     *
      * @return
      */
     private boolean isSaveChecked() {
@@ -408,11 +326,10 @@ public class BottleSplitDetailFragment extends BaseFragment {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                        bottleSplit.setMonitemName(data.getStringExtra("MonItemName"));
-                        bottleSplit.setMonitemIds(data.getStringExtra("MonItemId"));
-                        sample_project.setText(bottleSplit.getMonitemName());
-                    }
+                    bottleSplit.setMonitemName(data.getStringExtra("selectMonItemName"));
+                    bottleSplit.setMonitemIds(data.getStringExtra("selectMonItemId"));
+                    sample_project.setText(bottleSplit.getMonitemName());
+                    monItemId = data.getStringExtra("MonItemId");//用户没选择的监测项目
                 }
             }
         });
@@ -436,33 +353,16 @@ public class BottleSplitDetailFragment extends BaseFragment {
         });
     }
 
-    /**
-     * 根据itemId获取name
-     * @param itemId
-     * @return
-     */
-    private String getMonItemNameById(String itemId){
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mSample.getParentTagId())).unique();
-        List<MonItems> monItems = tags.getMMonItems();
-        if (!CheckUtil.isEmpty(monItems)){
-            for (MonItems monItem:monItems){
-                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)){
-                    return monItem.getName();
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * 更新分瓶信息的index
      */
-    private void updateAllBottleIndex(){
-        List<SamplingFormStand> samplingFormStandList=mSample.getSamplingFormStandResults();
-        if (!CheckUtil.isEmpty(samplingFormStandList)){
-            for (int i=0;i<samplingFormStandList.size();i++){
-                samplingFormStandList.get(i).setIndex(i+1);
-                samplingFormStandList.get(i).setStandNo(i+1);
+    private void updateAllBottleIndex() {
+        List<SamplingFormStand> samplingFormStandList = mSample.getSamplingFormStandResults();
+        if (!CheckUtil.isEmpty(samplingFormStandList)) {
+            for (int i = 0; i < samplingFormStandList.size(); i++) {
+                samplingFormStandList.get(i).setIndex(i + 1);
+                samplingFormStandList.get(i).setStandNo(i + 1);
             }
         }
         DBHelper.get().getSamplingFormStandDao().updateInTx(samplingFormStandList);

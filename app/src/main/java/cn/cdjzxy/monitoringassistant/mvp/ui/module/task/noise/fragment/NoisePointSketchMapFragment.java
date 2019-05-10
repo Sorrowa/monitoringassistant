@@ -138,6 +138,10 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
 
     @OnClick({R.id.linear_add, R.id.linear_map, R.id.linear_clean})
     public void onClick(View v) {
+        if (!mSample.getIsCanEdit()){
+            showMessage("提示：当前采样单，不支持编辑");
+            return;
+        }
         switch (v.getId()) {
             case R.id.linear_add:
                 startPicAct();

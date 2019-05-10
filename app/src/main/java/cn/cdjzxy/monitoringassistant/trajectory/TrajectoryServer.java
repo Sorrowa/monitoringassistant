@@ -249,6 +249,8 @@ public class TrajectoryServer extends Service {
                     isTraceStarted = true;
                     registerReceiver();
                     mClient.startGather(traceListener);//开启采集服务
+                } else {
+                    initTrack();
                 }
                 Log.e(TAG, "onStartTraceCallback: " +
                         String.format("onStartTraceCallback, errorNo:%d, message:%s ", errorNo, message));
@@ -487,6 +489,7 @@ public class TrajectoryServer extends Service {
 
     public void getCurrentLocation(OnEntityListener entityListener, OnTrackListener trackListener) {
         // 网络连接正常，开启服务及采集，则查询纠偏后实时位置；否则进行实时定位
+
         if (NetworkUtil.isNetworkAvailable(this)
                 && isTraceStarted
                 && isGatherStarted) {

@@ -3,14 +3,18 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
+import com.wonders.health.lib.base.mvp.IView;
+import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import java.util.ArrayList;
@@ -34,13 +38,15 @@ import cn.cdjzxy.monitoringassistant.widgets.GridItemDecoration;
  * 监测项目
  */
 
-public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
+public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
 
     @BindView(R.id.rv_project)
     RecyclerView rvProject;
     @BindView(R.id.rv_project_selected)
     RecyclerView rvProjectSelected;
+    @BindView(R.id.linear_search)
+    LinearLayout linearSearch;
 
     private MonItemAdapter mMonItemAdapter;
 
@@ -50,12 +56,14 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
     private String monItemId;
     private String samplingId;
 
-    private List<MonItems> mMonItems         = new ArrayList<>();
+    private List<MonItems> mMonItems = new ArrayList<>();
     private List<MonItems> mMonItemsSelected = new ArrayList<>();
-    private List<MonItems> mMonItemsDelete   = new ArrayList<>();
-    private StringBuilder  MonItemName       = new StringBuilder("");
-    private StringBuilder  MonItemId         = new StringBuilder("");
-    private String[] selectItems;
+    //    private List<MonItems> mMonItemsDelete = new ArrayList<>();
+    private StringBuilder selectMonItemNameBuilder;//选中
+    private StringBuilder selectMonItemIdBuilder;
+    private StringBuilder monItemNameBuilder;
+    private StringBuilder monItemIdBuilder;
+
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -65,8 +73,10 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
             public void onClick(View v) {
                 getMonItemsData();
                 Intent intent = new Intent();
-                intent.putExtra("MonItemName", MonItemName.toString());
-                intent.putExtra("MonItemId", MonItemId.toString());
+                intent.putExtra("selectMonItemName", selectMonItemNameBuilder.toString());
+                intent.putExtra("selectMonItemId", selectMonItemIdBuilder.toString());
+                intent.putExtra("MonItemName", monItemNameBuilder.toString());
+                intent.putExtra("MonItemId", monItemIdBuilder.toString());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -88,59 +98,38 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
     public void initData(@Nullable Bundle savedInstanceState) {
         initMonItemsView();
         initMonItemsSelectedView();
+        linearSearch.setVisibility(View.GONE);
 
         tagId = getIntent().getStringExtra("tagId");
         samplingId = getIntent().getStringExtra("samplingId");
-        monItemId=getIntent().getStringExtra("monItemId");
-        String selectItemsStr=getIntent().getStringExtra("selectItems");
-        if (!CheckUtil.isEmpty(selectItemsStr)){
-            selectItems=selectItemsStr.split(",");
-        }
-        List<String> monItemIdList=HelpUtil.getAllJcMonitIds(samplingId);
+        monItemId = getIntent().getStringExtra("monItemId");
+        String selectItemsStr = getIntent().getStringExtra("selectItems");
+//        if (!CheckUtil.isEmpty(selectItemsStr)) {
+//          String[]  selectItems = selectItemsStr.split(",");
+//        }
+        List<String> monItemIdList = HelpUtil.getAllJcMonitIds(samplingId);
 
         //设置未选中的item
         Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
         List<MonItems> allMonItems = tags.getMMonItems();
         //List<MonItems> monItems = tags.getMMonItems();
-        List<MonItems> monItems = new ArrayList<>();
-        if (!CheckUtil.isEmpty(monItemIdList)){
-            for (String mId:monItemIdList){
-                for (MonItems monItems1:allMonItems){
-                    if (monItems1.getId().equals(mId)){
-                        if (!monItems.contains(monItems1)){
-                            monItems.add(monItems1);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!CheckUtil.isEmpty(monItems)) {
+        if (!CheckUtil.isEmpty(allMonItems)) {
             mMonItems.clear();
-            if (!CheckUtil.isEmpty(selectItemsStr)){
-                for (MonItems monItem:monItems){
-                    if (!selectItemsStr.contains(monItem.getId())){
-                        mMonItems.add(monItem);
+            for (MonItems monItems : allMonItems) {
+                if (monItemIdList.contains(monItems.getId())) {
+                    if (!CheckUtil.isEmpty(selectItemsStr) &&
+                            !selectItemsStr.contains(monItems.getId())) {
+                        monItems.setSelected(false);
+                        mMonItems.add(monItems);
+                    } else {
+                        monItems.setSelected(true);
+                        mMonItemsSelected.add(monItems);
                     }
                 }
-            }else {
-                mMonItems.addAll(monItems);
             }
         }
         mMonItemAdapter.notifyDataSetChanged();
-        //设置选中的items
-        if (!CheckUtil.isEmpty(monItems)) {
-            mMonItemsSelected.clear();
-            if (!CheckUtil.isEmpty(selectItemsStr)){
-                for (MonItems monItem:monItems){
-                    if (selectItemsStr.contains(monItem.getId())){
-                        mMonItemsSelected.add(monItem);
-                    }
-                }
-                mMonItemSelectedAdapter.notifyDataSetChanged();
-            }
-        }
+        mMonItemSelectedAdapter.notifyDataSetChanged();
 
     }
 
@@ -161,7 +150,7 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
         mMonItemAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                upateMonItemState(position);
+                updateMonItemState(position);
             }
         });
         rvProject.addItemDecoration(new GridItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_16), 4));
@@ -175,7 +164,7 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
         mMonItemSelectedAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                upateMonItemSelectedState(position);
+                updateMonItemSelectedState(position);
             }
         });
         rvProjectSelected.addItemDecoration(new GridItemDecoration(getResources().getDimensionPixelSize(R.dimen.dp_16), 4));
@@ -186,10 +175,10 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_monitem:
-                addMonItems();
+                // addMonItems();
                 break;
             case R.id.iv_delete_monitem:
-                deleteMonItems();
+                //  deleteMonItems();
                 break;
         }
     }
@@ -199,13 +188,13 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
      *
      * @param position
      */
-    private void upateMonItemState(int position) {
-        if (mMonItems.get(position).isSelected()) {
-            mMonItems.get(position).setSelected(false);
-        } else {
-            mMonItems.get(position).setSelected(true);
-        }
+    private void updateMonItemState(int position) {
+        MonItems monItems = mMonItems.get(position);
+        monItems.setSelected(true);
+        mMonItemsSelected.add(monItems);
+        mMonItems.remove(position);
         mMonItemAdapter.notifyDataSetChanged();
+        mMonItemSelectedAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -213,64 +202,93 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> {
      *
      * @param position
      */
-    private void upateMonItemSelectedState(int position) {
-        if (mMonItemsSelected.get(position).isSelected()) {
-            mMonItemsSelected.get(position).setSelected(false);
-        } else {
-            mMonItemsSelected.get(position).setSelected(true);
+    private void updateMonItemSelectedState(int position) {
+        if (mMonItemsSelected.size() == 1) {
+            showMessage("至少保留一个监测项目");
+            return;
         }
-        mMonItemSelectedAdapter.notifyDataSetChanged();
-    }
 
-
-    private void addMonItems() {
-        mMonItemsDelete.clear();
-        for (MonItems monItem : mMonItems) {
-            if (monItem.isSelected()) {
-                monItem.setSelected(false);
-                mMonItemsSelected.add(monItem);
-                mMonItemsDelete.add(monItem);
-            }
-        }
-        mMonItems.removeAll(mMonItemsDelete);
+        MonItems monItems = mMonItemsSelected.get(position);
+        monItems.setSelected(false);
+        mMonItems.add(monItems);
+        mMonItemsSelected.remove(position);
         mMonItemAdapter.notifyDataSetChanged();
         mMonItemSelectedAdapter.notifyDataSetChanged();
     }
 
-    private void deleteMonItems() {
-        mMonItemsDelete.clear();
-        for (MonItems monItems : mMonItemsSelected) {
-            if (monItems.isSelected()) {
-                monItems.setSelected(false);
-                mMonItems.add(monItems);
-                mMonItemsDelete.add(monItems);
-            }
-        }
-        mMonItemsSelected.removeAll(mMonItemsDelete);
-        mMonItemAdapter.notifyDataSetChanged();
-        mMonItemSelectedAdapter.notifyDataSetChanged();
-    }
+
+//    private void addMonItems() {
+//        mMonItemsDelete.clear();
+//        for (MonItems monItem : mMonItems) {
+//            if (monItem.isSelected()) {
+//                monItem.setSelected(false);
+//                mMonItemsSelected.add(monItem);
+//                mMonItemsDelete.add(monItem);
+//            }
+//        }
+//        mMonItems.removeAll(mMonItemsDelete);
+//        mMonItemAdapter.notifyDataSetChanged();
+//        mMonItemSelectedAdapter.notifyDataSetChanged();
+//    }
+//
+//    private void deleteMonItems() {
+//        mMonItemsDelete.clear();
+//        for (MonItems monItems : mMonItemsSelected) {
+//            if (monItems.isSelected()) {
+//                monItems.setSelected(false);
+//                mMonItems.add(monItems);
+//                mMonItemsDelete.add(monItems);
+//            }
+//        }
+//        mMonItemsSelected.removeAll(mMonItemsDelete);
+//        mMonItemAdapter.notifyDataSetChanged();
+//        mMonItemSelectedAdapter.notifyDataSetChanged();
+//    }
 
 
     private void getMonItemsData() {
-
+        selectMonItemNameBuilder = new StringBuilder("");
+        selectMonItemIdBuilder = new StringBuilder("");
+        monItemNameBuilder = new StringBuilder("");
+        monItemIdBuilder = new StringBuilder("");
         if (CheckUtil.isEmpty(mMonItemsSelected)) {
             return;
         }
 
         for (MonItems monItems : mMonItemsSelected) {
-            MonItemName.append(monItems.getName() + ",");
-            MonItemId.append(monItems.getId() + ",");
+            selectMonItemNameBuilder.append(monItems.getName() + ",");
+            selectMonItemIdBuilder.append(monItems.getId() + ",");
         }
 
-        if (MonItemName.lastIndexOf(",") > 0) {
-            MonItemName.deleteCharAt(MonItemName.lastIndexOf(","));
+        if (selectMonItemNameBuilder.lastIndexOf(",") > 0) {
+            selectMonItemNameBuilder.deleteCharAt(selectMonItemNameBuilder.lastIndexOf(","));
         }
 
-        if (MonItemId.lastIndexOf(",") > 0) {
-            MonItemId.deleteCharAt(MonItemId.lastIndexOf(","));
+        if (selectMonItemIdBuilder.lastIndexOf(",") > 0) {
+            selectMonItemIdBuilder.deleteCharAt(selectMonItemIdBuilder.lastIndexOf(","));
+        }
+
+        for (MonItems items : mMonItems) {
+            monItemNameBuilder.append(items.getName() + ",");
+            monItemIdBuilder.append(items.getId() + ",");
+        }
+        if (monItemNameBuilder.lastIndexOf(",") > 0) {
+            monItemNameBuilder.deleteCharAt(monItemNameBuilder.lastIndexOf(","));
+        }
+
+        if (monItemIdBuilder.lastIndexOf(",") > 0) {
+            monItemIdBuilder.deleteCharAt(monItemIdBuilder.lastIndexOf(","));
         }
     }
 
 
+    @Override
+    public void showMessage(@NonNull String message) {
+        ArtUtils.makeText(this, message);
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message message) {
+
+    }
 }

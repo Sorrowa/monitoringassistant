@@ -398,12 +398,12 @@ public class TestRecordDetailFragment extends BaseFragment {
 
             if (detail.getSamplingType() == 0) {
                 //均值计算公式：（样品含量+平行样含量）/2
-                double valueDouble = calcAvg(value, targetValue);
+                double valueDouble = calcAvg(caleValue, targetCaleValue);
                 int size = 0;
                 if (value > targetValue) {
-                    size = calcNumberNumOfBits(value);
+                    size = calcNumberNumOfBits(caleValue);
                 } else if (targetValue > value) {
-                    size = calcNumberNumOfBits(targetValue);
+                    size = calcNumberNumOfBits(targetCaleValue);
                 }
                 detail.setValue(size > 0 ? valueDouble + "" : (int) valueDouble + "");
                 //原样数据，标记做了平行
@@ -422,13 +422,14 @@ public class TestRecordDetailFragment extends BaseFragment {
      * @param value2
      * @return
      */
-    private double calcAvg(double value1, double value2) {
+    private double calcAvg(String value1, String value2) {
         //计算小数位数
         int value1NumOfBits = calcNumberNumOfBits(value1);
         int value2NumOfBits = calcNumberNumOfBits(value2);
-
+        double va1 = Double.parseDouble(value1);
+        double va2 = Double.parseDouble(value2);
         //保留位数：取小数位数最大的
-        return NumberUtil.fourHomesSixEntries((value1 + value2) / 2, value1 > value2 ? value1NumOfBits : value2NumOfBits);
+        return NumberUtil.fourHomesSixEntries((va1 + va2) / 2, va1 > va2 ? value1NumOfBits : value2NumOfBits);
     }
 
     /**
@@ -437,12 +438,11 @@ public class TestRecordDetailFragment extends BaseFragment {
      * @param value
      * @return
      */
-    private int calcNumberNumOfBits(double value) {
+    private int calcNumberNumOfBits(String value) {
         //转换成字符串
-        String valueStr = value + "";
 
         //获取小数点的位置
-        int bitPos = valueStr.indexOf(".");
+        int bitPos = value.indexOf(".");
         if (bitPos == -1) {
             return 0;//没有小数点
         }
@@ -451,13 +451,13 @@ public class TestRecordDetailFragment extends BaseFragment {
         bitPos += 1;
 
         //小数点后面的数值转换成整数
-        int bitNum = Integer.parseInt(valueStr.substring(bitPos));
+        int bitNum = Integer.parseInt(value.substring(bitPos));
 //        if (bitNum == 0) {
 //            return 0;//小红点后面是填充的0
 //        }
 
         //字符串总长度减去小数点位置就是小数位数
-        return valueStr.length() - bitPos;
+        return value.length() - bitPos;
     }
 
 

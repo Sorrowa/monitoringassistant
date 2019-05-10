@@ -163,14 +163,20 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveMySample(false);
+                if (mSample.getIsCanEdit()){
+                    saveMySample(false);
+                }else {
+                    showMessage("提示：当前采样单，不支持编辑");
+                }
             }
         }));
 
     }
 
 
+
     private void showSaveDataDialog() {
+        if (!mSample.getIsCanEdit())return;
         final Dialog dialog = new AlertDialog.Builder(this)
                 .setMessage("有数据更改，是否本地保存？")
                 .setPositiveButton("保存", new DialogInterface.OnClickListener() {// 积极
@@ -432,6 +438,9 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     protected void onResume() {
         super.onResume();
         openFragment(NOISE_FRAGMENT_INT);
+        if (!mSample.getIsCanEdit()){
+            showMessage("提示：当前采样单，不支持编辑");
+        }
     }
 
     @Override
@@ -449,16 +458,6 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         ThreadPool.getInstantiation().addTask(new Runnable() {
             @Override
             public void run() {
-                try {
-                    mBasicFragment.savePrivateData();
-                    sourceListFragment.savePrivateData();
-                    pointListFragment.savePrivateData();
-                    monitorListFragment.savePrivateData();
-                    otherFileFragment.savePrivateData();
-                } catch (Exception e) {
-                    Log.e(TAG, "run: " + e);
-                }
-
                 saveMySample();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -484,34 +483,13 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         showLoadingDialog(msg);
     }
 
-    /**
-     * 判断采样单是否完成
-     *
-     * @param mSample
-     * @return
-     */
-    public static boolean isSamplingFinish(Sampling mSample) {
-        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getTagId())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getMethodId())) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * 保存数据
      */
     public static void saveMySample() {
 
-        mSample.setIsFinish(isSamplingFinish(mSample));
+        mSample.setIsFinish(SamplingUtil.isNoiseFinsh(mSample));
 
         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
