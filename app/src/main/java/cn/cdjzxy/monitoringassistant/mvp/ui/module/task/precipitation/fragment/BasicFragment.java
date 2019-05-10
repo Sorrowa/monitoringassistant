@@ -45,6 +45,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
@@ -64,8 +65,10 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.Precipitat
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mSampling;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
 import static cn.cdjzxy.monitoringassistant.utils.SamplingUtil.isMySampling;
@@ -90,7 +93,7 @@ public class BasicFragment extends BaseFragment {
     @BindView(R.id.tv_sampling_no)
     EditText tvSamplingNo;
     @BindView(R.id.ed_monitor_name)
-    EditText edMonitorName;//监测项目
+    TextView edMonitorName;//监测项目
     @BindView(R.id.tv_sampling_height)
     EditText tvSamplingHeight;
     @BindView(R.id.et_sampling_area)
@@ -135,6 +138,7 @@ public class BasicFragment extends BaseFragment {
     public View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_preciptation_basic_info, null);
     }
+
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
@@ -342,7 +346,6 @@ public class BasicFragment extends BaseFragment {
             }
         });
         recyclerview.setAdapter(mSamplingFileAdapter);
-
     }
 
     @Nullable
@@ -360,7 +363,9 @@ public class BasicFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-
+            if (mSampling != null && edMonitorName != null) {
+                edMonitorName.setText(mSampling.getMethodName());
+            }
         }
     }
 
@@ -456,6 +461,7 @@ public class BasicFragment extends BaseFragment {
                             mSampling.setTagId(data.getStringExtra("TagId"));
                             mSampling.setTagName(data.getStringExtra("TagName"));
                             tvSamplingType.setText(mSampling.getTagName());
+                            setMonitemNameData();
                         }
                     }
                 });
@@ -492,6 +498,7 @@ public class BasicFragment extends BaseFragment {
                             mSampling.setAddressNo(data.getStringExtra("AddressNo"));
                             tvSamplingPoint.setText(mSampling.getAddressName());
                             tvSamplingNo.setText(mSampling.getAddressNo());
+                            setMonitemNameData();
                         }
                     }
                 });
@@ -534,6 +541,21 @@ public class BasicFragment extends BaseFragment {
                 break;
         }
     }
+
+    /**
+     * 设置监测项目
+     */
+    public void setMonitemNameData() {
+        if (mSampling.getAddressId() == null || mSampling.getAddressId().equals("")) return;
+        if (mSampling.getTagId() == null || mSampling.getTagId().equals("")) return;
+        List<ProjectDetial> projectDetialList = DbHelpUtils.getProjectDetialList(mProject.getId()
+                , mSampling.getAddressId(), mSampling.getTagId());
+        for (ProjectDetial content : projectDetialList) {
+            mSampling.setMonitemName(content.getAddress() == null ? "" : content.getAddress());
+            edMonitorName.setText(mSampling.getMonitemName());
+        }
+    }
+
 
     private void showDateSelectDialog() {
         //时间选择器

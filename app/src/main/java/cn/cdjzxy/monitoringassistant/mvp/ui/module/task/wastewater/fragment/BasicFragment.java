@@ -59,6 +59,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivit
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
@@ -432,8 +433,11 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                mSample.setSamplingTimeBegin(DateUtils.getDate(date));
-                dateTextView.setText(DateUtils.getDate(date));
+                String date1 = DateUtils.getDate(date);
+                mSample.setSamplingTimeBegin(date1);
+                dateTextView.setText(date1);
+                mSample.setSamplingNo(SamplingUtil.createSamplingNo(date1));
+                base_sample_no.setText(mSample.getSamplingNo());
             }
         }).setType(new boolean[]{true, true, true, false, false, false}).build();
         pvTime.setDate(Calendar.getInstance());

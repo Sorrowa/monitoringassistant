@@ -103,7 +103,7 @@ public class CollectionFragment extends BaseFragment {
         if (list == null) list = new ArrayList<>();
         else list.clear();
         for (SamplingDetail detail : mSampling.getSamplingDetailResults()) {
-            if (detail != null && detail.getMethodName() != null &&
+            if (detail != null && detail.getMonitemName() != null &&
                     detail.getMonitemName().equals("降水量")) {//毛杨说的这个表单  这个只有降水量
                 list.add(detail);
             }

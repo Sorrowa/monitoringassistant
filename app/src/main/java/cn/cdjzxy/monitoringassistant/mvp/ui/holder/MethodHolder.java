@@ -25,7 +25,7 @@ public class MethodHolder extends BaseHolder<Methods> {
 
     @Override
     public void setData(Methods data, int position) {
-        mTvName.setText(data.getName());
+        mTvName.setText(data.getCode() == null ? data.getName() : data.getName() + "(" + data.getCode() + ")");
 
     }
 

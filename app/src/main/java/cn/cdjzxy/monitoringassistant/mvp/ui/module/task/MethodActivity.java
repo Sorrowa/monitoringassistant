@@ -37,7 +37,7 @@ public class MethodActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.recyclerView_point)
     RecyclerView recyclerViewPoint;
     @BindView(R.id.tabview)
-    CustomTab    tabview;
+    CustomTab tabview;
 
     private List<Methods> mMethods = new ArrayList<>();
     private MethodAdapter mMethodAdapter;
@@ -92,7 +92,9 @@ public class MethodActivity extends BaseTitileActivity<ApiPresenter> {
             public void onItemClick(View view, int viewType, Object data, int position) {
                 Intent intent = new Intent();
                 intent.putExtra("MethodId", mMethods.get(position).getId());
-                intent.putExtra("MethodName", mMethods.get(position).getName());
+                intent.putExtra("MethodName", mMethods.get(position).getName()
+                        + "("+mMethods.get(position).getCode()+")");
+
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }

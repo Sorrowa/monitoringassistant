@@ -100,9 +100,9 @@ public class SamplingUtil {
      *
      * @return
      */
-    public static Sampling createSample(String projectId, String formSelectId) {
-        Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-        FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
+    public static Sampling createWaterSample(String projectId, String formSelectId) {
+        Project project = DbHelpUtils.getDbProject(projectId);
+        FormSelect formSelect = DbHelpUtils.getDbFormSelect(formSelectId);
         Sampling sampling = new Sampling();
         sampling.setId(UUID.randomUUID().toString());//唯一标志
         sampling.setSamplingNo(createSamplingNo());
@@ -127,6 +127,36 @@ public class SamplingUtil {
         sampling.setSamplingTimeBegin(DateUtils.getDate());
         sampling.setSamplingDetailResults(new ArrayList<>());
         sampling.setSamplingContentResults(new ArrayList<>());
+        sampling.setIsLocal(true);
+        sampling.setIsUpload(false);
+        sampling.setIsCanEdit(true);
+        return sampling;
+    }
+
+    public static Sampling createPrecipitationSample(Project project, String formSelectId) {
+        FormSelect formSelect = DbHelpUtils.getDbFormSelect(formSelectId);
+        Sampling sampling = new Sampling();
+        sampling.setId("LC-" + UUID.randomUUID().toString());
+        sampling.setSamplingNo(createSamplingNo());
+        sampling.setProjectId(project.getId());
+        sampling.setProjectName(project.getName());
+        sampling.setProjectNo(project.getProjectNo());
+        sampling.setTagId(formSelect.getTagId());
+        sampling.setMontype(project.getTypeCode());
+        sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
+        sampling.setFormType(formSelect.getTagParentId());
+        sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
+        sampling.setFormName(formSelect.getFormName());
+        sampling.setFormPath(formSelect.getPath());
+        //        sampling.setFormFlows(formSelect.getFormFlows().toString());
+        sampling.setParentTagId(formSelect.getTagParentId());
+        sampling.setStatusName("进行中");
+        sampling.setStatus(0);
+        sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
+        sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
+        sampling.setSamplingTimeBegin(DateUtils.getDate());
+        sampling.setSamplingDetailResults(new ArrayList<>());
+        sampling.setSamplingFiless(new ArrayList<>());
         sampling.setIsLocal(true);
         sampling.setIsUpload(false);
         sampling.setIsCanEdit(true);
@@ -188,7 +218,9 @@ public class SamplingUtil {
         samplingNo.append(dateStr);
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
 //        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%")).orderAsc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%")).
+                orderAsc(SamplingDao.Properties.SamplingNo).list();
 
         if (CheckUtil.isEmpty(samplings)) {
             samplingNo.append(StringUtil.autoGenericCode(1, 2));
@@ -205,6 +237,75 @@ public class SamplingUtil {
     }
 
     /**
+     * 创建采样单编号:年月日-账号-流水号
+     *
+     * @return
+     */
+    public static String createSamplingNo(String data) {
+        StringBuilder samplingNo = new StringBuilder("");
+        String dateStr = data.replace("-", "").substring(2);
+        samplingNo.append(dateStr).append("-");
+        samplingNo.append(UserInfoHelper.get().getUser().getIntId()).append("-");
+//        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.SamplingNo.like(dateStr + "%")).
+                orderAsc(SamplingDao.Properties.SamplingNo).list();
+
+        if (CheckUtil.isEmpty(samplings)) {
+            samplingNo.append(StringUtil.autoGenericCode(1, 2));
+        } else {
+            String lastSamlingNo = samplings.get(samplings.size() - 1).getSamplingNo();
+            if (!CheckUtil.isEmpty(lastSamlingNo)) {
+                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2)) + 1;
+                samplingNo.append(StringUtil.autoGenericCode(serialNumber, 2));
+            } else {
+                samplingNo.append(StringUtil.autoGenericCode(1, 2));
+            }
+        }
+        return samplingNo.toString();
+    }
+
+    /**
+     * 样品编码规则 样品性质年月日——采样单流水号账号——采样号
+     * 样品性质：
+     * 1.水质
+     * 地下水、海水、废水、地表水     ===》  DXS/HS/FS/DBS
+     * 2.空气
+     * 无组织废气、环境空气、室内空气  ===》  WF/HK/SK
+     * 3.废气
+     * 有组织废气                  ===》  YF
+     * 4.降水
+     * 降水                       ===》  JS
+     * <p>
+     * <p>
+     * 注这里只返回：年月日——采样单流水号账号
+     *
+     * @return 年月日——采样单流水号账号
+     */
+    public static String createSamplingFrequecyNo() {
+        StringBuilder samplingNo = new StringBuilder("");
+        String dateStr = DateUtils.getDate().replace("-", "").substring(2);
+        samplingNo.append(dateStr).append("-");
+//        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%")).
+                orderAsc(SamplingDao.Properties.SamplingNo).list();
+        if (CheckUtil.isEmpty(samplings)) {
+            samplingNo.append(StringUtil.autoGenericCode(1, 2));
+        } else {
+            String lastSamlingNo = samplings.get(samplings.size() - 1).getSamplingNo();
+            if (!CheckUtil.isEmpty(lastSamlingNo)) {
+                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2)) + 1;
+                samplingNo.append(StringUtil.autoGenericCode(serialNumber, 2));
+            } else {
+                samplingNo.append(StringUtil.autoGenericCode(1, 2));
+            }
+        }
+        samplingNo.append(UserInfoHelper.get().getUser().getIntId());
+        return samplingNo.toString();
+    }
+
+    /**
      * 判断当前表单能否编辑
      *
      * @param sampling
@@ -216,7 +317,6 @@ public class SamplingUtil {
                 && sampling.getSamplingUserId().
                 contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false;
     }
-
 
 
     /**

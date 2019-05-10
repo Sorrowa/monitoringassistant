@@ -42,6 +42,8 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
@@ -52,9 +54,13 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.MyInputFilter;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mProject;
 
 /**
  * 采集样品详情
@@ -147,26 +153,26 @@ public class CollectionDetailFragment extends BaseFragment {
             //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
             String samplingNo;
 
-
+//
 //            String snDate = DateUtils.getDate().replace("-", "").substring(2);
 //            String snPointPosition = "采样点位编号未填写";
 //            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
 //                snPointPosition = mSampling.getAddressNo();
 //            }
 //            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
-//            int snFrequency = 1;
-//            if (samplingDetailResults != null
-//                    && samplingDetailResults.size() > 0) {
-//                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
-//            }
-            //新的样品编码规范——————2019年5月10更改
-            //JS(样品性质——降水)——年月日——采样单流水号(时间相同就加一)采样人员系统编号——采样号
-
-//            samplingNo = "JS" + snDate + "-" + snPointPosition + snUserId + "-" +
-//                    StringUtil.autoGenericCode(snFrequency, 2);
+            int snFrequency = 1;
+            if (samplingDetailResults != null
+                    && samplingDetailResults.size() > 0) {
+                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
+            }
+//            新的样品编码规范——————2019年5月10更改
+//            JS(样品性质——降水)——年月日——采样单流水号(时间相同就加一)采样人员系统编号——采样号
 //
-//            tvSampleCode.setText(samplingNo);
-//            tvFrequency.setText(snFrequency + "");
+            samplingNo = "JS" + SamplingUtil.createSamplingFrequecyNo() + "-" +
+                    StringUtil.autoGenericCode(snFrequency, 2);
+
+            tvSampleCode.setText(samplingNo);
+            tvFrequency.setText(snFrequency + "");
         } else {
             btnDelete.setVisibility(View.VISIBLE);
 
@@ -233,12 +239,13 @@ public class CollectionDetailFragment extends BaseFragment {
                     SamplingDetail samplingDetail;
                     if (listPosition == -1) {
                         samplingDetail = new SamplingDetail();
-                        samplingDetail.setMethodName("降水量");
+                        samplingDetail.setMonitemName("降水量");
+                        samplingDetail.setId("LC-" + UUID.randomUUID().toString());
                     } else {
                         samplingDetail = mSampling.getSamplingDetailResults().get(listPosition);
                     }
-                    samplingDetail.setId("LC-" + UUID.randomUUID().toString());
-                    samplingDetail.setSamplingId(PrecipitationActivity.mSampling.getId());
+
+                    samplingDetail.setSamplingId(mSampling.getId());
                     samplingDetail.setSampingCode(tvSampleCode.getText().toString());
                     samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
 
@@ -251,6 +258,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setValue(etPrecipitation.getText().toString());
                     samplingDetail.setValue1(etPrecipitation.getText().toString());
                     samplingDetail.setDescription(etRemark.getText().toString());
+
+
                     if (listPosition == -1) {
                         if (mSampling.getSamplingDetailResults() == null) {
                             mSampling.setSamplingDetailResults(new ArrayList<SamplingDetail>());
@@ -259,7 +268,6 @@ public class CollectionDetailFragment extends BaseFragment {
                         samplingDetailResults.add(samplingDetail);
                         mSampling.setSamplingDetailResults(samplingDetailResults);
                     }
-
 
                     mSampling.setIsFinish(isSamplingFinish());
                     mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
@@ -270,17 +278,21 @@ public class CollectionDetailFragment extends BaseFragment {
                         DBHelper.get().getSamplingDao().update(mSampling);
                     }
 
-                    SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(samplingDetail.getId())).unique();
-                    if (!CheckUtil.isNull(samplingDetails)) {
-                        DBHelper.get().getSamplingDetailDao().delete(samplingDetails);
+                    SamplingDetail samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())).unique();
+                    if (CheckUtil.isNull(samplingDetails)) {
+                        DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+                    } else {
+                        DBHelper.get().getSamplingDetailDao().update(samplingDetails);
                     }
-                    DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+
+
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
                     ArtUtils.makeText(getContext(), "保存成功");
                 }
                 break;
         }
+
     }
 
     private boolean saveCheck() {

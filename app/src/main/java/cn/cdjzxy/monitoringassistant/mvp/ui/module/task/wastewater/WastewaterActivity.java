@@ -190,7 +190,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         isNewCreate = getIntent().getBooleanExtra("isNewCreate", false);
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
         if (isNewCreate) {
-            mSample = SamplingUtil.createSample(projectId, formSelectId);
+            mSample = SamplingUtil.createWaterSample(projectId, formSelectId);
         } else {
             mSample = DBHelper.get().getSamplingDao().queryBuilder().
                     where(SamplingDao.Properties.Id.eq(samplingId)).unique();
