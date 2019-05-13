@@ -93,8 +93,8 @@ public class TaskFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        initSamplingView();
-        initPendingSamplingView();
+        initSamplingView();//已采样
+        initPendingSamplingView();//待采样
         initReceivedView();
         initWaitReceivedView();
     }
@@ -173,8 +173,8 @@ public class TaskFragment extends BaseFragment {
         pieChart.setTouchEnabled(false);
         pieChart.getLegend().setEnabled(false);
 
-      //  pieChart.setCenterText(getSpannableString("待采样\n\n\n" + DbHelpUtils.getProjectiSize()));
-        pieChart.setCenterText(getSpannableString("待采样\n\n\n20" ));
+        pieChart.setCenterText(getSpannableString("待采样\n\n\n" + DbHelpUtils.getProJectSize()));
+        // pieChart.setCenterText(getSpannableString("待采样\n\n\n20" ));
 
         setPendingSamplingViewData();
 
@@ -425,7 +425,7 @@ public class TaskFragment extends BaseFragment {
         SpannableString spannableString = new SpannableString(text);
         //设置字体大小
         spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_16)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_size_20)), 6, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         //设置字体颜色
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_666666)), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.text_color_41a5ff)), 6, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

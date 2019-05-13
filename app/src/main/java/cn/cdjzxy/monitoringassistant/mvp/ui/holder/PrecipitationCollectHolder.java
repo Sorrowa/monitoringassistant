@@ -35,7 +35,7 @@ public class PrecipitationCollectHolder extends BaseHolder<SamplingDetail> {
 
     @Override
     public void setData(SamplingDetail data, int position) {
-        tvFrequency.setText("频率：" + data.getFrequecyNo());
+        tvFrequency.setText("频次：" + data.getFrequecyNo());
         try {
             JSONObject privateData = new JSONObject(data.getPrivateData());
             tvTime.setText(privateData.getString("SDataTime") + "--" +privateData.getString("EDataTime"));

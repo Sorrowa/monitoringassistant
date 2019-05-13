@@ -38,25 +38,30 @@ public class DbHelpUtils {
 
 
     public static Project getDbProject(String id) {
+        if (CheckUtil.isEmpty(id)) return new Project();
         return DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(id)).unique();
     }
 
     public static FormSelect getDbFormSelect(String id) {
+        if (CheckUtil.isEmpty(id)) return new FormSelect();
         return DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(id)).unique();
     }
 
     public static Sampling getDbSampling(String id) {
+        if (CheckUtil.isEmpty(id)) return new Sampling();
         return DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(id)).unique();
     }
 
     public static MonItems getMonItems(String name) {
+        if (CheckUtil.isEmpty(name)) return new MonItems();
         return DBHelper.get().getMonItemsDao().queryBuilder().
                 where(MonItemsDao.Properties.Name.eq(name)).unique();
     }
 
     /**
      * 分瓶表
+     *
      * @param id
      * @return
      */
@@ -91,7 +96,7 @@ public class DbHelpUtils {
      *
      * @return
      */
-    public static long getProjectiSize() {
+    public static long getProJectSize() {
         return DBHelper.get().getProjectDao().count();
     }
 

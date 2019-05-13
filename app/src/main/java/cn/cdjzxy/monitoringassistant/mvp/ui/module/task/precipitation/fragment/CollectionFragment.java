@@ -238,44 +238,23 @@ public class CollectionFragment extends BaseFragment {
      */
     private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
         ArrayList<LabelInfo> result = new ArrayList<>();
-
-        if (CheckUtil.isEmpty(sampling.getSamplingContentResults())) {
-            if (CheckUtil.isEmpty(sampling.getSamplingDetailResults())) {
-                return result;
-            } else {
-                //组装标签信息
-                for (SamplingDetail item : sampling.getSamplingDetailResults()) {
-                    if (item.getMonitemName().equals("降水量")) {
-                        LabelInfo info = new LabelInfo();
-                        info.setTaskName(sampling.getProjectName());
-                        info.setNumber(sampling.getSamplingNo());
-                        info.setFrequecyNo("频次：" + item.getFrequecyNo());
-                        info.setType("降水");//项目类型固定“降水”
-                        info.setMonitemName(sampling.getMonitemName());//监测项目固定“降水量”
-                        info.setSampingCode(item.getSampingCode());
-                        info.setRemark("");//保存方法
-                        info.setCb1("交接");
-                        info.setCb2("分析");
-                        info.setQrCode(item.getSampingCode());//二维码为样品编码
-                        result.add(info);
-                    }
+        //打印功能实现
+        if (!CheckUtil.isEmpty(sampling.getSamplingDetailResults())) {
+            for (SamplingDetail item : sampling.getSamplingDetailResults()) {
+                if (item.getMonitemName().equals("降水量")) {
+                    LabelInfo info = new LabelInfo();
+                    info.setTaskName(sampling.getProjectName());
+                    info.setNumber(sampling.getSamplingNo());
+                    info.setFrequecyNo("频次：" + item.getFrequecyNo());
+                    info.setType("降水");//项目类型固定“降水”
+                    info.setMonitemName(sampling.getMonitemName());//监测项目固定“降水量”
+                    info.setSampingCode(item.getSampingCode());
+                    info.setRemark("");//保存方法
+                    info.setCb1("交接");
+                    info.setCb2("分析");
+                    info.setQrCode(item.getSampingCode());//二维码为样品编码
+                    result.add(info);
                 }
-            }
-        } else {
-            //组装标签信息
-            for (SamplingContent item : sampling.getSamplingContentResults()) {
-                LabelInfo info = new LabelInfo();
-                info.setTaskName(sampling.getProjectName());
-                info.setNumber(sampling.getSamplingNo());
-                info.setFrequecyNo("频次：" + item.getFrequecyNo());
-                info.setType("降水");//项目类型固定“降水”
-                info.setMonitemName(sampling.getMonitemName());//监测项目固定“降水量”
-                info.setSampingCode(item.getSampingCode());
-                info.setRemark("");//保存方法
-                info.setCb1("交接");
-                info.setCb2("分析");
-                info.setQrCode(item.getSampingCode());//二维码为样品编码
-                result.add(info);
             }
         }
         return result;

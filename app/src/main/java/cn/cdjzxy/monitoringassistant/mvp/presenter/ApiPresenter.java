@@ -1261,7 +1261,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             URLConnection con = url.openConnection();
             con.setReadTimeout(30000);
             con.setConnectTimeout(15000);
-
             InputStream is = con.getInputStream();//获取输入流
             if (is == null) {
                 return null;

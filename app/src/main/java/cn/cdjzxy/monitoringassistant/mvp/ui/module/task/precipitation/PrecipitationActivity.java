@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -122,11 +123,12 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         if (isNewCreate) {
             mSampling = SamplingUtil.createPrecipitationSample(mProject, formSelectId);
         } else {
-            mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
+            mSampling = DbHelpUtils.getDbSampling(samplingId);
+            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao()
+                    .queryBuilder().where(SamplingFileDao.Properties.SamplingId.
+                            eq(mSampling.getId())).list();
             mSampling.setSamplingFiless(CheckUtil.isEmpty(samplingFiles) ? new ArrayList<>() : samplingFiles);
-            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
-            mSampling.setSamplingDetailResults(CheckUtil.isEmpty(samplingDetails) ? new ArrayList<>() : samplingDetails);
+            getJsData();
         }
 
         mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_print, new View.OnClickListener() {
@@ -179,6 +181,35 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
 
         initTabData();
         openFragment(0);
+
+    }
+
+    /**
+     * 获取降水数据
+     * 因为服务器返回很多非降水的数据在，app暂时用不着 所以直接删除
+     * 积累后就会很多  app只用了降水的数据
+     */
+    private void getJsData() {
+        try {
+            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder()
+                    .where(SamplingDetailDao.Properties.SamplingId.eq(mSampling.getId()))
+                    .orderAsc(SamplingDetailDao.Properties.FrequecyNo).list();
+            List<SamplingDetail> detailList = new ArrayList<>();
+            List<SamplingDetail> deleteList = new ArrayList<>();
+            if (!CheckUtil.isEmpty(samplingDetails)) {
+                for (SamplingDetail detail : samplingDetails) {
+                    if (detail != null && detail.getMonitemName() != null && detail.getMonitemName().equals("降水量")) {
+                        detailList.add(detail);
+                    } else {
+                        deleteList.add(detail);
+                    }
+                }
+            }
+            mSampling.setSamplingDetailResults(detailList);
+            DBHelper.get().getSamplingDetailDao().deleteInTx(deleteList);
+        } catch (Exception e) {
+            Log.e(TAG, "getJsData: " + e.toString());
+        }
     }
 
     /**

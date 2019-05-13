@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.TestRecordFragment;
 
 public class SubmitDataUtil {
 
@@ -99,9 +101,80 @@ public class SubmitDataUtil {
         if (sampling.getAddressId() == null || sampling.getAddressId().equals("")) {
             sampFormBean.setAddressId("00000000-0000-0000-0000-000000000000");
         } else {
-            sampFormBean.setAddressId(sampling.getAddressId());
+            if (sampling.getAddressId().length() > 50) {
+                sampFormBean.setAddressId(sampling.getAddressId().split(",")[0]);
+            } else {
+                sampFormBean.setAddressId(sampling.getAddressId());
+            }
         }
-        sampFormBean.setAddressName(sampling.getAddressName());
+        if (sampling.getAddressName() == null) {
+            sampling.setAddressName("  ");
+        }
+        sampFormBean.setAddressName(sampling.getAddressName().length() > 50 ?
+                sampling.getAddressName().substring(0, 50) : sampling.getAddressName());
+        sampFormBean.setAddressNo(sampling.getAddressNo());
+        sampFormBean.setMonitemId(sampling.getMonitemId());
+        sampFormBean.setMonitemName(sampling.getMonitemName());
+        sampFormBean.setMethodName(sampling.getMethodName());
+        sampFormBean.setMethodId(sampling.getMethodId());
+        sampFormBean.setDeviceId(sampling.getDeviceId());
+        sampFormBean.setDeviceName(sampling.getDeviceName());
+        sampFormBean.setTransfer(sampling.getTransfer());
+        sampFormBean.setReciveTime(sampling.getReciveTime());
+        sampFormBean.setFile(sampling.getFile());
+        sampFormBean.setSamplingUserId(sampling.getSamplingUserId());
+        sampFormBean.setSamplingUserName(sampling.getSamplingUserName());
+        sampFormBean.setFormFlows(sampling.getFormFlows());
+        sampFormBean.setLayTableCheckbox(sampling.getLayTableCheckbox());
+        sampFormBean.setSubmitId(sampling.getSubmitId());
+        sampFormBean.setSubmitName(sampling.getSubmitName());
+        sampFormBean.setSubmitDate(sampling.getSubmitDate());
+        sampFormBean.setMonitorPerson(sampling.getMonitorPerson());
+        sampFormBean.setMonitorTime(sampling.getMonitorTime());
+        sampFormBean.setStatus(sampling.getStatus());
+        sampFormBean.setStatusName(sampling.getStatusName());
+        sampFormBean.setTransStatus(sampling.getTransStatus());
+        sampFormBean.setTransStatusName(sampling.getTransStatusName());
+        sampFormBean.setCurUserId(sampling.getCurUserId());
+        sampFormBean.setCurUserName(sampling.getCurUserName());
+        sampFormBean.setComment(sampling.getComment());
+        sampFormBean.setAddTime(sampling.getAddTime());
+        sampFormBean.setUpdateTime(sampling.getUpdateTime());
+        sampFormBean.setVersion(sampling.getVersion());
+        sampFormBean.setTagId(sampling.getTagId());
+        sampFormBean.setTagName(sampling.getTagName());
+        //设置气象信息
+        sampFormBean.setWeather(sampling.getWeather());
+        sampFormBean.setTemprature(sampling.getTemprature());
+        sampFormBean.setPressure(sampling.getPressure());
+        return sampFormBean;
+    }
+
+    /**
+     * set up SampFormBean
+     *
+     * @param sampling
+     * @return
+     */
+    public static PreciptationSampForm.SampFormBean setYqfUpSampFormBean(Sampling sampling) {
+        PreciptationSampForm.SampFormBean sampFormBean = new PreciptationSampForm.SampFormBean();
+        sampFormBean.setProjectId(sampling.getProjectId());
+        sampFormBean.setId(sampling.getId());
+        sampFormBean.setFormPath(sampling.getFormPath());
+        sampFormBean.setFormName(sampling.getFormName());
+        sampFormBean.setProjectName(sampling.getProjectName());
+        sampFormBean.setProjectNo(sampling.getProjectNo());
+        sampFormBean.setMontype(sampling.getMontype());
+        sampFormBean.setParentTagId(sampling.getParentTagId());
+        sampFormBean.setFormType(sampling.getFormType());
+        sampFormBean.setFormTypeName(sampling.getFormTypeName());
+        sampFormBean.setPrivateData(sampling.getPrivateData());
+        sampFormBean.setSendSampTime(sampling.getSendSampTime());
+        sampFormBean.setSamplingNo(sampling.getSamplingNo());
+        sampFormBean.setSamplingTimeBegin(sampling.getSamplingTimeBegin() == null ? DateUtils.getDate(new Date()) : sampling.getSamplingTimeBegin());
+        sampFormBean.setSamplingTimeEnd(CheckUtil.isEmpty(sampling.getSamplingTimeEnd()) ? sampFormBean.getSamplingTimeBegin() : sampling.getSamplingTimeEnd());
+        sampFormBean.setTagName(sampling.getTagName());
+        sampFormBean.setTagId(sampling.getTagId());
         sampFormBean.setAddressNo(sampling.getAddressNo());
         sampFormBean.setMonitemId(sampling.getMonitemId());
         sampFormBean.setMonitemName(sampling.getMonitemName());
@@ -199,13 +272,14 @@ public class SubmitDataUtil {
     private static List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> setYqfUpSamplingDetailDataList(Sampling sampling) {
         List<SamplingDetail> samplingDetailsList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
         if (!CheckUtil.isEmpty(samplingDetailsList)) {
+            int count = 1;
+            Collections.sort(samplingDetailsList, new TestRecordFragment.DetailComparator());
             List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeansList = new ArrayList<>();
             for (SamplingDetail samplingDetail : samplingDetailsList) {
                 if (CheckUtil.isEmpty(samplingDetail.getMonitemId())) {
                     continue;
                 }
                 PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
-
                 samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
                 samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
                 samplingDetailsBean.setProjectId(sampling.getProjectId());
@@ -214,7 +288,7 @@ public class SubmitDataUtil {
                 samplingDetailsBean.setMonitemName(samplingDetail.getMonitemName());
                 samplingDetailsBean.setAddresssId(sampling.getAddressId());
                 samplingDetailsBean.setAddressName(sampling.getAddressName());
-                samplingDetailsBean.setOrderIndex(samplingDetail.getOrderIndex() + "");
+                samplingDetailsBean.setOrderIndex(count + "");
                 samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
                 samplingDetailsBean.setSamplingTime(samplingDetail.getSamplingTime());
                 samplingDetailsBean.setSamplingType(samplingDetail.getSamplingType() + "");
@@ -232,8 +306,8 @@ public class SubmitDataUtil {
                 //samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
                 //samplingDetailsBean.setMonitemName("降水量");
                 samplingDetailsBean.setValue1(samplingDetail.getValue1());
-
                 samplingDetailsBeansList.add(samplingDetailsBean);
+                count++;
             }
             return samplingDetailsBeansList;
         }
@@ -407,7 +481,7 @@ public class SubmitDataUtil {
         preciptationSampForm.setDelFiles(new ArrayList<>());
 
         //设置SampFormBean数据
-        PreciptationSampForm.SampFormBean sampFormBean = setUpSampFormBean(sampling);
+        PreciptationSampForm.SampFormBean sampFormBean = setYqfUpSampFormBean(sampling);
         sampFormBean.setSamplingDetails(new ArrayList<>());
         sampFormBean.setSamplingFormStands(new ArrayList<>());
 

@@ -142,36 +142,35 @@ public class CollectionDetailFragment extends BaseFragment {
 
     private void createSampleDetailNo() {
         mSampling = PrecipitationActivity.mSampling;
-
+        //拿到只有降水量的数据
         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
+//        if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+//            for (SamplingDetail detail : mSampling.getSamplingDetailResults()) {
+//                if (detail != null && detail.getMonitemName() != null && detail.getMonitemName().equals("降水量")) {
+//                    samplingDetailResults.add(detail);
+//                }
+//            }
+//        }
 
         SharedPreferences collectListSettings = getActivity().getSharedPreferences("setting", 0);
         listPosition = collectListSettings.getInt("listPosition", -1);
 
         if (listPosition == -1) {
-            //添加 生成编码
-
-            //JS(要素)181029(日期)-01(点位)01(账号)-01(频次)
-            String samplingNo;
-
-//
-//            String snDate = DateUtils.getDate().replace("-", "").substring(2);
-//            String snPointPosition = "采样点位编号未填写";
-//            if (!CheckUtil.isEmpty(mSampling.getAddressNo())) {
-//                snPointPosition = mSampling.getAddressNo();
-//            }
-//            String snUserId = UserInfoHelper.get().getUser().getIntId() + "";
             int snFrequency = 1;
             if (samplingDetailResults != null
                     && samplingDetailResults.size() > 0) {
-                snFrequency = samplingDetailResults.get(samplingDetailResults.size() - 1).getFrequecyNo() + 1;
+                snFrequency = samplingDetailResults.size()+1;
+            }
+            if (CheckUtil.isEmpty(mSampling.getSamplingNo())) {
+                mSampling.setSamplingNo(SamplingUtil.createSamplingNo(mSampling.getSamplingTimeBegin()));
             }
 //            新的样品编码规范——————2019年5月10更改
 //            JS(样品性质——降水)——年月日——采样单流水号(时间相同就加一)采样人员系统编号——采样号
-//
-            samplingNo = "JS" + SamplingUtil.createSamplingFrequecyNo(mSampling.getSamplingTimeBegin()) + "-" +
-                    StringUtil.autoGenericCode(snFrequency, 2);
-
+            String mSamplingNo = mSampling.getSamplingNo();//采样单编号
+            String dateStr = DateUtils.strGetDate(mSampling.getSamplingTimeBegin()).replace("-", "").substring(2);//年月日
+            String waterNo = mSamplingNo.substring(mSamplingNo.lastIndexOf("-") + 1, mSamplingNo.length());//采样单流水号
+            String userId = UserInfoHelper.get().getUser().getIntId() + "-";//用户系统编号
+            String samplingNo = "JS" + dateStr + "-" + waterNo + userId + StringUtil.autoGenericCode(snFrequency, 2);//采样号
             tvSampleCode.setText(samplingNo);
             tvFrequency.setText(snFrequency + "");
         } else {

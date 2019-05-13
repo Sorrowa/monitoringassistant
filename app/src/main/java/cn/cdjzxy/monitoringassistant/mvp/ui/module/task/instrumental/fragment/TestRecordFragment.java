@@ -132,6 +132,8 @@ public class TestRecordFragment extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (mInstrumentalTestRecordAdapter != null) {
+                //排序
+                Collections.sort(mSampling.getSamplingDetailYQFs(), new DetailComparator());
                 mInstrumentalTestRecordAdapter.notifyDataSetChanged();
             } else {
                 initRecyclerViewData();
@@ -160,6 +162,8 @@ public class TestRecordFragment extends BaseFragment {
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
                             if (mInstrumentalTestRecordAdapter != null) {
+                                //排序
+                                Collections.sort(mSampling.getSamplingDetailYQFs(), new DetailComparator());
                                 mInstrumentalTestRecordAdapter.notifyDataSetChanged();
                             }
                         }
@@ -197,7 +201,6 @@ public class TestRecordFragment extends BaseFragment {
         mInstrumentalTestRecordAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-
                 if (position < 0 || position >= mSampling.getSamplingDetailYQFs().size()) {
                     return;
                 }
@@ -206,7 +209,6 @@ public class TestRecordFragment extends BaseFragment {
                 if (item == null) {
                     return;
                 }
-
                 if (currSelectDetails == item) {
                     currSelectDetails.setSelected(false);
                     currSelectDetails = null;
@@ -214,17 +216,14 @@ public class TestRecordFragment extends BaseFragment {
                     if (currSelectDetails != null) {
                         currSelectDetails.setSelected(false);
                     }
-
                     //记录选中项
                     currSelectDetails = item;
                     currSelectDetails.setSelected(true);
                 }
-
                 //更新列表
                 mInstrumentalTestRecordAdapter.notifyDataSetChanged();
             }
         });
-
         recyclerview.setAdapter(mInstrumentalTestRecordAdapter);
     }
 
@@ -281,8 +280,7 @@ public class TestRecordFragment extends BaseFragment {
         samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
-        samplingDetail.setOrderIndex(mSampling.getSamplingDetailYQFs()
-                == null ? 0 : mSampling.getSamplingDetailYQFs().size());
+        samplingDetail.setOrderIndex(currSelectDetails.getOrderIndex() + 1);
         samplingDetail.setPrivateDataBooleanValue("HasPX", false);
         samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
         samplingDetail.setPrivateDataStringValue("CaleValue", "");
@@ -332,7 +330,7 @@ public class TestRecordFragment extends BaseFragment {
         return null;
     }
 
-    class DetailComparator implements Comparator<SamplingDetail> {
+    public static class DetailComparator implements Comparator<SamplingDetail> {
 
         @Override
         public int compare(SamplingDetail o1, SamplingDetail o2) {

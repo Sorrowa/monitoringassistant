@@ -442,7 +442,7 @@ public class SamplingUtil {
         } else {
             String lastSamlingNo = samplings.get(samplings.size() - 1).getSamplingNo();
             if (!CheckUtil.isEmpty(lastSamlingNo)) {
-                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2)) + 1;
+                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2));
                 samplingNo.append("-").append(StringUtil.autoGenericCode(serialNumber, 2));
             } else {
                 samplingNo.append("-").append(StringUtil.autoGenericCode(1, 2));
