@@ -59,7 +59,7 @@ public class DateUtils {
 
 
     public static String getLastMouthDay() {
-        SimpleDateFormat dateFormater = new SimpleDateFormat(
+        SimpleDateFormat dateForMater = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -68,7 +68,7 @@ public class DateUtils {
 
         cal.set(Calendar.DAY_OF_MONTH,
                 cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-        return dateFormater.format(cal.getTime());
+        return dateForMater.format(cal.getTime());
     }
 
 
@@ -108,6 +108,86 @@ public class DateUtils {
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         return res;
+    }
+
+    /**
+     * 这个方法用于pc端返回了时间年月日
+     *
+     * @param s
+     * @return
+     */
+    public static String returnDate(String s) {
+        if (s == null || s.equals("")) return "";
+        String[] strDate = s.split(" ");
+        return strDate[0];
+    }
+
+    /**
+     * 这个方法用于pc端返回了时间：年月日时分秒 app只需要显示年月日
+     *
+     * @param s
+     * @return
+     */
+    public static String strGetDate(String s) {
+        if (CheckUtil.isEmpty(s)) return "";
+        try {
+            Date simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+            return getDate(simpleDateFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return s;
+        }
+    }
+
+    /**
+     * 这个方法用于pc端返回了时间：年月日时分秒 app只需要显示年月
+     *
+     * @param s
+     * @return
+     */
+    public static String strGetYears(String s) {
+        if (CheckUtil.isEmpty(s)) return "";
+        try {
+            Date simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+            return getYears(simpleDateFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return s;
+        }
+    }
+
+    /**
+     * 这个方法用于pc端返回了时间：年月日时分秒 app只需要显示 时分
+     *
+     * @param s
+     * @return
+     */
+    public static String strGetTimeNoMinute(String s) {
+        if (CheckUtil.isEmpty(s)) return "";
+        try {
+            Date simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+            return getTimeNoMinute(simpleDateFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return s;
+        }
+    }
+
+    /**
+     * 这个方法用于pc端返回了时间：年月日时分秒 app只需要显示 年月日时分
+     *
+     * @param s
+     * @return
+     */
+    public static String strGetTimeShort(String s) {
+        if (CheckUtil.isEmpty(s)) return "";
+        try {
+            Date simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+            return getTimeShort(simpleDateFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return s;
+        }
     }
 
     /**
@@ -161,9 +241,15 @@ public class DateUtils {
         return 0;
     }
 
+    /**
+     * 获取年月日时分
+     *
+     * @param time
+     * @return
+     */
     public static String getTimeShort(long time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date date = new Date();
             date.setTime(time);
             return sdf.format(date);
@@ -385,6 +471,16 @@ public class DateUtils {
 
     public static String getYears(Date date) {
         return new SimpleDateFormat("yyyy-MM").format(date).toString();
+    }
+
+    /**
+     * 返回年月日时分
+     *
+     * @param date
+     * @return
+     */
+    public static String getTimeShort(Date date) {
+        return new SimpleDateFormat("yyy-MM-dd HH:mm").format(date).toString();
     }
 
     /**

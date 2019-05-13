@@ -867,11 +867,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                             for (ProjectContent content : projectContentList) {
                                                 ProjectContent dbContent = DBHelper.get().getProjectContentDao().
                                                         queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
-                                                if (dbContent!=null){
+                                                if (dbContent != null) {
                                                     DBHelper.get()
                                                             .getProjectContentDao()
                                                             .update(content);
-                                                }else {
+                                                } else {
                                                     DBHelper.get()
                                                             .getProjectContentDao()
                                                             .insert(content);
@@ -1111,7 +1111,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         }
 
         //文件
-        List<SamplingFile> samplingFileList = sampling.getHasFile();
+        List<SamplingFile> samplingFileList = sampling.getHasFile() == null ? new ArrayList<>() : sampling.getHasFile();
         if (samplingFileList != null && samplingFileList.size() > 0) {
             for (SamplingFile samplingFile : samplingFileList) {
                 //从数据库查询对应的文件，Id由于是服务端提供的，所以不会变，但是SamplingId可能会变化，所以这里做一次更新
@@ -1177,7 +1177,12 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
                 && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
         sampling.setIsLocal(false);
-        DBHelper.get().getSamplingDao().insert(sampling);
+        if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
+            DBHelper.get().getSamplingDao().update(sampling);
+        } else {
+            DBHelper.get().getSamplingDao().insert(sampling);
+        }
+
     }
 
     /**
@@ -1492,7 +1497,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             //下载并保存文件
             String localPath = "";
 
-            String cacheDir = ApiPresenter.this.appComponent.appManager().getCurrentActivity().getCacheDir().getPath();
+            String cacheDir = Constant.FILE_DIR + Constant.PNG_DIR;
             File newFile = new File(cacheDir + "/" + remoteFile.getFileName());
             if (!newFile.exists()) {
                 //下载并保存文件

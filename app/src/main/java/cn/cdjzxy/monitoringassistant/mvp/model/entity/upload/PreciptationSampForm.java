@@ -728,6 +728,15 @@ public class PreciptationSampForm {
             private String SampleCollection;
             private String SampleAcceptance;
             private String SamplingOnTime;
+            private String Id;
+
+            public String getId() {
+                return Id;
+            }
+
+            public void setId(String id) {
+                Id = id;
+            }
 
             public String getSamplingId() {
                 return SamplingId;

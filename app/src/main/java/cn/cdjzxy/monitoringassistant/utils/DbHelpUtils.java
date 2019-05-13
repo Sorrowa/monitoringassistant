@@ -11,13 +11,16 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
@@ -51,6 +54,19 @@ public class DbHelpUtils {
         return DBHelper.get().getMonItemsDao().queryBuilder().
                 where(MonItemsDao.Properties.Name.eq(name)).unique();
     }
+
+    /**
+     * 分瓶表
+     * @param id
+     * @return
+     */
+    public static SamplingFormStand getSamplingFormStandDaoForId(String id) {
+        if (id == null || id.equals("")) return null;
+        return DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.
+                Properties.Id.eq(id)).
+                unique();
+    }
+
 
     /**
      * 获取Project 数据库集合
@@ -153,5 +169,35 @@ public class DbHelpUtils {
         } else {
             return projectDetialList;
         }
+    }
+
+    /**
+     * 根据采样id和监测项目id 查找分瓶
+     *
+     * @param samplingId
+     * @param itemId
+     * @return
+     */
+    public static List<SamplingFormStand> getSamplingStanTdList(String samplingId, String itemId) {
+        List<SamplingFormStand>
+                stanTdList = DBHelper.get().getSamplingFormStandDao().queryBuilder()
+                .where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId),
+                        SamplingFormStandDao.Properties.MonitemIds.like(itemId + "%")).list();
+        if (stanTdList == null) return new ArrayList<>();
+        else return stanTdList;
+    }
+
+
+    /**
+     * 获取样品采集列表
+     *
+     * @param samplingId
+     * @param projectId
+     * @return
+     */
+    public static List<SamplingContent> getSamplingContentList(String samplingId, String projectId) {
+        return DBHelper.get().getSamplingContentDao().queryBuilder().
+                where(SamplingContentDao.Properties.SamplingId.eq(samplingId),
+                        SamplingContentDao.Properties.ProjectId.eq(projectId)).list();
     }
 }

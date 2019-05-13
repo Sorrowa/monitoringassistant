@@ -66,6 +66,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterAct
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mProject;
@@ -145,7 +146,7 @@ public class BasicFragment extends BaseFragment {
         mPrivateData = new PreciptationPrivateData();
         mSamplingFiles.add(new SamplingFile());
         if (!CheckUtil.isNull(mSampling)) {
-            tvSamplingDate.setText(mSampling.getSamplingTimeBegin());
+            tvSamplingDate.setText(DateUtils.strGetDate(mSampling.getSamplingTimeBegin()));
             tvSamplingUser.setText(mSampling.getSamplingUserName());
             tvSamplingType.setText(mSampling.getTagName());
             tvSamplingPoint.setText(mSampling.getAddressName());
@@ -161,7 +162,7 @@ public class BasicFragment extends BaseFragment {
             tvSamplingMethod.setText(mSampling.getMethodName());
             tvSamplingDevice.setText(mSampling.getDeviceName());
             tvFlowMethod.setText(mSampling.getTransfer());
-            tvFlowDate.setText(mSampling.getSendSampTime());
+            tvFlowDate.setText(DateUtils.strGetTimeShort(mSampling.getSendSampTime()));
             tv_receive_date.setText(mSampling.getReciveTime());
             tvComment.setText(mSampling.getComment());
             mSamplingFiles.addAll(mSampling.getSamplingFiless());
@@ -359,15 +360,6 @@ public class BasicFragment extends BaseFragment {
 
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (mSampling != null && edMonitorName != null) {
-                edMonitorName.setText(mSampling.getMethodName());
-            }
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -461,7 +453,7 @@ public class BasicFragment extends BaseFragment {
                             mSampling.setTagId(data.getStringExtra("TagId"));
                             mSampling.setTagName(data.getStringExtra("TagName"));
                             tvSamplingType.setText(mSampling.getTagName());
-                            setMonitemNameData();
+                            setMonItemNameData();
                         }
                     }
                 });
@@ -498,7 +490,7 @@ public class BasicFragment extends BaseFragment {
                             mSampling.setAddressNo(data.getStringExtra("AddressNo"));
                             tvSamplingPoint.setText(mSampling.getAddressName());
                             tvSamplingNo.setText(mSampling.getAddressNo());
-                            setMonitemNameData();
+                            setMonItemNameData();
                         }
                     }
                 });
@@ -532,9 +524,21 @@ public class BasicFragment extends BaseFragment {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
                         if (resultCode == Activity.RESULT_OK) {
-                            mSampling.setDeviceName(data.getStringExtra("DeviceName"));
-                            mSampling.setDeviceId(data.getStringExtra("DeviceId"));
-                            tvSamplingDevice.setText(mSampling.getDeviceName());
+                            String deviceId = data.getStringExtra("DeviceId");
+                            String deviceName = data.getStringExtra("DeviceName");
+                            String deviceCode = data.getStringExtra("DeviceCode");
+                            String sourceWay = data.getStringExtra("SourceWay");
+                            String expireDate = data.getStringExtra("ExpireDate");
+                            String deviceText;
+                            if (expireDate != null && !expireDate.equals("")) {
+                                String[] s = expireDate.split(" ");
+                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, s[0]);
+                            } else {
+                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+                            }
+                            tvSamplingDevice.setText(deviceText);
+                            mSampling.setDeviceId(deviceId);
+                            mSampling.setDeviceName(deviceText);
                         }
                     }
                 });
@@ -545,15 +549,31 @@ public class BasicFragment extends BaseFragment {
     /**
      * 设置监测项目
      */
-    public void setMonitemNameData() {
+    public void setMonItemNameData() {
         if (mSampling.getAddressId() == null || mSampling.getAddressId().equals("")) return;
         if (mSampling.getTagId() == null || mSampling.getTagId().equals("")) return;
         List<ProjectDetial> projectDetialList = DbHelpUtils.getProjectDetialList(mProject.getId()
                 , mSampling.getAddressId(), mSampling.getTagId());
-        for (ProjectDetial content : projectDetialList) {
-            mSampling.setMonitemName(content.getAddress() == null ? "" : content.getAddress());
+        if (CheckUtil.isEmpty(projectDetialList)) {
+            mSampling.setMonitemName("");
             edMonitorName.setText(mSampling.getMonitemName());
+            return;
         }
+        StringBuilder stringBuilderName = new StringBuilder();
+        StringBuilder stringBuilderId = new StringBuilder();
+
+        for (ProjectDetial content : projectDetialList) {
+            stringBuilderName.append(content.getMonItemName()).append(",");
+            stringBuilderId.append(content.getMonItemId()).append(",");
+        }
+        if (stringBuilderName.lastIndexOf(",") > 0) {
+            stringBuilderName.deleteCharAt(stringBuilderName.lastIndexOf(","));
+        }
+        if (stringBuilderId.lastIndexOf(",") > 0)
+            stringBuilderId.deleteCharAt(stringBuilderId.lastIndexOf(","));
+        mSampling.setMonitemName(stringBuilderName.toString());
+        mSampling.setMonitemId(stringBuilderId.toString());
+        edMonitorName.setText(mSampling.getMonitemName());
     }
 
 
@@ -562,8 +582,10 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                mSampling.setSamplingTimeBegin(DateUtils.getDate(date));
+                String dateStr = DateUtils.getDate(date);
+                mSampling.setSamplingTimeBegin(dateStr);
                 tvSamplingDate.setText(mSampling.getSamplingTimeBegin());
+                mSampling.setSamplingNo(SamplingUtil.createSamplingNo(dateStr));
             }
         }).build();
         pvTime.setDate(Calendar.getInstance());
@@ -575,10 +597,10 @@ public class BasicFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                mSampling.setSendSampTime(DateUtils.getTime(date.getTime()));
+                mSampling.setSendSampTime(DateUtils.getTimeShort(date.getTime()));
                 tvFlowDate.setText(mSampling.getSendSampTime());
             }
-        }).setType(new boolean[]{true, true, true, true, true, true})
+        }).setType(new boolean[]{true, true, true, true, true, false})
                 .isCyclic(true)
                 .build();
         pvTime.setDate(Calendar.getInstance());

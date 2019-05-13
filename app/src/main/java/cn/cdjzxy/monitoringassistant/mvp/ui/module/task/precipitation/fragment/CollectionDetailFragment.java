@@ -61,6 +61,7 @@ import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mProject;
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mSampling;
 
 /**
  * 采集样品详情
@@ -168,7 +169,7 @@ public class CollectionDetailFragment extends BaseFragment {
 //            新的样品编码规范——————2019年5月10更改
 //            JS(样品性质——降水)——年月日——采样单流水号(时间相同就加一)采样人员系统编号——采样号
 //
-            samplingNo = "JS" + SamplingUtil.createSamplingFrequecyNo() + "-" +
+            samplingNo = "JS" + SamplingUtil.createSamplingFrequecyNo(mSampling.getSamplingTimeBegin()) + "-" +
                     StringUtil.autoGenericCode(snFrequency, 2);
 
             tvSampleCode.setText(samplingNo);
@@ -248,6 +249,13 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setSamplingId(mSampling.getId());
                     samplingDetail.setSampingCode(tvSampleCode.getText().toString());
                     samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
+                    samplingDetail.setAddresssId(mSampling.getAddressId());
+                    samplingDetail.setAddressName(mSampling.getAddressName());
+                    samplingDetail.setDeviceIdName(mSampling.getDeviceName());
+                    samplingDetail.setDeviceId(mSampling.getDeviceId());
+                    samplingDetail.setMethodName(mSampling.getMonitemName());
+                    samplingDetail.setMethodId(mSampling.getMonitemId());
+                    samplingDetail.setIsSenceAnalysis(true);
 
                     HashMap<String, String> map = new HashMap<>();
                     map.put("SDataTime", tvStartTime.getText().toString());
@@ -265,6 +273,7 @@ public class CollectionDetailFragment extends BaseFragment {
                             mSampling.setSamplingDetailResults(new ArrayList<SamplingDetail>());
                         }
                         List<SamplingDetail> samplingDetailResults = mSampling.getSamplingDetailResults();
+
                         samplingDetailResults.add(samplingDetail);
                         mSampling.setSamplingDetailResults(samplingDetailResults);
                     }
@@ -320,7 +329,7 @@ public class CollectionDetailFragment extends BaseFragment {
         TimePickerView pvTime = new TimePickerBuilder(getActivity(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                String selectTime = DateUtils.getTime(date.getTime());
+                String selectTime = DateUtils.getTimeShort(date.getTime());
                 try {
                     if (isStartTime) {
                         if (!TextUtils.isEmpty(tvEndTime.getText().toString()) && !DateUtils.compareTime(selectTime, tvEndTime.getText().toString())) {
@@ -340,7 +349,7 @@ public class CollectionDetailFragment extends BaseFragment {
                 }
 
             }
-        }).setType(new boolean[]{true, true, true, true, true, true})
+        }).setType(new boolean[]{true, true, true, true, true, false})
                 .isCyclic(true)
                 .build();
         pvTime.show();

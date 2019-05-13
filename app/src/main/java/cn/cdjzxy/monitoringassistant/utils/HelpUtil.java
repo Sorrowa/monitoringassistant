@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.utils;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
@@ -298,6 +299,45 @@ public class HelpUtil {
     }
 
     /**
+     * 此方法主要是分瓶监测项目更改了  对应的样品采集数量也应该更改
+     *
+     * @param sample
+     * @return
+     */
+    public static List<SamplingContent> setSamplingCountList(Sampling sample) {
+        List<SamplingContent> list = new ArrayList<>();
+        if (sample == null && sample.getSamplingContentResults() == null) {
+            return list;
+        }
+        if (sample.getSamplingFormStandResults() == null && sample.getSamplingFormStandResults().size() == 0)
+            return list;
+        for (SamplingContent content : sample.getSamplingContentResults()) {
+            List<SamplingFormStand> stanTdList = new ArrayList<>();
+            int i = 0;
+            if (content.getMonitemId() != null && !content.getMonitemId().equals("")) {
+                String[] monIds = content.getMonitemId().split(",");
+                for (String id : monIds) {
+                    List<SamplingFormStand> stanTds = DbHelpUtils.getSamplingStanTdList(sample.getId(), id);
+                    if (!CheckUtil.isNull(stanTds)) {
+                        if (!stanTdList.contains(stanTds)) {
+                            stanTdList.addAll(stanTds);
+                        }
+                    } else {
+                        Log.e(TAG, "countSamplingCount: " + "异常分瓶信息里面没有找到监测项目");
+                        i++;
+                    }
+                }
+            }
+
+            i += stanTdList.size();
+            content.setSamplingCount(i);
+            list.add(content);
+            generateSamplingDetails(content);
+        }
+        return list;
+    }
+
+    /**
      * 判断采样单下包含itemId的分瓶信息是否存在
      *
      * @param itemId
@@ -520,4 +560,54 @@ public class HelpUtil {
         return count;
     }
 
+
+    /**
+     * 统计样品数量
+     * 安装样品
+     *
+     * @return
+     */
+    public static int setSamplingCount(SamplingContent samplingContent, Sampling sample) {
+        List<SamplingFormStand> stanTdList = new ArrayList<>();
+        int i = 0;
+        if (samplingContent.getMonitemId() != null && !samplingContent.getMonitemId().equals("")) {
+            String[] monIds = samplingContent.getMonitemId().split(",");
+            for (String id : monIds) {
+                List<SamplingFormStand> stanTds = DbHelpUtils.getSamplingStanTdList(sample.getId(), id);
+                if (!CheckUtil.isNull(stanTds)) {
+                    if (!stanTdList.contains(stanTds)) {
+                        stanTdList.addAll(stanTds);
+                    }
+                } else {
+                    Log.e(TAG, "countSamplingCount: " + "异常分瓶信息里面没有找到监测项目");
+                    i++;
+                }
+            }
+        }
+        i += stanTdList.size();
+        return i;
+    }
+
+
+    /**
+     * 更改样品采集下面监测项目的样品数量
+     *
+     * @param content
+     * @return
+     */
+    public static void generateSamplingDetails(SamplingContent content) {
+        if (CheckUtil.isNull(content)) return;
+        List<SamplingDetail> samplingDetailsList = DBHelper.get().getSamplingDetailDao().
+                queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(content.getSamplingId()),
+                SamplingDetailDao.Properties.ProjectId.eq(content.getProjectId()),
+                SamplingDetailDao.Properties.SampingCode.eq(content.getSampingCode()),
+                SamplingDetailDao.Properties.FrequecyNo.eq(content.getFrequecyNo()),
+                SamplingDetailDao.Properties.SamplingType.eq(content.getSamplingType())).list();
+        if (!CheckUtil.isEmpty(samplingDetailsList)) {
+            for (SamplingDetail detail : samplingDetailsList) {
+                detail.setSamplingCount(content.getSamplingCount());
+            }
+            DBHelper.get().getSamplingDetailDao().updateInTx(samplingDetailsList);
+        }
+    }
 }

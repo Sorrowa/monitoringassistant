@@ -48,6 +48,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.Instrumenta
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterMoniteActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity.mSampling;
 
@@ -106,8 +107,8 @@ public class BasicInfoFragment extends BaseFragment {
 //            tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
             tvSamplingProperty.setText(mSampling.getFormTypeName());
             tvTestUser.setText(mSampling.getSamplingUserName());
-            tvTestStartDate.setText(mSampling.getSamplingTimeBegin());
-            tvTestEndDate.setText(mSampling.getSamplingTimeEnd());
+            tvTestStartDate.setText(DateUtils.strGetDate(mSampling.getSamplingTimeBegin()));
+            tvTestEndDate.setText(DateUtils.strGetDate(mSampling.getSamplingTimeEnd()));
             tvTestMethod.setText(mSampling.getMethodName());
             tvTestDevice.setText(mSampling.getPrivateDataStringValue("DeviceText"));
             tvComment.setText(mSampling.getComment());
@@ -272,6 +273,8 @@ public class BasicInfoFragment extends BaseFragment {
                         String time = DateUtils.getDate(date);
                         tvTestStartDate.setText(time);
                         mSampling.setSamplingTimeBegin(time);
+                        mSampling.setSamplingNo(SamplingUtil.createSamplingNo(time));
+                        tvSamplingNo.setText(mSampling.getSamplingNo());
                     }
                 });
                 break;
@@ -328,11 +331,17 @@ public class BasicInfoFragment extends BaseFragment {
                             String deviceCode = data.getStringExtra("DeviceCode");
                             String sourceWay = data.getStringExtra("SourceWay");
                             String expireDate = data.getStringExtra("ExpireDate");
+                            String deviceText;
+                            if (expireDate != null && !expireDate.equals("")) {
+                                String[] s = expireDate.split(" ");
+                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, s[0]);
+                            } else {
+                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+                            }
 
-                            String deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
 
                             mSampling.setDeviceId(deviceId);
-                            mSampling.setDeviceName(deviceName);
+                            mSampling.setDeviceName(deviceText);
                             mSampling.setPrivateDataStringValue("SourceWay", sourceWay);
                             mSampling.setPrivateDataStringValue("SourceDate", expireDate);
                             //设备信息格式：仪器名称(仪器编号)(仪器溯源方式 仪器溯源有效期)

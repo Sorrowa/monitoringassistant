@@ -46,7 +46,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
         public final static Property IsForceChecked = new Property(14, boolean.class, "IsForceChecked", false, "IS_FORCE_CHECKED");
         public final static Property CertCode = new Property(15, String.class, "CertCode", false, "CERT_CODE");
         public final static Property SourceWay = new Property(16, String.class, "SourceWay", false, "SOURCE_WAY");
-        public final static Property SourceDate = new Property(17, String.class, "sourceDate", false, "SOURCE_DATE");
+        public final static Property SourceDate = new Property(17, String.class, "SourceDate", false, "SOURCE_DATE");
     }
 
     private Query<Devices> methods_MDevicesQuery;
@@ -80,7 +80,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
                 "\"IS_FORCE_CHECKED\" INTEGER NOT NULL ," + // 14: IsForceChecked
                 "\"CERT_CODE\" TEXT," + // 15: CertCode
                 "\"SOURCE_WAY\" TEXT," + // 16: SourceWay
-                "\"SOURCE_DATE\" TEXT);"); // 17: sourceDate
+                "\"SOURCE_DATE\" TEXT);"); // 17: SourceDate
     }
 
     /** Drops the underlying database table. */
@@ -166,9 +166,9 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             stmt.bindString(17, SourceWay);
         }
  
-        String sourceDate = entity.getSourceDate();
-        if (sourceDate != null) {
-            stmt.bindString(18, sourceDate);
+        String SourceDate = entity.getSourceDate();
+        if (SourceDate != null) {
+            stmt.bindString(18, SourceDate);
         }
     }
 
@@ -249,9 +249,9 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             stmt.bindString(17, SourceWay);
         }
  
-        String sourceDate = entity.getSourceDate();
-        if (sourceDate != null) {
-            stmt.bindString(18, sourceDate);
+        String SourceDate = entity.getSourceDate();
+        if (SourceDate != null) {
+            stmt.bindString(18, SourceDate);
         }
     }
 
@@ -280,7 +280,7 @@ public class DevicesDao extends AbstractDao<Devices, String> {
             cursor.getShort(offset + 14) != 0, // IsForceChecked
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // CertCode
             cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // SourceWay
-            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17) // sourceDate
+            cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17) // SourceDate
         );
         return entity;
     }

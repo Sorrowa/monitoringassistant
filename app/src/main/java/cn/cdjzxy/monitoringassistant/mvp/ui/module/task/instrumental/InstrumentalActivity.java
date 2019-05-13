@@ -49,6 +49,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -117,7 +118,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
         if (isNewCreate) {
             //是否是新建
-            mSampling = createSampling();
+            mSampling = SamplingUtil.createInstrumentalSampling(projectId, formSelectId);
         } else {
             //从数据库加载
             mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
@@ -149,7 +150,8 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                     mSampling.setIsFinish(IsSamplingFinish());
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
-                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
+                        Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
+                                where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
                         if (CheckUtil.isNull(sampling)) {
                             DBHelper.get().getSamplingDao().insert(mSampling);
                         } else {
@@ -224,130 +226,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         finish();
     }
 
-    private Sampling createSampling() {
-        Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-//        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
 
-        FormSelect formSelect = DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.FormId.eq(formSelectId)).unique();
-
-        Sampling sampling = new Sampling();
-        sampling.setId("LC-" + UUID.randomUUID().toString());
-        sampling.setSamplingNo(createSamplingNo());
-        sampling.setProjectId(project.getId());
-        sampling.setProjectName(project.getName());
-        sampling.setProjectNo(project.getProjectNo());
-        sampling.setTagId(formSelect.getTagId());
-        sampling.setMontype(project.getTypeCode());
-        sampling.setTagId(project.getMonType());//TODO:
-        sampling.setTagName(project.getMonType());
-        sampling.setAddressNo("");
-        sampling.setFormType(formSelect.getTagParentId());
-        sampling.setFormTypeName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagParentId())).unique().getName());
-        sampling.setFormName(formSelect.getFormName());
-        sampling.setFormPath(formSelect.getPath());
-        sampling.setParentTagId(formSelect.getTagParentId());
-        sampling.setStatus(0);
-        sampling.setSamplingUserId(UserInfoHelper.get().getUser().getId());
-        sampling.setSamplingUserName(UserInfoHelper.get().getUser().getName());
-        sampling.setMonitorPerson(UserInfoHelper.get().getUser().getName());
-        sampling.setSamplingTimeBegin(DateUtils.getDate());
-        sampling.setSamplingTimeEnd(DateUtils.getDate());
-        sampling.setSamplingDetailResults(new ArrayList());
-        sampling.setSamplingFiless(new ArrayList());
-        sampling.setSamplingDetailYQFs(new ArrayList());
-        sampling.setSamplingFormStandResults(new ArrayList<>());
-        sampling.setIsLocal(true);
-        sampling.setIsUpload(false);
-        sampling.setIsCanEdit(true);
-        sampling.setStatusName("等待提交");
-        sampling.setSendSampTime("");
-        sampling.setLayTableCheckbox("on");
-        sampling.setTransStatus(3);
-        sampling.setTransStatusName("等待提交");
-        sampling.setCurUserId(UserInfoHelper.get().getUser().getId());
-        sampling.setCurUserName(UserInfoHelper.get().getUser().getName());
-        sampling.setAddTime(DateUtils.getTime(new Date().getTime()));
-        sampling.setUpdateTime(DateUtils.getTime(new Date().getTime()));
-        sampling.setVersion(0);
-        sampling.setFormFlows("");
-        sampling.setTagId("");
-        sampling.setTagName("");
-        sampling.setAddressId("");
-        sampling.setAddressName("");
-        sampling.setComment("");
-
-//        if (!CheckUtil.isEmpty(projectDetials)) {
-//            for (ProjectDetial projectDetial : projectDetials) {
-//                if (!sampling.getTagId().contains(projectDetial.getMonItemId())) {
-//                    if (!TextUtils.isEmpty(sampling.getTagId())) {
-//                        sampling.setTagId(sampling.getTagId() + ",");
-//                    }
-//                    sampling.setTagId(sampling.getTagId() + projectDetial.getMonItemId());
-//                }
-//
-//                if (!sampling.getTagName().contains(projectDetial.getMonItemName())) {
-//                    if (!TextUtils.isEmpty(sampling.getTagName())) {
-//                        sampling.setTagName(sampling.getTagName() + ",");
-//                    }
-//                    sampling.setTagName(sampling.getTagName() + projectDetial.getMonItemName());
-//                }
-//                if (!sampling.getAddressId().contains(projectDetial.getAddressId())) {
-//                    if (!TextUtils.isEmpty(sampling.getAddressId())) {
-//                        sampling.setAddressId(sampling.getAddressId() + ",");
-//                    }
-//                    sampling.setAddressId(sampling.getAddressId() + projectDetial.getAddressId());
-//                }
-//
-//                if (!sampling.getAddressName().contains(projectDetial.getAddress())) {
-//                    if (!TextUtils.isEmpty(sampling.getAddressName())) {
-//                        sampling.setAddressName(sampling.getAddressName() + ",");
-//                    }
-//                    sampling.setAddressName(sampling.getAddressName() + projectDetial.getAddress());
-//                }
-//            }
-//        }
-
-        HashMap<String, String> privateData = new HashMap<>();
-        privateData.put("CaleValue", "");
-        privateData.put("RPDValue", "");
-        privateData.put("SamplingOnTime", "");
-        privateData.put("HasPX", "false");
-        privateData.put("FormTypeName", "");
-        privateData.put("SourceWay", "");
-        privateData.put("SourceDate", "");
-        privateData.put("DeviceText", "");
-        sampling.setPrivateData(com.alibaba.fastjson.JSONObject.toJSONString(privateData));
-
-        return sampling;
-    }
-
-    /**
-     * 创建采样单编号
-     *
-     * @return
-     */
-    private String createSamplingNo() {
-        StringBuilder samplingNo = new StringBuilder("");
-        String dateStr = DateUtils.getDate().replace("-", "").substring(2);
-        samplingNo.append(dateStr);
-        samplingNo.append(UserInfoHelper.get().getUser().getIntId());
-
-//        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%")).orderAsc(SamplingDao.Properties.SamplingNo).list();
-
-        if (CheckUtil.isEmpty(samplings)) {
-            samplingNo.append(StringUtil.autoGenericCode(1, 2));
-        } else {
-            String lastSamlingNo = samplings.get(samplings.size() - 1).getSamplingNo();
-            if (!CheckUtil.isEmpty(lastSamlingNo)) {
-                int serialNumber = Integer.parseInt(lastSamlingNo.substring(lastSamlingNo.length() - 2)) + 1;
-                samplingNo.append(StringUtil.autoGenericCode(serialNumber, 2));
-            } else {
-                samplingNo.append(StringUtil.autoGenericCode(1, 2));
-            }
-        }
-        return samplingNo.toString();
-    }
 
 
     /**
@@ -394,13 +273,13 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
         for (SamplingDetail detail : sampling.getSamplingDetailYQFs()) {
             if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("SamplingOnTime"))) {
-                return String.format("监测结果[%s]需选择分析时间",detail.getSampingCode());//没有填写分析时间
+                return String.format("监测结果[%s]需选择分析时间", detail.getSampingCode());//没有填写分析时间
             }
             if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
-                return String.format("监测结果[%s]需填写分析结果",detail.getSampingCode());//没有填写分析结果
+                return String.format("监测结果[%s]需填写分析结果", detail.getSampingCode());//没有填写分析结果
             }
             if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("ValueUnit"))) {
-                return String.format("监测结果[%s]需填写结果单位",detail.getSampingCode());//没有填写结果单位
+                return String.format("监测结果[%s]需填写结果单位", detail.getSampingCode());//没有填写结果单位
             }
         }
 

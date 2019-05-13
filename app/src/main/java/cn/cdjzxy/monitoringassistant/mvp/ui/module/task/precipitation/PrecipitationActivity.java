@@ -120,7 +120,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
 
         mProject = DbHelpUtils.getDbProject(projectId);
         if (isNewCreate) {
-            mSampling = SamplingUtil.createPrecipitationSample(mProject,formSelectId);
+            mSampling = SamplingUtil.createPrecipitationSample(mProject, formSelectId);
         } else {
             mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
             List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
@@ -145,9 +145,15 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                         if (!CheckUtil.isEmpty(samplingFiles)) {
                             DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
                         }
-                        mSampling.getSamplingFiless().remove(0);
+                        if (CheckUtil.isNull(mSampling.getSamplingFiless().get(0).getId())) {
+                            //将补充位置的第一个图片去除,添加图片的标志
+                            mSampling.getSamplingFiless().remove(0);
+                        }
+
                         DBHelper.get().getSamplingFileDao().insertInTx(mSampling.getSamplingFiless());
                     }
+//                    mSampling.setMonitemName(SamplingUtil.setPrecipiationMonitemName(mSampling));
+//                    mSampling.setMonitemName(SamplingUtil.setPrecipiationMonitemId(mSampling));
 
                     if (!CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
                         List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();

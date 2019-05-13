@@ -180,7 +180,7 @@ public class BasicFragment extends BaseFragment {
             base_sample_xz.setText(mProject.getMonType());
 
 
-            base_sample_date.setText(mSample.getSamplingTimeBegin());
+            base_sample_date.setText(DateUtils.strGetDate(mSample.getSamplingTimeBegin()));
             base_sample_user.setText(mSample.getSamplingUserName());
             base_sample_property.setText(mSample.getTagName());
             base_sample_point.setText(mSample.getAddressName());
@@ -211,7 +211,7 @@ public class BasicFragment extends BaseFragment {
             more_waterbody.setText(fsExtends == null ? "" : fsExtends.getReceiving());
             //流转信息
             tv_flow_method.setText(mSample.getTransfer());
-            tv_flow_date.setText(mSample.getSendSampTime());
+            tv_flow_date.setText(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
             tv_receive_date.setText(mSample.getReciveTime());
             //图片信息
             if (mSample.getSamplingFiless() != null && mSample.getSamplingFiless().size() > 0) {
@@ -454,9 +454,9 @@ public class BasicFragment extends BaseFragment {
             @Override
             public void onTimeSelect(Date date, View v) {
                 mSample.setSendSampTime(DateUtils.getTime(date.getTime()));
-                dateTextView.setText(DateUtils.getTime(date.getTime()));
+                dateTextView.setText(DateUtils.getTimeShort(date.getTime()));
             }
-        }).setType(new boolean[]{true, true, true, true, true, true}).isCyclic(true).build();
+        }).setType(new boolean[]{true, true, true, true, true, false}).isCyclic(true).build();
         pvTime.setDate(Calendar.getInstance());
         pvTime.show();
     }

@@ -46,6 +46,7 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
@@ -58,6 +59,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
 
 /**
@@ -266,22 +268,41 @@ public class BottleSplitDetailFragment extends BaseFragment {
             bottleSplit.setAnalysisSite(sample_place.getText().toString());
             bottleSplit.setSamplingAmount(sample_quantity.getText().toString());
             bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
-            bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
-            //生成分瓶信息
-            List<SamplingFormStand> list = DbHelpUtils.getSamplingFormStandListForSampId(mSample.getId());
-            if (!CheckUtil.isEmpty(list)) {
-                DBHelper.get().getSamplingFormStandDao().deleteInTx(list);
-            }
-            if (mSample.getSamplingFormStandResults() != null) {
-                mSample.getSamplingFormStandResults().clear();
-            }
-            if (monItemId != null && !monItemId.equals("")) {
-                String[] monItemIds = monItemId.split(",");
-                for (String s : monItemIds) {
-                    HelpUtil.createAndUpdateBottle(s, mSample);
+
+            if (monItemId == null || monItemId.equals("")) {
+                if (DbHelpUtils.getSamplingFormStandDaoForId(bottleSplit.getId()) != null) {
+                    DBHelper.get().getSamplingFormStandDao().update(bottleSplit);
                 }
+                mSample.getSamplingFormStandResults().set(bottleListPosition, bottleSplit);
+            } else {
+                //生成分瓶信息
+                List<SamplingFormStand> list = DbHelpUtils.getSamplingFormStandListForSampId(mSample.getId());
+                if (!CheckUtil.isEmpty(list)) {
+                    DBHelper.get().getSamplingFormStandDao().deleteInTx(list);
+                }
+                if (mSample.getSamplingFormStandResults() != null) {
+                    mSample.getSamplingFormStandResults().clear();
+                }
+                if (monItemId != null && !monItemId.equals("")) {
+                    String[] monItemIds = monItemId.split(",");
+                    for (String s : monItemIds) {
+                        HelpUtil.createAndUpdateBottle(s, mSample);
+                    }
+                }
+                bottleSplit.setIndex(HelpUtil.generateNewBottleIndex(mSample.getId()));
+                DBHelper.get().getSamplingFormStandDao().insert(bottleSplit);
+                //这里要从新生成样品数量
+                List<SamplingContent> samplingContentList = DbHelpUtils.getSamplingContentList(mSample.getId(), mProject.getId());
+                if (mSample.getSamplingContentResults() == null || mSample.getSamplingContentResults().size() == 0) {
+                    mSample.setSamplingContentResults(samplingContentList);
+                }
+                if (!CheckUtil.isEmpty(samplingContentList))
+                    DBHelper.get().getSamplingContentDao().deleteInTx(samplingContentList);
+                List<SamplingContent> contentList = HelpUtil.setSamplingCountList(mSample);
+                mSample.setSamplingContentResults(contentList);
+                if (!CheckUtil.isEmpty(contentList))
+                    DBHelper.get().getSamplingContentDao().insertInTx(contentList);
             }
-            DBHelper.get().getSamplingFormStandDao().insert(bottleSplit);
             mSample.setSamplingFormStandResults(DbHelpUtils.getSamplingFormStandListForSampId(mSample.getId()));
             mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
             mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
@@ -309,6 +330,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
             ArtUtils.makeText(getContext(), "请选择监测项目");
             return false;
         }
+
         return true;
     }
 

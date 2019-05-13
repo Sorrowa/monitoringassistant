@@ -77,7 +77,7 @@ public class MonItemMethodActivity extends BaseTitileActivity<ApiPresenter> {
 
             //查询方法
             List<Methods> tempList = DBHelper.get().getMethodsDao().queryBuilder().where(MethodsDao.Properties.Id.in(methodIdList)).list();
-            if(!CheckUtil.isEmpty(tempList)){
+            if (!CheckUtil.isEmpty(tempList)) {
                 mMethods.addAll(tempList);
             }
         }
@@ -97,7 +97,7 @@ public class MonItemMethodActivity extends BaseTitileActivity<ApiPresenter> {
             public void onItemClick(View view, int viewType, Object data, int position) {
                 Intent intent = new Intent();
                 intent.putExtra("MethodId", mMethods.get(position).getId());
-                intent.putExtra("MethodName", mMethods.get(position).getName());
+                intent.putExtra("MethodName", mMethods.get(position).getName() + "(" + mMethods.get(position).getCode() + ")");
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }

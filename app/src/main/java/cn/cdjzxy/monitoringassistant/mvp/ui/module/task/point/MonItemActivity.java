@@ -140,7 +140,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
         if (!CheckUtil.isEmpty(monItems)) {
             mMonItems.clear();
             for (MonItems monItem : monItems) {
-                if (!CheckUtil.isEmpty(selectItemsStr)&&!selectItemsStr.contains(monItem.getId())) {
+                if (CheckUtil.isEmpty(selectItemsStr) || !selectItemsStr.contains(monItem.getId())) {
                     monItem.setSelected(false);
                     mMonItems.add(monItem);
                 } else {

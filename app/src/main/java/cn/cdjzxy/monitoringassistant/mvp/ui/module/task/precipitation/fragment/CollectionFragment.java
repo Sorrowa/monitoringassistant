@@ -39,6 +39,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.LabelInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
@@ -163,6 +164,10 @@ public class CollectionFragment extends BaseFragment {
 
                 break;
             case R.id.btn_add_blank:
+                if (CheckUtil.isEmpty(mSampling.getSamplingTimeBegin())) {
+                    ArtUtils.makeText(getContext(), "请先选择采样日期");
+                    return;
+                }
                 //添加空白
                 if (TextUtils.isEmpty(mSampling.getAddressName())) {
                     ArtUtils.makeText(getContext(), "请先选择采样点位");
@@ -234,23 +239,45 @@ public class CollectionFragment extends BaseFragment {
     private ArrayList<LabelInfo> buildPrintLabelList(Sampling sampling) {
         ArrayList<LabelInfo> result = new ArrayList<>();
 
-        //组装标签信息
-        for (SamplingDetail item : sampling.getSamplingDetailResults()) {
-            LabelInfo info = new LabelInfo();
-            info.setTaskName(sampling.getProjectName());
-            info.setNumber(sampling.getSamplingNo());
-            info.setFrequecyNo("频次：" + item.getFrequecyNo());
-            info.setType("降水");//项目类型固定“降水”
-            info.setMonitemName(item.getMonitemName());//监测项目固定“降水量”
-            info.setSampingCode(item.getSampingCode());
-            info.setRemark("");//保存方法
-            info.setCb1("交接");
-            info.setCb2("分析");
-            info.setQrCode(item.getSampingCode());//二维码为样品编码
-
-            result.add(info);
+        if (CheckUtil.isEmpty(sampling.getSamplingContentResults())) {
+            if (CheckUtil.isEmpty(sampling.getSamplingDetailResults())) {
+                return result;
+            } else {
+                //组装标签信息
+                for (SamplingDetail item : sampling.getSamplingDetailResults()) {
+                    if (item.getMonitemName().equals("降水量")) {
+                        LabelInfo info = new LabelInfo();
+                        info.setTaskName(sampling.getProjectName());
+                        info.setNumber(sampling.getSamplingNo());
+                        info.setFrequecyNo("频次：" + item.getFrequecyNo());
+                        info.setType("降水");//项目类型固定“降水”
+                        info.setMonitemName(sampling.getMonitemName());//监测项目固定“降水量”
+                        info.setSampingCode(item.getSampingCode());
+                        info.setRemark("");//保存方法
+                        info.setCb1("交接");
+                        info.setCb2("分析");
+                        info.setQrCode(item.getSampingCode());//二维码为样品编码
+                        result.add(info);
+                    }
+                }
+            }
+        } else {
+            //组装标签信息
+            for (SamplingContent item : sampling.getSamplingContentResults()) {
+                LabelInfo info = new LabelInfo();
+                info.setTaskName(sampling.getProjectName());
+                info.setNumber(sampling.getSamplingNo());
+                info.setFrequecyNo("频次：" + item.getFrequecyNo());
+                info.setType("降水");//项目类型固定“降水”
+                info.setMonitemName(sampling.getMonitemName());//监测项目固定“降水量”
+                info.setSampingCode(item.getSampingCode());
+                info.setRemark("");//保存方法
+                info.setCb1("交接");
+                info.setCb2("分析");
+                info.setQrCode(item.getSampingCode());//二维码为样品编码
+                result.add(info);
+            }
         }
-
         return result;
     }
 

@@ -49,14 +49,14 @@ public class Devices {
     private boolean IsForceChecked;
     private String CertCode;
     private String SourceWay;
-    private String sourceDate;
+    private String SourceDate;
 
     @Keep()
     public Devices(String Id, String Name, String Specification, String SystemCode,
                    String DevCode, String DepartmentId, String DepartmentName,
                    String Company, String PurchasingDate, float RePrice,
                    String StoreLoaction, String ExpireDate, String Manager, int State,
-                   boolean IsForceChecked, String CertCode, String SourceWay,String sourceDate) {
+                   boolean IsForceChecked, String CertCode, String SourceWay,String SourceDate) {
         this.Id = Id;
         this.Name = Name;
         this.Specification = Specification;
@@ -74,7 +74,7 @@ public class Devices {
         this.IsForceChecked = IsForceChecked;
         this.CertCode = CertCode;
         this.SourceWay = SourceWay;
-        this.sourceDate=sourceDate;
+        this.SourceDate=SourceDate;
     }
 
     @Keep()
@@ -218,10 +218,10 @@ public class Devices {
     }
 
     public String getSourceDate() {
-        return sourceDate;
+        return SourceDate;
     }
 
     public void setSourceDate(String sourceDate) {
-        this.sourceDate = sourceDate;
+        this.SourceDate = sourceDate;
     }
 }

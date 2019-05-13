@@ -42,7 +42,8 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle"
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
             android:orientation="horizontal">
 
             <TextView
@@ -66,13 +67,14 @@
 
             <TextView
                 android:id="@+id/base_sample_date"
-                style="@style/RightViewItemStyle" />
+                style="@style/RightViewItemHintStyle" />
 
         </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle"
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
             android:orientation="horizontal">
 
             <TextView
@@ -90,7 +92,8 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle"
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
             android:orientation="horizontal">
 
             <TextView
@@ -106,7 +109,8 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle"
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
             android:orientation="horizontal">
 
             <TextView
@@ -163,7 +167,8 @@
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle"
+        <LinearLayout
+            style="@style/BasicInfoItemStyle"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -173,8 +178,8 @@
 
             <EditText
                 android:id="@+id/base_sample_comment"
-                android:layout_weight="1"
                 style="@style/BasicInfoItemEditTextStyle"
+                android:layout_weight="1"
                 android:maxLength="100" />
 
         </LinearLayout>

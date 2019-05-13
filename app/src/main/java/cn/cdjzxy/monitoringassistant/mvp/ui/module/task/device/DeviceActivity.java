@@ -119,7 +119,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> {
                 intent.putExtra("DeviceId", device.getId());
                 intent.putExtra("DeviceName", device.getName());
                 intent.putExtra("SourceWay", TextUtils.isEmpty(device.getSourceWay()) ? "" : device.getSourceWay());
-                intent.putExtra("ExpireDate", TextUtils.isEmpty(device.getExpireDate()) ? "" : device.getExpireDate());
+                intent.putExtra("ExpireDate", TextUtils.isEmpty(device.getSourceDate()) ? "" : device.getSourceDate());
                 intent.putExtra("DeviceCode", TextUtils.isEmpty(device.getDevCode()) ? "" : device.getDevCode());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
