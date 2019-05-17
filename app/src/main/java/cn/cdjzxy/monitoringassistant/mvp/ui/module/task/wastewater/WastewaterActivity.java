@@ -9,11 +9,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
-import com.google.gson.Gson;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
-import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
-import com.yinghe.whiteboardlib.MultiImageSelectorActivity;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
@@ -29,30 +26,22 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.AutographActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.fragment.AutographFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BasicFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.BottleSplitDetailFragment;
@@ -61,9 +50,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.Coll
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
-import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
-import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
@@ -152,8 +139,8 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                         DBHelper.get().getSamplingFormStandDao().insertInTx(mSample.getSamplingFormStandResults());
                     }
 
-                    mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-                    mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+                    mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
+                    mSample.setStatusName(mSample.getIsFinish() ? "已完成" : "进行中");
                     //保存基本信息
                     saveBaseInfo();
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);

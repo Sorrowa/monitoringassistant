@@ -7,9 +7,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.wonders.health.lib.base.di.component.AppComponent;
 import com.wonders.health.lib.base.mvp.BasePresenter;
 import com.wonders.health.lib.base.mvp.Message;
@@ -20,7 +18,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -32,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.app.rx.RxObserver;
 import cn.cdjzxy.monitoringassistant.app.rx.RxUtils;
@@ -87,10 +83,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
-import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
@@ -1174,9 +1168,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }
                 break;
         }
-        sampling.setIsCanEdit((sampling.getStatus() == 0 || sampling.getStatus() == 4 || sampling.getStatus() == 9)
-                && sampling.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false);
+        sampling.setIsCanEdit(SamplingUtil.setSampIsCanEdit(sampling));
         sampling.setIsLocal(false);
+        sampling.setIsFinish(SamplingUtil.isSamplingFinsh(sampling));
         if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
             DBHelper.get().getSamplingDao().update(sampling);
         } else {
@@ -1348,6 +1342,12 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     public void onSuccess(BaseResponse baseResponse) {
                         msg.what = Constants.NET_RESPONSE_CODE_259;
                         msg.obj = baseResponse.getMessage();
+                        try {
+                            msg.str = (String) baseResponse.getData();//服务端的采样单id
+                        } catch (Exception e) {
+                            Log.e(TAG, "onSuccess: " + e.toString());
+                            msg.str =preciptationSampForm.getSampForm().getId();
+                        }
                         msg.handleMessageToTarget();
                     }
 
@@ -1549,9 +1549,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 privateDatas[0].setImageSYT(path);
                 sampling.setPrivateData(new Gson().toJson(privateDatas[0]));
             }
-            sampling.setIsCanEdit(SamplingUtil.sampIsCanEdit(sampling));
+            sampling.setIsCanEdit(SamplingUtil.setSampIsCanEdit(sampling));
             sampling.setIsLocal(false);
-            sampling.setIsFinish(SamplingUtil.isNoiseFinsh(sampling));
+            sampling.setIsFinish(SamplingUtil.isSamplingFinsh(sampling));
             if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
                 DBHelper.get().getSamplingDao().update(sampling);
             } else {
@@ -1571,6 +1571,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      */
     private String downloadNoiseFile(String downloadUrl) {
         String fileName = null;
+
         try {
             int lastIndex = downloadUrl.lastIndexOf("/");
             if (lastIndex >= 0) {
@@ -1582,9 +1583,21 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        String cacheDir = Constant.FILE_DIR + Constant.PNG_DIR + "/noise/";
 
+        //如果fileName是空的话  就不用下载了 直接返回空字符串
+        if (fileName == null || fileName.equals("")) {
+            Log.e("downloadNoiseFile", "Url:" + downloadUrl);
+            return "";
+        } else {
+            //判断本地是否存在这种图片
+            if (FileUtils.fileIsExists(cacheDir + "/" + fileName)) {
+                Log.d(TAG, "downloadNoiseFile:" + String.format("路径:%s 文件名：%s", cacheDir, fileName));
+                return cacheDir + "/" + fileName;
+            }
+        }
+        //本地不存在并且fileName不为空 去下载
         String fileUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + downloadUrl;
-
         try {
             URL url = new URL(fileUrl);
             URLConnection con = url.openConnection();
@@ -1593,13 +1606,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
             InputStream is = con.getInputStream();//获取输入流
             if (is == null) {
-                return null;
+                return "";
             }
 
-            String cacheDir = Constant.FILE_DIR + Constant.PNG_DIR + "/noise/";
-            if (fileName == null || fileName.equals("")) {
-                fileName = System.currentTimeMillis() + ".png";
-            }
             File newFile = new File(cacheDir + "/" + fileName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(newFile);//指定文件保存路径，代码看下一步
@@ -1625,7 +1634,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             e.printStackTrace();
         }
 
-        return null;
+        return "";
     }
 
     /**

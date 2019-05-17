@@ -11,29 +11,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.baidu.navisdk.ui.routeguide.mapmode.subview.L;
-import com.bigkoo.pickerview.builder.TimePickerBuilder;
-import com.bigkoo.pickerview.listener.OnTimeSelectListener;
-import com.bigkoo.pickerview.view.TimePickerView;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
-import org.greenrobot.greendao.DbUtils;
 import org.simple.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,21 +33,18 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.PlaceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.BottleMonItemActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
@@ -227,8 +214,8 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
                         mSample.getSamplingFormStandResults().remove(bottleListPosition);
 
-                        mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-                        mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+                        mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
+                        mSample.setStatusName( mSample.getIsFinish() ? "已完成" : "进行中");
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
                         if (CheckUtil.isNull(sampling)) {
                             DBHelper.get().getSamplingDao().insert(mSample);
@@ -304,8 +291,8 @@ public class BottleSplitDetailFragment extends BaseFragment {
                     DBHelper.get().getSamplingContentDao().insertInTx(contentList);
             }
             mSample.setSamplingFormStandResults(DbHelpUtils.getSamplingFormStandListForSampId(mSample.getId()));
-            mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-            mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+            mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
+            mSample.setStatusName(mSample.getIsFinish() ? "已完成" : "进行中");
             Sampling sampling = DbHelpUtils.getDbSampling(mSample.getId());
             if (CheckUtil.isNull(sampling)) {
                 mSample.setId(UUID.randomUUID().toString());

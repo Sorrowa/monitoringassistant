@@ -1,13 +1,11 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
 
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,9 +16,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoiseSamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
@@ -28,14 +25,6 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
-import id.zelory.compressor.Compressor;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mProject;
 
@@ -454,17 +443,45 @@ public class SamplingUtil {
 
     /**
      * 判断当前表单能否编辑
+     * 通过采样单状态
+     * {@sampling.getStatus:0等待提交，1等待收样审核，2等待室主任审核，
+     * 3等待质控审核，4打回重新提交，5作废，6通过审核，7等待检验审核，8协助人员审核，9撤回待提交，10app上传服务器保存
+     * }
+     * 和采样是否有本人有关
      *
      * @param sampling
      * @return
      */
-    public static boolean sampIsCanEdit(Sampling sampling) {
+    public static boolean setSampIsCanEdit(Sampling sampling) {
         return (sampling.getStatus() == 0 ||
-                sampling.getStatus() == 4 || sampling.getStatus() == 9)
+                sampling.getStatus() == 4 ||
+                sampling.getStatus() == 9
+        )
                 && sampling.getSamplingUserId().
                 contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false;
     }
 
+    /**
+     * 判断采样单是否完成
+     *
+     * @param sampling
+     * @return
+     */
+    public static boolean isSamplingFinsh(Sampling sampling) {
+        switch (sampling.getFormPath()) {
+            case PATH_PRECIPITATION://降水
+                return isPrecipitationSamplingFinish(sampling);
+            case PATH_WASTE_WATER://水和废水
+                return isWasterSamplingFinish(sampling);
+            case PATH_INSTRUMENTAL://仪器法
+                return isInstrumentSamplingFinish(sampling) == "" ? true : false;
+            case PATH_NOISE_FACTORY://噪声
+                return isNoiseSamplingFinsh(sampling);
+            default://还没有开发
+                return false;
+
+        }
+    }
 
     /**
      * 判断噪声表是否采样完成
@@ -472,11 +489,10 @@ public class SamplingUtil {
      * @param sampling
      * @return
      */
-    public static boolean isNoiseFinsh(Sampling sampling) {
+    public static boolean isNoiseSamplingFinsh(Sampling sampling) {
         if (CheckUtil.isEmpty(sampling.getSamplingTimeBegin())) {//检测日期必填项
             return false;
         }
-
         if (CheckUtil.isEmpty(sampling.getPrivateData()))//采样检测信息
             return false;
         NoisePrivateData privateData = new Gson().fromJson(sampling.getPrivateData(),
@@ -484,13 +500,122 @@ public class SamplingUtil {
         if (CheckUtil.isEmpty(privateData.getMianNioseAddr())) {
             return false;
         }
-
         return true;
+    }
 
+    /**
+     * 降水采样单采样是否完成
+     *
+     * @return
+     */
+    public static boolean isPrecipitationSamplingFinish(Sampling mSampling) {
+        if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getTagName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 采样是否完成
+     * 仪器法表
+     *
+     * @return
+     */
+    public static String isInstrumentSamplingFinish(Sampling sampling) {
+        if (CheckUtil.isEmpty(sampling.getSamplingUserName())) {
+            return "请选择“监测人”";
+        }
+
+        if (CheckUtil.isEmpty(sampling.getSamplingTimeBegin())) {
+            return "请选择“分析开始日期”";
+        }
+        if (CheckUtil.isEmpty(sampling.getSamplingTimeEnd())) {
+            return "请选择“分析结束日期”";
+        }
+
+        if (CheckUtil.isEmpty(sampling.getMonitemId())) {
+            return "请选择“监测项目”";
+        }
+
+        if (CheckUtil.isEmpty(sampling.getMethodName())) {
+            return "请选择“监测方法”";
+        }
+
+        if (CheckUtil.isEmpty(sampling.getDeviceName())) {
+            return "请选择“监测设备”";
+        }
+
+        if (CheckUtil.isEmpty(sampling.getSamplingDetailYQFs())) {
+            return "请添加监测结果";
+        }
+
+        for (SamplingDetail detail : sampling.getSamplingDetailYQFs()) {
+            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("SamplingOnTime"))) {
+                return String.format("监测结果[%s]需选择分析时间", detail.getSampingCode());//没有填写分析时间
+            }
+            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
+                return String.format("监测结果[%s]需填写分析结果", detail.getSampingCode());//没有填写分析结果
+            }
+            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("ValueUnit"))) {
+                return String.format("监测结果[%s]需填写结果单位", detail.getSampingCode());//没有填写结果单位
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * 判断水和废水采样单是否完成
+     *
+     * @param mSample
+     * @return
+     */
+    public static boolean isWasterSamplingFinish(Sampling mSample) {
+        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getTagId())) {
+            return false;
+        }
+        if (CheckUtil.isEmpty(mSample.getAddressId())) {
+            return false;
+        }
+//        Gson gson = new Gson();
+//        FsExtends fsExtends = gson.fromJson(mSample.getPrivateData(), FsExtends.class);
+//        if (CheckUtil.isEmpty(mSample.getMethodId())) {
+//            return false;
+//        }
+//
+//        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
+//            return false;
+//        }
+        return true;
     }
 
     /**
      * 设置采样单的MonitemName
+     *
      * @param mSampling
      * @return
      */
@@ -516,6 +641,7 @@ public class SamplingUtil {
 
     /**
      * 设置采样单的MonitemId
+     *
      * @param mSampling
      * @return
      */

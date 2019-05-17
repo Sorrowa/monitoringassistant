@@ -164,36 +164,6 @@ public class HelpUtil {
         return nameStr;
     }
 
-    /**
-     * 判断采样单是否完成
-     *
-     * @param mSample
-     * @return
-     */
-    public static boolean isSamplingFinish(Sampling mSample) {
-        if (CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getSamplingUserId())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getTagId())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSample.getAddressId())) {
-            return false;
-        }
-//        Gson gson = new Gson();
-//        FsExtends fsExtends = gson.fromJson(mSample.getPrivateData(), FsExtends.class);
-//        if (CheckUtil.isEmpty(mSample.getMethodId())) {
-//            return false;
-//        }
-//
-//        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
-//            return false;
-//        }
-        return true;
-    }
 
     /**
      * 产生新的分瓶信息index

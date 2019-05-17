@@ -5,6 +5,8 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.util.List;
+
 
 /**
  * 用户信息
@@ -62,15 +64,17 @@ public class UserInfo {
     private String Token;
     private String WebUrl;
     private String pwd;
-    private int    intId;
+    private int intId;
+    private String AppRightStr;
+
     @Keep()
     public UserInfo(String Id, String LoginName, String WorkNo, String Name,
-            String Sex, String Brithdate, String IdentityCode, String Mobile,
-            String DepartmentName, String Position, String ReportSite,
-            String Nation, String Province, String City, String Country,
-            String Dgree, String Major, String School, String PoliticsStatus,
-            String JobType, String ProfessionalTitle, String Token, String WebUrl,
-            String pwd, int intId) {
+                    String Sex, String Brithdate, String IdentityCode, String Mobile,
+                    String DepartmentName, String Position, String ReportSite,
+                    String Nation, String Province, String City, String Country,
+                    String Dgree, String Major, String School, String PoliticsStatus,
+                    String JobType, String ProfessionalTitle, String Token, String WebUrl,
+                    String pwd, int intId, String AppRightStr) {
         this.Id = Id;
         this.LoginName = LoginName;
         this.WorkNo = WorkNo;
@@ -96,161 +100,220 @@ public class UserInfo {
         this.WebUrl = WebUrl;
         this.pwd = pwd;
         this.intId = intId;
+        this.AppRightStr = AppRightStr;
     }
+
     @Keep()
     public UserInfo() {
         //改url
 //        this.WebUrl="192.168.1.242";
     }
+
     public String getId() {
         return this.Id;
     }
+
     public void setId(String Id) {
         this.Id = Id;
     }
+
     public String getLoginName() {
         return this.LoginName;
     }
+
     public void setLoginName(String LoginName) {
         this.LoginName = LoginName;
     }
+
     public String getWorkNo() {
         return this.WorkNo;
     }
+
     public void setWorkNo(String WorkNo) {
         this.WorkNo = WorkNo;
     }
+
     public String getName() {
         return this.Name;
     }
+
     public void setName(String Name) {
         this.Name = Name;
     }
+
     public String getSex() {
         return this.Sex;
     }
+
     public void setSex(String Sex) {
         this.Sex = Sex;
     }
+
     public String getBrithdate() {
         return this.Brithdate;
     }
+
     public void setBrithdate(String Brithdate) {
         this.Brithdate = Brithdate;
     }
+
     public String getIdentityCode() {
         return this.IdentityCode;
     }
+
     public void setIdentityCode(String IdentityCode) {
         this.IdentityCode = IdentityCode;
     }
+
     public String getMobile() {
         return this.Mobile;
     }
+
     public void setMobile(String Mobile) {
         this.Mobile = Mobile;
     }
+
     public String getDepartmentName() {
         return this.DepartmentName;
     }
+
     public void setDepartmentName(String DepartmentName) {
         this.DepartmentName = DepartmentName;
     }
+
     public String getPosition() {
         return this.Position;
     }
+
     public void setPosition(String Position) {
         this.Position = Position;
     }
+
     public String getReportSite() {
         return this.ReportSite;
     }
+
     public void setReportSite(String ReportSite) {
         this.ReportSite = ReportSite;
     }
+
     public String getNation() {
         return this.Nation;
     }
+
     public void setNation(String Nation) {
         this.Nation = Nation;
     }
+
     public String getProvince() {
         return this.Province;
     }
+
     public void setProvince(String Province) {
         this.Province = Province;
     }
+
     public String getCity() {
         return this.City;
     }
+
     public void setCity(String City) {
         this.City = City;
     }
+
     public String getCountry() {
         return this.Country;
     }
+
     public void setCountry(String Country) {
         this.Country = Country;
     }
+
     public String getDgree() {
         return this.Dgree;
     }
+
     public void setDgree(String Dgree) {
         this.Dgree = Dgree;
     }
+
     public String getMajor() {
         return this.Major;
     }
+
     public void setMajor(String Major) {
         this.Major = Major;
     }
+
     public String getSchool() {
         return this.School;
     }
+
     public void setSchool(String School) {
         this.School = School;
     }
+
     public String getPoliticsStatus() {
         return this.PoliticsStatus;
     }
+
     public void setPoliticsStatus(String PoliticsStatus) {
         this.PoliticsStatus = PoliticsStatus;
     }
+
     public String getJobType() {
         return this.JobType;
     }
+
     public void setJobType(String JobType) {
         this.JobType = JobType;
     }
+
     public String getProfessionalTitle() {
         return this.ProfessionalTitle;
     }
+
     public void setProfessionalTitle(String ProfessionalTitle) {
         this.ProfessionalTitle = ProfessionalTitle;
     }
+
     public String getToken() {
         return this.Token;
     }
+
     public void setToken(String Token) {
         this.Token = Token;
     }
+
     public String getWebUrl() {
         return this.WebUrl;
     }
+
     public void setWebUrl(String WebUrl) {
         this.WebUrl = WebUrl;
     }
+
     public String getPwd() {
         return this.pwd;
     }
+
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
+
     public int getIntId() {
         return this.intId;
     }
+
     public void setIntId(int intId) {
         this.intId = intId;
     }
 
+    public String getAppRightStr() {
+        return AppRightStr;
+    }
+
+    public void setAppRightStr(String appRightStr) {
+        AppRightStr = appRightStr;
+    }
 }

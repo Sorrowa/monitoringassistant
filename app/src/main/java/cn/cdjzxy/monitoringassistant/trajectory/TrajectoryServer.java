@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
@@ -114,10 +115,13 @@ public class TrajectoryServer extends Service {
      */
     public Trace mTrace = null;
 
-    /**
-     * 轨迹服务ID
-     */
-    public long serviceId = 211193;
+//    /**
+//     * 轨迹服务ID
+//     */
+//    public long serviceId = 211193;
+
+    public long serviceId = BuildConfig.BAI_DU_TRAJECTORY_SERVER_ID;
+
 
     /**
      * 轨迹服务名称

@@ -25,15 +25,10 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
-import org.apache.poi.hssf.util.HSSFColor;
 import org.simple.eventbus.EventBus;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,20 +39,15 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.UnitActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.NumberUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class TestRecordDetailFragment extends BaseFragment {
 
@@ -286,7 +276,7 @@ public class TestRecordDetailFragment extends BaseFragment {
                 //未完成状态改变为已完成，则更新到数据库
                 if (!mSampling.getIsFinish()) {
                     //是否完成
-                    mSampling.setIsFinish(InstrumentalActivity.IsSamplingFinish());
+                    mSampling.setIsFinish(SamplingUtil.isSamplingFinsh(mSampling));
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (mSampling.getIsFinish()) {
                         DBHelper.get().getSamplingDao().update(mSampling);

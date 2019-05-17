@@ -4,27 +4,21 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.google.gson.Gson;
 import com.micheal.print.thread.ThreadPool;
-import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
-import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
@@ -62,7 +56,6 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePoin
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceEditFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceListFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -489,7 +482,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
      */
     public static void saveMySample() {
 
-        mSample.setIsFinish(SamplingUtil.isNoiseFinsh(mSample));
+        mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
 
         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();

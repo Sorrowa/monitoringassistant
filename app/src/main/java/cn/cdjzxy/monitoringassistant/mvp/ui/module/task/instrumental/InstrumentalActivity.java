@@ -4,41 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
-import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -47,10 +33,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.Te
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.TestRecordFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.DateUtil;
-import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
-import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
@@ -147,7 +130,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 //                    mSampling.setProjectNo(project.getProjectNo());
 //                    mSampling.setAddressNo("");
 
-                    mSampling.setIsFinish(IsSamplingFinish());
+                    mSampling.setIsFinish((SamplingUtil.isSamplingFinsh(mSampling)));
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
@@ -225,65 +208,4 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
         }
         finish();
     }
-
-
-
-
-    /**
-     * 采样是否完成
-     *
-     * @return
-     */
-    public static boolean IsSamplingFinish() {
-        return TextUtils.isEmpty(CheckIsSamplingFinish(mSampling));
-    }
-
-    /**
-     * 采样是否完成
-     *
-     * @return
-     */
-    public static String CheckIsSamplingFinish(Sampling sampling) {
-        if (CheckUtil.isEmpty(sampling.getSamplingUserName())) {
-            return "请选择“监测人”";
-        }
-
-        if (CheckUtil.isEmpty(sampling.getSamplingTimeBegin())) {
-            return "请选择“分析开始日期”";
-        }
-        if (CheckUtil.isEmpty(sampling.getSamplingTimeEnd())) {
-            return "请选择“分析结束日期”";
-        }
-
-        if (CheckUtil.isEmpty(sampling.getMonitemId())) {
-            return "请选择“监测项目”";
-        }
-
-        if (CheckUtil.isEmpty(sampling.getMethodName())) {
-            return "请选择“监测方法”";
-        }
-
-        if (CheckUtil.isEmpty(sampling.getDeviceName())) {
-            return "请选择“监测设备”";
-        }
-
-        if (CheckUtil.isEmpty(sampling.getSamplingDetailYQFs())) {
-            return "请添加监测结果";
-        }
-
-        for (SamplingDetail detail : sampling.getSamplingDetailYQFs()) {
-            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("SamplingOnTime"))) {
-                return String.format("监测结果[%s]需选择分析时间", detail.getSampingCode());//没有填写分析时间
-            }
-            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
-                return String.format("监测结果[%s]需填写分析结果", detail.getSampingCode());//没有填写分析结果
-            }
-            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("ValueUnit"))) {
-                return String.format("监测结果[%s]需填写结果单位", detail.getSampingCode());//没有填写结果单位
-            }
-        }
-
-        return "";
-    }
-
 }

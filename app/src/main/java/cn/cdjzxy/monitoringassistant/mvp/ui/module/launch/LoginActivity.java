@@ -26,6 +26,7 @@ import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DaoSession;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;

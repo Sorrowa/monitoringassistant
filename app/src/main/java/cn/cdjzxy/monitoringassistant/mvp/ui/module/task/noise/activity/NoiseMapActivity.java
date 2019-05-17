@@ -75,9 +75,10 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
     public void initData(@Nullable Bundle savedInstanceState) {
         mapView.getMap().setMyLocationEnabled(true);
         mLocClient = new LocationClient(this);
-        mLocClient.registerLocationListener(new MyLocationListenner());
+        mLocClient.registerLocationListener(new MyLocationListener());
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setCoorType("bd09ll"); // 设置坐标类型
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
@@ -253,7 +254,7 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
     /**
      * 定位SDK监听函数
      */
-    public class MyLocationListenner implements BDLocationListener {
+    public class MyLocationListener implements BDLocationListener {
 
         @Override
         public void onReceiveLocation(BDLocation location) {
@@ -280,14 +281,13 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
 
         @Override
         protected File doInBackground(Bitmap... bitmaps) {
-             return saveInOI(bitmaps[0], FILE_PATH, FILE_NAME, 100);
+            return saveInOI(bitmaps[0], FILE_PATH, FILE_NAME, 100);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
-
 
 
         @Override

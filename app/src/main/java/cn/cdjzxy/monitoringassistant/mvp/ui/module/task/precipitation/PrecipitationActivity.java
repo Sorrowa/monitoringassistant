@@ -4,13 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.StatusBarUtil;
@@ -20,27 +17,18 @@ import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -49,10 +37,8 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.C
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment.CollectionFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
-import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
@@ -165,8 +151,8 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
                         DBHelper.get().getSamplingDetailDao().insertInTx(mSampling.getSamplingDetailResults());
                     }
 
-                    mSampling.setIsFinish(isSamplingFinish());
-                    mSampling.setStatusName(isSamplingFinish() ? "已完成" : "进行中");
+                    mSampling.setIsFinish(SamplingUtil.isSamplingFinsh(mSampling));
+                    mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
                         DBHelper.get().getSamplingDao().insertOrReplace(mSampling);
                         isNewCreate = false;
@@ -265,36 +251,4 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
         }
         finish();
     }
-
-    /**
-     * 采样是否完成
-     *
-     * @return
-     */
-    private boolean isSamplingFinish() {
-        if (CheckUtil.isEmpty(mSampling.getSamplingDetailResults())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getSamplingUserName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getTagName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getAddressName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getPrivateData())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getMethodName())) {
-            return false;
-        }
-        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
-            return false;
-        }
-        return true;
-    }
-
-
 }

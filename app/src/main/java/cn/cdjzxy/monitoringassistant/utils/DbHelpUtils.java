@@ -12,9 +12,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
@@ -22,6 +21,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -107,6 +107,7 @@ public class DbHelpUtils {
      * @return
      */
     public static List<SamplingFormStand> getSamplingFormStandListForSampId(String id) {
+        if (CheckUtil.isEmpty(id)) return new ArrayList<>();
         List<SamplingFormStand> list = DBHelper.get().getSamplingFormStandDao().queryBuilder().
                 where(SamplingFormStandDao.
                         Properties.SamplingId.eq(id)).list();
@@ -204,5 +205,21 @@ public class DbHelpUtils {
         return DBHelper.get().getSamplingContentDao().queryBuilder().
                 where(SamplingContentDao.Properties.SamplingId.eq(samplingId),
                         SamplingContentDao.Properties.ProjectId.eq(projectId)).list();
+    }
+    /**
+     * 获取样品采集列表
+     *
+     * @param samplingId
+     * @return
+     */
+    public static List<SamplingContent> getSamplingContentList(String samplingId) {
+        return DBHelper.get().getSamplingContentDao().queryBuilder().
+                where(SamplingContentDao.Properties.SamplingId.eq(samplingId)).list();
+    }
+
+    public static List<SamplingDetail> getSamplingDetaiList(String id) {
+        if (CheckUtil.isEmpty(id)) return new ArrayList<>();
+        return DBHelper.get().getSamplingDetailDao().queryBuilder().
+                where(SamplingDetailDao.Properties.SamplingId.eq(id)).list();
     }
 }

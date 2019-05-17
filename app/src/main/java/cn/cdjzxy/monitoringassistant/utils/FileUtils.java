@@ -149,6 +149,26 @@ public class FileUtils {
     }
 
     /**
+     * 判断文件是否存在
+     *
+     * @param fileName 包含文件路径和文件名称
+     * @return @true存在 @false不存在
+     */
+    public static boolean fileIsExists(String fileName) {
+        try {
+            File f = new File(fileName);
+            if (!f.exists()) {
+                return false;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * 压缩图片
      *
      * @param fileList 原图片集合
@@ -208,4 +228,7 @@ public class FileUtils {
 
         void onFailed(String message);
     }
+
+
+
 }

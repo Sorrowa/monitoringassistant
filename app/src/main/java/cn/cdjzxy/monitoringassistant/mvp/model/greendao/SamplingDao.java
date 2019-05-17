@@ -92,6 +92,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         public final static Property LayTableCheckbox = new Property(62, String.class, "layTableCheckbox", false, "LAY_TABLE_CHECKBOX");
         public final static Property DeleteFiles = new Property(63, String.class, "DeleteFiles", false, "DELETE_FILES");
         public final static Property SamplingUserResults = new Property(64, String.class, "SamplingUserResults", false, "SAMPLING_USER_RESULTS");
+        public final static Property IsUploadSave = new Property(65, boolean.class, "isUploadSave", false, "IS_UPLOAD_SAVE");
     }
 
     private final StringConverter SamplingUserResultsConverter = new StringConverter();
@@ -172,7 +173,8 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
                 "\"IS_FINISH\" INTEGER NOT NULL ," + // 61: isFinish
                 "\"LAY_TABLE_CHECKBOX\" TEXT," + // 62: layTableCheckbox
                 "\"DELETE_FILES\" TEXT," + // 63: DeleteFiles
-                "\"SAMPLING_USER_RESULTS\" TEXT);"); // 64: SamplingUserResults
+                "\"SAMPLING_USER_RESULTS\" TEXT," + // 64: SamplingUserResults
+                "\"IS_UPLOAD_SAVE\" INTEGER NOT NULL );"); // 65: isUploadSave
     }
 
     /** Drops the underlying database table. */
@@ -477,6 +479,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         if (SamplingUserResults != null) {
             stmt.bindString(65, SamplingUserResultsConverter.convertToDatabaseValue(SamplingUserResults));
         }
+        stmt.bindLong(66, entity.getIsUploadSave() ? 1L: 0L);
     }
 
     @Override
@@ -775,6 +778,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         if (SamplingUserResults != null) {
             stmt.bindString(65, SamplingUserResultsConverter.convertToDatabaseValue(SamplingUserResults));
         }
+        stmt.bindLong(66, entity.getIsUploadSave() ? 1L: 0L);
     }
 
     @Override
@@ -849,7 +853,8 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
             cursor.getShort(offset + 61) != 0, // isFinish
             cursor.isNull(offset + 62) ? null : cursor.getString(offset + 62), // layTableCheckbox
             cursor.isNull(offset + 63) ? null : cursor.getString(offset + 63), // DeleteFiles
-            cursor.isNull(offset + 64) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 64)) // SamplingUserResults
+            cursor.isNull(offset + 64) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 64)), // SamplingUserResults
+            cursor.getShort(offset + 65) != 0 // isUploadSave
         );
         return entity;
     }
@@ -921,6 +926,7 @@ public class SamplingDao extends AbstractDao<Sampling, String> {
         entity.setLayTableCheckbox(cursor.isNull(offset + 62) ? null : cursor.getString(offset + 62));
         entity.setDeleteFiles(cursor.isNull(offset + 63) ? null : cursor.getString(offset + 63));
         entity.setSamplingUserResults(cursor.isNull(offset + 64) ? null : SamplingUserResultsConverter.convertToEntityProperty(cursor.getString(offset + 64)));
+        entity.setIsUploadSave(cursor.getShort(offset + 65) != 0);
      }
     
     @Override

@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -57,11 +55,13 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoiseSamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
@@ -82,6 +82,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterAct
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
@@ -96,7 +97,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 /**
@@ -193,6 +193,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     private boolean isBatchUpload = false;
     //是否提交
     private int samplingIndex;
+    private boolean isSubmit;//true 提交 false 保存
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -255,32 +256,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 finish();
                 break;
             case Constants.NET_RESPONSE_CODE_259:
-                sampling.setIsCanEdit(false);
-                sampling.setIsUpload(true);
-                sampling.setStatusName("已提交");
-                sampling.setStatus(7);
-                sampling.setSubmitDate(DateUtils.getDate());
-                sampling.setDeleteFiles("");//清空删除文件ID字符串
-                sampling.setSelected(false);
-                sampling.setIsCanEdit(SamplingUtil.sampIsCanEdit(sampling));
-                DBHelper.get().getSamplingDao().update(sampling);
-
-                //标记文件已上传
-                List<SamplingFile> updateFiles = new ArrayList<>();
-                List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()), SamplingFileDao.Properties.IsUploaded.eq(false)).list();
-                for (SamplingFile sf : samplingFiles) {
-                    if (!sf.getIsUploaded()) {
-                        sf.setIsUploaded(true);
-                        updateFiles.add(sf);
-                    }
-                }
-
-                if (updateFiles.size() > 0) {
-                    DBHelper.get().getSamplingFileDao().updateInTx(updateFiles);
-                }
-
+                String id = message.str == null || message.equals("") ? sampling.getId() : message.str;//服务端id
+                updateSampling(id);
                 setUploadAltInfo(String.format("采样单[%s]上传成功！", sampling.getSamplingNo()));
-
                 if (!uploadNextSampling()) {
                     batchUploadFinish();
                     showMessage("数据提交成功");
@@ -302,6 +280,84 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 更新表单
+     *
+     * @param id 服务端的id:  因为app端id是主键，所以这里不能直接替换  要先把之前的文件或者其他信息保存后才能本地id相关的数据
+     */
+    private void updateSampling(String id) {
+        if (isSubmit) {
+            sampling.setStatusName("已提交");
+            sampling.setIsCanEdit(false);
+            sampling.setStatus(7);
+            sampling.setUploadSave(true);
+            sampling.setIsUpload(true);
+        } else {
+            sampling.setIsUpload(false);
+            sampling.setStatus(0);//app端新增 代表已经保存到服务器
+            sampling.setUploadSave(true);
+            sampling.setStatusName("服务器已保存,等待提交");
+        }
+        sampling.setSubmitDate(DateUtils.getDate());
+        sampling.setDeleteFiles("");//清空删除文件ID字符串
+        sampling.setSelected(false);
+        sampling.setIsCanEdit(SamplingUtil.setSampIsCanEdit(sampling));
+
+        //标记文件已上传
+        List<SamplingFile> updateFiles = new ArrayList<>();
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().
+                where(SamplingFileDao.Properties.SamplingId.eq(sampling.getId()),
+                        SamplingFileDao.Properties.IsUploaded.eq(false)).list();
+        for (SamplingFile sf : samplingFiles) {
+            if (!sf.getIsUploaded()) {
+                sf.setIsUploaded(true);
+            }
+            sf.setSamplingId(id);
+            updateFiles.add(sf);
+        }
+        if (id.equals(sampling.getId())) {//服务端返回的id和本地id一致  直接更新
+            if (updateFiles.size() > 0) {
+                DBHelper.get().getSamplingFileDao().updateInTx(updateFiles);
+            }
+            if (DbHelpUtils.getDbSampling(sampling.getId()) != null)
+                DBHelper.get().getSamplingDao().update(sampling);
+        } else {////服务端返回的id和本地id一致 生成新的数据  删除之前的
+            if (!CheckUtil.isEmpty(samplingFiles)) {
+                DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+            }
+            DBHelper.get().getSamplingFileDao().insertInTx(updateFiles);
+            List<SamplingDetail> samplingDetailsList = DbHelpUtils.getSamplingDetaiList(sampling.getId());
+            if (!CheckUtil.isEmpty(samplingDetailsList)) {
+                for (SamplingDetail detail : samplingDetailsList) {
+                    detail.setSamplingId(id);
+                }
+                DBHelper.get().getSamplingDetailDao().updateInTx(samplingDetailsList);
+            }
+            List<SamplingFormStand> samplingFormStandsList = DbHelpUtils.getSamplingFormStandListForSampId(sampling.getId());
+            if (!CheckUtil.isEmpty(samplingFormStandsList)) {
+                for (SamplingFormStand stand : samplingFormStandsList) {
+                    stand.setSamplingId(id);
+                }
+                DBHelper.get().getSamplingFormStandDao().updateInTx(samplingFormStandsList);
+            }
+            List<SamplingContent> samplingContentList = DbHelpUtils.getSamplingContentList(sampling.getId());
+            if (!CheckUtil.isEmpty(samplingContentList)) {
+                for (SamplingContent content : samplingContentList) {
+                    content.setSamplingId(id);
+                }
+                DBHelper.get().getSamplingContentDao().updateInTx(samplingContentList);
+            }
+            if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
+                DBHelper.get().getSamplingDao().delete(sampling);
+            }
+            sampling.setId(id);
+            if (DbHelpUtils.getDbSampling(id) != null) {
+                DBHelper.get().getSamplingDao().update(sampling);
+            } else
+                DBHelper.get().getSamplingDao().insert(sampling);
         }
     }
 
@@ -533,6 +589,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 isBatchUpload = false;
+                isSubmit = false;
                 if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
                     uploadProjecteContentData(true);
                 }
@@ -543,13 +600,13 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
                     } else if (PATH_WASTEWATER.equals(sampling.getFormPath())) {
                     } else if (PATH_INSTRUMENTAL.equals(sampling.getFormPath())) {
-                        finishAlt = InstrumentalActivity.CheckIsSamplingFinish(sampling);
+                        finishAlt = SamplingUtil.isInstrumentSamplingFinish(sampling);
                     }
 
                     if (sampling.getStatus() == 4) {
-                        showMessage("请先完善采样单信息后再次提交！" + finishAlt);
+                        showMessage("请先完善采样单信息后在进行保存！" + finishAlt);
                     } else {
-                        showMessage("请先完善采样单信息！" + finishAlt);
+                        showMessage("请先完善采样单信息后在进行保存！" + finishAlt);
                     }
                     return;
                 }
@@ -578,9 +635,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 break;
             case R.id.btn_submit:
                 if (!hasSelectSample()) {
-                    showMessage("请先勾选已完成的采样单！");
+                    showMessage("请勾选已完成并未提交的采样单！");
                     return;
                 }
+                isSubmit = true;
                 batchUploadSampling();
                 break;
 
@@ -820,7 +878,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DBHelper.get().getSamplingDao().delete(sampling);
+                        if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
+                            DBHelper.get().getSamplingDao().delete(sampling);
+                        }
+                        mSamplings.remove(position);
                         getSampling(mTagId);
                         showMessage("删除采样单成功");
                     }
@@ -1045,7 +1106,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 if (TextUtils.isEmpty(sampling.getAddTime())) {
                     sampling.setAddTime(DateUtils.getTime(new Date().getTime()));
                 }
-
                 //文件上传完成后，组装采样单数据。文件ID已更改
                 PreciptationSampForm preciptationSampForm = null;
                 if (PATH_PRECIPITATION.equals(sampling.getFormPath())) {
@@ -1070,12 +1130,12 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 //删除文件组装
                 preciptationSampForm.setDelFiles(sampling.getSubmitDeleteFileIdList());
 
-                if (sampling.getStatus() == 0 && sampling.getIsLocal()) {
+                if (sampling.getStatus() == 0 && sampling.getIsLocal() && !sampling.isUploadSave()) {
                     preciptationSampForm.setIsAdd(true);
                 } else {
                     preciptationSampForm.setIsAdd(false);
                 }
-
+                preciptationSampForm.setIsSubmit(isSubmit);
                 preciptationSampForm.setCompelSubmit(isCompelSubmit);
                 Gson gson = new Gson();
                 String str = gson.toJson(preciptationSampForm);
@@ -1371,9 +1431,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             List<Sampling> samplingList = mTaskDetailAdapter.getInfos();
             if (!CheckUtil.isEmpty(samplingList)) {
                 for (Sampling sampling : samplingList) {
-                    if (sampling.getIsFinish()
-                            && sampling.isSelected()
-                            && !sampling.getIsUpload()) {
+                    //samplingList里面：选中 完成 未提交
+                    if (sampling.getIsFinish() && sampling.isSelected() && !sampling.getIsUpload()) {
                         return true;
                     }
                 }

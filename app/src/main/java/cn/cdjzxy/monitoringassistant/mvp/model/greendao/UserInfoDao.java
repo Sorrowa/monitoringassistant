@@ -49,6 +49,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         public final static Property WebUrl = new Property(22, String.class, "WebUrl", false, "WEB_URL");
         public final static Property Pwd = new Property(23, String.class, "pwd", false, "PWD");
         public final static Property IntId = new Property(24, int.class, "intId", false, "INT_ID");
+        public final static Property AppRightStr = new Property(25, String.class, "AppRightStr", false, "APP_RIGHT_STR");
     }
 
 
@@ -88,7 +89,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
                 "\"TOKEN\" TEXT," + // 21: Token
                 "\"WEB_URL\" TEXT," + // 22: WebUrl
                 "\"PWD\" TEXT," + // 23: pwd
-                "\"INT_ID\" INTEGER NOT NULL );"); // 24: intId
+                "\"INT_ID\" INTEGER NOT NULL ," + // 24: intId
+                "\"APP_RIGHT_STR\" TEXT);"); // 25: AppRightStr
     }
 
     /** Drops the underlying database table. */
@@ -221,6 +223,11 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             stmt.bindString(24, pwd);
         }
         stmt.bindLong(25, entity.getIntId());
+ 
+        String AppRightStr = entity.getAppRightStr();
+        if (AppRightStr != null) {
+            stmt.bindString(26, AppRightStr);
+        }
     }
 
     @Override
@@ -347,6 +354,11 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             stmt.bindString(24, pwd);
         }
         stmt.bindLong(25, entity.getIntId());
+ 
+        String AppRightStr = entity.getAppRightStr();
+        if (AppRightStr != null) {
+            stmt.bindString(26, AppRightStr);
+        }
     }
 
     @Override
@@ -381,7 +393,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
             cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // Token
             cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // WebUrl
             cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // pwd
-            cursor.getInt(offset + 24) // intId
+            cursor.getInt(offset + 24), // intId
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25) // AppRightStr
         );
         return entity;
     }
@@ -413,6 +426,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         entity.setWebUrl(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
         entity.setPwd(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
         entity.setIntId(cursor.getInt(offset + 24));
+        entity.setAppRightStr(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
      }
     
     @Override

@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,34 +14,27 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.baidu.navisdk.ui.routeguide.mapmode.subview.I;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
-import org.greenrobot.greendao.query.WhereCondition;
 import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,10 +44,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
@@ -67,21 +56,15 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.ClickUtils;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
-import cn.cdjzxy.monitoringassistant.utils.DateUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
-import cn.cdjzxy.monitoringassistant.widgets.ViewClickProxy;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
 
@@ -476,8 +459,8 @@ public class CollectionDetailFragment extends BaseFragment {
                             mSample.setSamplingFormStandResults(new ArrayList<>());
                         }
 
-                        mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-                        mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+                        mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
+                        mSample.setStatusName(mSample.getIsFinish() ? "已完成" : "进行中");
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
                         if (CheckUtil.isNull(sampling)) {
                             DBHelper.get().getSamplingDao().insert(mSample);
@@ -538,8 +521,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
 
                     //设置采样单完结状态以及更新采样单
-                    mSample.setIsFinish(HelpUtil.isSamplingFinish(mSample));
-                    mSample.setStatusName(HelpUtil.isSamplingFinish(mSample) ? "已完成" : "进行中");
+                    mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
+                    mSample.setStatusName(mSample.getIsFinish() ? "已完成" : "进行中");
                     Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
                     if (CheckUtil.isNull(sampling)) {
                         //mSample.setId( UUID.randomUUID().toString());

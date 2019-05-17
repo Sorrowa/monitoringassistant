@@ -155,9 +155,9 @@ public class Sampling {
     private boolean isLocal;//是否为本地创建
     private boolean isCanEdit;//是否可编辑
     private boolean isFinish;//是否完成
+    private boolean isUploadSave;//是否已经服务器上传保存
     private String layTableCheckbox;
     private String DeleteFiles;//删除的文件ID集合字符串，格式：ID1,ID2,ID3
-
 
 
     @Convert(columnType = String.class, converter = StringConverter.class)
@@ -180,8 +180,23 @@ public class Sampling {
     private List<SamplingFile> HasFile;
     @Transient
     private List<SamplingFile> autographList;//签名文件集合
+
     @Keep()
-    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName, String ProjectName, int Montype, String SamplingTimeBegin, String SamplingTimeEnd, String ParentTagId, String TagId, String TagName, String AddressId, String AddressName, String AddressNo, String SamplingHeight, String PollutionType, String RainType, String SampProperty, String FormType, String FormTypeName, String DeviceId, String DeviceName, String MethodId, String MethodName, String Weather, String WindSpeed, String Temprature, String Pressure, String CalibrationFactor, String Transfer, String SendSampTime, String ReciveTime, String PrivateData, String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName, String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName, int TransStatus, String TransStatusName, String CurUserId, String CurUserName, String FormFlows, String Comment, String AddTime, String UpdateTime, int Version, String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo, String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish, String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults) {
+    public Sampling(String Id, String ProjectId, String SamplingNo, String FormPath, String FormName,
+                    String ProjectName, int Montype, String SamplingTimeBegin, String SamplingTimeEnd,
+                    String ParentTagId, String TagId, String TagName, String AddressId, String AddressName,
+                    String AddressNo, String SamplingHeight, String PollutionType, String RainType,
+                    String SampProperty, String FormType, String FormTypeName, String DeviceId,
+                    String DeviceName, String MethodId, String MethodName, String Weather,
+                    String WindSpeed, String Temprature, String Pressure, String CalibrationFactor,
+                    String Transfer, String SendSampTime, String ReciveTime, String PrivateData,
+                    String SamplingUserId, String SamplingUserName, String SubmitId, String SubmitName,
+                    String SubmitDate, String MonitorPerson, String MonitorTime, int Status, String StatusName,
+                    int TransStatus, String TransStatusName, String CurUserId, String CurUserName,
+                    String FormFlows, String Comment, String AddTime, String UpdateTime, int Version,
+                    String MonitemId, String MonitemName, String AuditDate, String Recoding, String ProjectNo,
+                    String file, boolean isUpload, boolean isLocal, boolean isCanEdit, boolean isFinish,
+                    String layTableCheckbox, String DeleteFiles, List<String> SamplingUserResults, boolean isUploadSave) {
         this.Id = Id;
         this.ProjectId = ProjectId;
         this.SamplingNo = SamplingNo;
@@ -247,6 +262,7 @@ public class Sampling {
         this.layTableCheckbox = layTableCheckbox;
         this.DeleteFiles = DeleteFiles;
         this.SamplingUserResults = SamplingUserResults;
+        this.isUploadSave = isUploadSave;
     }
 
     @Keep()
@@ -802,6 +818,14 @@ public class Sampling {
         this.isUpload = isUpload;
     }
 
+    public boolean isUploadSave() {
+        return isUploadSave;
+    }
+
+    public void setUploadSave(boolean uploadSave) {
+        isUploadSave = uploadSave;
+    }
+
     public boolean getIsLocal() {
         return this.isLocal;
     }
@@ -999,6 +1023,14 @@ public class Sampling {
         }
 
         return result;
+    }
+
+    public boolean getIsUploadSave() {
+        return this.isUploadSave;
+    }
+
+    public void setIsUploadSave(boolean isUploadSave) {
+        this.isUploadSave = isUploadSave;
     }
 
 
