@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.widget.Button;
 
+import com.aries.ui.view.title.TitleBarView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.wonders.health.lib.base.di.component.AppComponent;
 import com.wonders.health.lib.base.mvp.IView;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.cdjzxy.monitoringassistant.BroadcastReceiver.NetworkChangeReceiver;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
@@ -32,6 +34,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.services.RepositoryService;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
@@ -41,7 +45,7 @@ import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
-public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
+public class LoginActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
     @BindView(R.id.et_name)
     ClearEditText etName;
@@ -249,6 +253,7 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
                 , Manifest.permission.INTERNET
                 , Manifest.permission.VIBRATE
                 , Manifest.permission.ACCESS_FINE_LOCATION
+                , Manifest.permission.ACCESS_COARSE_LOCATION
         );
 
 
@@ -259,18 +264,14 @@ public class LoginActivity extends BaseActivity<ApiPresenter> implements IView {
      * 进入主界面
      */
     private void toMain() {
-         startTraceServer();//开启轨迹服务
-        //  app.startTrajectoryServer(this);
         startRepositoeyDownload(name, pwd);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
-    /**
-     * 开启轨迹服务
-     */
-    private void startTraceServer() {
-        Intent intent = new Intent(this, TrajectoryServer.class);
-        startService(intent);
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+
     }
 }

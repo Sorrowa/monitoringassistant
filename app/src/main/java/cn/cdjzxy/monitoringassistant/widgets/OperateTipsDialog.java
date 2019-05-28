@@ -122,20 +122,19 @@ public class OperateTipsDialog extends Dialog {
             dialog.setContentView(layout);
             Window dialogWindow = dialog.getWindow();
             WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-            lp.width = (int) (HelpUtil.getWidth(m_context) / 3);
-            lp.height = (int) (HelpUtil.getHeight(m_context) / 3);
+            lp.width = HelpUtil.getWidth(m_context) / 3;
+            lp.height = HelpUtil.getHeight(m_context) / 3;
             dialogWindow.setAttributes(lp);
 
             // set the dialog m_title
             ((TextView) layout.findViewById(R.id.title)).setText(m_title);
             ((TextView) layout.findViewById(R.id.title)).getPaint().setFakeBoldText(true);
-            ;
             // set the confirm button
             if (m_confirmBtnText != null) {
                 ((Button) layout.findViewById(R.id.confirm_btn))
                         .setText(m_confirmBtnText);
                 if (m_confirmBtnClickListener != null) {
-                    ((Button) layout.findViewById(R.id.confirm_btn))
+                    layout.findViewById(R.id.confirm_btn)
                             .setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
                                     m_confirmBtnClickListener.onClick(dialog,

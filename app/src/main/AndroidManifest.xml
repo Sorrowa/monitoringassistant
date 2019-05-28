@@ -26,6 +26,7 @@
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
@@ -236,6 +237,11 @@
                 <action android:name="android.bluetooth.device.action.PAIRING_REQUEST" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".BroadcastReceiver.NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGR" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name="com.baidu.location.f"
@@ -248,6 +254,8 @@
             android:enabled="true"
             android:exported="true"
             android:process=":remote" />
+        <service
+            android:name=".services.TraceService"/>
 
         <activity
             android:name=".mvp.ui.module.easy.EasyPusherActivity"
@@ -278,12 +286,14 @@
             android:name=".mvp.ui.module.task.point.EnterRelatePointSelectActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".mvp.ui.module.task.noise.activity.NoiseMapActivity"
+        <activity
+            android:name=".mvp.ui.module.task.noise.activity.NoiseMapActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity android:name=".mvp.ui.module.task.noise.activity.NoisePointPicActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".mvp.ui.module.task.noise.activity.NoisePointPicActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
     </application>
 

@@ -100,11 +100,7 @@ public class BluetoothUtils {
      * @return
      */
     public boolean isSupportBlueTooth() {
-        if (mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            return true;
-        } else {
-            return false;
-        }
+        return mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
 
 

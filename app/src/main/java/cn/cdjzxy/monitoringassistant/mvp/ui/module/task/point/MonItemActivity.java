@@ -69,8 +69,8 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
     private List<MonItems> mMonItemsSelected = new ArrayList<>();
     //    private List<MonItems> mMonItemsDelete = new ArrayList<>();
 
-    private StringBuilder MonItemName = new StringBuilder("");
-    private StringBuilder MonItemId = new StringBuilder("");
+    private StringBuilder MonItemName = new StringBuilder();
+    private StringBuilder MonItemId = new StringBuilder();
     private String[] selectItems;
 
     @Override

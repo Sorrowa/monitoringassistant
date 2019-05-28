@@ -17,5 +17,6 @@ public interface EventBusTags {
     String TAG_PROJECT_FINISH = "TAG_PROJECT_FINISH  ";//采样完结操作
 
     String TAG_NOISE_FRAGMENT_TYPE = "TAG_NOISE_FRAGMENT_TYPE";//噪声操作
+    String TAG_NETWORK_CHANGE = "TAG_NETWORK_CHANGE";//网络改变
 
 }

@@ -54,6 +54,8 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.wander.WanderTaskActivity;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 
@@ -392,15 +394,26 @@ public class TaskFragment extends BaseFragment {
                 ArtUtils.makeText(getContext(), "功能开发中");
                 break;
             case R.id.btn_wait_sampling:
-                ArtUtils.startActivity(TaskActivity.class);
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Project_See_Num)) {
+                    ArtUtils.startActivity(TaskActivity.class);
+                } else {
+                    showNoPermissionDialog("才能进行任务查看。",  UserInfoAppRight.APP_Permission_Project_See_Name);
+                }
                 break;
             case R.id.btn_receive://流转已收样
-                startWanderTask(true);
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Project_See_Num)) {
+                    startWanderTask(true);
+                } else {
+                    showNoPermissionDialog("才能进行任务查看。",  UserInfoAppRight.APP_Permission_Project_See_Name);
+                }
 //                ArtUtils.makeText(getContext(), "功能开发中");
                 break;
             case R.id.btn_wait_receive://流转待收样
-                startWanderTask(false);
-//                ArtUtils.makeText(getContext(), "功能开发中");
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Project_See_Num)) {
+                    startWanderTask(false);
+                } else {
+                    showNoPermissionDialog("才能进行任务查看。",  UserInfoAppRight.APP_Permission_Project_See_Name);
+                }
                 break;
         }
     }

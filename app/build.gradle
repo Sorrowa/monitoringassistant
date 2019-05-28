@@ -43,7 +43,7 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
-            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "LOG_DEBUG", "false"
 //            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
 
@@ -106,7 +106,7 @@ android {
     //greendao配置
     greendao {
         //数据库版本号，升级时修改
-        schemaVersion 2
+        schemaVersion 3
         //生成的DAO，DaoMaster和DaoSession的包路径。默认与表实体所在的包路径相同
         daoPackage 'cn.cdjzxy.monitoringassistant.mvp.model.greendao'
         //生成源文件的路径。默认源文件目录是在build目录中的(build/generated/source/greendao)

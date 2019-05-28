@@ -66,11 +66,7 @@ public class SamplingUtil {
      */
     public static boolean isMySampling(String submitId) {
         UserInfo user = UserInfoHelper.get().getUserInfo();
-        if (user.getId().equals(submitId)) {
-            return true;
-        } else {
-            return false;
-        }
+        return user.getId().equals(submitId);
     }
 
     /**
@@ -80,11 +76,7 @@ public class SamplingUtil {
      * @return
      */
     public static boolean samplingIsSubmit(int status) {
-        if (status == 0 || status == 4 || status == 9) {
-            return false;
-        } else {
-            return true;
-        }
+        return status != 0 && status != 4 && status != 9;
     }
 
     /**
@@ -309,7 +301,7 @@ public class SamplingUtil {
      * @return
      */
     public static String createSamplingNo() {
-        StringBuilder samplingNo = new StringBuilder("");
+        StringBuilder samplingNo = new StringBuilder();
         String dateStr = DateUtils.getDate().replace("-", "").substring(2);
         samplingNo.append(dateStr).append("-");
         samplingNo.append(UserInfoHelper.get().getUser().getIntId()).append("-");
@@ -338,7 +330,7 @@ public class SamplingUtil {
      * @return
      */
     public static String createSamplingNo(String data) {
-        StringBuilder samplingNo = new StringBuilder("");
+        StringBuilder samplingNo = new StringBuilder();
         String dateStr = data.replace("-", "").substring(2);
         samplingNo.append(dateStr).append("-");
         samplingNo.append(UserInfoHelper.get().getUser().getIntId());
@@ -379,7 +371,7 @@ public class SamplingUtil {
      * @return 年月日——采样单流水号账号
      */
     public static String createSamplingFrequecyNo() {
-        StringBuilder samplingNo = new StringBuilder("");
+        StringBuilder samplingNo = new StringBuilder();
         String dateStr = DateUtils.getDate().replace("-", "").substring(2);
         samplingNo.append(dateStr).append("-");
 //        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
@@ -419,7 +411,7 @@ public class SamplingUtil {
      * @return 年月日——采样单流水号账号
      */
     public static String createSamplingFrequecyNo(String data) {
-        StringBuilder samplingNo = new StringBuilder("");
+        StringBuilder samplingNo = new StringBuilder();
         String dateStr = data.replace("-", "").substring(2);
         samplingNo.append(dateStr);
 //        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.like(samplingNo.toString() + "%"), SamplingDao.Properties.ProjectId.eq(projectId)).orderAsc(SamplingDao.Properties.SamplingNo).list();
@@ -458,7 +450,7 @@ public class SamplingUtil {
                 sampling.getStatus() == 9
         )
                 && sampling.getSamplingUserId().
-                contains(UserInfoHelper.get().getUserInfo().getId()) ? true : false;
+                contains(UserInfoHelper.get().getUserInfo().getId());
     }
 
     /**
@@ -474,7 +466,7 @@ public class SamplingUtil {
             case PATH_WASTE_WATER://水和废水
                 return isWasterSamplingFinish(sampling);
             case PATH_INSTRUMENTAL://仪器法
-                return isInstrumentSamplingFinish(sampling) == "" ? true : false;
+                return isInstrumentSamplingFinish(sampling) == "";
             case PATH_NOISE_FACTORY://噪声
                 return isNoiseSamplingFinsh(sampling);
             default://还没有开发
@@ -497,10 +489,7 @@ public class SamplingUtil {
             return false;
         NoisePrivateData privateData = new Gson().fromJson(sampling.getPrivateData(),
                 NoisePrivateData.class);
-        if (CheckUtil.isEmpty(privateData.getMianNioseAddr())) {
-            return false;
-        }
-        return true;
+        return !CheckUtil.isEmpty(privateData.getMianNioseAddr());
     }
 
     /**
@@ -527,10 +516,7 @@ public class SamplingUtil {
         if (CheckUtil.isEmpty(mSampling.getMethodName())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
-            return false;
-        }
-        return true;
+        return !CheckUtil.isEmpty(mSampling.getDeviceName());
     }
 
     /**
@@ -598,19 +584,7 @@ public class SamplingUtil {
         if (CheckUtil.isEmpty(mSample.getTagId())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSample.getAddressId())) {
-            return false;
-        }
-//        Gson gson = new Gson();
-//        FsExtends fsExtends = gson.fromJson(mSample.getPrivateData(), FsExtends.class);
-//        if (CheckUtil.isEmpty(mSample.getMethodId())) {
-//            return false;
-//        }
-//
-//        if (CheckUtil.isNull(fsExtends) || CheckUtil.isEmpty(fsExtends.getSewageDisposal())) {
-//            return false;
-//        }
-        return true;
+        return !CheckUtil.isEmpty(mSample.getAddressId());
     }
 
     /**

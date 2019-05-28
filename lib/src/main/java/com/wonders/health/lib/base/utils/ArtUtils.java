@@ -155,7 +155,7 @@ public class ArtUtils {
      */
     public static <T extends View> T findViewByName(Context context, View view, String viewName) {
         int id = getResources(context).getIdentifier(viewName, "id", context.getPackageName());
-        T v = (T) view.findViewById(id);
+        T v = view.findViewById(id);
         return v;
     }
 
@@ -169,7 +169,7 @@ public class ArtUtils {
      */
     public static <T extends View> T findViewByName(Context context, Activity activity, String viewName) {
         int id = getResources(context).getIdentifier(viewName, "id", context.getPackageName());
-        T v = (T) activity.findViewById(id);
+        T v = activity.findViewById(id);
         return v;
     }
 
@@ -339,10 +339,7 @@ public class ArtUtils {
     }
 
     public static boolean isEmpty(Object obj) {
-        if (obj == null) {
-            return true;
-        }
-        return false;
+        return obj == null;
     }
 
 

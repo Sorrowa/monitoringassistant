@@ -70,8 +70,8 @@ public class UserActivity extends BaseTitileActivity<ApiPresenter> {
     private List<User> mUsers = new ArrayList<>();
     private List<User> mUsersSelected = new ArrayList<>();
 
-    private StringBuilder UserName = new StringBuilder("");
-    private StringBuilder UserId = new StringBuilder("");
+    private StringBuilder UserName = new StringBuilder();
+    private StringBuilder UserId = new StringBuilder();
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {

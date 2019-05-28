@@ -148,7 +148,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
         mPopupAnchorView = view.findViewById(R.id.footer);
 
-        mCategoryText = (TextView) view.findViewById(R.id.category_btn);
+        mCategoryText = view.findViewById(R.id.category_btn);
         if (mRequestType== WhiteBoardFragment.REQUEST_IMAGE) {
             mCategoryText.setText(R.string.folder_all);
         } else if (mRequestType == WhiteBoardFragment.REQUEST_BACKGROUND) {
@@ -175,7 +175,7 @@ public class MultiImageSelectorFragment extends Fragment {
             }
         });
 
-        mImageGridView = (GridView) view.findViewById(R.id.grid);
+        mImageGridView = view.findViewById(R.id.grid);
         mImageGridView.setAdapter(mImageAdapter);
         mImageGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

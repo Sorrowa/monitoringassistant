@@ -16,6 +16,9 @@
 package com.wonders.health.lib.base.base.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import com.wonders.health.lib.base.R;
 import com.wonders.health.lib.base.base.delegate.IFragment;
 import com.wonders.health.lib.base.integration.cache.Cache;
 import com.wonders.health.lib.base.integration.cache.CacheType;
@@ -84,9 +88,9 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     public boolean useEventBus() {
         return true;
     }
+
     /**
      * 动态隐藏软键盘
-     *
      */
     public void hideSoftInput() {
         View view = getActivity().getCurrentFocus();
@@ -94,4 +98,39 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    /**
+     * 显示一个dialog
+     *
+     * @param title    提示标题
+     * @param msg      提示消息
+     * @param listener 确定事件回调
+     */
+    public void showDialog(String title, String msg, DialogInterface.OnClickListener listener) {
+        final Dialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle(title)
+                .setMessage(msg)
+                .setCancelable(true)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (listener != null) {
+                            listener.onClick(dialog, which);
+                        }
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
+    }
+    /**
+     * 显示用户没权限
+     *
+     * @param hint 权限提示
+     * @param name 名称
+     */
+    public void showNoPermissionDialog(String hint, String name) {
+        showDialog("提示", String.format("您需要：%s权限," + hint, name) + getString(R.string.Permission_hint_str), null);
+    }
+
 }

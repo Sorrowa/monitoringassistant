@@ -24,9 +24,10 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        saveUrlAs("https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0282c44e9c45d688bc02b4a494c37dab/4b90f603738da977f86d8b56be51f8198618e309.jpg",
-                "C:/Users/10708/Desktop", "GET","test.png");
-       // delete();
+//        saveUrlAs("https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0282c44e9c45d688bc02b4a494c37dab/4b90f603738da977f86d8b56be51f8198618e309.jpg",
+//                "C:/Users/10708/Desktop", "GET", "test.png");
+//        textMantRound();
+        // delete();
     }
 
     /**
@@ -107,4 +108,29 @@ public class ExampleUnitTest {
         }
     }
 
+    /**
+     * 测试四舍六入规则
+     * 验证：不保留小数是：math.round() 满足四舍五入的规则
+     * 保留一位或者多位小数时  满足四舍六入无成双规则
+     * <p>
+     * 有效位数确定后，其后面多余的数字应该舍去，只保留有效数字最末一位，这种修约（舍入）规则是“四舍六入五成双”，
+     * 也即“4舍6入5凑偶”这里“四”是指≤4 时舍去，
+     * <p>
+     * "六"是指≥6时进上，
+     * <p>
+     * "五"指的是根据5后面的数字来定，当5后有数时，舍5入1；
+     * <p>
+     * 当5后无数或为0时，需要分两种情况来讲：
+     * <p>
+     * ①5前为奇数，舍5入1；
+     * <p>
+     * ②5前为偶数，舍5不进。
+     */
+
+    public void textManthRound() {
+        float[] floats = new float[]{0.5f, 0.51f, 0.151f, 0.251f, 0.252f};
+        for (float f : floats) {
+//            System.out.println(Math.round(f, 1));
+        }
+    }
 }

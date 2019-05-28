@@ -24,6 +24,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.GpsBean;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
@@ -57,6 +58,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UnitDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.UserDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.WeatherDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.GpsBeanDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MsgDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
@@ -99,6 +101,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig unitDaoConfig;
     private final DaoConfig userDaoConfig;
     private final DaoConfig weatherDaoConfig;
+    private final DaoConfig gpsBeanDaoConfig;
     private final DaoConfig msgDaoConfig;
     private final DaoConfig projectDaoConfig;
     private final DaoConfig projectContentDaoConfig;
@@ -132,6 +135,7 @@ public class DaoSession extends AbstractDaoSession {
     private final UnitDao unitDao;
     private final UserDao userDao;
     private final WeatherDao weatherDao;
+    private final GpsBeanDao gpsBeanDao;
     private final MsgDao msgDao;
     private final ProjectDao projectDao;
     private final ProjectContentDao projectContentDao;
@@ -201,6 +205,9 @@ public class DaoSession extends AbstractDaoSession {
         weatherDaoConfig = daoConfigMap.get(WeatherDao.class).clone();
         weatherDaoConfig.initIdentityScope(type);
 
+        gpsBeanDaoConfig = daoConfigMap.get(GpsBeanDao.class).clone();
+        gpsBeanDaoConfig.initIdentityScope(type);
+
         msgDaoConfig = daoConfigMap.get(MsgDao.class).clone();
         msgDaoConfig.initIdentityScope(type);
 
@@ -265,6 +272,7 @@ public class DaoSession extends AbstractDaoSession {
         unitDao = new UnitDao(unitDaoConfig, this);
         userDao = new UserDao(userDaoConfig, this);
         weatherDao = new WeatherDao(weatherDaoConfig, this);
+        gpsBeanDao = new GpsBeanDao(gpsBeanDaoConfig, this);
         msgDao = new MsgDao(msgDaoConfig, this);
         projectDao = new ProjectDao(projectDaoConfig, this);
         projectContentDao = new ProjectContentDao(projectContentDaoConfig, this);
@@ -298,6 +306,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Unit.class, unitDao);
         registerDao(User.class, userDao);
         registerDao(Weather.class, weatherDao);
+        registerDao(GpsBean.class, gpsBeanDao);
         registerDao(Msg.class, msgDao);
         registerDao(Project.class, projectDao);
         registerDao(ProjectContent.class, projectContentDao);
@@ -333,6 +342,7 @@ public class DaoSession extends AbstractDaoSession {
         unitDaoConfig.clearIdentityScope();
         userDaoConfig.clearIdentityScope();
         weatherDaoConfig.clearIdentityScope();
+        gpsBeanDaoConfig.clearIdentityScope();
         msgDaoConfig.clearIdentityScope();
         projectDaoConfig.clearIdentityScope();
         projectContentDaoConfig.clearIdentityScope();
@@ -413,6 +423,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public WeatherDao getWeatherDao() {
         return weatherDao;
+    }
+
+    public GpsBeanDao getGpsBeanDao() {
+        return gpsBeanDao;
     }
 
     public MsgDao getMsgDao() {

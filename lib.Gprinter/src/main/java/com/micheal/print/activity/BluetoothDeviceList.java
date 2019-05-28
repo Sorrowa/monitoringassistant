@@ -52,16 +52,16 @@ public class BluetoothDeviceList extends Activity {
         Log.e(DEBUG_TAG, "On Create");
 
 
-        ivLeft = (LinearLayout) findViewById(R.id.iv_left);
+        ivLeft = findViewById(R.id.iv_left);
         ivLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        lvPairedDevice = (ListView) findViewById(R.id.lvPairedDevices);
+        lvPairedDevice = findViewById(R.id.lvPairedDevices);
 
-        btDeviceScan = (Button) findViewById(R.id.btBluetoothScan);
+        btDeviceScan = findViewById(R.id.btBluetoothScan);
         btDeviceScan.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

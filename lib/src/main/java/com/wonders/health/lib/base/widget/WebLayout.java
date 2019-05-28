@@ -23,7 +23,7 @@ public class WebLayout implements IWebLayout {
         mSmartRefreshLayout = (SmartRefreshLayout) LayoutInflater.from(activity).inflate(R.layout.layout_web, null);
         mSmartRefreshLayout.setEnableLoadMore(false);
         mSmartRefreshLayout.setEnableRefresh(false);
-        mWebView = (WebView) mSmartRefreshLayout.findViewById(R.id.webView);
+        mWebView = mSmartRefreshLayout.findViewById(R.id.webView);
     }
 
     @NonNull

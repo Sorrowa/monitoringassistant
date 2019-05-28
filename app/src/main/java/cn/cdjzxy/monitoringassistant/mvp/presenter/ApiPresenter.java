@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -53,6 +54,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Weather;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
@@ -83,6 +85,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
+import cn.cdjzxy.monitoringassistant.services.TraceService;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
@@ -97,12 +100,19 @@ import okhttp3.RequestBody;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity.TYPE_TASK;
+
 /**
  * App相关的数据操作Presenter
  */
 public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     public static final double PROGRESS = Math.round((100 / 21.0) * 10) / 10.0;
+    private double SAMPLING_PROGRESS = 0.0;
+
+    private void setSAMPLING_PROGRESS(int size) {
+        SAMPLING_PROGRESS = ((double) (Math.round((100 / size) * 1)));
+    }
 
     private AppComponent appComponent;
 
@@ -300,6 +310,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -327,6 +338,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -354,6 +366,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -381,6 +394,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -408,6 +422,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -435,6 +450,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -462,6 +478,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -489,6 +506,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -517,6 +535,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -545,6 +564,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息：权限";
                         msg.handleMessageToTarget();
                     }
 
@@ -573,6 +593,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息：点位";
                         msg.handleMessageToTarget();
                     }
 
@@ -600,6 +621,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息：企业";
                         msg.handleMessageToTarget();
                     }
 
@@ -627,6 +649,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -657,6 +680,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -668,7 +692,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     }
                 }));
     }
-
 
     /**
      * @param msg
@@ -685,6 +708,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -712,6 +736,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
 
@@ -740,6 +765,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步基础信息：消息";
                         msg.handleMessageToTarget();
                     }
 
@@ -759,6 +785,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                     @Override
                     public void onSuccess(BaseResponse baseResponse) {
                         msg.what = Message.RESULT_OK;
+                        msg.str = "正在同步基础信息：消息";
                         msg.obj = baseResponse.getMessage();
                         msg.handleMessageToTarget();
                     }
@@ -850,7 +877,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         //更新本地的记录
                                         dao.update(project);
                                         List<ProjectDetial> projectDetials = project.getProjectDetials();
-                                        //todo:搞定
                                         if (!CheckUtil.isEmpty(projectDetials)) {
                                             DBHelper.get()
                                                     .getProjectDetialDao()
@@ -889,17 +915,22 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 //                                }
 //                            }
 //                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
+                            List<String> taskIds = new ArrayList<>();
+                            setSAMPLING_PROGRESS(projects.size());
+                            for (int i = 0; i < projects.size(); i++) {
+                                String id = projects.get(i).getId();
+                                if (!CheckUtil.isEmpty(id)) {
+                                    taskIds.add(projects.get(i).getId());
+                                    getSampling(Message.obtain(msg), taskIds, i, projects.size());
+                                    taskIds.clear();
+                                }
+                            }
                         }
 
-                        List<Project> projects = baseResponse.getData();
-                        List<String> taskIds = new ArrayList<>();
-
-                        for (Project project : projects) {
-                            taskIds.add(project.getId());
-                        }
-
-                        msg.what = MainActivity.TYPE_TASK;
-                        msg.obj = taskIds;
+                        msg.str = "正在同步采样单";
+                        msg.what = Message.RESULT_OK;
+                        msg.obj = PROGRESS;
+                        msg.arg1 = 0;
                         msg.handleMessageToTarget();
                     }
 
@@ -930,6 +961,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步采样单规范";
                         msg.handleMessageToTarget();
                     }
 
@@ -972,6 +1004,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         }
                         msg.what = Message.RESULT_OK;
                         msg.obj = PROGRESS;
+                        msg.str = "正在同步采样单分类";
                         msg.handleMessageToTarget();
                     }
 
@@ -984,6 +1017,45 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
+    /**
+     * 获取所有采样单信息(支持批量)
+     *
+     * @param msg
+     */
+    public void getSampling(final Message msg, List<String> projectIds, int i, int size) {
+        if (CheckUtil.isEmpty(projectIds)) return;
+        mModel.getSampling(projectIds)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Sampling>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Sampling>> baseResponse) {
+                        Log.i(TAG, String.format("listSize:%d,i:%d", size, i));
+                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                            List<Sampling> samplings = baseResponse.getData();
+                            if (!CheckUtil.isEmpty(samplings)) {
+                                //DBHelper.get().getSamplingFormStandDao().deleteAll();
+                                for (Sampling sampling : samplings) {
+                                    saveOneSampling(sampling);
+                                }
+                            }
+                        }
+
+                        Message message = Message.obtain(msg);
+                        message.what = TYPE_TASK;
+                        message.arg1 = size;
+                        message.obj = SAMPLING_PROGRESS;
+                        message.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int responseCode) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+
+    }
 
     /**
      * 获取所有采样单信息(支持批量)
@@ -1255,10 +1327,14 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
             URLConnection con = url.openConnection();
             con.setReadTimeout(30000);
             con.setConnectTimeout(15000);
-            InputStream is = con.getInputStream();//获取输入流
+            InputStream is = null;
+            if (((HttpURLConnection) con).getResponseCode() == 200) {
+                is = con.getInputStream();//获取输入流
+            }
             if (is == null) {
                 return null;
             }
+
 
             String cacheDir = this.appComponent.appManager().getCurrentActivity().getCacheDir().getPath();
             File newFile = new File(cacheDir + "/" + fileName);
@@ -1346,7 +1422,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             msg.str = (String) baseResponse.getData();//服务端的采样单id
                         } catch (Exception e) {
                             Log.e(TAG, "onSuccess: " + e.toString());
-                            msg.str =preciptationSampForm.getSampForm().getId();
+                            msg.str = preciptationSampForm.getSampForm().getId();
                         }
                         msg.handleMessageToTarget();
                     }
@@ -1571,7 +1647,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      */
     private String downloadNoiseFile(String downloadUrl) {
         String fileName = null;
-
+        String fileUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + downloadUrl;
         try {
             int lastIndex = downloadUrl.lastIndexOf("/");
             if (lastIndex >= 0) {
@@ -1580,36 +1656,34 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 //文件名手动编码
                 downloadUrl = downloadUrl.replace(fn, java.net.URLEncoder.encode(fn, "utf-8"));
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String cacheDir = Constant.FILE_DIR + Constant.PNG_DIR + "/noise/";
-
-        //如果fileName是空的话  就不用下载了 直接返回空字符串
-        if (fileName == null || fileName.equals("")) {
-            Log.e("downloadNoiseFile", "Url:" + downloadUrl);
-            return "";
-        } else {
-            //判断本地是否存在这种图片
-            if (FileUtils.fileIsExists(cacheDir + "/" + fileName)) {
-                Log.d(TAG, "downloadNoiseFile:" + String.format("路径:%s 文件名：%s", cacheDir, fileName));
-                return cacheDir + "/" + fileName;
+            String cacheDir = Constant.FILE_DIR + Constant.PNG_DIR + "/noise/";
+            File newFile = new File(cacheDir + fileName);
+            //如果fileName是空的话  就不用下载了 直接返回空字符串
+            if (fileName == null || fileName.equals("")) {
+                Log.e("downloadNoiseFile", "Url:" + downloadUrl);
+                return "";
+            } else {
+                //判断本地是否存在这种图片
+                if (newFile.exists()) {
+                    Log.d(TAG, "downloadNoiseFile:" + String.format("路径:%s 文件名：%s", cacheDir, fileName));
+                    return cacheDir + fileName;
+                } else {
+                    FileUtils.makeDir(cacheDir);
+                }
             }
-        }
-        //本地不存在并且fileName不为空 去下载
-        String fileUrl = UserInfoHelper.get().getUserInfo().getWebUrl() + downloadUrl;
-        try {
+            //本地不存在并且fileName不为空 去下载
+
             URL url = new URL(fileUrl);
             URLConnection con = url.openConnection();
             con.setReadTimeout(30000);
             con.setConnectTimeout(15000);
-
-            InputStream is = con.getInputStream();//获取输入流
-            if (is == null) {
-                return "";
+            InputStream is = null;
+            if (((HttpURLConnection) con).getResponseCode() == 200) {
+                is = con.getInputStream();//获取输入流
             }
-
-            File newFile = new File(cacheDir + "/" + fileName);
+            if (is == null) {
+                return null;
+            }
 
             FileOutputStream fileOutputStream = new FileOutputStream(newFile);//指定文件保存路径，代码看下一步
 
@@ -1684,7 +1758,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      * @param status@true下拉刷新 @false 上拉加载
      */
     public void getSampleStorageProject(Map<String, String> map, Message msg, boolean status) {
-        mModel.getSampleStorageProject(map).compose(RxUtils.applySchedulers(this, msg.getTarget()))
+        mModel.getSampleStorageProject(map).compose(RxUtils.applySchedulers(this,
+                msg.getTarget()))
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<ProjectSampleStorage>>() {
                     @Override
                     public void onSuccess(BaseResponse<ProjectSampleStorage> response) {
@@ -1720,4 +1795,27 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
+
+    /**
+     * @param gpsList
+     */
+    public void postGaoDeCoordInates(List<Gps> gpsList, TraceService.TraceUploadListener listener) {
+        mModel.postGaoDeCoordInates(gpsList)
+                .compose(RxUtils.applySchedulers(this))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse>() {
+                    @Override
+                    public void onSuccess(BaseResponse baseResponse) {
+                        if (listener != null) {
+                            listener.success(baseResponse);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int code) {
+                        if (listener != null) {
+                            listener.onFailure(message, code);
+                        }
+                    }
+                }));
+    }
 }

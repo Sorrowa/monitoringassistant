@@ -163,7 +163,6 @@ public class TrajectoryServer extends Service {
         UserInfo userInfo = UserInfoHelper.get().getUserInfo();
         name = userInfo.getName() + "-" + userInfo.getWorkNo();
         mTrace = new Trace(serviceId, name);
-        mTrace.setNotification(notification);
         trackConf = getSharedPreferences("track_conf", MODE_PRIVATE);
         locRequest = new LocRequest(serviceId);
         mClient.setOnCustomAttributeListener(new OnCustomAttributeListener() {
@@ -280,7 +279,7 @@ public class TrajectoryServer extends Service {
                     isGatherStarted = false;
                     // 停止成功后，直接移除is_trace_started记录（便于区分用户没有停止服务，直接杀死进程的情况）
                     unregisterPowerReceiver();
-                    mClient.stopGather(traceListener);
+                    mClient.stopGather(traceListener);//停止采集
                 }
                 Log.i(TAG, "onStopTraceCallback: " +
                         String.format("onStopTraceCallback, errorNo:%d, message:%s ", errorNo, message));
@@ -395,8 +394,13 @@ public class TrajectoryServer extends Service {
             startRealTimeLoc(packInterval);
             powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
             initNotification();
+            mTrace.setNotification(notification);
             mClient.setInterval(gatherInterval, packInterval);//设置采集和打包位置数据的时间间隔
-            mClient.startTrace(mTrace, traceListener);//启动鹰眼服务
+            try {
+                mClient.startTrace(mTrace, traceListener);//启动鹰眼服务
+            } catch (Exception e) {
+                Log.e(TAG, "initTrack: " + e.toString());
+            }
             Log.e(TAG, "initTrackinitTrack: id：" + mTrace.getServiceId() + "\n name:" + mTrace.getEntityName());
             Log.i(TAG, "onCreate: id：" + mTrace.getServiceId() + "\n name:" + mTrace.getEntityName());
         }
@@ -493,7 +497,6 @@ public class TrajectoryServer extends Service {
 
     public void getCurrentLocation(OnEntityListener entityListener, OnTrackListener trackListener) {
         // 网络连接正常，开启服务及采集，则查询纠偏后实时位置；否则进行实时定位
-
         if (NetworkUtil.isNetworkAvailable(this)
                 && isTraceStarted
                 && isGatherStarted) {

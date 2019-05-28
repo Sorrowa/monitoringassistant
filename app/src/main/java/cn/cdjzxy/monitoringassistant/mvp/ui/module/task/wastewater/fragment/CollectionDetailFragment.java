@@ -50,6 +50,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
@@ -57,7 +58,9 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.MonItemActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.ClickUtils;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
@@ -282,7 +285,7 @@ public class CollectionDetailFragment extends BaseFragment {
         }
 
         List<String> aimList = new ArrayList<>();
-        List<String> itemList = Arrays.asList(monitemName.split(","));
+        String[] itemList = monitemName.split(",");
 
         for (String item : itemList) {
             if (!aimList.contains(item)) {
@@ -310,7 +313,7 @@ public class CollectionDetailFragment extends BaseFragment {
         }
         if (str2 == null || str2.equals(""))
             return str1;
-        List<String> strList = Arrays.asList(str1.split(","));
+        String[] strList = str1.split(",");
         List<String> itemList = Arrays.asList(str2.split(","));
         StringBuilder res = new StringBuilder();
         for (String item : strList) {
@@ -350,6 +353,14 @@ public class CollectionDetailFragment extends BaseFragment {
     @OnClick({R.id.btn_back, R.id.sample_monitor_items, R.id.sample_monitor,
             R.id.btn_delete, R.id.btn_save, R.id.re_sample})
     public void onClick(View view) {
+        if (view.getId() == R.id.btn_back) {
+            EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
+            return;
+        }
+        if (!WastewaterActivity.isNewCreate && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         if (!ClickUtils.canClick()) {
             return;
         }
@@ -869,7 +880,7 @@ public class CollectionDetailFragment extends BaseFragment {
      * @return
      */
     private String getStandMonitors(boolean isSenceAnalysis) {
-        StringBuilder monItemsBuilder = new StringBuilder("");
+        StringBuilder monItemsBuilder = new StringBuilder();
         List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().build().list();
         if (!CheckUtil.isEmpty(stantdsList)) {
             for (SamplingStantd stantd : stantdsList) {
@@ -991,9 +1002,7 @@ public class CollectionDetailFragment extends BaseFragment {
             if (!CheckUtil.isEmpty(monitemIdList)) {
                 if (!CheckUtil.isEmpty(senceMonitemIdList)) {
                     for (String monitemId : monitemIdList) {
-                        if (senceMonitemIdList.contains(monitemId)) {
-                            senceMonitemIdList.remove(monitemId);
-                        }
+                        senceMonitemIdList.remove(monitemId);
                     }
                 }
                 if (!CheckUtil.isEmpty(senceMonitemIdList)) {
@@ -1025,9 +1034,7 @@ public class CollectionDetailFragment extends BaseFragment {
             if (!CheckUtil.isEmpty(senceMonitemIdList)) {
                 if (!CheckUtil.isEmpty(monitemIdList)) {
                     for (String monitemId : senceMonitemIdList) {
-                        if (monitemIdList.contains(monitemId)) {
-                            monitemIdList.remove(monitemId);
-                        }
+                        monitemIdList.remove(monitemId);
                     }
                 }
                 if (!CheckUtil.isEmpty(monitemIdList)) {

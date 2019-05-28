@@ -34,7 +34,6 @@ public class FilePresenter extends BasePresenter<FileRepository> {
 
     public FilePresenter(AppComponent appComponent) {
         super(appComponent.repositoryManager().createRepository(FileRepository.class));
-
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

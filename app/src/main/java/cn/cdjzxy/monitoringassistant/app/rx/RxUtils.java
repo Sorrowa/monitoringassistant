@@ -54,7 +54,7 @@ public class RxUtils {
                         .retryWhen(new RetryWithDelay(3, 2))
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override
-                            public void accept(@NonNull Disposable disposable) throws Exception {
+                            public void accept(@NonNull Disposable disposable) {
                                 basePresenter.addDispose(disposable);
                                 view.showLoading();//显示进度条
                             }
@@ -63,7 +63,7 @@ public class RxUtils {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(new Action() {
                             @Override
-                            public void run() throws Exception {
+                            public void run() {
                                 view.hideLoading();//隐藏进度条
                             }
                         });
@@ -86,7 +86,7 @@ public class RxUtils {
                         .retryWhen(new RetryWithDelay(3, 2))
                         .doOnSubscribe(new Consumer<Disposable>() {
                             @Override
-                            public void accept(@NonNull Disposable disposable) throws Exception {
+                            public void accept(@NonNull Disposable disposable) {
                                 basePresenter.addDispose(disposable);
 
                             }
@@ -95,7 +95,7 @@ public class RxUtils {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(new Action() {
                             @Override
-                            public void run() throws Exception {
+                            public void run() {
 
                             }
                         });

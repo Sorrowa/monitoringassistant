@@ -217,9 +217,9 @@ public class DropDownView extends RelativeLayout {
     }
 
     private void bindViews() {
-        dropDownContainer = (LinearLayout) findViewById(R.id.drop_down_container);
+        dropDownContainer = findViewById(R.id.drop_down_container);
         emptyDropDownSpace = findViewById(R.id.empty_drop_down_space);
-        dropDownHeaderContainer = (ViewGroup) findViewById(R.id.drop_down_header);
+        dropDownHeaderContainer = findViewById(R.id.drop_down_header);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

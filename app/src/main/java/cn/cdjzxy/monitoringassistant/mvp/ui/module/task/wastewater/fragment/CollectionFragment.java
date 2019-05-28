@@ -47,9 +47,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterCollectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.LabelPrintActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
@@ -169,6 +171,10 @@ public class CollectionFragment extends BaseFragment {
 
     @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank, R.id.btn_print_label, R.id.btn_add_new})
     public void onClick(View view) {
+        if (!WastewaterActivity.isNewCreate && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.btn_add_parallel://添加平行(需要选择普通样)
                 if (CheckUtil.isNull(selectSamplingDetail)) {
@@ -365,7 +371,7 @@ public class CollectionFragment extends BaseFragment {
      */
     private SealInfo buildSealInfo(Project project) {
 
-        StringBuilder points = new StringBuilder("");
+        StringBuilder points = new StringBuilder();
 
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {

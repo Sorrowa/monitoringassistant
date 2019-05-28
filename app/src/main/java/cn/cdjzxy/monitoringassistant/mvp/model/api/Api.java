@@ -76,6 +76,9 @@ public interface Api {
 
     String TEMPORARY_SERVER_IP = "TEMPORARY_SERVER_IP";//临时IP
     String LOGIN_RESP_WEBURL = "LOGIN_RESP_WEBURL";//登录返回的webUrl
+
+    //*******************轨迹******************
+    String GAO_DE_COORDINATES = "/api/Tarack/PostGaodeCoordinates";//批量上传坐标点位
 }
 
 

@@ -1,13 +1,19 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.base;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,14 +30,28 @@ import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import org.simple.eventbus.Subscriber;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.GpsBean;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
+import cn.cdjzxy.monitoringassistant.services.TraceService;
+import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+import retrofit2.Retrofit;
 
 /**
  * Activity 基类
@@ -41,12 +61,12 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompatActivity implements IActivity<P>, ITitleView {
     protected final String TAG = this.getClass().getSimpleName();
     private Cache mCache;
-    private   Unbinder              mUnbinder;
-    protected P                     mPresenter;
+    private Unbinder mUnbinder;
+    protected P mPresenter;
 
-    protected View          mContentView;
+    protected View mContentView;
     protected TitleDelegate mTitleDelegate;
-    protected TitleBarView  mTitleBar;
+    protected TitleBarView mTitleBar;
 
     private Dialog dialog;
     private TextView dialogTextView;
@@ -71,7 +91,7 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext=this;
+        mContext = this;
         try {
             int layoutResID = initView(savedInstanceState);
             //如果 initView 返回 0, 框架则不会调用 setContentView(), 当然也不会 Bind ButterKnife
@@ -187,8 +207,8 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
         }
 
         View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-        dialogTextView = (TextView) layout.findViewById(R.id.tv_content);
-        RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
+        dialogTextView = layout.findViewById(R.id.tv_content);
+        RelativeLayout rlDialog = layout.findViewById(R.id.rl_dialog);
         if (CheckUtil.isEmpty(str)) {
             dialogTextView.setVisibility(View.GONE);
         } else {
@@ -227,6 +247,59 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
     private void reLogin(boolean isReLogin) {
         UserInfoHelper.get().saveUserLoginStatee(false);
         ArtUtils.startActivity(LoginActivity.class);
+    }
+
+
+    /**
+     * 显示一个dialog
+     *
+     * @param title    提示标题
+     * @param msg      提示消息
+     * @param listener 确定事件回调
+     */
+    public void showDialog(String title, String msg, DialogInterface.OnClickListener listener) {
+        final Dialog dialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(msg)
+                .setCancelable(true)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {// 积极
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (listener != null) {
+                            listener.onClick(dialog, which);
+                        }
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
+    }
+
+    /**
+     * 显示用户没权限
+     *
+     * @param hint 权限提示
+     * @param name 名称
+     */
+    public void showNoPermissionDialog(String hint, String name) {
+        showDialog("提示", String.format("您需要：%s权限," + hint, name) + getString(R.string.Permission_hint_str), null);
+    }
+
+
+    /*********************************轨迹上传业务****************************************************************/
+
+    /**
+     * 开启轨迹服务
+     */
+    public void startTraceService() {
+        //开启轨迹服务
+        Intent intent = new Intent();
+        intent.setClass(this, TraceService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
     }
 
 }

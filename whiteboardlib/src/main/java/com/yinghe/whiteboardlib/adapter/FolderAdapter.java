@@ -161,11 +161,11 @@ public class FolderAdapter extends BaseAdapter {
         ImageView indicator;
 
         ViewHolder(View view) {
-            cover = (ImageView) view.findViewById(R.id.cover);
-            name = (TextView) view.findViewById(R.id.name);
-            path = (TextView) view.findViewById(R.id.path);
-            size = (TextView) view.findViewById(R.id.size);
-            indicator = (ImageView) view.findViewById(R.id.indicator);
+            cover = view.findViewById(R.id.cover);
+            name = view.findViewById(R.id.name);
+            path = view.findViewById(R.id.path);
+            size = view.findViewById(R.id.size);
+            indicator = view.findViewById(R.id.indicator);
             view.setTag(this);
         }
 

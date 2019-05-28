@@ -40,10 +40,10 @@ public class FileRepository implements IModel {
         return Observable.just(mApiService.getRepositoryHashCode(params))
                 .flatMap(new Function<Observable<ResponseBody>, ObservableSource<ResponseBody>>() {
                     @Override
-                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) throws Exception {
+                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) {
                         return responseBodyObservable.map(new Function<ResponseBody, ResponseBody>() {
                             @Override
-                            public ResponseBody apply(ResponseBody responseBody) throws Exception {
+                            public ResponseBody apply(ResponseBody responseBody) {
                                 return responseBody;
                             }
                         });
@@ -62,10 +62,10 @@ public class FileRepository implements IModel {
         return Observable.just(mApiService.getRepositoryGroups(params))
                 .flatMap(new Function<Observable<ResponseBody>, ObservableSource<ResponseBody>>() {
                     @Override
-                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) throws Exception {
+                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) {
                         return responseBodyObservable.map(new Function<ResponseBody, ResponseBody>() {
                             @Override
-                            public ResponseBody apply(ResponseBody responseBody) throws Exception {
+                            public ResponseBody apply(ResponseBody responseBody) {
                                 return responseBody;
                             }
                         });
@@ -84,10 +84,10 @@ public class FileRepository implements IModel {
         return Observable.just(mApiService.getRepositoryFolder(params))
                 .flatMap(new Function<Observable<ResponseBody>, ObservableSource<ResponseBody>>() {
                     @Override
-                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) throws Exception {
+                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) {
                         return responseBodyObservable.map(new Function<ResponseBody, ResponseBody>() {
                             @Override
-                            public ResponseBody apply(ResponseBody responseBody) throws Exception {
+                            public ResponseBody apply(ResponseBody responseBody) {
                                 return responseBody;
                             }
                         });
@@ -106,10 +106,10 @@ public class FileRepository implements IModel {
         return Observable.just(mApiService.getRepositoryFile(params))
                 .flatMap(new Function<Observable<ResponseBody>, ObservableSource<ResponseBody>>() {
                     @Override
-                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) throws Exception {
+                    public ObservableSource<ResponseBody> apply(Observable<ResponseBody> responseBodyObservable) {
                         return responseBodyObservable.map(new Function<ResponseBody, ResponseBody>() {
                             @Override
-                            public ResponseBody apply(ResponseBody responseBody) throws Exception {
+                            public ResponseBody apply(ResponseBody responseBody) {
                                 return responseBody;
                             }
                         });

@@ -39,14 +39,10 @@ public class DateUtils {
     }
 
     //判断结束时间大于起始时间
-    public static Boolean compareTime(String startTime, String endTime) throws ParseException {
+    public static Boolean compareTime(String startTime, String endTime) {
         long longstr1 = Long.valueOf(startTime.replaceAll("[-\\s:]", ""));
         long longstr2 = Long.valueOf(endTime.replaceAll("[-\\s:]", ""));
-        if (longstr1 - longstr2 < 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return longstr1 - longstr2 < 0;
     }
 
     //获取剩余时间
@@ -466,11 +462,11 @@ public class DateUtils {
      * @return 当前年月日
      */
     public static String getDate(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd").format(date).toString();
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
     public static String getYears(Date date) {
-        return new SimpleDateFormat("yyyy-MM").format(date).toString();
+        return new SimpleDateFormat("yyyy-MM").format(date);
     }
 
     /**
@@ -480,7 +476,7 @@ public class DateUtils {
      * @return
      */
     public static String getTimeShort(Date date) {
-        return new SimpleDateFormat("yyy-MM-dd HH:mm").format(date).toString();
+        return new SimpleDateFormat("yyy-MM-dd HH:mm").format(date);
     }
 
     /**
@@ -489,7 +485,7 @@ public class DateUtils {
      * @return 当前年月日
      */
     public static String getWholeDate() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()).toString();
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
     }
 
     /**
@@ -540,7 +536,7 @@ public class DateUtils {
     }
 
     public static String getWholeDateStr() {
-        return new SimpleDateFormat("yyyyMMddHHMMss").format(new Date()).toString();
+        return new SimpleDateFormat("yyyyMMddHHMMss").format(new Date());
     }
 
 }

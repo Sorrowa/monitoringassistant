@@ -118,7 +118,7 @@ public class StackUtil {
             if (!activity.isFinishing()) {
                 activity.finish();
             }
-            if (mActivityStack != null && mActivityStack.contains(activity)) {
+            if (mActivityStack != null) {
                 mActivityStack.remove(activity);
 
             }

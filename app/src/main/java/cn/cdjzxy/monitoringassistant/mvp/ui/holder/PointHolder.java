@@ -30,8 +30,10 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointItemAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.NavigationActivity;
@@ -78,6 +80,11 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
         } else {
             mTvEdit.setVisibility(View.VISIBLE);
         }
+        if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Modify_Num)) {
+            mTvEdit.setText("查看方案");
+        } else {
+            mTvEdit.setText("修改方案");
+        }
 
         mTvName.setText(data.getTagName());
         mTvTime.setText(data.getDays() + "天" + data.getPeriod() + "次");
@@ -121,7 +128,7 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
                 @Override
                 public void onItemClick(View view, int viewType, Object data, int position) {
                     EnvirPoint pointSelect = (EnvirPoint) data;
-                    if (listener!=null){
+                    if (listener != null) {
                         listener.onItemOnClick(pointSelect);
                     }
                 }

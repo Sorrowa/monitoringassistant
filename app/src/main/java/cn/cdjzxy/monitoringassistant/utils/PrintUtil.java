@@ -120,7 +120,7 @@ public class PrintUtil {
 
         //边框-监测项目
         sy = ey;
-        ey += (int) (normalHeight * 2);
+        ey += normalHeight * 2;
         tsc.addBox(minX, sy, maxX, ey, thickness);
 
         // 绘制-监测项目

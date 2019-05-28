@@ -49,6 +49,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationPrivateData;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -308,6 +309,10 @@ public class BasicFragment extends BaseFragment {
         mSamplingFileAdapter = new SamplingFileAdapter(mSamplingFiles, new SamplingFileAdapter.OnSamplingFileListener() {
             @Override
             public void onChoosePhoto() {
+                if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                    showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                    return;
+                }
                 if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
@@ -317,6 +322,10 @@ public class BasicFragment extends BaseFragment {
 
             @Override
             public void onDeletePhoto(int position) {
+                if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                    showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                    return;
+                }
                 if (mSampling == null && !isMySampling(mSampling.getSubmitId())) {
                     ArtUtils.makeText(getContext(), "编辑无权限,他人表单只能查看");
                     return;
@@ -378,6 +387,9 @@ public class BasicFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            return;
+        }
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             List<String> paths = Matisse.obtainPathResult(data);
             for (String path : paths) {
@@ -424,6 +436,11 @@ public class BasicFragment extends BaseFragment {
 
     @OnClick({R.id.layout_flow_information, R.id.tv_sampling_type, R.id.tv_flow_date, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
     public void onClick(View view) {
+        if (!PrecipitationActivity.isNewCreate &&
+                !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.tv_sampling_date:
                 showDateSelectDialog();

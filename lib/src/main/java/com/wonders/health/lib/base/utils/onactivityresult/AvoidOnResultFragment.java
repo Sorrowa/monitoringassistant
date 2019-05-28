@@ -34,7 +34,7 @@ public class AvoidOnResultFragment extends Fragment {
         final PublishSubject<ActivityResultInfo> subject = PublishSubject.create();
         return subject.doOnSubscribe(new Consumer<Disposable>() {
             @Override
-            public void accept(Disposable disposable) throws Exception {
+            public void accept(Disposable disposable) {
                 mSubjects.put(subject.hashCode(), subject);
                 startActivityForResult(intent, subject.hashCode());
             }

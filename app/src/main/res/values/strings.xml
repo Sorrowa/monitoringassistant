@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">嘉泽云小助手</string>
-
-
     <string name="back_str">返回</string>
     <string name="close_str">| 关闭</string>
 
     <string name="cancel_btn_text">取消</string>
     <string name="confirm_btn_text">确定</string>
-
+    <string name="Permission_hint_str">\n详情请登录PC端用户权限管理查看，或者请联系管理员为你配置相应的权限。\n如果您已经配置好了，请您重新登录。</string>
 </resources>

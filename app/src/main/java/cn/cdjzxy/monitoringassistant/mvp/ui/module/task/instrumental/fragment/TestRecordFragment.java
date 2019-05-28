@@ -23,6 +23,8 @@ import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
 
+import org.simple.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,8 +36,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.InstrumentalTestRecordAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterSamplingActivity;
@@ -144,6 +149,11 @@ public class TestRecordFragment extends BaseFragment {
 
     @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank})
     public void onClick(View view) {
+        if (!InstrumentalActivity.isNewCreate &&
+                !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.btn_add_parallel:
                 //添加选中样品的平行数据
@@ -268,7 +278,6 @@ public class TestRecordFragment extends BaseFragment {
 
         //复制数据
         SamplingDetail samplingDetail = new SamplingDetail();
-
         samplingDetail.setId("LC-" + UUID.randomUUID().toString());
         samplingDetail.setProjectId(currSelectDetails.getProjectId());
         samplingDetail.setMonitemId(currSelectDetails.getMonitemId());

@@ -13,6 +13,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.UploadFileResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Unit;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
@@ -175,8 +176,6 @@ public interface ApiService {
     Observable<BaseResponse> putVerifySampleStorage();
 
 
-
-
     //*******************采样******************
     @GET(Api.GET_TABLES)
     Observable<BaseResponse<List<Table>>> getTableList();
@@ -287,4 +286,14 @@ public interface ApiService {
     @Headers({"Content-Type: application/json"})
     @PUT(Api.PUT_READ_MSG)
     Observable<BaseResponse> putReadMsg(@Body List<String> messageIds);
+
+    /**
+     * 上传点位
+     *
+     * @param gpsList
+     * @return
+     */
+    @POST(Api.GAO_DE_COORDINATES)
+    Observable<BaseResponse> postGaoDeCoordinates(@Body List<Gps> gpsList);
+
 }

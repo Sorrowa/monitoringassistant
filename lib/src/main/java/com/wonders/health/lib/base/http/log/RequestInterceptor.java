@@ -138,10 +138,9 @@ public class RequestInterceptor implements Interceptor {
      * @param response
      * @param logResponse
      * @return
-     * @throws IOException
      */
     @Nullable
-    private String printResult(Request request, Response response, boolean logResponse) throws IOException {
+    private String printResult(Request request, Response response, boolean logResponse) {
         try {
             //读取服务器返回的结果
             ResponseBody responseBody = response.newBuilder().build().body();
@@ -193,9 +192,8 @@ public class RequestInterceptor implements Interceptor {
      *
      * @param request
      * @return
-     * @throws UnsupportedEncodingException
      */
-    public static String parseParams(Request request) throws UnsupportedEncodingException {
+    public static String parseParams(Request request) {
         try {
             RequestBody body = request.newBuilder().build().body();
             if (body == null) return "";

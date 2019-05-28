@@ -214,8 +214,8 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     public void showLoadingDialog(String str, boolean isCanCanceled) {
         if (!this.isFinishing()) {
             View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-            TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
-            RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
+            TextView tvContent = layout.findViewById(R.id.tv_content);
+            RelativeLayout rlDialog = layout.findViewById(R.id.rl_dialog);
             if (CheckUtil.isEmpty(str)) {
                 tvContent.setVisibility(View.GONE);
             } else {

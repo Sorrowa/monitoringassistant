@@ -29,7 +29,7 @@ public class StringUtil {
 
     public static String join(String seperator, List<String> dataList){
         if (!CheckUtil.isEmpty(dataList)){
-            StringBuilder stringBuilder = new StringBuilder("");
+            StringBuilder stringBuilder = new StringBuilder();
             for (String item:dataList){
                 stringBuilder.append(item+seperator);
             }

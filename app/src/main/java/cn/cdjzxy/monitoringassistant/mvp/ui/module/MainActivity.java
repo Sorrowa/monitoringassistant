@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import cn.cdjzxy.monitoringassistant.BroadcastReceiver.NetworkChangeReceiver;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
@@ -54,6 +55,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.repository.RepositoryFragment
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.scanCode.ScanCodeFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.PwdModifyFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
 import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
@@ -77,6 +79,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private BadgeView mBadgeView;
 
     private NumberProgressBar mNumberProgressBar;
+    private NumberProgressBar mNumberProgressBarSam;//采样单进度
+    private TextView mTvHintSam;//采样单提示
     private TextView mTvHint;
     private DialogPlus mDialogPlus;
 
@@ -98,6 +102,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private SettingFragment mSettingFragment;
     //private ManagementFragment mManagementFragment;
     private double progress = 0.0;
+    private double progressSam = 0.0;
+    private int proItem = 0;
     private boolean isEasy = false;//是否进入直播界面
 
 
@@ -131,7 +137,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         mFragmentManager = this.getSupportFragmentManager();
-
         initTabData();
         openFragment(0);
         mTitleBarView.setTitleMainText("嘉泽云监测");
@@ -142,7 +147,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             @Override
             public void showExitTip() {
                 showMessage("再按一次退出程序");
-
             }
 
             @Override
@@ -153,6 +157,18 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         }, 3000);
 
         updateDataFromNetwork();
+        startTraceServer();
+    }
+
+    /**
+     * 开启轨迹服务
+     */
+    private void startTraceServer() {
+//        Intent intent = new Intent(this, TrajectoryServer.class);
+//        startService(intent);
+        if (UserInfoHelper.get().getUserTraceOpen()) {
+            startTraceService();
+        }
     }
 
     @Override
@@ -179,7 +195,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            return onBack() ? false : mExitHelper.onKeyDown(keyCode, event);
+            return !onBack() && mExitHelper.onKeyDown(keyCode, event);
         }
         return mExitHelper.onKeyDown(keyCode, event);
     }
@@ -209,11 +225,11 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 }
                 break;
             case Message.RESULT_OK:
-                updateProgress((double) message.obj);
+                updateProgress((double) message.obj, message.str);
                 break;
             case TYPE_TASK:
-                updateProgress(ApiPresenter.PROGRESS);
-                mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);//获取所有采样单信息(支持批量)
+                updateProgressSam((double) message.obj, message.arg1);
+                //mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);//获取所有采样单信息(支持批量)
                 break;
         }
     }
@@ -223,11 +239,11 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      *
      * @param addValue
      */
-    private void updateProgress(double addValue) {
+    private void updateProgress(double addValue, String str) {
         if (!mDialogPlus.isShowing()) {
             return;
         }
-
+        mTvHint.setText(str);
         progress += addValue;
         if (progress > 100) {
             progress = 100;
@@ -238,6 +254,32 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         if (progress >= 100) {
             mDialogPlus.dismiss();
         }
+    }
+
+    /**
+     * 更新进度
+     *
+     * @param addValue
+     */
+    private void updateProgressSam(double addValue, int size) {
+        if (!mDialogPlus.isShowing()) {
+            return;
+        }
+
+        mTvHintSam.setVisibility(View.VISIBLE);
+        mNumberProgressBarSam.setVisibility(View.VISIBLE);
+        mTvHintSam.setText(String.format("正在同步采样单：%d/%d", proItem, size));
+        progressSam += addValue;
+        proItem++;
+        if (addValue > 100) {
+            progressSam = 100;
+            mTvHintSam.setText("采样单同步完成");
+        }
+        if (proItem == size) {
+            mDialogPlus.dismiss();
+        }
+        mNumberProgressBarSam.setProgress((int) progressSam);
+
     }
 
     /**
@@ -441,7 +483,9 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private void showDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_download, null);
         mNumberProgressBar = view.findViewById(R.id.progressbar);
+        mNumberProgressBarSam = view.findViewById(R.id.progressbar_1);
         mTvHint = view.findViewById(R.id.tv_hint);
+        mTvHintSam = view.findViewById(R.id.tv_hint_1);
         DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
         dialogPlusBuilder.setContentHolder(new ViewHolder(view));
         dialogPlusBuilder.setGravity(Gravity.CENTER);

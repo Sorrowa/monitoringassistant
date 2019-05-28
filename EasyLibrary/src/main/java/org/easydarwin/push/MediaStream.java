@@ -560,9 +560,7 @@ public class MediaStream extends Service implements LifecycleObserver {
             if (ActivityCompat.checkSelfPermission(getApplication(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
                     ActivityCompat.checkSelfPermission(getApplication(), android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                 // connect if not connected
-                if (mSurfaceHolderRef != null && mSurfaceHolderRef.get() != null) {
-                    return true;
-                }
+                return mSurfaceHolderRef != null && mSurfaceHolderRef.get() != null;
             }
         }
         return false;
@@ -730,13 +728,10 @@ public class MediaStream extends Service implements LifecycleObserver {
     // 根据Unicode编码完美的判断中文汉字和符号
     private static boolean isChinese(char c) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
-        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+        return ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
                 || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
                 || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
-                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
-            return true;
-        }
-        return false;
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION;
     }
 
     private int getTxtPixelLength(String txt, boolean zoomed) {
@@ -1029,11 +1024,7 @@ public class MediaStream extends Service implements LifecycleObserver {
         @Override
         public void run() {
             int cameraCount = 0;
-            if (isCameraBack) {
-                isCameraBack = false;
-            } else {
-                isCameraBack = true;
-            }
+            isCameraBack = !isCameraBack;
             try {
                 if (!enanleVideo) return;
                 if (mTargetCameraId != -1 && mCameraId == mTargetCameraId) {

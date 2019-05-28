@@ -44,6 +44,6 @@ public class PointAdapter extends DefaultAdapter<ProjectDetial> {
     }
 
     public interface ItemAdapterOnClickListener {
-        public void onItemOnClick(EnvirPoint point);
+        void onItemOnClick(EnvirPoint point);
     }
 }

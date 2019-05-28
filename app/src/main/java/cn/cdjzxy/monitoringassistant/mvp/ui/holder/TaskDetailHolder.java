@@ -75,7 +75,7 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
                 .throttleFirst(3, TimeUnit.SECONDS)//在一秒内只取第一次点击
                 .subscribe(new Consumer<Unit>() {
                     @Override
-                    public void accept(Unit unit) throws Exception {
+                    public void accept(Unit unit) {
                         onSamplingListener.onUpload(mIvUpload, position);
                     }
                 });

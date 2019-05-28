@@ -46,9 +46,11 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -106,11 +108,13 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
         mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-        if (mProject.getCanSamplingEidt()) {
+        if (mProject.getCanSamplingEidt() &&
+                UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Add_Num)) {
             linearAdd.setVisibility(View.VISIBLE);
         } else {
             linearAdd.setVisibility(View.GONE);
         }
+
         getData();
         initPointData();
 
@@ -155,11 +159,15 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.linear_add:
-                Intent intent = new Intent();
-                intent.setClass(PointActivity.this, ProgramModifyActivity.class);
-                intent.putExtra("projectId", projectId);
-                intent.putExtra("isAdd", true);
-                ArtUtils.startActivity(intent);
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Add_Num)) {
+                    Intent intent = new Intent();
+                    intent.setClass(PointActivity.this, ProgramModifyActivity.class);
+                    intent.putExtra("projectId", projectId);
+                    intent.putExtra("isAdd", true);
+                    ArtUtils.startActivity(intent);
+                } else {
+                    showNoPermissionDialog("才能进行采样方案添加。",  UserInfoAppRight.APP_Permission_Plan_See_Name);
+                }
                 break;
         }
     }

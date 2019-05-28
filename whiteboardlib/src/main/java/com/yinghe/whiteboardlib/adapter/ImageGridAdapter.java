@@ -211,8 +211,8 @@ public class ImageGridAdapter extends BaseAdapter {
         View mask;
 
         ViewHolder(View view) {
-            image = (ImageView) view.findViewById(R.id.image);
-            indicator = (ImageView) view.findViewById(R.id.checkmark);
+            image = view.findViewById(R.id.image);
+            indicator = view.findViewById(R.id.checkmark);
             mask = view.findViewById(R.id.mask);
             view.setTag(this);
         }

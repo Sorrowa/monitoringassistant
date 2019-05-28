@@ -42,8 +42,10 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SealInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PrecipitationCollectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity;
@@ -161,9 +163,12 @@ public class CollectionFragment extends BaseFragment {
         hideSoftInput();
         switch (view.getId()) {
             case R.id.btn_add_parallel:
-
                 break;
             case R.id.btn_add_blank:
+                if (!isCanEdit()) {
+                    showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                    return;
+                }
                 if (CheckUtil.isEmpty(mSampling.getSamplingTimeBegin())) {
                     ArtUtils.makeText(getContext(), "请先选择采样日期");
                     return;
@@ -267,7 +272,7 @@ public class CollectionFragment extends BaseFragment {
      */
     private SealInfo buildSealInfo(Project project) {
 
-        StringBuilder points = new StringBuilder("");
+        StringBuilder points = new StringBuilder();
 
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(project.getId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
@@ -289,5 +294,14 @@ public class CollectionFragment extends BaseFragment {
         result.setTime(DateUtils.getTime(new Date().getTime()));
 
         return result;
+    }
+
+    /**
+     * 判断是否有编辑权限
+     *
+     * @return
+     */
+    private boolean isCanEdit() {
+        return !PrecipitationActivity.isNewCreate && UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num);
     }
 }

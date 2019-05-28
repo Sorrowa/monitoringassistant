@@ -91,7 +91,7 @@ public class CustomTab extends LinearLayout {
         for (int i = 0; i < count; i++) {
             Tab tab = new Tab();
             tab.setTabName(tabs[i]);
-            tab.setSelected(i == 0 ? true : false);
+            tab.setSelected(i == 0);
             mTabs.add(tab);
         }
 

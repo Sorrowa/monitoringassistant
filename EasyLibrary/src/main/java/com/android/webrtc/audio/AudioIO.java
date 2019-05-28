@@ -279,7 +279,7 @@ public class AudioIO {
 
     }
 
-    public void pumpAudio(short[] pcm, int offset, int length) throws InterruptedException, IOException {
+    public void pumpAudio(short[] pcm, int offset, int length) throws IOException {
         ByteBuffer bb = ByteBuffer.allocate(length * 2).order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer sb = bb.asShortBuffer();
         sb.put(pcm, offset, length);

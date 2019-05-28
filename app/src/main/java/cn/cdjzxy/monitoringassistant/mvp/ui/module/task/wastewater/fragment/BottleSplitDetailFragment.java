@@ -36,11 +36,14 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.PlaceActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.BottleMonItemActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
@@ -160,6 +163,14 @@ public class BottleSplitDetailFragment extends BaseFragment {
 
     @OnClick({R.id.btn_back, R.id.sample_place, R.id.sample_project, R.id.btn_save, R.id.btn_delete})
     public void onClick(View view) {
+        if (view.getId() == R.id.btn_back) {
+            EventBus.getDefault().post(2, EventBusTags.TAG_WASTEWATER_BOTTLE);
+            return;
+        }
+        if (!WastewaterActivity.isNewCreate && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.btn_back:
                 EventBus.getDefault().post(2, EventBusTags.TAG_WASTEWATER_BOTTLE);
@@ -215,7 +226,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
                         mSample.getSamplingFormStandResults().remove(bottleListPosition);
 
                         mSample.setIsFinish(SamplingUtil.isSamplingFinsh(mSample));
-                        mSample.setStatusName( mSample.getIsFinish() ? "已完成" : "进行中");
+                        mSample.setStatusName(mSample.getIsFinish() ? "已完成" : "进行中");
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
                         if (CheckUtil.isNull(sampling)) {
                             DBHelper.get().getSamplingDao().insert(mSample);

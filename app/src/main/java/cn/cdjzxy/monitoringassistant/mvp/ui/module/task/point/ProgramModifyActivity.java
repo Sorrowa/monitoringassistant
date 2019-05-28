@@ -37,11 +37,14 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TagAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -149,6 +152,10 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
     @OnClick({R.id.tv_tag, R.id.tv_point, R.id.tv_monitem, R.id.btn_add_parallel, R.id.btn_add_blank})
     public void onClick(View view) {
+        if (!isAdd && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Modify_Num)) {
+            showNoPermissionDialog("才能进行采样方案编辑。", UserInfoAppRight.APP_Permission_Plan_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.tv_tag:
                 showTagDialog();
@@ -161,7 +168,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 }
                 Intent intent = new Intent(this, ProgramPointSelectActivity.class);
                 if (mProject.getTypeCode() != 3) {//污染源
-                    intent.putExtra("isRcv",true);
+                    intent.putExtra("isRcv", true);
                     intent.putExtra("rcvId", mProject.getRcvId());
                 }
                 intent.putExtra("tagId", mProjectDetial.getTagId());
@@ -202,6 +209,10 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 break;
             case R.id.btn_add_parallel:
                 //根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
+                if (isAdd) {
+                    finish();
+                    return;
+                }
                 deleteProgramPoitRowData();
                 mProject.setIsSamplingEidt(true);
                 DBHelper.get().getProjectDao().update(mProject);

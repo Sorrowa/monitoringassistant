@@ -135,9 +135,7 @@ public class NoisePointListFragment extends BaseFragment implements IView {
             if (list.get(position).isIsChecked()) {
                 list.get(position).setIsChecked(false);
                 if (selectList != null && selectList.size() > 0) {
-                    if (selectList.contains(list.get(position).getGuid())) {
-                        selectList.remove(list.get(position).getGuid());
-                    }
+                    selectList.remove(list.get(position).getGuid());
                 }
             } else {
                 list.get(position).setIsChecked(true);

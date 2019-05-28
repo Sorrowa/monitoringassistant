@@ -247,10 +247,10 @@ public class BottleMonItemActivity extends BaseTitileActivity<ApiPresenter> impl
 
 
     private void getMonItemsData() {
-        selectMonItemNameBuilder = new StringBuilder("");
-        selectMonItemIdBuilder = new StringBuilder("");
-        monItemNameBuilder = new StringBuilder("");
-        monItemIdBuilder = new StringBuilder("");
+        selectMonItemNameBuilder = new StringBuilder();
+        selectMonItemIdBuilder = new StringBuilder();
+        monItemNameBuilder = new StringBuilder();
+        monItemIdBuilder = new StringBuilder();
         if (CheckUtil.isEmpty(mMonItemsSelected)) {
             return;
         }

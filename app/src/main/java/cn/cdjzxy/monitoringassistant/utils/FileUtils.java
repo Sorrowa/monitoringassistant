@@ -48,7 +48,7 @@ public class FileUtils {
             return false;
         }
         File folder = new File(dirPath);
-        return (folder.exists() && folder.isDirectory()) ? true : folder.mkdirs();
+        return (folder.exists() && folder.isDirectory()) || folder.mkdirs();
     }
 
 
@@ -112,9 +112,7 @@ public class FileUtils {
      */
     public static File saveInOI(Bitmap bitmap, String filePath, String imgName, int compress) {
 //        Log.e(TAG, "saveInOI: " + String.format(" filePath:%d, imgName:%s ", filePath, imgName));
-        if (!imgName.contains(".png")) {
-            imgName += ".png";
-        }
+
         Log.e(TAG, "saveInOI: " + System.currentTimeMillis());
 
         Log.e(TAG, "saveInOI: " + System.currentTimeMillis());

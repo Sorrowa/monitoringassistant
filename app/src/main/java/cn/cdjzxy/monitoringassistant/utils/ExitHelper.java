@@ -10,7 +10,7 @@ public class ExitHelper {
     /**
      * 退出操作接口
      */
-    public static interface IExitInterface {
+    public interface IExitInterface {
         /**
          * 显示退出提示
          */

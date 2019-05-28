@@ -135,17 +135,11 @@ public class DateUtil {
         int diffMonth = (endYear - startYear) * 12 + (endMonth - startMonth);
 
         if ("month".equals(unit)) {
-            if ((diffMonth % interval) == 0 && ((startDay == endDay) || (startDay > endDay && endDay == lastDay))) {
-                return true;
-            }
+            return (diffMonth % interval) == 0 && ((startDay == endDay) || (startDay > endDay && endDay == lastDay));
         } else if ("quarter".equals(unit)) {
-            if ((diffMonth % (interval * 3)) == 0 && ((startDay == endDay) || (startDay > endDay && endDay == lastDay))) {
-                return true;
-            }
+            return (diffMonth % (interval * 3)) == 0 && ((startDay == endDay) || (startDay > endDay && endDay == lastDay));
         } else if ("year".equals(unit)) {
-            if ((diffMonth % (interval * 12)) == 0 && ((startDay == endDay) || (startDay > endDay && endDay == lastDay))) {
-                return true;
-            }
+            return (diffMonth % (interval * 12)) == 0 && ((startDay == endDay) || (startDay > endDay && endDay == lastDay));
         } else if ("week".equals(unit)) {
             endCalendar.clear();
             endCalendar.set(endYear, endMonth - 1, endDay);
@@ -153,9 +147,7 @@ public class DateUtil {
             startCalendar.set(startYear, startMonth - 1, startDay);
 
             long diffDay = (endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (1000 * 60 * 60 * 24);
-            if ((diffDay % (interval * 7)) == 0) {
-                return true;
-            }
+            return (diffDay % (interval * 7)) == 0;
         }
 
         return false;

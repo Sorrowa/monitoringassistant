@@ -30,9 +30,9 @@ public class EasyPusher implements Pusher {
     private int mTotalFrms;
 
     public interface OnInitPusherCallback {
-        public void onCallback(int code);
+        void onCallback(int code);
 
-        static class CODE {
+        class CODE {
             public static final int EASY_ACTIVATE_INVALID_KEY = -1;       //无效Key
             public static final int EASY_ACTIVATE_TIME_ERR = -2;       //时间错误
             public static final int EASY_ACTIVATE_PROCESS_NAME_LEN_ERR = -3;       //进程名称长度不匹配

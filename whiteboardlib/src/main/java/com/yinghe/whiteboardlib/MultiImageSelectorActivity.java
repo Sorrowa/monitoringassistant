@@ -233,9 +233,7 @@ public class MultiImageSelectorActivity extends AppCompatActivity
 
     @Override
     public void onImageUnselected(String path) {
-        if (resultList.contains(path)) {
-            resultList.remove(path);
-        }
+        resultList.remove(path);
         updateDoneText(resultList);
     }
 

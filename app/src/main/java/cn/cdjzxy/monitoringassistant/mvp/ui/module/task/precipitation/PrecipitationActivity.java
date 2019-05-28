@@ -26,9 +26,11 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -54,7 +56,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     private String projectId;
     private String formSelectId;
     private String samplingId;
-    private boolean isNewCreate;
+    public static boolean isNewCreate;
 
     private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
@@ -128,6 +130,12 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
             mTitleBarView.addRightAction(mTitleBarView.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!isNewCreate && !UserInfoHelper.get()
+                            .isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                        showNoPermissionDialog("才能进行表单编辑。",
+                                UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                        return;
+                    }
                     if (!CheckUtil.isEmpty(mSampling.getSamplingFiless())) {
                         List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(PrecipitationActivity.mSampling.getId())).list();
                         if (!CheckUtil.isEmpty(samplingFiles)) {

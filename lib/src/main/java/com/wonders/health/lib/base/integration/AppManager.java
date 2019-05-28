@@ -95,7 +95,7 @@ public final class AppManager {
             case SHOW_SNACKBAR:
                 if (message.obj == null)
                     break;
-                showSnackbar((String) message.obj, message.arg1 == 0 ? false : true);
+                showSnackbar((String) message.obj, message.arg1 != 0);
                 break;
             case KILL_ALL:
                 killAll();
@@ -222,7 +222,7 @@ public final class AppManager {
      * @return
      */
     public Activity getCurrentActivity() {
-        return mCurrentActivity != null ? mCurrentActivity : null;
+        return mCurrentActivity;
     }
 
     /**
@@ -280,9 +280,7 @@ public final class AppManager {
             return;
         }
         synchronized (AppManager.class) {
-            if (mActivityList.contains(activity)) {
-                mActivityList.remove(activity);
-            }
+            mActivityList.remove(activity);
         }
     }
 

@@ -144,9 +144,7 @@ public class NoiseMonitorListFragment extends BaseFragment implements IView {
             if (mPrivateDataList.get(position).isChecked()) {
                 mPrivateDataList.get(position).setChecked(false);
                 if (selectList != null && selectList.size() > 0) {
-                    if (selectList.contains(mPrivateDataList.get(position).getId())) {
-                        selectList.remove(mPrivateDataList.get(position).getId());
-                    }
+                    selectList.remove(mPrivateDataList.get(position).getId());
                 }
             } else {
                 mPrivateDataList.get(position).setChecked(true);

@@ -43,6 +43,7 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
@@ -150,7 +151,7 @@ public class CollectionDetailFragment extends BaseFragment {
             int snFrequency = 1;
             if (samplingDetailResults != null
                     && samplingDetailResults.size() > 0) {
-                snFrequency = samplingDetailResults.size()+1;
+                snFrequency = samplingDetailResults.size() + 1;
             }
             if (CheckUtil.isEmpty(mSampling.getSamplingNo())) {
                 mSampling.setSamplingNo(SamplingUtil.createSamplingNo(mSampling.getSamplingTimeBegin()));
@@ -209,6 +210,10 @@ public class CollectionDetailFragment extends BaseFragment {
 
     @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.btn_delete, R.id.btn_save})
     public void onViewClicked(View view) {
+        if (!isCanEdit()) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.tv_start_time:
                 isStartTime = true;
@@ -334,7 +339,7 @@ public class CollectionDetailFragment extends BaseFragment {
                         }
                         tvEndTime.setText(selectTime);
                     }
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -409,10 +414,16 @@ public class CollectionDetailFragment extends BaseFragment {
         if (CheckUtil.isEmpty(mSampling.getMethodName())) {
             return false;
         }
-        if (CheckUtil.isEmpty(mSampling.getDeviceName())) {
-            return false;
-        }
-        return true;
+        return !CheckUtil.isEmpty(mSampling.getDeviceName());
+    }
 
+
+    /**
+     * 判断是否有编辑权限
+     *
+     * @return
+     */
+    private boolean isCanEdit() {
+        return !PrecipitationActivity.isNewCreate && UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num);
     }
 }

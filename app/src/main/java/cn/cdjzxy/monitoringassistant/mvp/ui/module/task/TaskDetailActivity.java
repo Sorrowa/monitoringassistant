@@ -62,6 +62,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
@@ -199,8 +200,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public void setTitleBar(TitleBarView titleBar) {
         mTitleBarView = titleBar;
         mTitleBarView.setTitleMainText("采样任务");
-        mTitleBarView.setRightText("采样完结");
-        mTitleBarView.setOnRightTextClickListener(v -> showFinishDialog());
+        //2019年5月17日 项目经理：敬蓉说采样完结 没有这个功能了
+//        mTitleBarView.setRightText("采样完结");
+//        mTitleBarView.setOnRightTextClickListener(v -> showFinishDialog());
     }
 
     @Nullable
@@ -388,7 +390,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 tvTaskTimeRange.setText(data.getPlanBeginTime().split(" ")[0].replace("-", "/") + "~" + data.getPlanEndTime().split(" ")[0].replace("-", "/"));
             }
 
-            StringBuilder users = new StringBuilder("");
+            StringBuilder users = new StringBuilder();
             List<String> userIds = data.getSamplingUser();
             if (!CheckUtil.isEmpty(userIds)) {
                 List<User> userList = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(userIds)).list();
@@ -399,8 +401,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
             }
 
-            StringBuilder monItems = new StringBuilder("");
-            StringBuilder points = new StringBuilder("");
+            StringBuilder monItems = new StringBuilder();
+            StringBuilder points = new StringBuilder();
 
             List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
             if (!CheckUtil.isEmpty(projectDetials)) {
@@ -588,6 +590,10 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
             @Override
             public void onUpload(View view, int position) {
+                if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Upload_Num)) {
+                    showNoPermissionDialog("才能进行表单上传。",  UserInfoAppRight.APP_Permission_Sampling_Upload_Name);
+                    return;
+                }
                 isBatchUpload = false;
                 isSubmit = false;
                 if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
@@ -626,14 +632,26 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_sampling_point:
-                Intent intent = new Intent(this, PointActivity.class);
-                intent.putExtra("projectId", mProject.getId());
-                startActivity(intent);
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_See_Num)) {
+                    Intent intent = new Intent(this, PointActivity.class);
+                    intent.putExtra("projectId", mProject.getId());
+                    startActivity(intent);
+                } else {
+                    showNoPermissionDialog("才能进行采样方案查看。",  UserInfoAppRight.APP_Permission_Plan_See_Name);
+                }
                 break;
             case R.id.btn_add_sampling:
-                showAddDialog();
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Add_Num)) {
+                    showAddDialog();
+                } else {
+                    showNoPermissionDialog("才能进行表单新增。",  UserInfoAppRight.APP_Permission_Sampling_Add_Name);
+                }
                 break;
             case R.id.btn_submit:
+                if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Submit_Num)) {
+                    showNoPermissionDialog("才能进行表单提交。",  UserInfoAppRight.APP_Permission_Sampling_Submit_Name);
+                    return;
+                }
                 if (!hasSelectSample()) {
                     showMessage("请勾选已完成并未提交的采样单！");
                     return;
@@ -641,7 +659,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 isSubmit = true;
                 batchUploadSampling();
                 break;
-
             case R.id.cb_all:
                 if (!isSelecteAll) {
                     cbAll.setImageResource(R.mipmap.ic_cb_checked);

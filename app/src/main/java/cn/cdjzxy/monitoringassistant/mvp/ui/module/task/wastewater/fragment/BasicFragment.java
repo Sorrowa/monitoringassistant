@@ -47,6 +47,8 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FsExtends;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SamplingFileAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.preview.PreviewActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.Glide4Engine;
@@ -266,11 +268,19 @@ public class BasicFragment extends BaseFragment {
         sampleFileAdapter = new SamplingFileAdapter(sampleFiles, new SamplingFileAdapter.OnSamplingFileListener() {
             @Override
             public void onChoosePhoto() {
+                if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                    showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                    return;
+                }
                 choosePhoto(REQUEST_CODE);
             }
 
             @Override
             public void onDeletePhoto(int position) {
+                if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                    showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                    return;
+                }
                 SamplingFile samplingFile = sampleFiles.remove(position);
                 //记录删除的文件，提交给服务端
                 if (samplingFile != null) {
@@ -324,6 +334,9 @@ public class BasicFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            return;
+        }
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {//添加图片
             List<String> paths = Matisse.obtainPathResult(data);
             ArtUtils.makeText(getContext(), paths.toString());
@@ -376,6 +389,10 @@ public class BasicFragment extends BaseFragment {
             R.id.base_sample_point, R.id.base_sample_method, R.id.weather_info_layout,
             R.id.more_info_layout, R.id.layout_flow_information, R.id.weather_state, R.id.tv_flow_date, R.id.tv_receive_date, R.id.more_build_date})
     public void onClick(View view) {
+        if (!WastewaterActivity.isNewCreate && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+            showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+            return;
+        }
         switch (view.getId()) {
             case R.id.iv_add_photo:
                 choosePhoto(REQUEST_CODE);

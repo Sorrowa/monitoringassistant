@@ -96,8 +96,8 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     public void showLoadingDialog(String str, boolean isCanCanceled) {
 
         View layout = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-        TextView tvContent = (TextView) layout.findViewById(R.id.tv_content);
-        RelativeLayout rlDialog = (RelativeLayout) layout.findViewById(R.id.rl_dialog);
+        TextView tvContent = layout.findViewById(R.id.tv_content);
+        RelativeLayout rlDialog = layout.findViewById(R.id.rl_dialog);
         if (CheckUtil.isEmpty(str)) {
             tvContent.setVisibility(View.GONE);
         } else {
@@ -136,7 +136,8 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     public void hideSoftInput() {
         View view = getActivity().getCurrentFocus();
         if (view == null) view = new View(getActivity());
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().
+                getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

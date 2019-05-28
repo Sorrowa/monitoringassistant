@@ -49,7 +49,7 @@ public class EasyPusherActivity extends BaseTitileActivity {
         if (mediaStream == null) {
             return single.doOnSuccess(new Consumer<MediaStream>() {
                 @Override
-                public void accept(MediaStream ms) throws Exception {
+                public void accept(MediaStream ms) {
                     mediaStream = ms;
                 }
             });
@@ -65,7 +65,7 @@ public class EasyPusherActivity extends BaseTitileActivity {
 
         getMediaStream().subscribe(new Consumer<MediaStream>() {
             @Override
-            public void accept(final MediaStream ms) throws Exception {
+            public void accept(final MediaStream ms) {
                 ms.observePushingState(EasyPusherActivity.this, new Observer<MediaStream.PushingState>() {
 
                     @Override
@@ -124,7 +124,7 @@ public class EasyPusherActivity extends BaseTitileActivity {
             }
         }, new Consumer<Throwable>() {
             @Override
-            public void accept(Throwable throwable) throws Exception {
+            public void accept(Throwable throwable) {
                 Toast.makeText(EasyPusherActivity.this, "创建服务出错!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -135,7 +135,7 @@ public class EasyPusherActivity extends BaseTitileActivity {
     public void onSwitchCamera(View view) {
         getMediaStream().subscribe(new Consumer<MediaStream>() {
             @Override
-            public void accept(MediaStream mediaStream) throws Exception {
+            public void accept(MediaStream mediaStream) {
                 mediaStream.switchCamera();
             }
         });
@@ -144,7 +144,7 @@ public class EasyPusherActivity extends BaseTitileActivity {
     public void onPushing(View view) {
         getMediaStream().subscribe(new Consumer<MediaStream>() {
             @Override
-            public void accept(MediaStream mediaStream) throws Exception {
+            public void accept(MediaStream mediaStream) {
                 MediaStream.PushingState state = mediaStream.getPushingState();
                 if (state != null && state.state > 0) { // 终止推送和预览
                     mediaStream.stopStream();
@@ -173,7 +173,7 @@ public class EasyPusherActivity extends BaseTitileActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     getMediaStream().subscribe(new Consumer<MediaStream>() {
                         @Override
-                        public void accept(MediaStream mediaStream) throws Exception {
+                        public void accept(MediaStream mediaStream) {
                             mediaStream.notifyPermissionGranted();
                         }
                     });

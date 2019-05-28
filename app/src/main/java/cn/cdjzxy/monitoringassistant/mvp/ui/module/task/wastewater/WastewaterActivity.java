@@ -31,6 +31,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
@@ -38,6 +39,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.autograph.fragment.AutographFragment;
@@ -66,7 +68,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     private String projectId;//项目id
     private String formSelectId;//采样要素id（TagId）
     private String samplingId;//采样单id
-    private boolean isNewCreate;//是否是新增采样单
+    public static boolean isNewCreate;//是否是新增采样单
     public static Sampling mSample;
     public static Project mProject;
 
@@ -103,6 +105,10 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
                 , new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isNewCreate && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                    showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                    return;
+                }
                 if (mSample.getIsCanEdit()) {
                     if (!checkBaseInfo()) {
                         return;
@@ -210,7 +216,25 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化Tab数据
      */
     private void initTabData() {
-        tabview.setTabs("基本信息", "样品采集", "分瓶信息");
+        List<Tab> tabs = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Tab tab = new Tab();
+            if (i == 0) {
+                tab.setTabName("基本信息");
+                tab.setSelected(true);
+                tab.setResId(R.mipmap.icon_basic);
+            } else if (i == 1) {
+                tab.setTabName("样品采集");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_source);
+            } else if (i == 2) {
+                tab.setTabName("分瓶信息");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_point);
+            }
+            tabs.add(tab);
+        }
+        tabview.setTabs(tabs);
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {

@@ -106,9 +106,7 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
                     public void selectLister(int p, View v) {
                         if (sampleFiles.get(p).getIsSelect()) {
                             sampleFiles.get(p).setIsSelect(false);
-                            if (selectList.contains(sampleFiles.get(p).getLocalId())) {
-                                selectList.remove(sampleFiles.get(p).getLocalId());
-                            }
+                            selectList.remove(sampleFiles.get(p).getLocalId());
                         } else {
                             sampleFiles.get(p).setIsSelect(true);
                             if (!selectList.contains(sampleFiles.get(p).getLocalId())) {

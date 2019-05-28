@@ -913,6 +913,6 @@ public class SketchView extends View implements OnTouchListener {
 
     public interface OnDrawChangedListener {
 
-        public void onDrawChanged();
+        void onDrawChanged();
     }
 }

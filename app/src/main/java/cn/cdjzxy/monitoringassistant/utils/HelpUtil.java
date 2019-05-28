@@ -221,7 +221,7 @@ public class HelpUtil {
      * @return
      */
     public static String joinStringList(List<String> strList) {
-        StringBuilder builderItems = new StringBuilder("");
+        StringBuilder builderItems = new StringBuilder();
         if (!CheckUtil.isEmpty(strList)) {
             for (String itemStr : strList) {
                 builderItems.append(itemStr + ",");
@@ -242,10 +242,7 @@ public class HelpUtil {
     public static boolean isSamplingHasBottle(String samplingId) {
         List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().
                 where(SamplingFormStandDao.Properties.SamplingId.eq(samplingId)).list();
-        if (!CheckUtil.isEmpty(formStantdsList)) {
-            return true;
-        }
-        return false;
+        return !CheckUtil.isEmpty(formStantdsList);
     }
 
     /**

@@ -94,7 +94,7 @@ public class DeviceActivity extends BaseTitileActivity<ApiPresenter> {
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                getDeviceData(position == 0 ? true : false);
+                getDeviceData(position == 0);
             }
         });
     }

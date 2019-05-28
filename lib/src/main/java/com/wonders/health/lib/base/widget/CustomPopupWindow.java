@@ -169,7 +169,7 @@ public class CustomPopupWindow extends PopupWindow {
     }
 
     public interface CustomPopupWindowListener {
-        public void initPopupView(View contentView);
+        void initPopupView(View contentView);
     }
 
 }

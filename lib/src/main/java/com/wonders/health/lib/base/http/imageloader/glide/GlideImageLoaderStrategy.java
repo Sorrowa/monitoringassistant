@@ -135,7 +135,7 @@ public class GlideImageLoaderStrategy implements BaseImageLoaderStrategy<ImageCo
         if (config.isClearDiskCache()) {//清除本地缓存
             Completable.fromAction(new Action() {
                 @Override
-                public void run() throws Exception {
+                public void run() {
                     Glide.get(ctx).clearDiskCache();
                 }
             }).subscribeOn(Schedulers.io()).subscribe();
@@ -144,7 +144,7 @@ public class GlideImageLoaderStrategy implements BaseImageLoaderStrategy<ImageCo
         if (config.isClearMemory()) {//清除内存缓存
             Completable.fromAction(new Action() {
                 @Override
-                public void run() throws Exception {
+                public void run() {
                     Glide.get(ctx).clearMemory();
                 }
             }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();

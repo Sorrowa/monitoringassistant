@@ -280,9 +280,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     private void saveHistory(String keyword) {
-        if (mHistorys.contains(keyword)) {
-            mHistorys.remove(keyword);
-        }
+        mHistorys.remove(keyword);
 
         mHistorys.add(0, keyword);
 

@@ -16,5 +16,5 @@
     <string name="status_layout_manager_empty">还没有内容</string>
     <string name="status_layout_manager_error">似乎出了点问题</string>
     <string name="status_layout_manager_retry">重新加载</string>
-
+    <string name="Permission_hint_str">\n详情请登录PC端用户权限管理查看，或者请联系管理员为您配置相应的权限。\n如果您已经配置好了，请您重新登录。</string>
 </resources>

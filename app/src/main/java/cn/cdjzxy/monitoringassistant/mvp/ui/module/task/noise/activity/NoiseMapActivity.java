@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -64,6 +65,17 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
     private String FILE_PATH, FILE_NAME;
     private boolean isFirstLoc = true; // 是否首次定位
 
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case Message.RESULT_FAILURE:
+                    hideLoading();
+                    showMessage("地图截屏无响应,请重新尝试");
+                    break;
+            }
+        }
+    };
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -169,8 +181,8 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
                 break;
             case R.id.linear_save:
                 showLoadingDialog("请稍等");
-
                 snapshot();
+                handler.sendEmptyMessageAtTime(Message.RESULT_FAILURE, 3000);
                 break;
         }
     }
@@ -199,7 +211,8 @@ public class NoiseMapActivity extends BaseTitileActivity<ApiPresenter> implement
     public void snapshot() {
         mapView.getMap().snapshot(new BaiduMap.SnapshotReadyCallback() {
             public void onSnapshotReady(Bitmap snapshot) {
-                new SaveToFileTask().equals(snapshot);
+                new SaveToFileTask().execute(snapshot);
+                handler.removeMessages(Message.RESULT_FAILURE);
 //                File file = new File(FILE_PATH + FILE_NAME);
 //                FileOutputStream out;
 //                try {

@@ -232,9 +232,7 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
      * @param keyword
      */
     private void saveHistory(String keyword) {
-        if (mHistoryList.contains(keyword)) {
-            mHistoryList.remove(keyword);
-        }
+        mHistoryList.remove(keyword);
 
         mHistoryList.add(0, keyword);
 

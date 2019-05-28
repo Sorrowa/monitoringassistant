@@ -71,7 +71,7 @@ public class WanderTaskHolder extends BaseHolder<ProjectSampleStorage.DataBean> 
             mTvTaskTimeRange.setText("采样未完结");
         }
 
-        StringBuilder users = new StringBuilder("");
+        StringBuilder users = new StringBuilder();
         List<String> userIds = data.getSamplingUser();
         if (!CheckUtil.isEmpty(userIds)) {
             List<User> userList = DBHelper.get().getUserDao().queryBuilder().where(UserDao.Properties.Id.in(userIds)).list();
@@ -82,8 +82,8 @@ public class WanderTaskHolder extends BaseHolder<ProjectSampleStorage.DataBean> 
             }
         }
 
-        StringBuilder monItems = new StringBuilder("");
-        StringBuilder points = new StringBuilder("");
+        StringBuilder monItems = new StringBuilder();
+        StringBuilder points = new StringBuilder();
 
         List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {

@@ -88,7 +88,7 @@ public class CodecManager {
 							}
 						}
 						
-						Codec codec = new Codec(codecInfo.getName(), (Integer[]) formats.toArray(new Integer[formats.size()]));
+						Codec codec = new Codec(codecInfo.getName(), formats.toArray(new Integer[formats.size()]));
 						encoders.add(codec);
 					} catch (Exception e) {
 						Log.wtf(TAG,e);
@@ -97,7 +97,7 @@ public class CodecManager {
 			}
 		}
 
-		sEncoders = (Codec[]) encoders.toArray(new Codec[encoders.size()]);
+		sEncoders = encoders.toArray(new Codec[encoders.size()]);
 		if (sEncoders.length == 0) {
 			sEncoders = new Codec[]{new Codec(null, new Integer[]{0})};
 		}
@@ -138,7 +138,7 @@ public class CodecManager {
 							}
 						}
 
-						Codec codec = new Codec(codecInfo.getName(), (Integer[]) formats.toArray(new Integer[formats.size()]));
+						Codec codec = new Codec(codecInfo.getName(), formats.toArray(new Integer[formats.size()]));
 						decoders.add(codec);
 					} catch (Exception e) {
 						Log.wtf(TAG,e);
@@ -147,7 +147,7 @@ public class CodecManager {
 			}
 		}
 
-		sDecoders = (Codec[]) decoders.toArray(new Codec[decoders.size()]);
+		sDecoders = decoders.toArray(new Codec[decoders.size()]);
 
 		// We will use the decoder from google first, it seems to work properly on many phones
 		for (int i=0;i<sDecoders.length;i++) {

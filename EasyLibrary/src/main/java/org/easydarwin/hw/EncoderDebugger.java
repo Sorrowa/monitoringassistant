@@ -315,13 +315,10 @@ public class EncoderDebugger {
                     + "lastSdk", 0);
             int lastVersion = mPreferences.getInt(PREF_PREFIX + resolution
                     + "lastVersion", 0);
-            if (Build.VERSION.SDK_INT > lastSdk || VERSION > lastVersion) {
-                return true;
-            }
+            return Build.VERSION.SDK_INT > lastSdk || VERSION > lastVersion;
         } else {
             return true;
         }
-        return false;
     }
 
     /**

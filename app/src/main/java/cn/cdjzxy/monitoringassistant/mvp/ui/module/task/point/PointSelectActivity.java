@@ -99,7 +99,7 @@ public class PointSelectActivity extends BaseTitileActivity<ApiPresenter> {
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
-                getPointData(position == 0 ? true : false);
+                getPointData(position == 0);
             }
         });
     }

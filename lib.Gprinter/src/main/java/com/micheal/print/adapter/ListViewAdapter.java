@@ -73,9 +73,9 @@ public class ListViewAdapter extends BaseAdapter {
             listItemView = new ListItemView();
             arg1 = listContainer.inflate(R.layout.main_screen_list_item, null);
             //            listItemView.image = (ImageView)arg1.findViewById(R.id.ivOperationItem);
-            listItemView.title = (TextView) arg1.findViewById(R.id.tvOperationItem);
-            listItemView.info = (TextView) arg1.findViewById(R.id.tvInfo);
-            listItemView.button = (Button) arg1.findViewById(R.id.btTestConnect);
+            listItemView.title = arg1.findViewById(R.id.tvOperationItem);
+            listItemView.info = arg1.findViewById(R.id.tvInfo);
+            listItemView.button = arg1.findViewById(R.id.btTestConnect);
             //设置控件集到convertView
             arg1.setTag(listItemView);
         } else {

@@ -22,9 +22,11 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.FragmentAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
@@ -49,7 +51,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
     private String projectId;
     private String formSelectId;
     private String samplingId;
-    private boolean isNewCreate;
+    public static boolean isNewCreate;
 
     private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
@@ -129,7 +131,10 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 //                    Project project = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
 //                    mSampling.setProjectNo(project.getProjectNo());
 //                    mSampling.setAddressNo("");
-
+                    if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
+                        showNoPermissionDialog("才能进行表单保存。",  UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                        return;
+                    }
                     mSampling.setIsFinish((SamplingUtil.isSamplingFinsh(mSampling)));
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
                     if (isNewCreate) {
