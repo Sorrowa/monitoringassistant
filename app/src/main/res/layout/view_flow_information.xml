@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -12,6 +14,7 @@
         style="@style/BasicInfoItemStyle">
 
         <TextView
+            android:id="@+id/text_view_tv_arrow"
             style="@style/BasicInfoItemNameStyle"
             android:text="流转信息（选填）" />
 
@@ -29,51 +32,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoNextItemNameStyle"
-                android:text="运输方式" />
-
-            <EditText
-                android:id="@+id/tv_flow_method"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:maxLength="100"/>
-
-        </RelativeLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_flow_method"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="运输方式"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_flow_date"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="送样时间"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-            <TextView
-                style="@style/BasicInfoNextItemNameStyle"
-                android:text="送样时间" />
-
-            <TextView
-                android:id="@+id/tv_flow_date"
-                style="@style/BasicInfoItemEditTextStyle" />
-
-        </RelativeLayout>
         <include layout="@layout/view_line_basic_info" />
 
-        <RelativeLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoNextItemNameStyle"
-                android:text="收样时间" />
-
-            <TextView
-                android:id="@+id/tv_receive_date"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:hint=""/>
-
-        </RelativeLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_receive_date"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="收样时间"
+            app:rightEditTextHint="系统带回"
+            app:rightTextHint="请选择" />
 
     </LinearLayout>
 
-</merge>
+</LinearLayout>

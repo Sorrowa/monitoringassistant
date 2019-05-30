@@ -95,6 +95,7 @@ public class WanderTaskActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
+                intent.putExtra(INTENT_WANDER_FROM, intentWanderFrom);
                 intent.setClass(WanderTaskActivity.this, WanderTaskSearchActivity.class);
                 startActivity(intent);
             }

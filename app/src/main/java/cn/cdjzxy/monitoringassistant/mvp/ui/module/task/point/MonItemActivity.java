@@ -204,6 +204,7 @@ public class MonItemActivity extends BaseTitileActivity<ApiPresenter> {
                 //deleteMonItems();
                 break;
             case R.id.img_search:
+                hideSoftInput();
                 searchMonItems();
                 break;
         }

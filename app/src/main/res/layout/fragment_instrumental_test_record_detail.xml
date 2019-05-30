@@ -1,202 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="1">
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/btn_back"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/item_height_dp_52"
-                android:background="#F5F5F5">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/dp_16"
-                    android:drawableRight="@mipmap/ic_has_next"
-                    android:drawablePadding="@dimen/dp_16"
-                    android:gravity="center_vertical"
-                    android:text="监测结果"
-                    android:textColor="#303030"
-                    android:textSize="@dimen/text_size_14" />
+                <LinearLayout
+                    android:id="@+id/btn_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_height_dp_52"
+                    android:background="#F5F5F5">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/dp_16"
-                    android:gravity="center_vertical"
-                    android:text="监测详情"
-                    android:textColor="#676767"
-                    android:textSize="@dimen/text_size_14" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/dp_16"
+                        android:drawableRight="@mipmap/ic_has_next"
+                        android:drawablePadding="@dimen/dp_16"
+                        android:gravity="center_vertical"
+                        android:text="监测结果"
+                        android:textColor="#303030"
+                        android:textSize="@dimen/text_size_14" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/dp_16"
+                        android:gravity="center_vertical"
+                        android:text="监测详情"
+                        android:textColor="#676767"
+                        android:textSize="@dimen/text_size_14" />
 
 
+                </LinearLayout>
+
+                <include layout="@layout/view_line" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_sample_code"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="true"
+                    app:leftText="样品编码"
+                    app:rightTextHint="系统自动生成" />
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_frequency"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="true"
+                    app:leftText="频次"
+                    app:rightTextHint="系统自动生成" />
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_point"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="true"
+                    app:leftText="点位"
+                    app:rightTextHint="系统自动生成" />
+
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_control"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="true"
+                    app:leftText="内控"
+                    app:rightTextHint="系统自动生成" />
+
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_time"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="true"
+                    app:leftText="监测日期"
+                    app:rightTextHint="请选择" />
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_analyse_time"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="true"
+                    app:leftText="分析时间"
+                    app:rightTextHint="请选择" />
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_analyse_result"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="false"
+                    app:leftText="分析结果"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
+
+                <include layout="@layout/view_line_basic_info" />
+
+                <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                    android:id="@+id/my_layout_unit"
+                    style="@style/MyDrawableLinearLayoutItemStyle"
+                    app:isShowRightTextView="false"
+                    app:leftText="结果单位"
+                    app:rightEditTextHint="请输入"
+                    app:rightTextHint="请选择" />
+
+                <include layout="@layout/view_line_basic_info" />
             </LinearLayout>
 
-            <include layout="@layout/view_line" />
-
-            <RelativeLayout style="@style/BasicInfoItemStyle">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="样品编码" />
-
-                <TextView
-                    android:id="@+id/tv_sample_code"
-                    style="@style/BasicInfoItemTextViewStyle"
-                    android:drawableRight="@null"
-                    android:hint="" />
-
-            </RelativeLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <RelativeLayout style="@style/BasicInfoItemStyle">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="频次" />
-
-                <TextView
-                    android:id="@+id/tv_frequency"
-                    style="@style/BasicInfoItemTextViewStyle"
-                    android:drawableRight="@null"
-                    android:hint="" />
-
-            </RelativeLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <RelativeLayout style="@style/BasicInfoItemStyle">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="点位" />
-
-                <TextView
-                    android:id="@+id/tv_point"
-                    style="@style/BasicInfoItemTextViewStyle"
-                    android:drawableRight="@null"
-                    android:hint="" />
-
-            </RelativeLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <RelativeLayout style="@style/BasicInfoItemStyle">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="内控" />
-
-                <TextView
-                    android:id="@+id/tv_control"
-                    style="@style/BasicInfoItemTextViewStyle"
-                    android:drawableRight="@null"
-                    android:hint="" />
-
-            </RelativeLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <RelativeLayout style="@style/BasicInfoItemStyle">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="监测日期" />
-
-                <TextView
-                    android:id="@+id/tv_test_time"
-                    style="@style/BasicInfoItemTextViewStyle"
-                    android:drawableRight="@null"
-                    android:hint="" />
-
-            </RelativeLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <LinearLayout
-                style="@style/BasicInfoItemStyle"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="分析时间" />
-
-                <TextView
-                    android:id="@+id/tv_analyse_time"
-                    style="@style/RightViewItemHintStyle"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <LinearLayout
-                style="@style/BasicInfoItemStyle"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="分析结果" />
-
-                <EditText
-                    android:id="@+id/et_analyse_result"
-                    style="@style/BasicInfoItemEditTextStyle"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="right|center"
-                    android:inputType="numberDecimal"
-                    android:maxLength="64" />
-
-            </LinearLayout>
-
-            <include layout="@layout/view_line_basic_info" />
-
-            <LinearLayout
-                style="@style/BasicInfoItemStyle"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/BasicInfoItemNameStyle"
-                    android:text="结果单位" />
-
-                <TextView
-                    android:id="@+id/tv_test_unit"
-                    style="@style/RightViewItemHintStyle"
-                    android:layout_height="match_parent"
-                    android:gravity="right|center" />
-
-            </LinearLayout>
-
-            <include layout="@layout/view_line_basic_info" />
         </LinearLayout>
+    </ScrollView>
 
-
-
-
-    </LinearLayout>
-</ScrollView>
     <include layout="@layout/view_line_basic_info" />
 
 

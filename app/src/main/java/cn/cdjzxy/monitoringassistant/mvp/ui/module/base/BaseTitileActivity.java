@@ -1,5 +1,6 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.base;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -301,5 +303,13 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
             startService(intent);
         }
     }
-
+    /**
+     * 动态隐藏软键盘
+     */
+    public void hideSoftInput() {
+        View view = getCurrentFocus();
+        if (view == null) view = new View(this);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

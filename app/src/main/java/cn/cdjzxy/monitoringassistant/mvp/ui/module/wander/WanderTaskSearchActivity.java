@@ -40,6 +40,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.wander.WanderTaskActivity.INTENT_WANDER_FROM;
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
 /**
@@ -61,7 +62,7 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
     private SearchAdapter mSearchTypeAdapter;
     private SearchHistoryAdapter mSearchHistoryAdapter;
     private WanderTaskAdapter wanderAdapter;
-
+    private String intentWanderFrom;//流转单状态（0待流转，1已流转，10自送样，20待流转已流转一起查）
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
         return R.layout.activity_wander_task_search;
@@ -72,6 +73,11 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
         mTaskTypes = new ArrayList<>();
         mHistoryList = new ArrayList<>();
         wanderList = new ArrayList<>();
+        if (getIntent() != null) {
+            intentWanderFrom = getIntent().getStringExtra(INTENT_WANDER_FROM);
+        } else {
+            intentWanderFrom = "0";
+        }
         initTypeView();
         initHistoryView();
         initWanderView();
@@ -203,6 +209,7 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
                 Intent intent = new Intent();
                 intent.setClass(WanderTaskSearchActivity.this, WanderTaskListDetailActivity.class);
                 intent.putExtra(WanderTaskListDetailActivity.INTENT_PROJECT_ID, wanderList.get(position).getId());
+                intent.putExtra(INTENT_WANDER_FROM, intentWanderFrom);
                 startActivity(intent);
             }
         });

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
@@ -13,6 +15,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/text_view_weather_arrow"
             style="@style/BasicInfoItemNameStyle"
             android:text="气象信息（选填）" />
 
@@ -30,65 +33,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:orientation="horizontal">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_weather_state"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="true"
+            app:leftText="天气"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
-            <TextView
-                style="@style/BasicInfoNextItemNameStyle"
-                android:layout_gravity="center"
-                android:text="天气" />
-
-            <TextView
-                android:id="@+id/weather_state"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoNextItemNameStyle"
-                android:text="气温（℃）" />
-
-            <EditText
-                android:id="@+id/weather_temp"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_weight="1"
-                android:inputType="numberDecimal"
-                android:maxLength="50" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_weather_temp"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="气温（℃）"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            style="@style/BasicInfoItemStyle"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/BasicInfoNextItemNameStyle"
-                android:text="气压（kPa）" />
-
-            <EditText
-                android:id="@+id/weather_pressure"
-                style="@style/BasicInfoItemEditTextStyle"
-                android:layout_weight="1"
-                android:inputType="numberDecimal"
-                android:maxLength="50" />
-
-        </LinearLayout>
-
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_weather_pressure"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:drawableRight="@mipmap/ic_has_next"
+            app:isShowRightTextView="false"
+            app:leftText="气压（kPa）"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
     </LinearLayout>
 
 </LinearLayout>

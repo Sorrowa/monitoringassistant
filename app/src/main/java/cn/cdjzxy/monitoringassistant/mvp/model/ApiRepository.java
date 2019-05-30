@@ -630,11 +630,31 @@ public class ApiRepository implements IModel {
     }
 
     /**
-     * 获取我的任务
+     * 获取所有采样单信息(支持批量)
      *
      * @return
      */
-    public Observable<BaseResponse<List<Sampling>>> getSampling(List<String> projectIds) {
+    public Observable<BaseResponse<List<Sampling>>> getSamplings(List<String> projectIds) {
+        return Observable.just(mApiService.getSamplings(projectIds))
+                .flatMap(new Function<Observable<BaseResponse<List<Sampling>>>, ObservableSource<BaseResponse<List<Sampling>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Sampling>>> apply(Observable<BaseResponse<List<Sampling>>> baseResponseObservable) {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Sampling>>, BaseResponse<List<Sampling>>>() {
+                            @Override
+                            public BaseResponse<List<Sampling>> apply(BaseResponse<List<Sampling>> baseResponse) {
+                                return baseResponse;
+                            }
+                        });
+
+                    }
+                });
+    }
+    /**
+     * 获取所有采样单信息
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<Sampling>>> getSampling(String projectIds) {
         return Observable.just(mApiService.getSampling(projectIds))
                 .flatMap(new Function<Observable<BaseResponse<List<Sampling>>>, ObservableSource<BaseResponse<List<Sampling>>>>() {
                     @Override
@@ -649,7 +669,6 @@ public class ApiRepository implements IModel {
                     }
                 });
     }
-
     /**
      * 根据ID获取采样单信息
      *

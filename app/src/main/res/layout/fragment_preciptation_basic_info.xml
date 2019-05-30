@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <LinearLayout
@@ -9,175 +10,97 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_sample_date"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="采样日期"
+            app:rightTextHint="请选择" />
+        <include layout="@layout/view_line_basic_info" />
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样日期"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/tv_sampling_date"
-                style="@style/RightViewItemHintStyle" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_sample_user"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="采样人"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样人" />
-
-            <TextView
-                android:id="@+id/tv_sampling_user"
-                style="@style/BasicInfoItemTextViewStyle_gai"
-                android:layout_height="match_parent"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="center|end"/>
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_sample_type"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="降水类型"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="降水类型"
-                android:textColor="#333333" />
-
-            <TextView
-                android:id="@+id/tv_sampling_type"
-                style="@style/BasicInfoItemTextViewStyle_gai" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_sample_point"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="采样点位"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样点位"
-                android:textColor="#333333" />
-
-            <TextView
-                android:id="@+id/tv_sampling_point"
-                style="@style/BasicInfoItemTextViewStyle_gai" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_sample_no"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="点位编号"
+            app:rightTextHint="请输入" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
 
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="点位编号" />
-
-            <EditText
-                android:id="@+id/tv_sampling_no"
-                style="@style/BasicInfoItemEditTextStyle_gai"
-                android:inputType="number"
-                android:maxLength="50" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_monitor_name"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="监测项目"
+            app:rightTextHint="系统自动生成" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测项目" />
-
-            <TextView
-                android:id="@+id/ed_monitor_name"
-                style="@style/RightViewItemStyle" />
-
-        </LinearLayout>
-
-        <include layout="@layout/view_line_basic_info" />
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样高度" />
-
-            <EditText
-                android:id="@+id/tv_sampling_height"
-                style="@style/BasicInfoItemEditTextStyle_gai"
-                android:inputType="numberDecimal"
-                android:maxLength="50" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_monitor_height"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="false"
+            app:leftText="采样高度"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="系统自动生成" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样器接雨面积（c㎡）" />
-
-            <EditText
-                android:id="@+id/et_sampling_area"
-                style="@style/BasicInfoItemEditTextStyle_gai"
-                android:inputType="numberDecimal" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_monitor_area"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="false"
+            app:leftText="采样器接雨面积（c㎡）"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="系统自动生成" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="采样方法" />
-
-            <TextView
-                android:id="@+id/tv_sampling_method"
-                style="@style/BasicInfoItemTextViewStyle_gai" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_monitor_method"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="采样方法"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_line_basic_info" />
 
-        <LinearLayout style="@style/BasicInfoItemStyle">
-
-            <TextView
-                style="@style/BasicInfoItemNameStyle"
-                android:text="监测仪器名称、型号及编号（溯源信息）" />
-
-            <TextView
-                android:id="@+id/tv_sampling_device"
-                style="@style/BasicInfoItemTextViewStyle_gai" />
-
-        </LinearLayout>
+        <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+            android:id="@+id/my_layout_monitor_device"
+            style="@style/MyDrawableLinearLayoutItemStyle"
+            app:isShowRightTextView="true"
+            app:leftText="监测仪器名称、型号及编号（溯源信息）"
+            app:rightEditTextHint="请输入"
+            app:rightTextHint="请选择" />
 
         <include layout="@layout/view_flow_information" />
 

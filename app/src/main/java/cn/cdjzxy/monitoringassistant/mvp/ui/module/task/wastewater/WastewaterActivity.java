@@ -286,6 +286,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
      * @param position
      */
     private void openFragment(int position) {
+        hideSoftInput();
         viewPager.setCurrentItem(position);
     }
 
@@ -305,6 +306,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
+        hideSoftInput();
         if (viewPager.getCurrentItem() == 4) {
             openFragment(1);
             return;

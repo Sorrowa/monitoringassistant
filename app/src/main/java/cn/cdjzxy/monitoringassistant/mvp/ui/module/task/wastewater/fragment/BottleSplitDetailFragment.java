@@ -48,6 +48,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
@@ -58,20 +59,20 @@ import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.Wastew
 
 public class BottleSplitDetailFragment extends BaseFragment {
 
-    @BindView(R.id.sample_project)
-    TextView sample_project;
-    @BindView(R.id.sample_quantity)
-    EditText sample_quantity;
-    @BindView(R.id.sample_vessel)
-    EditText sample_vessel;
-    @BindView(R.id.sample_number)
-    EditText sample_number;
-    @BindView(R.id.sample_method)
-    EditText sample_method;
-    @BindView(R.id.sample_date)
-    EditText sample_date;
-    @BindView(R.id.sample_place)
-    TextView sample_place;
+    @BindView(R.id.my_layout_sample_project)
+    MyDrawableLinearLayout sample_project;//监测项目
+    @BindView(R.id.my_layout_sample_quantity)
+    MyDrawableLinearLayout sample_quantity;//采样量
+    @BindView(R.id.my_layout_sample_vessel)
+    MyDrawableLinearLayout sample_vessel;//容器
+    @BindView(R.id.my_layout_sample_number)
+    MyDrawableLinearLayout sample_number;//数量
+    @BindView(R.id.my_layout_sample_method)
+    MyDrawableLinearLayout sample_method;//保存方法
+    @BindView(R.id.my_layout_sample_date)
+    MyDrawableLinearLayout sample_date;//保存时间
+    @BindView(R.id.my_layout_sample_place)
+    MyDrawableLinearLayout sample_place;//分析地点
     @BindView(R.id.operate_layout)
     View operate_layout;
 
@@ -130,12 +131,12 @@ public class BottleSplitDetailFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            sample_project.setText("");
-            sample_quantity.setText("");
-            sample_vessel.setText("");
-            sample_number.setText("");
-            sample_method.setText("");
-            sample_place.setText("");
+            sample_project.setRightTextStr("");
+            sample_quantity.setEditTextStr("");
+            sample_vessel.setEditTextStr("");
+            sample_number.setEditTextStr("");
+            sample_method.setEditTextStr("");
+            sample_place.setRightTextStr("");
             setBottleSplitDetail();
         }
     }
@@ -149,20 +150,21 @@ public class BottleSplitDetailFragment extends BaseFragment {
             bottleSplit.setId(UUID.randomUUID().toString());
         } else {
             bottleSplit = samplingFormStandResults.get(bottleListPosition);
-            sample_project.setText(CheckUtil.isEmpty(bottleSplit.getMonitemName()) ? "" : bottleSplit.getMonitemName());
-            sample_quantity.setText(CheckUtil.isEmpty(bottleSplit.getSamplingAmount()) ? "" : bottleSplit.getSamplingAmount());
-            sample_vessel.setText(CheckUtil.isEmpty(bottleSplit.getContainer()) ? "" : bottleSplit.getContainer());
-            sample_number.setText(bottleSplit.getCount() + "");
-            sample_method.setText(CheckUtil.isEmpty(bottleSplit.getSaveMehtod()) ? "" : bottleSplit.getSaveMehtod());
-            sample_date.setText(CheckUtil.isEmpty(bottleSplit.getSaveTimes()) ? "" : bottleSplit.getSaveTimes());
-            sample_place.setText(CheckUtil.isEmpty(bottleSplit.getAnalysisSite()) ? "" : bottleSplit.getAnalysisSite());
+            sample_project.setRightTextStr(CheckUtil.isEmpty(bottleSplit.getMonitemName()) ? "" : bottleSplit.getMonitemName());
+            sample_quantity.setEditTextStr(CheckUtil.isEmpty(bottleSplit.getSamplingAmount()) ? "" : bottleSplit.getSamplingAmount());
+            sample_vessel.setEditTextStr(CheckUtil.isEmpty(bottleSplit.getContainer()) ? "" : bottleSplit.getContainer());
+            sample_number.setEditTextStr(bottleSplit.getCount() + "");
+            sample_method.setEditTextStr(CheckUtil.isEmpty(bottleSplit.getSaveMehtod()) ? "" : bottleSplit.getSaveMehtod());
+            sample_date.setEditTextStr(CheckUtil.isEmpty(bottleSplit.getSaveTimes()) ? "" : bottleSplit.getSaveTimes());
+            sample_place.setRightTextStr(CheckUtil.isEmpty(bottleSplit.getAnalysisSite()) ? "" : bottleSplit.getAnalysisSite());
         }
         //设置初始化的MonitemIds
 
     }
 
-    @OnClick({R.id.btn_back, R.id.sample_place, R.id.sample_project, R.id.btn_save, R.id.btn_delete})
+    @OnClick({R.id.btn_back, R.id.my_layout_sample_place, R.id.my_layout_sample_project, R.id.btn_save, R.id.btn_delete})
     public void onClick(View view) {
+        hideSoftInput();
         if (view.getId() == R.id.btn_back) {
             EventBus.getDefault().post(2, EventBusTags.TAG_WASTEWATER_BOTTLE);
             return;
@@ -175,10 +177,10 @@ public class BottleSplitDetailFragment extends BaseFragment {
             case R.id.btn_back:
                 EventBus.getDefault().post(2, EventBusTags.TAG_WASTEWATER_BOTTLE);
                 break;
-            case R.id.sample_project:
+            case R.id.my_layout_sample_project:
                 showMonitorItems();
                 break;
-            case R.id.sample_place:
+            case R.id.my_layout_sample_place:
                 showAnalysisPlace();
                 break;
             case R.id.btn_delete:
@@ -259,12 +261,12 @@ public class BottleSplitDetailFragment extends BaseFragment {
     private void operateSave() {
         if (isSaveChecked()) {
             bottleSplit.setSamplingId(mSample.getId());
-            bottleSplit.setContainer(sample_vessel.getText().toString());
-            bottleSplit.setCount(Integer.parseInt(sample_number.getText().toString()));
-            bottleSplit.setSaveMehtod(sample_method.getText().toString());
-            bottleSplit.setSaveTimes(sample_date.getText().toString());
-            bottleSplit.setAnalysisSite(sample_place.getText().toString());
-            bottleSplit.setSamplingAmount(sample_quantity.getText().toString());
+            bottleSplit.setContainer(sample_vessel.getEditTextStr());
+            bottleSplit.setCount(Integer.parseInt(sample_number.getEditTextStr()));
+            bottleSplit.setSaveMehtod(sample_method.getEditTextStr());
+            bottleSplit.setSaveTimes(sample_date.getEditTextStr());
+            bottleSplit.setAnalysisSite(sample_place.getRightTextViewStr());
+            bottleSplit.setSamplingAmount(sample_quantity.getEditTextStr());
             bottleSplit.setStandNo(HelpUtil.generateNewBottleIndex(mSample.getId()));
 
             if (monItemId == null || monItemId.equals("")) {
@@ -348,7 +350,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
                 if (resultCode == Activity.RESULT_OK) {
                     bottleSplit.setMonitemName(data.getStringExtra("selectMonItemName"));
                     bottleSplit.setMonitemIds(data.getStringExtra("selectMonItemId"));
-                    sample_project.setText(bottleSplit.getMonitemName());
+                    sample_project.setRightTextStr(bottleSplit.getMonitemName());
                     monItemId = data.getStringExtra("MonItemId");//用户没选择的监测项目
                 }
             }
@@ -366,7 +368,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
                 if (resultCode == Activity.RESULT_OK) {
                     if (!CheckUtil.isEmpty(data.getStringExtra("place"))) {
                         bottleSplit.setAnalysisSite(data.getStringExtra("place"));
-                        sample_place.setText(bottleSplit.getAnalysisSite());
+                        sample_place.setRightTextStr(bottleSplit.getAnalysisSite());
                     }
                 }
             }

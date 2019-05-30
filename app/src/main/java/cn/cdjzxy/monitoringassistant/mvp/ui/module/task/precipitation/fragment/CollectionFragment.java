@@ -165,7 +165,8 @@ public class CollectionFragment extends BaseFragment {
             case R.id.btn_add_parallel:
                 break;
             case R.id.btn_add_blank:
-                if (!isCanEdit()) {
+                if (!PrecipitationActivity.isNewCreate &&
+                        !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
                     showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
                     return;
                 }
@@ -296,12 +297,4 @@ public class CollectionFragment extends BaseFragment {
         return result;
     }
 
-    /**
-     * 判断是否有编辑权限
-     *
-     * @return
-     */
-    private boolean isCanEdit() {
-        return !PrecipitationActivity.isNewCreate && UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num);
-    }
 }

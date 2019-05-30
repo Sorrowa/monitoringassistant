@@ -82,6 +82,7 @@ public class WanderTaskListDetailActivity extends BaseTitileActivity<ApiPresente
         isRefresh = true;
         projectId = getIntent().getStringExtra(INTENT_PROJECT_ID);
         state = getIntent().getStringExtra(INTENT_WANDER_FROM);
+        if (CheckUtil.isEmpty(state)) state = "20";//20待流转已流转一起查
         initTabLayout();
         getAllSampleStorageData();
         initRefresh();

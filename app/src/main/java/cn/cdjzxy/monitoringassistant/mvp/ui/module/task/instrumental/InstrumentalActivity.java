@@ -39,6 +39,9 @@ import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
 
+/**
+ * 现场监测仪器法
+ */
 public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.tabview)
@@ -192,6 +195,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
      * @param position
      */
     private void openFragment(int position) {
+        hideSoftInput();
         viewPager.setCurrentItem(position);
     }
 
@@ -207,6 +211,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
+        hideSoftInput();
         if (viewPager.getCurrentItem() == 2) {
             openFragment(1);
             return;

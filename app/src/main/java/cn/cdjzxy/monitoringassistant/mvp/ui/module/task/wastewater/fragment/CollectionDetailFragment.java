@@ -7,6 +7,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -68,6 +70,7 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.WastewaterActivity.mSample;
 
@@ -76,30 +79,30 @@ import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.wastewater.Wastew
  */
 
 public class CollectionDetailFragment extends BaseFragment {
-    @BindView(R.id.sample_code)
-    TextView sample_code;
-    @BindView(R.id.sample_frequency)
-    TextView sample_frequency;
-    @BindView(R.id.sample_quality)
-    TextView sample_quality;
-    @BindView(R.id.sample_monitor_items)
-    TextView sample_monitor_items;
-    @BindView(R.id.sample_monitor)
-    TextView sample_monitor;
+    @BindView(R.id.my_layout_sample_code)
+    MyDrawableLinearLayout sample_code;//样品编码
+    @BindView(R.id.my_layout_sample_time)
+    MyDrawableLinearLayout sample_Time;//采样时间
+    @BindView(R.id.my_layout_sample_frequency)
+    MyDrawableLinearLayout sample_frequency;//频次
+    @BindView(R.id.my_layout_sample_quality)
+    MyDrawableLinearLayout sample_quality;//质控
+    @BindView(R.id.my_layout_sample_monitor_items)
+    MyDrawableLinearLayout sample_monitor_items;//检测项目
+    @BindView(R.id.my_layout_sample_monitor)
+    MyDrawableLinearLayout sample_monitor;//现场检测
+    @BindView(R.id.text_view_sample_add_preserve)
+    TextView text_view_sample_add_preserve;//是否添加保存剂
     @BindView(R.id.sample_add_preserve)
     CheckedTextView sample_add_preserve;
+    @BindView(R.id.text_view_sample_compare_monitor)
+    TextView text_view_sample_compare_monitor;//是否对比监测
     @BindView(R.id.sample_compare_monitor)
     CheckedTextView sample_compare_monitor;
     @BindView(R.id.sample_mark)
     TextView sample_mark;
-    @BindView(R.id.sample_monitor_items_title)
-    TextView sample_monitor_items_title;
-    @BindView(R.id.sample_monitor_title)
-    TextView sample_monitor_title;
     @BindView(R.id.operate_layout)
     View operate_layout;
-    @BindView(R.id.sample_time)
-    TextView sample_Time;
 
     Unbinder unbinder;
 
@@ -134,6 +137,7 @@ public class CollectionDetailFragment extends BaseFragment {
             public void onClick(View v) {
                 sample_add_preserve.setChecked(!sample_add_preserve.isChecked());
                 samplingDetail.setIsAddPreserve(sample_add_preserve.isChecked());
+                setViewStyleDrawable(samplingDetail.isAddPreserve(), text_view_sample_add_preserve);
                 if (samplingDetail.isAddPreserve()) {
                     samplingDetail.setPreservative("是");
                 } else {
@@ -148,6 +152,7 @@ public class CollectionDetailFragment extends BaseFragment {
             public void onClick(View v) {
                 sample_compare_monitor.setChecked(!sample_compare_monitor.isChecked());
                 samplingDetail.setIsCompare(sample_compare_monitor.isChecked());
+                setViewStyleDrawable(samplingDetail.getIsCompare(), text_view_sample_compare_monitor);
             }
         });
 
@@ -175,16 +180,13 @@ public class CollectionDetailFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            sample_code.setText("");
-            sample_Time.setText("");
-            sample_frequency.setText("");
-            sample_quality.setText("");
-            sample_monitor_items.setText("");
-            sample_monitor.setText("");
+            sample_code.setRightTextStr("");
+            sample_Time.setRightTextStr("");
+            sample_frequency.setRightTextStr("");
+            sample_quality.setRightTextStr("");
+            sample_monitor_items.setRightTextStr("");
+            sample_monitor.setRightTextStr("");
             sample_mark.setText("");
-            sample_monitor_items_title.setText("监测项目（0）");
-            sample_monitor_title.setText("现场监测（0）");
-
             setSamplingDetail();
         }
 
@@ -197,9 +199,9 @@ public class CollectionDetailFragment extends BaseFragment {
         if (fsListPosition == -1) {
             samplingDetail = new SamplingContent();
             samplingDetail.setId(UUID.randomUUID().toString());
-            sample_code.setText(HelpUtil.createSamplingCode(mSample));
-            sample_frequency.setText(HelpUtil.createFrequency(mSample) + "");
-            sample_quality.setText(Constants.SAMPLING_TYPE_PT);
+            sample_code.setRightTextStr(HelpUtil.createSamplingCode(mSample));
+            sample_frequency.setRightTextStr(HelpUtil.createFrequency(mSample) + "");
+            sample_quality.setRightTextStr(Constants.SAMPLING_TYPE_PT);
             samplingDetail.setSamplingType(0);
             samplingDetail.setOrderIndex(HelpUtil.createOrderIndex(mSample));
             samplingDetail.setFrequecyNo(HelpUtil.createFrequency(mSample));
@@ -207,18 +209,20 @@ public class CollectionDetailFragment extends BaseFragment {
             samplingDetail.setPreservative("否");
             samplingDetail.setIsAddPreserve(false);
             samplingDetail.setIsCompare(false);
+            setViewStyleDrawable(false, text_view_sample_add_preserve);
+            setViewStyleDrawable(false, text_view_sample_compare_monitor);
             samplingDetail.setSamplingTime("");
             //新增时要将监测项目和现场监测项目带过来
             setDefaultMonitor();
         } else {
             samplingDetail = samplingDetailResults.get(fsListPosition);
-            sample_code.setText(samplingDetail.getSampingCode());
-            sample_frequency.setText(samplingDetail.getFrequecyNo() + "");
+            sample_code.setRightTextStr(samplingDetail.getSampingCode());
+            sample_frequency.setRightTextStr(samplingDetail.getFrequecyNo() + "");
             /**设置检测项目简介**/
             //这里把MonitemName内容去除重复
             String res = MakeDeferenceGone(samplingDetail.getMonitemName());
             samplingDetail.setMonitemName(res);
-            sample_monitor_items.setText(res);
+            sample_monitor_items.setRightTextStr(res);
             /**设置现场项目简介**/
             //在过滤重复项
 //            String res = getDifference(samplingDetail.getSenceMonitemName()
@@ -226,25 +230,27 @@ public class CollectionDetailFragment extends BaseFragment {
 //            Log.d("zzh", "res=" + res);
 //            Log.d("zzh", "template=" + samplingDetail.getSenceMonitemName());
 
-            sample_monitor.setText(samplingDetail.getSenceMonitemName());
-            sample_Time.setText(samplingDetail.getSamplingTime());
+            sample_monitor.setRightTextStr(samplingDetail.getSenceMonitemName());
+            sample_Time.setRightTextStr(samplingDetail.getSamplingTime());
             if (!CheckUtil.isNull(samplingDetail.getPreservative()) && samplingDetail.getPreservative().equals("是")) {
                 sample_add_preserve.setChecked(true);
                 samplingDetail.setIsAddPreserve(true);
                 samplingDetail.setPreservative("是");
+                setViewStyleDrawable(true, text_view_sample_add_preserve);
             } else {
                 sample_add_preserve.setChecked(false);
                 samplingDetail.setIsAddPreserve(false);
                 samplingDetail.setPreservative("否");
+                setViewStyleDrawable(false, text_view_sample_add_preserve);
             }
-
+            setViewStyleDrawable(samplingDetail.getIsCompare(), text_view_sample_compare_monitor);
             sample_compare_monitor.setChecked(samplingDetail.getIsCompare());
             sample_mark.setText(samplingDetail.getDescription());
 
             //记录不同项目的长度
 
             if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())) {
-                sample_monitor_items_title.setText("监测项目（"
+                sample_monitor_items.setLeftTextViewStr("监测项目（"
                         + samplingDetail.getMonitemId().split(",").length
                         + "）");
             }
@@ -253,15 +259,15 @@ public class CollectionDetailFragment extends BaseFragment {
                 /**判断有无相似项目**/
                 int resone = getThelenth(samplingDetail.getSenceMonitemId().split(",")
                         , samplingDetail.getMonitemId().split(","));
-                sample_monitor_title.setText("现场监测（" + resone + "）");
+                sample_monitor.setLeftTextViewStr("现场监测（" + resone + "）");
             }
 
             if (samplingDetail.getSamplingType() == 0) {
-                sample_quality.setText(Constants.SAMPLING_TYPE_PT);
+                sample_quality.setRightTextStr(Constants.SAMPLING_TYPE_PT);
             } else if (samplingDetail.getSamplingType() == 1) {
-                sample_quality.setText(Constants.SAMPLING_TYPE_PX);
+                sample_quality.setRightTextStr(Constants.SAMPLING_TYPE_PX);
             } else if (samplingDetail.getSamplingType() == 2) {
-                sample_quality.setText(Constants.SAMPLING_TYPE_KB);
+                sample_quality.setRightTextStr(Constants.SAMPLING_TYPE_KB);
             }
         }
 
@@ -271,6 +277,31 @@ public class CollectionDetailFragment extends BaseFragment {
         } else {
             sample_monitor.setEnabled(true);
         }
+    }
+
+    /**
+     * 给view设置选中样式
+     *
+     * @param isSelect 选中还是未选中
+     * @param view     view
+     */
+    private void setViewStyleDrawable(boolean isSelect, TextView view) {
+        Drawable drawable;
+        if (isSelect) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                drawable = getContext().getDrawable(R.mipmap.icon_yes_data);
+            } else {
+                drawable = getContext().getResources().getDrawable(R.mipmap.icon_yes_data);
+            }
+
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                drawable = getContext().getDrawable(R.mipmap.icon_no_data);
+            } else {
+                drawable = getContext().getResources().getDrawable(R.mipmap.icon_no_data);
+            }
+        }
+        view.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
     }
 
     /**
@@ -350,9 +381,10 @@ public class CollectionDetailFragment extends BaseFragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.btn_back, R.id.sample_monitor_items, R.id.sample_monitor,
-            R.id.btn_delete, R.id.btn_save, R.id.re_sample})
+    @OnClick({R.id.btn_back, R.id.my_layout_sample_monitor_items, R.id.my_layout_sample_monitor,
+            R.id.btn_delete, R.id.btn_save, R.id.my_layout_sample_time})
     public void onClick(View view) {
+        hideSoftInput();
         if (view.getId() == R.id.btn_back) {
             EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
             return;
@@ -368,10 +400,10 @@ public class CollectionDetailFragment extends BaseFragment {
             case R.id.btn_back:
                 EventBus.getDefault().post(1, EventBusTags.TAG_WASTEWATER_COLLECTION);
                 break;
-            case R.id.sample_monitor_items:
+            case R.id.my_layout_sample_monitor_items:
                 showMonitorItems();
                 break;
-            case R.id.sample_monitor:
+            case R.id.my_layout_sample_monitor:
                 showAddressItems();
                 break;
             case R.id.btn_delete:
@@ -380,8 +412,8 @@ public class CollectionDetailFragment extends BaseFragment {
             case R.id.btn_save:
                 operateSave();
                 break;
-            case R.id.re_sample:
-                showDateSelectDialog(sample_Time);
+            case R.id.my_layout_sample_time:
+                showDateSelectDialog();
                 break;
             default:
                 break;
@@ -392,12 +424,12 @@ public class CollectionDetailFragment extends BaseFragment {
      * 时间选择器(采样日期)
      * data picker
      */
-    private void showDateSelectDialog(TextView dateTextView) {
+    private void showDateSelectDialog() {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
                 samplingDetail.setSamplingTime(DateUtils.getTimeNoMinute(date));
-                dateTextView.setText(DateUtils.getTimeNoMinute(date));
+                sample_Time.setRightTextStr(DateUtils.getTimeNoMinute(date));
             }
         }).setType(new boolean[]{false, false, false, true, true, false}).build();
         pvTime.setDate(Calendar.getInstance());
@@ -507,8 +539,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     showLoadingDialog("请等待...", true);
                     samplingDetail.setProjectId(mSample.getProjectId());
                     samplingDetail.setSamplingId(mSample.getId());
-                    samplingDetail.setSampingCode(sample_code.getText().toString());
-                    samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getText().toString()));
+                    samplingDetail.setSampingCode(sample_code.getRightTextViewStr());
+                    samplingDetail.setFrequecyNo(Integer.parseInt(sample_frequency.getRightTextViewStr()));
                     samplingDetail.setDescription(sample_mark.getText().toString());
                     // samplingDetail.setSamplingTime(DateUtils.getWholeDate());
                     //设置样品采集和样品验收
@@ -585,7 +617,7 @@ public class CollectionDetailFragment extends BaseFragment {
      * @return
      */
     private boolean isSaveChecked() {
-        if (TextUtils.isEmpty(sample_monitor_items.getText().toString())) {
+        if (TextUtils.isEmpty(sample_monitor_items.getRightTextViewStr())) {
             ArtUtils.makeText(getContext(), "请选择监测项目");
             return false;
         }
@@ -646,10 +678,10 @@ public class CollectionDetailFragment extends BaseFragment {
         if (isScene) {//现场检测
             samplingDetail.setSenceMonitemName(name);
             samplingDetail.setSenceMonitemId(id);
-            sample_monitor.setText(name);
+            sample_monitor.setRightTextStr(name);
             //name去重
             str = getDifference(samplingDetail.getMonitemName(), samplingDetail.getSenceMonitemName());
-            sample_monitor_items.setText(str);
+            sample_monitor_items.setRightTextStr(str);
             samplingDetail.setMonitemName(str);
             //id去重
             samplingDetail.setMonitemId(getDifference(samplingDetail.getMonitemId(),
@@ -657,10 +689,10 @@ public class CollectionDetailFragment extends BaseFragment {
         } else {//检测项目
             samplingDetail.setMonitemName(name);
             samplingDetail.setMonitemId(id);
-            sample_monitor_items.setText(name);
+            sample_monitor_items.setRightTextStr(name);
             //name去重
             str = getDifference(samplingDetail.getSenceMonitemName(), samplingDetail.getMonitemName());
-            sample_monitor.setText(str);
+            sample_monitor.setRightTextStr(str);
             samplingDetail.setSenceMonitemName(str);
             //id去重
             samplingDetail.setSenceMonitemId(getDifference(samplingDetail.getSenceMonitemId(),
@@ -668,15 +700,15 @@ public class CollectionDetailFragment extends BaseFragment {
         }
         //名称项数量
         if (samplingDetail.getMonitemId() == null || samplingDetail.getMonitemId().equals("")) {
-            sample_monitor_items_title.setText("监测项目(" + 0 + ")");
+            sample_monitor_items.setLeftTextViewStr("监测项目(" + 0 + ")");
         } else {
-            sample_monitor_items_title.setText("监测项目(" + samplingDetail.
+            sample_monitor_items.setLeftTextViewStr("监测项目(" + samplingDetail.
                     getMonitemId().split(",").length + ")");
         }
         if (samplingDetail.getSenceMonitemId() == null || samplingDetail.getSenceMonitemId().equals("")) {
-            sample_monitor_title.setText("现场监测(" + 0 + ")");
+            sample_monitor.setLeftTextViewStr("现场监测(" + 0 + ")");
         } else {
-            sample_monitor_title.setText("现场监测(" + samplingDetail.getSenceMonitemId().
+            sample_monitor.setLeftTextViewStr("现场监测(" + samplingDetail.getSenceMonitemId().
                     split(",").length + ")");
         }
     }
@@ -852,22 +884,21 @@ public class CollectionDetailFragment extends BaseFragment {
         samplingDetail.setSenceMonitemName(HelpUtil.joinStringList(xcNameList));
         samplingDetail.setSenceMonitemId(HelpUtil.joinStringList(xcIdList));
 
-        sample_monitor_items.setText(samplingDetail.getMonitemName());
-        sample_monitor.setText(samplingDetail.getSenceMonitemName());
+        sample_monitor_items.setRightTextStr(samplingDetail.getMonitemName());
+        sample_monitor.setRightTextStr(samplingDetail.getSenceMonitemName());
 
         int count = 0;
         if (!CheckUtil.isEmpty(samplingDetail.getMonitemId())) {
             count += samplingDetail.getMonitemId().split(",").length;
-            sample_monitor_items_title.setText("监测项目（" + count + "）");
         }
-
+        sample_monitor_items.setLeftTextViewStr("监测项目（" + count + "）");
+        int resone = 0;
         if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())) {
-            count += samplingDetail.getSenceMonitemId().split(",").length;
-            int resone = getThelenth(samplingDetail.getSenceMonitemId().split(",")
+            resone = getThelenth(samplingDetail.getSenceMonitemId().split(",")
                     , samplingDetail.getMonitemId().split(","));
-            sample_monitor_title.setText("现场监测（" + resone + "）");
-//            sample_monitor_title.setText("现场监测（"+samplingDetail.getSenceMonitemId().split(",").length+"）");
+            sample_monitor.setLeftTextViewStr("现场监测（" + resone + "）");
         }
+        sample_monitor.setLeftTextViewStr("现场监测（" + resone + "）");
 
         // samplingDetail.setSamplingCount(HelpUtil.setSamplingCount(samplingDetail, mSample));
 
@@ -1014,19 +1045,19 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setSenceMonitemId(StringUtil.join(",", senceMonitemIdList));
                     String res = getDifference(samplingDetail.getSenceMonitemName()
                             , samplingDetail.getMonitemName());
-                    sample_monitor.setText(res);
+                    sample_monitor.setRightTextStr(res);
 
                     int resone = getLenth(senceMonitemIdList
                             , samplingDetail.getMonitemId().split(","));
-                    sample_monitor_title.setText("现场监测（" + resone + "）");
+                    sample_monitor.setLeftTextViewStr("现场监测（" + resone + "）");
 
 //                    sample_monitor_title.setText("现场监测("+senceMonitemIdList.size()+")");
                 } else {
                     samplingDetail.setSenceMonitemName("");
                     samplingDetail.setSenceMonitemId("");
                     //空的，就不管了
-                    sample_monitor.setText(samplingDetail.getSenceMonitemName());
-                    sample_monitor_title.setText("现场监测(0)");
+                    sample_monitor.setRightTextStr(samplingDetail.getSenceMonitemName());
+                    sample_monitor.setLeftTextViewStr("现场监测(0)");
                 }
             }
 
@@ -1044,13 +1075,13 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
                     samplingDetail.setMonitemName(StringUtil.join(",", monitemNameList));
                     samplingDetail.setMonitemId(StringUtil.join(",", monitemIdList));
-                    sample_monitor_items.setText(samplingDetail.getMonitemName());
-                    sample_monitor_items_title.setText("监测项目(" + monitemIdList.size() + ")");
+                    sample_monitor_items.setRightTextStr(samplingDetail.getMonitemName());
+                    sample_monitor_items.setLeftTextViewStr("监测项目(" + monitemIdList.size() + ")");
                 } else {
                     samplingDetail.setMonitemName("");
                     samplingDetail.setMonitemId("");
-                    sample_monitor_items.setText(samplingDetail.getMonitemName());
-                    sample_monitor_items_title.setText("监测项目(0)");
+                    sample_monitor_items.setRightTextStr(samplingDetail.getMonitemName());
+                    sample_monitor_items.setLeftTextViewStr("监测项目(0)");
                 }
             }
 

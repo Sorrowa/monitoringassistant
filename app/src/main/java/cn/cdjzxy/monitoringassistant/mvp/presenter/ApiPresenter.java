@@ -845,8 +845,10 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             //
                             ProjectDao dao = DBHelper.get().getProjectDao();
                             //日期转化
+                            setSAMPLING_PROGRESS(projects.size());
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             for (Project project : projects) {
+                                getSampling(Message.obtain(msg), project.getId(), projects.size());
                                 Project old = dao.queryBuilder()
                                         .where(ProjectDao.Properties.Id.eq(project.getId()))
                                         .build()
@@ -915,16 +917,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 //                                }
 //                            }
 //                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
-                            List<String> taskIds = new ArrayList<>();
-                            setSAMPLING_PROGRESS(projects.size());
-                            for (int i = 0; i < projects.size(); i++) {
-                                String id = projects.get(i).getId();
-                                if (!CheckUtil.isEmpty(id)) {
-                                    taskIds.add(projects.get(i).getId());
-                                    getSampling(Message.obtain(msg), taskIds, i, projects.size());
-                                    taskIds.clear();
-                                }
-                            }
+
+
                         }
 
                         msg.str = "正在同步采样单";
@@ -1022,14 +1016,13 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      *
      * @param msg
      */
-    public void getSampling(final Message msg, List<String> projectIds, int i, int size) {
+    public void getSampling(final Message msg, String projectIds, int size) {
         if (CheckUtil.isEmpty(projectIds)) return;
         mModel.getSampling(projectIds)
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Sampling>>>() {
                     @Override
                     public void onSuccess(BaseResponse<List<Sampling>> baseResponse) {
-                        Log.i(TAG, String.format("listSize:%d,i:%d", size, i));
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
@@ -1062,8 +1055,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      *
      * @param msg
      */
-    public void getSampling(final Message msg, List<String> projectIds) {
-        mModel.getSampling(projectIds)
+    public void getSamplings(final Message msg, List<String> projectIds) {
+        mModel.getSamplings(projectIds)
                 .compose(RxUtils.applySchedulers(this, msg.getTarget()))
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Sampling>>>() {
                     @Override

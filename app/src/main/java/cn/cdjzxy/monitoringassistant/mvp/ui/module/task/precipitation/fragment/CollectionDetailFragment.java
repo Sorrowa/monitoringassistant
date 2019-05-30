@@ -54,6 +54,7 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.MyInputFilter;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 /**
  * 采集样品详情
@@ -62,18 +63,18 @@ import cn.cdjzxy.monitoringassistant.utils.StringUtil;
 public class CollectionDetailFragment extends BaseFragment {
 
     Unbinder unbinder;
-    @BindView(R.id.tv_sample_code)
-    TextView tvSampleCode;
-    @BindView(R.id.tv_frequency)
-    TextView tvFrequency;
-    @BindView(R.id.tv_start_time)
-    TextView tvStartTime;
-    @BindView(R.id.tv_end_time)
-    TextView tvEndTime;
-    @BindView(R.id.et_precipitation)
-    EditText etPrecipitation;
-    @BindView(R.id.et_rainwater_volume)
-    EditText etRainwaterVolume;
+    @BindView(R.id.my_layout_sample_code)
+    MyDrawableLinearLayout tvSampleCode;
+    @BindView(R.id.my_layout_frequency)
+    MyDrawableLinearLayout tvFrequency;
+    @BindView(R.id.my_layout_start_time)
+    MyDrawableLinearLayout tvStartTime;
+    @BindView(R.id.my_layout_end_time)
+    MyDrawableLinearLayout tvEndTime;
+    @BindView(R.id.my_layout_precipitation)
+    MyDrawableLinearLayout etPrecipitation;
+    @BindView(R.id.my_layout_rainwater_volume)
+    MyDrawableLinearLayout etRainwaterVolume;
     @BindView(R.id.et_remark)
     EditText etRemark;
     @BindView(R.id.btn_delete)
@@ -95,10 +96,8 @@ public class CollectionDetailFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        etPrecipitation.setFilters(new InputFilter[]{new MyInputFilter(2)});
-        etRainwaterVolume.setFilters(new InputFilter[]{new MyInputFilter(2)});
-
-
+        etPrecipitation.getEditText().setFilters(new InputFilter[]{new MyInputFilter(2)});
+        etRainwaterVolume.getEditText().setFilters(new InputFilter[]{new MyInputFilter(2)});
     }
 
     @Nullable
@@ -123,10 +122,10 @@ public class CollectionDetailFragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            tvStartTime.setText("");
-            tvEndTime.setText("");
-            etPrecipitation.setText("");
-            etRainwaterVolume.setText("");
+            tvStartTime.setRightTextStr("");
+            tvEndTime.setRightTextStr("");
+            etPrecipitation.setEditTextStr("");
+            etRainwaterVolume.setEditTextStr("");
             etRemark.setText("");
             createSampleDetailNo();
         }
@@ -163,25 +162,25 @@ public class CollectionDetailFragment extends BaseFragment {
             String waterNo = mSamplingNo.substring(mSamplingNo.lastIndexOf("-") + 1, mSamplingNo.length());//采样单流水号
             String userId = UserInfoHelper.get().getUser().getIntId() + "-";//用户系统编号
             String samplingNo = "JS" + dateStr + "-" + waterNo + userId + StringUtil.autoGenericCode(snFrequency, 2);//采样号
-            tvSampleCode.setText(samplingNo);
-            tvFrequency.setText(snFrequency + "");
+            tvSampleCode.setRightTextStr(samplingNo);
+            tvFrequency.setRightTextStr(snFrequency + "");
         } else {
             btnDelete.setVisibility(View.VISIBLE);
 
             SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
-            tvSampleCode.setText(samplingDetail.getSampingCode());
-            tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
+            tvSampleCode.setRightTextStr(samplingDetail.getSampingCode());
+            tvFrequency.setRightTextStr(samplingDetail.getFrequecyNo() + "");
 
             String privateData = samplingDetail.getPrivateData();
             try {
                 JSONObject jsonObject = new JSONObject(privateData);
-                tvStartTime.setText(jsonObject.getString("SDataTime"));
-                tvEndTime.setText(jsonObject.getString("EDataTime"));
-                etRainwaterVolume.setText(jsonObject.getString("RainVol"));
+                tvStartTime.setRightTextStr(jsonObject.getString("SDataTime"));
+                tvEndTime.setRightTextStr(jsonObject.getString("EDataTime"));
+                etRainwaterVolume.setEditTextStr(jsonObject.getString("RainVol"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            etPrecipitation.setText(samplingDetail.getValue1());
+            etPrecipitation.setEditTextStr(samplingDetail.getValue1());
             etRemark.setText(samplingDetail.getDescription());
         }
 
@@ -208,18 +207,20 @@ public class CollectionDetailFragment extends BaseFragment {
         EventBus.getDefault().post(1, EventBusTags.TAG_PRECIPITATION_COLLECTION);
     }
 
-    @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.btn_delete, R.id.btn_save})
+    @OnClick({R.id.my_layout_start_time, R.id.my_layout_end_time, R.id.btn_delete, R.id.btn_save})
     public void onViewClicked(View view) {
-        if (!isCanEdit()) {
+        hideSoftInput();
+        if (!PrecipitationActivity.isNewCreate &&
+                !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
             showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
             return;
         }
         switch (view.getId()) {
-            case R.id.tv_start_time:
+            case R.id.my_layout_start_time:
                 isStartTime = true;
                 initTimePickerView();
                 break;
-            case R.id.tv_end_time:
+            case R.id.my_layout_end_time:
                 isStartTime = false;
                 initTimePickerView();
                 break;
@@ -242,8 +243,8 @@ public class CollectionDetailFragment extends BaseFragment {
                     }
 
                     samplingDetail.setSamplingId(mSampling.getId());
-                    samplingDetail.setSampingCode(tvSampleCode.getText().toString());
-                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getText().toString()));
+                    samplingDetail.setSampingCode(tvSampleCode.getRightTextViewStr());
+                    samplingDetail.setFrequecyNo(Integer.parseInt(tvFrequency.getRightTextViewStr()));
                     samplingDetail.setAddresssId(mSampling.getAddressId());
                     samplingDetail.setAddressName(mSampling.getAddressName());
                     samplingDetail.setDeviceIdName(mSampling.getDeviceName());
@@ -253,13 +254,13 @@ public class CollectionDetailFragment extends BaseFragment {
                     samplingDetail.setIsSenceAnalysis(true);
 
                     HashMap<String, String> map = new HashMap<>();
-                    map.put("SDataTime", tvStartTime.getText().toString());
-                    map.put("EDataTime", tvEndTime.getText().toString());
-                    map.put("RainVol", etRainwaterVolume.getText().toString());
+                    map.put("SDataTime", tvStartTime.getRightTextViewStr());
+                    map.put("EDataTime", tvEndTime.getRightTextViewStr());
+                    map.put("RainVol", etRainwaterVolume.getEditTextStr());
                     samplingDetail.setPrivateData(new JSONObject(map).toString());
 
-                    samplingDetail.setValue(etPrecipitation.getText().toString());
-                    samplingDetail.setValue1(etPrecipitation.getText().toString());
+                    samplingDetail.setValue(etPrecipitation.getEditTextStr());
+                    samplingDetail.setValue1(etPrecipitation.getEditTextStr());
                     samplingDetail.setDescription(etRemark.getText().toString());
 
 
@@ -300,19 +301,19 @@ public class CollectionDetailFragment extends BaseFragment {
     }
 
     private boolean saveCheck() {
-        if (TextUtils.isEmpty(tvStartTime.getText().toString())) {
+        if (TextUtils.isEmpty(tvStartTime.getRightTextViewStr())) {
             ArtUtils.makeText(getContext(), "请选择开始时间");
             return false;
         }
-        if (TextUtils.isEmpty(tvEndTime.getText().toString())) {
+        if (TextUtils.isEmpty(tvEndTime.getRightTextViewStr())) {
             ArtUtils.makeText(getContext(), "请选择结束时间");
             return false;
         }
-        if (TextUtils.isEmpty(etPrecipitation.getText().toString())) {
+        if (TextUtils.isEmpty(etPrecipitation.getEditTextStr())) {
             ArtUtils.makeText(getContext(), "请输入降水量");
             return false;
         }
-        if (TextUtils.isEmpty(etRainwaterVolume.getText().toString())) {
+        if (TextUtils.isEmpty(etRainwaterVolume.getEditTextStr())) {
             ArtUtils.makeText(getContext(), "请输入雨水体积");
             return false;
         }
@@ -327,17 +328,19 @@ public class CollectionDetailFragment extends BaseFragment {
                 String selectTime = DateUtils.getTimeShort(date.getTime());
                 try {
                     if (isStartTime) {
-                        if (!TextUtils.isEmpty(tvEndTime.getText().toString()) && !DateUtils.compareTime(selectTime, tvEndTime.getText().toString())) {
+                        if (!TextUtils.isEmpty(tvEndTime.getRightTextViewStr()) &&
+                                !DateUtils.compareTime(selectTime, tvEndTime.getRightTextViewStr())) {
                             ArtUtils.makeText(getContext(), "开始时间必须小于结束时间");
                             return;
                         }
-                        tvStartTime.setText(selectTime);
+                        tvStartTime.setRightTextStr(selectTime);
                     } else {
-                        if (!TextUtils.isEmpty(tvStartTime.getText().toString()) && DateUtils.compareTime(selectTime, tvStartTime.getText().toString())) {
+                        if (!TextUtils.isEmpty(tvStartTime.getRightTextViewStr())
+                                && DateUtils.compareTime(selectTime, tvStartTime.getRightTextViewStr())) {
                             ArtUtils.makeText(getContext(), "结束时间必须大于开始时间");
                             return;
                         }
-                        tvEndTime.setText(selectTime);
+                        tvEndTime.setRightTextStr(selectTime);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -417,13 +420,4 @@ public class CollectionDetailFragment extends BaseFragment {
         return !CheckUtil.isEmpty(mSampling.getDeviceName());
     }
 
-
-    /**
-     * 判断是否有编辑权限
-     *
-     * @return
-     */
-    private boolean isCanEdit() {
-        return !PrecipitationActivity.isNewCreate && UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num);
-    }
 }

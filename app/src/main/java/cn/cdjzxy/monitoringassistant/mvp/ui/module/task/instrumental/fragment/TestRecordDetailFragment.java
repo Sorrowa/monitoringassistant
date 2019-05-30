@@ -50,6 +50,7 @@ import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.NumberUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.StringUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 public class TestRecordDetailFragment extends BaseFragment {
 
@@ -58,50 +59,50 @@ public class TestRecordDetailFragment extends BaseFragment {
     /**
      * 样品编码
      */
-    @BindView(R.id.tv_sample_code)
-    TextView tvSampleCode;
+    @BindView(R.id.my_layout_sample_code)
+    MyDrawableLinearLayout tvSampleCode;
 
     /**
      * 频次
      */
-    @BindView(R.id.tv_frequency)
-    TextView tvFrequency;
+    @BindView(R.id.my_layout_frequency)
+    MyDrawableLinearLayout tvFrequency;
 
     /**
      * 点位
      */
-    @BindView(R.id.tv_point)
-    TextView tvPoint;
+    @BindView(R.id.my_layout_point)
+    MyDrawableLinearLayout tvPoint;
 
     /**
      * 内控，平行/样品
      */
-    @BindView(R.id.tv_control)
-    TextView tvControl;
+    @BindView(R.id.my_layout_control)
+    MyDrawableLinearLayout tvControl;
 
     /**
      * 检测日期
      */
-    @BindView(R.id.tv_test_time)
-    TextView tvTestTime;
+    @BindView(R.id.my_layout_time)
+    MyDrawableLinearLayout tvTestTime;
 
     /**
      * 分析时间
      */
-    @BindView(R.id.tv_analyse_time)
-    TextView tvAnalyseTime;
+    @BindView(R.id.my_layout_analyse_time)
+    MyDrawableLinearLayout tvAnalyseTime;
 
     /**
      * 分析结果
      */
-    @BindView(R.id.et_analyse_result)
-    EditText etAnalyseResult;
+    @BindView(R.id.my_layout_analyse_result)
+    MyDrawableLinearLayout etAnalyseResult;
 
     /**
      * 结果单位
      */
-    @BindView(R.id.tv_test_unit)
-    TextView tvTestUnit;
+    @BindView(R.id.my_layout_unit)
+    MyDrawableLinearLayout tvTestUnit;
 
     /**
      * 删除按钮
@@ -162,9 +163,9 @@ public class TestRecordDetailFragment extends BaseFragment {
         mSampling = InstrumentalActivity.mSampling;
 
         if (isVisibleToUser) {
-            tvAnalyseTime.setText("");
-            tvTestUnit.setText("");
-            etAnalyseResult.setText("");
+            tvAnalyseTime.setRightTextStr("");
+            tvTestUnit.setRightTextStr("");
+            etAnalyseResult.setEditTextStr("");
             TestRecordDetailFragment.this.unitId = "";
             createSampleDetailNo();
         }
@@ -179,13 +180,13 @@ public class TestRecordDetailFragment extends BaseFragment {
         btnDelete.setVisibility(View.VISIBLE);
 
         SamplingDetail samplingDetail = samplingDetailResults.get(listPosition);
-        tvSampleCode.setText(samplingDetail.getSampingCode());
-        tvFrequency.setText(samplingDetail.getFrequecyNo() + "");
-        tvPoint.setText(samplingDetail.getAddressName());
-        tvTestTime.setText(DateUtils.strGetDate(samplingDetail.getSamplingOnTime()));//监测日期
-        tvControl.setText(samplingDetail.getSamplingType() == 1 ? "平行" : "");
-        tvAnalyseTime.setText(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
-        etAnalyseResult.setText(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
+        tvSampleCode.setRightTextStr(samplingDetail.getSampingCode());
+        tvFrequency.setRightTextStr(samplingDetail.getFrequecyNo() + "");
+        tvPoint.setRightTextStr(samplingDetail.getAddressName());
+        tvTestTime.setRightTextStr(DateUtils.strGetDate(samplingDetail.getSamplingOnTime()));//监测日期
+        tvControl.setRightTextStr(samplingDetail.getSamplingType() == 1 ? "平行" : "");
+        tvAnalyseTime.setRightTextStr(samplingDetail.getPrivateDataStringValue("SamplingOnTime"));//分析实际
+        etAnalyseResult.setEditTextStr(samplingDetail.getPrivateDataStringValue("CaleValue"));//分析结果
 
         //记录结果单位ID
         TestRecordDetailFragment.this.unitId = samplingDetail.getPrivateDataStringValue("ValueUnit");
@@ -193,12 +194,12 @@ public class TestRecordDetailFragment extends BaseFragment {
                 samplingDetail.getPrivateDataStringValue("ValueUnitName").equals("")) {
             List<Unit> units = DBHelper.get().getUnitDao().loadAll();
             if (units != null && units.size() > 0) {
-                tvTestUnit.setText(units.get(0).getName());
+                tvTestUnit.setRightTextStr(units.get(0).getName());
                 TestRecordDetailFragment.this.unitId = units.get(0).getId();
             }
 
         } else {
-            tvTestUnit.setText(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
+            tvTestUnit.setRightTextStr(samplingDetail.getPrivateDataStringValue("ValueUnitName"));//结果单位
         }
         if (!mSampling.getIsCanEdit()) {
             btnDelete.setVisibility(View.GONE);
@@ -222,25 +223,26 @@ public class TestRecordDetailFragment extends BaseFragment {
         EventBus.getDefault().post(1, EventBusTags.TAG_INSTRUMENTAL_RECORD);
     }
 
-    @OnClick({R.id.tv_analyse_time, R.id.tv_test_unit, R.id.btn_delete, R.id.btn_save})
+    @OnClick({R.id.my_layout_analyse_time, R.id.my_layout_unit, R.id.btn_delete, R.id.btn_save})
     public void onViewClicked(View view) {
+        hideSoftInput();
         if (!InstrumentalActivity.isNewCreate &&
                 !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
             showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
             return;
         }
         switch (view.getId()) {
-            case R.id.tv_analyse_time:
+            case R.id.my_layout_analyse_time:
                 initTimePickerView(new OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date, View v) {
-                        tvAnalyseTime.setText(DateUtils.getTimeHour(date.getTime()));
+                        tvAnalyseTime.setRightTextStr(DateUtils.getTimeHour(date.getTime()));
                     }
                 });
 
                 break;
 
-            case R.id.tv_test_unit:
+            case R.id.my_layout_unit:
                 Intent intent4 = new Intent(getContext(), UnitActivity.class);
                 new AvoidOnResult(getActivity()).startForResult(intent4, new AvoidOnResult.Callback() {
                     @Override
@@ -248,7 +250,7 @@ public class TestRecordDetailFragment extends BaseFragment {
                         if (resultCode == Activity.RESULT_OK) {
                             //记录结果单位
                             TestRecordDetailFragment.this.unitId = data.getStringExtra("UnitId");
-                            tvTestUnit.setText(data.getStringExtra("UnitName"));
+                            tvTestUnit.setRightTextStr(data.getStringExtra("UnitName"));
                         }
                     }
                 });
@@ -271,10 +273,10 @@ public class TestRecordDetailFragment extends BaseFragment {
                 SamplingDetail samplingDetail = mSampling.getSamplingDetailYQFs().get(listPosition);
 
                 //更新数据
-                samplingDetail.setPrivateDataStringValue("SamplingOnTime", tvAnalyseTime.getText().toString());
-                samplingDetail.setPrivateDataStringValue("CaleValue", etAnalyseResult.getText().toString());
+                samplingDetail.setPrivateDataStringValue("SamplingOnTime", tvAnalyseTime.getRightTextViewStr());
+                samplingDetail.setPrivateDataStringValue("CaleValue", etAnalyseResult.getEditTextStr());
                 samplingDetail.setPrivateDataStringValue("ValueUnit", TestRecordDetailFragment.this.unitId);
-                samplingDetail.setPrivateDataStringValue("ValueUnitName", tvTestUnit.getText().toString());
+                samplingDetail.setPrivateDataStringValue("ValueUnitName", tvTestUnit.getRightTextViewStr());
 //                    samplingDetail.setPrivateDataBooleanValue("HasPX", "平行".equals(tvControl.getText().toString()));
 
                 //计算均值和偏差值
@@ -301,12 +303,12 @@ public class TestRecordDetailFragment extends BaseFragment {
     }
 
     private boolean saveCheck() {
-        if (TextUtils.isEmpty(tvAnalyseTime.getText().toString())) {
+        if (TextUtils.isEmpty(tvAnalyseTime.getRightTextViewStr())) {
             ArtUtils.makeText(getContext(), "请选择分析时间！");
             return false;
         }
 
-        String result = etAnalyseResult.getText().toString();
+        String result = etAnalyseResult.getEditTextStr();
         if (TextUtils.isEmpty(result)) {
             ArtUtils.makeText(getContext(), "请输入分析结果！");
             return false;
@@ -324,7 +326,7 @@ public class TestRecordDetailFragment extends BaseFragment {
             return false;
         }
 
-        if (TextUtils.isEmpty(tvTestUnit.getText().toString())) {
+        if (TextUtils.isEmpty(tvTestUnit.getRightTextViewStr())) {
             ArtUtils.makeText(getContext(), "请选择结果单位！");
             return false;
         }

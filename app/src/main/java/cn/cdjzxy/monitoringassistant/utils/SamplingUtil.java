@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
@@ -270,7 +271,8 @@ public class SamplingUtil {
         sampling.setTagId(formSelect.getTagId());
         sampling.setParentTagId(formSelect.getTagParentId());
         sampling.setMonitemName("工业企业厂界噪声");
-        sampling.setMonitemId(DbHelpUtils.getMonItems("工业企业厂界噪声").getId());//为了检测方法
+        MonItems  monItems=DbHelpUtils.getMonItems("工业企业厂界噪声");
+        sampling.setMonitemId(CheckUtil.isNull(monItems)?"":monItems.getId());//为了检测方法
 //        sampling.setMontype(project.getMonType() + "");
         sampling.setMontype(project.getTypeCode());
         sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());

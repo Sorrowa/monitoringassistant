@@ -202,7 +202,10 @@ public interface ApiService {
     Observable<BaseResponse> putSubmitSampling();
 
     @GET(Api.GET_SAMPLING)
-    Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") List<String> projectIds);
+    Observable<BaseResponse<List<Sampling>>> getSamplings(@Query("ProjectId") List<String> projectIds);
+
+    @GET(Api.GET_SAMPLING)
+    Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") String projectId);
 
     @GET(Api.GET_SAMPLING_BY_ID)
     Observable<BaseResponse<List<Sampling>>> getSamplingByID(@Query("SamplingID") String samplingID);

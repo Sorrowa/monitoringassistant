@@ -4,6 +4,8 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -68,6 +70,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.precipitation.PrecipitationActivity.mProject;
@@ -84,44 +87,48 @@ public class BasicFragment extends BaseFragment {
 
     private static final int REQUEST_CODE = 24;
 
-    @BindView(R.id.tv_sampling_date)
-    TextView tvSamplingDate;
-    @BindView(R.id.tv_sampling_user)
-    TextView tvSamplingUser;
-    @BindView(R.id.tv_sampling_type)
-    TextView tvSamplingType;
-    @BindView(R.id.tv_sampling_point)
-    TextView tvSamplingPoint;
-    @BindView(R.id.tv_sampling_no)
-    EditText tvSamplingNo;
-    @BindView(R.id.ed_monitor_name)
-    TextView edMonitorName;//监测项目
-    @BindView(R.id.tv_sampling_height)
-    EditText tvSamplingHeight;
-    @BindView(R.id.et_sampling_area)
-    EditText etSamplingArea;
-    @BindView(R.id.tv_sampling_method)
-    TextView tvSamplingMethod;
-    @BindView(R.id.tv_sampling_device)
-    TextView tvSamplingDevice;
+    @BindView(R.id.my_layout_sample_date)
+    MyDrawableLinearLayout tvSamplingDate;
+    @BindView(R.id.my_layout_sample_user)
+    MyDrawableLinearLayout tvSamplingUser;
+    @BindView(R.id.my_layout_sample_type)
+    MyDrawableLinearLayout tvSamplingType;
+    @BindView(R.id.my_layout_sample_point)
+    MyDrawableLinearLayout tvSamplingPoint;
+    @BindView(R.id.my_layout_sample_no)
+    MyDrawableLinearLayout tvSamplingNo;
+    @BindView(R.id.my_layout_monitor_name)
+    MyDrawableLinearLayout edMonitorName;//监测项目
+    @BindView(R.id.my_layout_monitor_height)
+    MyDrawableLinearLayout tvSamplingHeight;
+    @BindView(R.id.my_layout_monitor_area)
+    MyDrawableLinearLayout etSamplingArea;
+    @BindView(R.id.my_layout_monitor_method)
+    MyDrawableLinearLayout tvSamplingMethod;
+    @BindView(R.id.my_layout_monitor_device)
+    MyDrawableLinearLayout tvSamplingDevice;
     @BindView(R.id.layout_flow_information)
     RelativeLayout layoutFlowInformation;
-    @BindView(R.id.tv_flow_method)
-    EditText tvFlowMethod;
-    @BindView(R.id.tv_flow_date)
-    TextView tvFlowDate;
+
     @BindView(R.id.tv_comment)
     EditText tvComment;
-    @BindView(R.id.layout_flow_information_container)
-    LinearLayout layoutFlowInformationContainer;
+
     @BindView(R.id.iv_add_photo)
     ImageView ivAddPhoto;
-    @BindView(R.id.tv_arrow)
-    TextView tvArrow;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
-    @BindView(R.id.tv_receive_date)
-    TextView tv_receive_date;
+
+    //流转信息
+    @BindView(R.id.tv_arrow)
+    TextView tvArrow;
+    @BindView(R.id.layout_flow_information_container)
+    LinearLayout layoutFlowInformationContainer;
+    @BindView(R.id.my_layout_flow_method)
+    MyDrawableLinearLayout tvFlowMethod;
+    @BindView(R.id.my_layout_flow_date)
+    MyDrawableLinearLayout tvFlowDate;
+    @BindView(R.id.my_layout_receive_date)
+    MyDrawableLinearLayout tv_receive_date;
 
     Unbinder unbinder;
 
@@ -147,24 +154,24 @@ public class BasicFragment extends BaseFragment {
         mPrivateData = new PreciptationPrivateData();
         mSamplingFiles.add(new SamplingFile());
         if (!CheckUtil.isNull(mSampling)) {
-            tvSamplingDate.setText(DateUtils.strGetDate(mSampling.getSamplingTimeBegin()));
-            tvSamplingUser.setText(mSampling.getSamplingUserName());
-            tvSamplingType.setText(mSampling.getTagName());
-            tvSamplingPoint.setText(mSampling.getAddressName());
-            tvSamplingNo.setText(mSampling.getAddressNo());
-            edMonitorName.setText(mSampling.getMonitemName());
+            tvSamplingDate.setRightTextStr(DateUtils.strGetDate(mSampling.getSamplingTimeBegin()));
+            tvSamplingUser.setRightTextStr(mSampling.getSamplingUserName());
+            tvSamplingType.setRightTextStr(mSampling.getTagName());
+            tvSamplingPoint.setRightTextStr(mSampling.getAddressName());
+            tvSamplingNo.setEditTextStr(mSampling.getAddressNo());
+            edMonitorName.setEditTextStr(mSampling.getMonitemName());
             if (!CheckUtil.isEmpty(mSampling.getPrivateData())) {
                 mPrivateData = JSONObject.parseObject(mSampling.getPrivateData(), PreciptationPrivateData.class);
                 if (!CheckUtil.isNull(mPrivateData)) {
-                    tvSamplingHeight.setText(mPrivateData.getSampHight());
-                    etSamplingArea.setText(mPrivateData.getSampArea());
+                    tvSamplingHeight.setEditTextStr(mPrivateData.getSampHight());
+                    etSamplingArea.setEditTextStr(mPrivateData.getSampArea());
                 }
             }
-            tvSamplingMethod.setText(mSampling.getMethodName());
-            tvSamplingDevice.setText(mSampling.getDeviceName());
-            tvFlowMethod.setText(mSampling.getTransfer());
-            tvFlowDate.setText(DateUtils.strGetTimeShort(mSampling.getSendSampTime()));
-            tv_receive_date.setText(mSampling.getReciveTime());
+            tvSamplingMethod.setRightTextStr(mSampling.getMethodName());
+            tvSamplingDevice.setRightTextStr(mSampling.getDeviceName());
+            tvFlowMethod.setRightTextStr(mSampling.getTransfer());
+            tvFlowDate.setRightTextStr(DateUtils.strGetTimeShort(mSampling.getSendSampTime()));
+            tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSampling.getReciveTime()));
             tvComment.setText(mSampling.getComment());
             mSamplingFiles.addAll(mSampling.getSamplingFiless());
 
@@ -183,7 +190,7 @@ public class BasicFragment extends BaseFragment {
         }
 
         //点位编号
-        tvSamplingNo.addTextChangedListener(new TextWatcher() {
+        tvSamplingNo.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -215,7 +222,7 @@ public class BasicFragment extends BaseFragment {
             }
         });
 
-        tvSamplingHeight.addTextChangedListener(new TextWatcher() {
+        tvSamplingHeight.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -233,7 +240,7 @@ public class BasicFragment extends BaseFragment {
             }
         });
 
-        etSamplingArea.addTextChangedListener(new TextWatcher() {
+        etSamplingArea.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -255,7 +262,7 @@ public class BasicFragment extends BaseFragment {
             }
         });
 
-        tvFlowMethod.addTextChangedListener(new TextWatcher() {
+        tvFlowMethod.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -434,33 +441,38 @@ public class BasicFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.layout_flow_information, R.id.tv_sampling_type, R.id.tv_flow_date, R.id.tv_sampling_date, R.id.iv_add_photo, R.id.tv_sampling_user, R.id.tv_sampling_point, R.id.tv_sampling_method, R.id.tv_sampling_device})
+    @OnClick({R.id.layout_flow_information, R.id.my_layout_sample_type, R.id.my_layout_flow_date,
+            R.id.my_layout_sample_date, R.id.iv_add_photo, R.id.my_layout_sample_user,
+            R.id.my_layout_sample_point, R.id.my_layout_monitor_method, R.id.my_layout_monitor_device})
     public void onClick(View view) {
+        hideSoftInput();
         if (!PrecipitationActivity.isNewCreate &&
                 !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
             showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
             return;
         }
         switch (view.getId()) {
-            case R.id.tv_sampling_date:
+            case R.id.my_layout_sample_date:
                 showDateSelectDialog();
                 break;
-            case R.id.tv_flow_date:
+            case R.id.my_layout_flow_date:
                 showDateSelectDialog1();
                 break;
             case R.id.layout_flow_information:
                 if (tvArrow.getRotation() == 90f) {
                     tvArrow.setRotation(0f);
+                    setViewStyle(false,tvArrow);
                     layoutFlowInformationContainer.setVisibility(View.GONE);
                 } else {
                     tvArrow.setRotation(90f);
+                    setViewStyle(true,tvArrow);
                     layoutFlowInformationContainer.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.iv_add_photo:
                 choosePhoto(REQUEST_CODE);
                 break;
-            case R.id.tv_sampling_type:
+            case R.id.my_layout_sample_type:
                 Intent intent = new Intent(getContext(), TypeActivity.class);
                 intent.putExtra("tagId", mSampling.getParentTagId());
                 new AvoidOnResult(getActivity()).startForResult(intent, new AvoidOnResult.Callback() {
@@ -469,13 +481,13 @@ public class BasicFragment extends BaseFragment {
                         if (resultCode == Activity.RESULT_OK) {
                             mSampling.setTagId(data.getStringExtra("TagId"));
                             mSampling.setTagName(data.getStringExtra("TagName"));
-                            tvSamplingType.setText(mSampling.getTagName());
+                            tvSamplingType.setRightTextStr(mSampling.getTagName());
                             setMonItemNameData();
                         }
                     }
                 });
                 break;
-            case R.id.tv_sampling_user:
+            case R.id.my_layout_sample_user:
                 Intent intent1 = new Intent(getContext(), UserActivity.class);
                 intent1.putExtra("projectId", mSampling.getProjectId());
                 intent1.putExtra("selectUserIds", mSampling.getSamplingUserId());
@@ -485,12 +497,12 @@ public class BasicFragment extends BaseFragment {
                         if (resultCode == Activity.RESULT_OK) {
                             mSampling.setSamplingUserId(data.getStringExtra("UserId"));
                             mSampling.setSamplingUserName(data.getStringExtra("UserName"));
-                            tvSamplingUser.setText(mSampling.getSamplingUserName());
+                            tvSamplingUser.setRightTextStr(mSampling.getSamplingUserName());
                         }
                     }
                 });
                 break;
-            case R.id.tv_sampling_point:
+            case R.id.my_layout_sample_point:
                 if (CheckUtil.isEmpty(mSampling.getTagId())) {
                     ArtUtils.makeText(getContext(), "请先选择降水类型");
                     return;
@@ -505,14 +517,14 @@ public class BasicFragment extends BaseFragment {
                             mSampling.setAddressName(data.getStringExtra("Address"));
                             mSampling.setAddressId(data.getStringExtra("AddressId"));
                             mSampling.setAddressNo(data.getStringExtra("AddressNo"));
-                            tvSamplingPoint.setText(mSampling.getAddressName());
-                            tvSamplingNo.setText(mSampling.getAddressNo());
+                            tvSamplingPoint.setRightTextStr(mSampling.getAddressName());
+                            tvSamplingNo.setRightTextStr(mSampling.getAddressNo());
                             setMonItemNameData();
                         }
                     }
                 });
                 break;
-            case R.id.tv_sampling_method:
+            case R.id.my_layout_monitor_method:
                 if (CheckUtil.isEmpty(mSampling.getParentTagId())) {
                     ArtUtils.makeText(getContext(), "请先选择降水类型");
                     return;
@@ -525,12 +537,12 @@ public class BasicFragment extends BaseFragment {
                         if (resultCode == Activity.RESULT_OK) {
                             mSampling.setMethodName(data.getStringExtra("MethodName"));
                             mSampling.setMethodId(data.getStringExtra("MethodId"));
-                            tvSamplingMethod.setText(mSampling.getMethodName());
+                            tvSamplingMethod.setRightTextStr(mSampling.getMethodName());
                         }
                     }
                 });
                 break;
-            case R.id.tv_sampling_device:
+            case R.id.my_layout_monitor_device:
                 if (CheckUtil.isEmpty(mSampling.getMethodId())) {
                     ArtUtils.makeText(getContext(), "请先选择方法");
                     return;
@@ -553,7 +565,7 @@ public class BasicFragment extends BaseFragment {
                             } else {
                                 deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
                             }
-                            tvSamplingDevice.setText(deviceText);
+                            tvSamplingDevice.setRightTextStr(deviceText);
                             mSampling.setDeviceId(deviceId);
                             mSampling.setDeviceName(deviceText);
                         }
@@ -562,7 +574,30 @@ public class BasicFragment extends BaseFragment {
                 break;
         }
     }
+    /**
+     * 给view设置选中样式
+     *
+     * @param isSelect 选中还是未选中
+     * @param view     view
+     */
+    private void setViewStyle(boolean isSelect, TextView view) {
+        Drawable drawable;
+        if (isSelect) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                drawable = getContext().getDrawable(R.mipmap.ic_has_open);
+            } else {
+                drawable = getContext().getResources().getDrawable(R.mipmap.ic_has_open);
+            }
 
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                drawable = getContext().getDrawable(R.mipmap.ic_has_next);
+            } else {
+                drawable = getContext().getResources().getDrawable(R.mipmap.ic_has_next);
+            }
+        }
+        view.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
+    }
     /**
      * 设置监测项目
      */
@@ -573,7 +608,7 @@ public class BasicFragment extends BaseFragment {
                 , mSampling.getAddressId(), mSampling.getTagId());
         if (CheckUtil.isEmpty(projectDetialList)) {
             mSampling.setMonitemName("");
-            edMonitorName.setText(mSampling.getMonitemName());
+            edMonitorName.setRightTextStr(mSampling.getMonitemName());
             return;
         }
         StringBuilder stringBuilderName = new StringBuilder();
@@ -590,7 +625,7 @@ public class BasicFragment extends BaseFragment {
             stringBuilderId.deleteCharAt(stringBuilderId.lastIndexOf(","));
         mSampling.setMonitemName(stringBuilderName.toString());
         mSampling.setMonitemId(stringBuilderId.toString());
-        edMonitorName.setText(mSampling.getMonitemName());
+        edMonitorName.setRightTextStr(mSampling.getMonitemName());
     }
 
 
@@ -601,7 +636,7 @@ public class BasicFragment extends BaseFragment {
             public void onTimeSelect(Date date, View v) {
                 String dateStr = DateUtils.getDate(date);
                 mSampling.setSamplingTimeBegin(dateStr);
-                tvSamplingDate.setText(mSampling.getSamplingTimeBegin());
+                tvSamplingDate.setRightTextStr(mSampling.getSamplingTimeBegin());
                 mSampling.setSamplingNo(SamplingUtil.createSamplingNo(dateStr));
             }
         }).build();
@@ -615,7 +650,7 @@ public class BasicFragment extends BaseFragment {
             @Override
             public void onTimeSelect(Date date, View v) {
                 mSampling.setSendSampTime(DateUtils.getTimeShort(date.getTime()));
-                tvFlowDate.setText(mSampling.getSendSampTime());
+                tvFlowDate.setRightTextStr(mSampling.getSendSampTime());
             }
         }).setType(new boolean[]{true, true, true, true, true, false})
                 .isCyclic(true)

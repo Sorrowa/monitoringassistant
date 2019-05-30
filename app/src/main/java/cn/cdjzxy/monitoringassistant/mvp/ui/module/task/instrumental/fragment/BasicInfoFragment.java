@@ -54,40 +54,41 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.WasteWaterM
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity.mSampling;
 
 public class BasicInfoFragment extends BaseFragment {
 
-    @BindView(R.id.tv_choose_project)
-    TextView tvChooseProject;
+    @BindView(R.id.my_layout_project)
+    MyDrawableLinearLayout tvChooseProject;
 
-    @BindView(R.id.tv_sampling_no)
-    TextView tvSamplingNo;
+    @BindView(R.id.my_layout_sampling_no)
+    MyDrawableLinearLayout tvSamplingNo;
 
-    @BindView(R.id.tv_project_name)
-    TextView tvProjectName;
+    @BindView(R.id.my_layout_project_name)
+    MyDrawableLinearLayout tvProjectName;
 
-    @BindView(R.id.tv_monitem_name)
-    TextView tvMonitemName;
+    @BindView(R.id.my_layout_monitem_name)
+    MyDrawableLinearLayout tvMonitemName;
 
-    @BindView(R.id.tv_sampling_property)
-    TextView tvSamplingProperty;
+    @BindView(R.id.my_layout_sampling_property)
+    MyDrawableLinearLayout tvSamplingProperty;
 
-    @BindView(R.id.tv_test_user)
-    TextView tvTestUser;
+    @BindView(R.id.my_layout_test_user)
+    MyDrawableLinearLayout tvTestUser;
 
-    @BindView(R.id.tv_test_start_date)
-    TextView tvTestStartDate;
+    @BindView(R.id.my_layout_start_date)
+    MyDrawableLinearLayout tvTestStartDate;
 
-    @BindView(R.id.tv_test_end_date)
-    TextView tvTestEndDate;
+    @BindView(R.id.my_layout_end_date)
+    MyDrawableLinearLayout tvTestEndDate;
 
-    @BindView(R.id.tv_test_method)
-    TextView tvTestMethod;
+    @BindView(R.id.my_layout_method)
+    MyDrawableLinearLayout tvTestMethod;
 
-    @BindView(R.id.tv_test_device)
-    TextView tvTestDevice;
+    @BindView(R.id.my_layout_device)
+    MyDrawableLinearLayout tvTestDevice;
 
     @BindView(R.id.tv_comment)
     EditText tvComment;
@@ -106,16 +107,16 @@ public class BasicInfoFragment extends BaseFragment {
     public void initData(@Nullable Bundle savedInstanceState) {
         if (!CheckUtil.isNull(mSampling)) {
 //            tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
-            tvSamplingNo.setText(mSampling.getSamplingNo());
-            tvProjectName.setText(mSampling.getProjectName());
-            tvMonitemName.setText(mSampling.getMonitemName());
+            tvSamplingNo.setRightTextStr(mSampling.getSamplingNo());
+            tvProjectName.setRightTextStr(mSampling.getProjectName());
+            tvMonitemName.setRightTextStr(mSampling.getMonitemName());
 //            tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
-            tvSamplingProperty.setText(mSampling.getFormTypeName());
-            tvTestUser.setText(mSampling.getSamplingUserName());
-            tvTestStartDate.setText(DateUtils.strGetDate(mSampling.getSamplingTimeBegin()));
-            tvTestEndDate.setText(DateUtils.strGetDate(mSampling.getSamplingTimeEnd()));
-            tvTestMethod.setText(mSampling.getMethodName());
-            tvTestDevice.setText(mSampling.getPrivateDataStringValue("DeviceText"));
+            tvSamplingProperty.setRightTextStr(mSampling.getFormTypeName());
+            tvTestUser.setRightTextStr(mSampling.getSamplingUserName());
+            tvTestStartDate.setRightTextStr(DateUtils.strGetDate(mSampling.getSamplingTimeBegin()));
+            tvTestEndDate.setRightTextStr(DateUtils.strGetDate(mSampling.getSamplingTimeEnd()));
+            tvTestMethod.setRightTextStr(mSampling.getMethodName());
+            tvTestDevice.setRightTextStr(mSampling.getPrivateDataStringValue("DeviceText"));
             tvComment.setText(mSampling.getComment());
 
             tvChooseProject.setEnabled(mSampling.getIsCanEdit());
@@ -174,16 +175,17 @@ public class BasicInfoFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @OnClick({R.id.tv_test_user, R.id.tv_choose_project, R.id.tv_test_start_date,
-            R.id.tv_test_end_date, R.id.tv_test_method, R.id.tv_test_device})
+    @OnClick({R.id.my_layout_test_user, R.id.my_layout_project, R.id.my_layout_start_date,
+            R.id.my_layout_end_date, R.id.my_layout_method, R.id.my_layout_device})
     public void onClick(View view) {
+        hideSoftInput();
         if (!InstrumentalActivity.isNewCreate &&
                 !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
             showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
             return;
         }
         switch (view.getId()) {
-            case R.id.tv_test_user:
+            case R.id.my_layout_test_user:
                 Intent intent1 = new Intent(getContext(), UserActivity.class);
                 intent1.putExtra("projectId", mSampling.getProjectId());
                 intent1.putExtra("selectUserIds", mSampling.getSamplingUserId());
@@ -197,14 +199,14 @@ public class BasicInfoFragment extends BaseFragment {
 
                                 mSampling.setMonitorPerson(mSampling.getSamplingUserName());
 
-                                tvTestUser.setText(mSampling.getSamplingUserName());
+                                tvTestUser.setRightTextStr(mSampling.getSamplingUserName());
                             }
                         }
                     }
                 });
                 break;
 
-            case R.id.tv_choose_project:
+            case R.id.my_layout_project:
                 intent1 = new Intent(getContext(), WasteWaterMoniteActivity.class);
                 intent1.putExtra("projectId", mSampling.getProjectId());
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
@@ -220,7 +222,7 @@ public class BasicInfoFragment extends BaseFragment {
 
                         String monitemId = data.getStringExtra("MonitemId");
                         String monitemName = data.getStringExtra("MonitemName");
-                        tvChooseProject.setText(monitemName);
+                        tvChooseProject.setRightTextStr(monitemName);
                         if (monitemId.equals(mSampling.getMonitemId()) && monitemName.equals(mSampling.getMonitemName())) {
                             return;//跟之前选择的一样
                         }
@@ -244,18 +246,18 @@ public class BasicInfoFragment extends BaseFragment {
 
 //                        tvChooseProject.setText(InstrumentalActivity.mSampling.getMonitemName());
 //                        tvSamplingProperty.setText(InstrumentalActivity.mSampling.getTagName());
-                        tvSamplingProperty.setText(mSampling.getFormTypeName());
-                        tvMonitemName.setText(mSampling.getMonitemName());
+                        tvSamplingProperty.setRightTextStr(mSampling.getFormTypeName());
+                        tvMonitemName.setRightTextStr(mSampling.getMonitemName());
 
                         //重置监测方法
                         mSampling.setMethodId("");
                         mSampling.setMethodName("");
-                        tvTestMethod.setText(mSampling.getMethodName());
+                        tvTestMethod.setRightTextStr(mSampling.getMethodName());
 
                         //重置监测仪器
                         mSampling.setDeviceName("");
                         mSampling.setDeviceId("");
-                        tvTestDevice.setText(mSampling.getDeviceName());
+                        tvTestDevice.setRightTextStr(mSampling.getDeviceName());
 
                         //重置检测结果,先清理数据库中的数据
                         List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSampling.getId())).list();
@@ -276,31 +278,31 @@ public class BasicInfoFragment extends BaseFragment {
                 });
                 break;
 
-            case R.id.tv_test_start_date:
+            case R.id.my_layout_start_date:
                 showDateSelectDialog(new OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date, View v) {
                         String time = DateUtils.getDate(date);
-                        tvTestStartDate.setText(time);
+                        tvTestStartDate.setRightTextStr(time);
                         mSampling.setSamplingTimeBegin(time);
                         mSampling.setSamplingNo(SamplingUtil.createSamplingNo(time));
-                        tvSamplingNo.setText(mSampling.getSamplingNo());
+                        tvSamplingNo.setRightTextStr(mSampling.getSamplingNo());
                     }
                 });
                 break;
 
-            case R.id.tv_test_end_date:
+            case R.id.my_layout_end_date:
                 showDateSelectDialog(new OnTimeSelectListener() {
                     @Override
                     public void onTimeSelect(Date date, View v) {
                         String time = DateUtils.getDate(date);
-                        tvTestEndDate.setText(time);
+                        tvTestEndDate.setRightTextStr(time);
                         mSampling.setSamplingTimeEnd(time);
                     }
                 });
                 break;
 
-            case R.id.tv_test_method:
+            case R.id.my_layout_method:
                 if (CheckUtil.isEmpty(mSampling.getMonitemId())) {
                     ArtUtils.makeText(getContext(), "请选择项目！");
                     return;
@@ -314,18 +316,18 @@ public class BasicInfoFragment extends BaseFragment {
                         if (resultCode == Activity.RESULT_OK) {
                             mSampling.setMethodId(data.getStringExtra("MethodId"));
                             mSampling.setMethodName(data.getStringExtra("MethodName"));
-                            tvTestMethod.setText(mSampling.getMethodName());
+                            tvTestMethod.setRightTextStr(mSampling.getMethodName());
 
                             //重置监测仪器
                             mSampling.setDeviceName("");
                             mSampling.setDeviceId("");
-                            tvTestDevice.setText(mSampling.getDeviceName());
+                            tvTestDevice.setRightTextStr(mSampling.getDeviceName());
                         }
                     }
                 });
                 break;
 
-            case R.id.tv_test_device:
+            case R.id.my_layout_device:
                 if (CheckUtil.isEmpty(mSampling.getMethodId())) {
                     ArtUtils.makeText(getContext(), "请先选择方法");
                     return;
@@ -357,7 +359,7 @@ public class BasicInfoFragment extends BaseFragment {
                             //设备信息格式：仪器名称(仪器编号)(仪器溯源方式 仪器溯源有效期)
                             mSampling.setPrivateDataStringValue("DeviceText", deviceText);
 
-                            tvTestDevice.setText(deviceText);
+                            tvTestDevice.setRightTextStr(deviceText);
                         }
                     }
                 });

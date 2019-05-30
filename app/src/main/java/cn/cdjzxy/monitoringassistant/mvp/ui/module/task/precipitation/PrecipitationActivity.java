@@ -210,7 +210,21 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化Tab数据
      */
     private void initTabData() {
-        tabview.setTabs("基本信息", "样品采集");
+        List<Tab> tabs = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            Tab tab = new Tab();
+            if (i == 0) {
+                tab.setTabName("基本信息");
+                tab.setSelected(true);
+                tab.setResId(R.mipmap.icon_basic);
+            } else if (i == 1) {
+                tab.setTabName("样品采集");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_source);
+            }
+            tabs.add(tab);
+        }
+        tabview.setTabs(tabs);
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {
@@ -238,6 +252,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
      * @param position
      */
     private void openFragment(int position) {
+        hideSoftInput();
         viewPager.setCurrentItem(position);
     }
 
@@ -253,6 +268,7 @@ public class PrecipitationActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     private void onBack() {
+        hideSoftInput();
         if (viewPager.getCurrentItem() == 2) {
             openFragment(1);
             return;

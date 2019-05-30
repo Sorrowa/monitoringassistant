@@ -149,6 +149,7 @@ public class TestRecordFragment extends BaseFragment {
 
     @OnClick({R.id.btn_add_parallel, R.id.btn_add_blank})
     public void onClick(View view) {
+        hideSoftInput();
         if (!InstrumentalActivity.isNewCreate &&
                 !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
             showNoPermissionDialog("才能进行表单编辑。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);

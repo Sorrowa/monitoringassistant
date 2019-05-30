@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -36,140 +37,82 @@
 
     <include layout="@layout/view_line" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/jcxm_name"
-            style="@style/BasicInfoItemNameStyle"
-            android:text="监测项目" />
-
-        <TextView
-            android:id="@+id/sample_project"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:layout_marginLeft="@dimen/dp_20"
-            android:layout_toRightOf="@id/jcxm_name"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="2" />
-
-    </LinearLayout>
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_project"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="true"
+        app:leftText="监测项目"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="采样量" />
-
-        <EditText
-            android:id="@+id/sample_quantity"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:layout_weight="1"
-            android:maxLength="20" />
-
-    </LinearLayout>
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_quantity"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="采样量"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_vessel"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="容器"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="容器" />
-
-        <EditText
-            android:id="@+id/sample_vessel"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:layout_weight="1"
-            android:maxLength="20" />
-
-    </LinearLayout>
 
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="数量（瓶）" />
-
-        <EditText
-            android:id="@+id/sample_number"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:maxLength="2" />
-
-    </LinearLayout>
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_number"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="数量（瓶）"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="保存方法" />
-
-        <EditText
-            android:id="@+id/sample_method"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:layout_weight="1"
-            android:maxLength="100" />
-
-    </LinearLayout>
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_method"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="保存方法"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="保存时间" />
-
-        <EditText
-            android:id="@+id/sample_date"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:layout_weight="1"
-            android:maxLength="20" />
-
-    </LinearLayout>
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_date"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="保存时间"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
     <include layout="@layout/view_line_basic_info" />
 
-    <LinearLayout
-        style="@style/BasicInfoItemStyle"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="分析地点" />
-
-        <TextView
-            android:id="@+id/sample_place"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:layout_weight="1" />
-
-    </LinearLayout>
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_sample_place"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="true"
+        app:leftText="分析地点"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择" />
 
     <include layout="@layout/view_line_basic_info" />
 
