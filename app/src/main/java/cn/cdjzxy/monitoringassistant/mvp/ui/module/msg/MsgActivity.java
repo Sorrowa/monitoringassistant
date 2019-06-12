@@ -82,7 +82,8 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> implements IVi
         initTabData();
         initMsgData();
 
-        List<Msg> msgs = DBHelper.get().getMsgDao().queryBuilder().where(MsgDao.Properties.MsgStatus.eq(0)).list();
+        List<Msg> msgs = DBHelper.get().getMsgDao().queryBuilder().
+                where(MsgDao.Properties.MsgStatus.eq(0)).list();
         if (!CheckUtil.isEmpty(msgs)) {
             btnReadAll.setVisibility(View.VISIBLE);
         } else {

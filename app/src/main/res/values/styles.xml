@@ -12,8 +12,9 @@
 
     <!--解决启动白屏问题-->
     <style name="AppTransparentTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <!-- 登录EditText主题颜色-->
@@ -297,6 +298,5 @@
     <style name="MyDrawableLinearLayoutItemStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/btn_height_dp_56</item>
-
     </style>
 </resources>

@@ -16,31 +16,24 @@
         android:background="@color/white"
         android:orientation="horizontal">
 
-        <LinearLayout
+
+        <cn.cdjzxy.monitoringassistant.widgets.CustomTab
+            android:id="@+id/tabview"
+            android:layout_width="258dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_4" />
+
+        <View
+            android:layout_width="@dimen/division_line"
+            android:layout_height="match_parent"
+            android:background="@color/dc_c1c1c1" />
+
+        <cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:fitsSystemWindows="true"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/dp_4" />
 
-            <cn.cdjzxy.monitoringassistant.widgets.CustomTab
-                android:id="@+id/tabview"
-                android:layout_width="258dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_4" />
-
-            <View
-                android:layout_width="@dimen/division_line"
-                android:layout_height="match_parent"
-                android:background="@color/dc_c1c1c1" />
-
-            <cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dp_4" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

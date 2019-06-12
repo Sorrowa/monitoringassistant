@@ -72,7 +72,7 @@ public class Project {
     private String PlanBeginTime;
     private String PlanEndTime;
     private boolean CanSamplingEidt;//是否允许修改方案
-    private boolean isSamplingEidt;//是否修改方案wo
+    private boolean isSamplingEidt;//是否修改方案
 
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> SamplingUser;

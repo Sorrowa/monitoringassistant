@@ -121,7 +121,7 @@ public class TraceService extends Service {
 //                        && bdLocation.getLocType() != BDLocation.TypeNone
 //                        && bdLocation.getLocType()
 //                        ) {
-                if (null != null
+                if (null != bdLocation
                         && (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation//网络定位成功
                         || bdLocation.getLocType() == BDLocation.TypeOffLineLocation//离线定位成功
                         || bdLocation.getLocType() == BDLocation.TypeOffLineLocationNetworkFail//离线定位成功（已取消）

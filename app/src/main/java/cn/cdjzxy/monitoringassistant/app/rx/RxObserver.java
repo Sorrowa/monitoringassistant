@@ -37,6 +37,7 @@ public class RxObserver<T> implements Observer<T> {
     public static final int CODE_DEFAULT = 100000;//默认的code值
 
 
+    private static long LastTime=0;
     private RxCallBack<T> mRxCallBack;
 
     public RxObserver(RxCallBack<T> rxCallBack) {
@@ -103,7 +104,13 @@ public class RxObserver<T> implements Observer<T> {
         } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException) {
             msg = "数据解析错误";
         }
+        //每10s可激活一次
+        if (System.currentTimeMillis()-LastTime < 10000){
+            //初始值为0
+            return;
+        }
         mRxCallBack.onFailure(type, msg, CODE_DEFAULT);
+        LastTime=System.currentTimeMillis();
     }
 
     private String convertCompositeExceptionStatusCode(CompositeException compositeException) {

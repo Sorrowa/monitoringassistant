@@ -66,6 +66,8 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
     private Unbinder mUnbinder;
     protected P mPresenter;
 
+    private long LastTime=0;
+
     protected View mContentView;
     protected TitleDelegate mTitleDelegate;
     protected TitleBarView mTitleBar;
@@ -247,8 +249,14 @@ public abstract class BaseTitileActivity<P extends IPresenter> extends AppCompat
 
     @Subscriber(tag = EventBusTags.TAG_TOKEN_EXPIRE)
     private void reLogin(boolean isReLogin) {
+        //每30s可激活一次
+        if (LastTime!=0 && System.currentTimeMillis()-LastTime < 30000){
+            //初始值为0
+            return;
+        }
         UserInfoHelper.get().saveUserLoginStatee(false);
         ArtUtils.startActivity(LoginActivity.class);
+        LastTime=System.currentTimeMillis();
     }
 
 

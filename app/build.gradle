@@ -70,12 +70,12 @@ android {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "false"
             //测试环境
-//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
 //            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
-            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             //成都百度服务id
 //            buildConfigField "long", "BAI_DU_TRAJECTORY_SERVER_ID", "211193"
 //            //新都百度服务id

@@ -853,6 +853,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         .where(ProjectDao.Properties.Id.eq(project.getId()))
                                         .build()
                                         .unique();
+
                                 /**如果没有冲突，那么直接插入**/
                                 if (old == null) {
                                     List<ProjectDetial> projectDetials = project.getProjectDetials();
@@ -1210,7 +1211,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
                     for (SamplingDetail samplingDetail : samplingDetailYQFs) {
                         QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
-                        List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"), SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
+                        List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"),
+                                SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())),
+                                SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
                         //匹配采样单编号一样的数据或Id一样，覆盖。
 //                List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().whereOr(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
                         if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
@@ -1533,7 +1536,8 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     }
 
     private List<Sampling> getLocalSamplingsByNo(String samplingNo) {
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo)).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().
+                queryBuilder().where(SamplingDao.Properties.SamplingNo.eq(samplingNo)).list();
         return samplings;
     }
 

@@ -77,6 +77,7 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                 onBack();
             }
         });
+
     }
 
     @Nullable

@@ -17,10 +17,12 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.micheal.print.thread.ThreadPool;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
@@ -29,6 +31,7 @@ import com.wonders.health.lib.base.utils.PermissionUtil;
 import com.wonders.health.lib.base.widget.badgeview.BadgeView;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
+import com.wonders.health.lib.base.widget.dialogplus.OnDismissListener;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.Subscriber;
@@ -82,6 +85,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private NumberProgressBar mNumberProgressBarSam;//采样单进度
     private TextView mTvHintSam;//采样单提示
     private TextView mTvHint;
+    private ImageView mTvCancel;//取消按钮
     private DialogPlus mDialogPlus;
 
     private TitleBarView mTitleBarView;
@@ -155,8 +159,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 ArtUtils.exitApp();
             }
         }, 3000);
-
-        updateDataFromNetwork();
+        showDialog();
+        ThreadPool.getInstantiation().addTask(this::updateDataFromNetwork);
         startTraceServer();
     }
 
@@ -221,6 +225,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         switch (message.what) {
             case Message.RESULT_FAILURE:
                 if (mDialogPlus != null) {
+                    progress=100;
                     mDialogPlus.dismiss();
                 }
                 break;
@@ -313,7 +318,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
      * 初始化Tab数据
      */
     private void initTabData() {
-        ArtUtils.configRecyclerView(recyclerView, new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+        ArtUtils.configRecyclerView(recyclerView,
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
                 return false;
@@ -366,7 +372,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 updateTitle(position);
                 updateTabStatus(position);
                 openFragment(position);
-
             }
         });
         recyclerView.setAdapter(mMainTabAdapter);
@@ -400,7 +405,6 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
             }
         }
         mMainTabAdapter.notifyDataSetChanged();
-
     }
 
     /**
@@ -422,7 +426,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 break;
 
             case 2://点位地图
-                ft.replace(R.id.layout_container, mWebFragment = WebFragment.getInstance(mBundle), WebFragment.class.getName());
+                ft.replace(R.id.layout_container, mWebFragment = WebFragment.getInstance(mBundle),
+                        WebFragment.class.getName());
                 //                mBundle.putString(WebFragment.URL_KEY, BuildConfig.SERVER_IP + "/GIS/APPGIS");
                 mBundle.putString(WebFragment.URL_KEY, "https://www.amap.com/");
                 break;
@@ -442,6 +447,8 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 break;
             default:
                 break;
+
+
         }
         ft.commit();
     }
@@ -482,6 +489,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
     private void showDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_download, null);
+        view.setClickable(true);
         mNumberProgressBar = view.findViewById(R.id.progressbar);
         mNumberProgressBarSam = view.findViewById(R.id.progressbar_1);
         mTvHint = view.findViewById(R.id.tv_hint);
@@ -489,8 +497,17 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
         dialogPlusBuilder.setContentHolder(new ViewHolder(view));
         dialogPlusBuilder.setGravity(Gravity.CENTER);
-        dialogPlusBuilder.setCancelable(false);
+        dialogPlusBuilder.setCancelable(true);
         dialogPlusBuilder.setContentWidth(700);
+        dialogPlusBuilder.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(@NonNull DialogPlus dialog) {
+                if (progress<100){
+                    showMessage("后台将同步大量数据，可能会发生卡顿");
+                }
+            }
+        });
+
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
     }
@@ -501,7 +518,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private void updateDataFromNetwork() {
         if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
             progress = 5;
-            showDialog();
+//            showDialog();
             mPresenter.getDevices(Message.obtain(this, new Object()));//获取设备信息 GET
             mPresenter.getMethods(Message.obtain(this, new Object()));//获取方法信息 GET
             mPresenter.getMonItems(Message.obtain(this, new Object()));//获取监测项目 GET
