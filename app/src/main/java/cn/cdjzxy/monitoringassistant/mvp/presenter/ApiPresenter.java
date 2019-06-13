@@ -94,6 +94,9 @@ import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.observers.ResourceObserver;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -831,6 +834,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
     /**
      * 获得与我相关的任务
      * 添加：判断时间先后保留信息
+     * 现修改为，获取与我相关的采样信息之后
+     * 根据projectID重新获取content和detail
+     * 然后插入内容到数据库中
      *
      * @param msg
      */
@@ -843,6 +849,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
                             List<Project> projects = baseResponse.getData();//所有与我相关的任务
                             //
+                            //更新任务列表
+                            List<String> updateTaskId=new ArrayList<>();
+                            //新增任务列表
+                            List<String> newTaskId=new ArrayList<>();
+
                             ProjectDao dao = DBHelper.get().getProjectDao();
                             //日期转化
                             setSAMPLING_PROGRESS(projects.size());
@@ -856,21 +867,26 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                                 /**如果没有冲突，那么直接插入**/
                                 if (old == null) {
-                                    List<ProjectDetial> projectDetials = project.getProjectDetials();
-                                    if (!CheckUtil.isEmpty(projectDetials)) {
-                                        DBHelper.get()
-                                                .getProjectDetialDao()
-                                                .insertInTx(projectDetials);
+//                                    List<ProjectDetial> projectDetials = project.getProjectDetials();
+//                                    if (!CheckUtil.isEmpty(projectDetials)) {
+//                                        DBHelper.get()
+//                                                .getProjectDetialDao()
+//                                                .insertInTx(projectDetials);
+//                                    }
+//                                    List<ProjectContent> projectContentList = project.getProjectContents();
+//                                    if (!CheckUtil.isEmpty(projectContentList)) {
+//                                        DBHelper.get()
+//                                                .getProjectContentDao()
+//                                                .insertInTx(projectContentList);
+                                    newTaskId.add(project.getId());
+                                    if (newTaskId.size()>=9){
+                                        getTaskById(newTaskId,msg);
+                                        newTaskId.clear();
                                     }
-                                    List<ProjectContent> projectContentList = project.getProjectContents();
-                                    if (!CheckUtil.isEmpty(projectContentList)) {
-                                        DBHelper.get()
-                                                .getProjectContentDao()
-                                                .insertInTx(projectContentList);
-                                    }
-                                    dao.insert(project);
                                     continue;
                                 }
+//                                    dao.insert(project);
+
                                 /**有冲突，比较时间先后，暂时默认相同时间使用服务器版本**/
                                 try {
                                     Date remoteDate = sdf.parse(project.getUpdateTime());
@@ -879,28 +895,36 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         //服务端后更新,以及相等情况
                                         //更新本地的记录
                                         dao.update(project);
-                                        List<ProjectDetial> projectDetials = project.getProjectDetials();
-                                        if (!CheckUtil.isEmpty(projectDetials)) {
-                                            DBHelper.get()
-                                                    .getProjectDetialDao()
-                                                    .updateInTx(projectDetials);
+
+                                        /**根据项目ID获取项目信息**/
+
+                                        updateTaskId.add(project.getId());
+                                        if (updateTaskId.size()>=9){
+                                            getTaskById(updateTaskId,msg);
+                                            updateTaskId.clear();
                                         }
-                                        List<ProjectContent> projectContentList = project.getProjectContents();
-                                        if (!CheckUtil.isEmpty(projectContentList)) {
-                                            for (ProjectContent content : projectContentList) {
-                                                ProjectContent dbContent = DBHelper.get().getProjectContentDao().
-                                                        queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
-                                                if (dbContent != null) {
-                                                    DBHelper.get()
-                                                            .getProjectContentDao()
-                                                            .update(content);
-                                                } else {
-                                                    DBHelper.get()
-                                                            .getProjectContentDao()
-                                                            .insert(content);
-                                                }
-                                            }
-                                        }
+//                                        List<ProjectDetial> projectDetials = project.getProjectDetials();
+//                                        if (!CheckUtil.isEmpty(projectDetials)) {
+//                                            DBHelper.get()
+//                                                    .getProjectDetialDao()
+//                                                    .updateInTx(projectDetials);
+//                                        }
+//                                        List<ProjectContent> projectContentList = project.getProjectContents();
+//                                        if (!CheckUtil.isEmpty(projectContentList)) {
+//                                            for (ProjectContent content : projectContentList) {
+//                                                ProjectContent dbContent = DBHelper.get().getProjectContentDao().
+//                                                        queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
+//                                                if (dbContent != null) {
+//                                                    DBHelper.get()
+//                                                            .getProjectContentDao()
+//                                                            .update(content);
+//                                                } else {
+//                                                    DBHelper.get()
+//                                                            .getProjectContentDao()
+//                                                            .insert(content);
+//                                                }
+//                                            }
+//                                        }
 
                                     }
                                     //如果是客户端后更新,那么不用任何操作,因为存储的就是最新的
@@ -908,25 +932,19 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     e.printStackTrace();
                                 }
                             }
+                            if (0 != newTaskId.size()){
+                                getTaskById(newTaskId,msg);
+                            }
+                            if (0!=updateTaskId.size()){
+                                getTaskById(updateTaskId,msg);
+                            }
 
-//                            DBHelper.get().getProjectDetialDao().deleteAll();
-//                            DBHelper.get().getProjectDao().deleteAll();
-//                            for (Project project : projects) {
-//                                List<ProjectDetial> projectDetials = project.getProjectDetials();
-//                                if (!CheckUtil.isEmpty(projectDetials)) {
-//                                    DBHelper.get().getProjectDetialDao().insertInTx(projectDetials);
-//                                }
-//                            }
-//                            DBHelper.get().getProjectDao().insertInTx(baseResponse.getData());
-
-
+                            msg.str = "正在同步采样单";
+                            msg.what = Message.RESULT_OK;
+                            msg.obj = PROGRESS;
+                            msg.arg1 = 0;
+                            msg.handleMessageToTarget();
                         }
-
-                        msg.str = "正在同步采样单";
-                        msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
-                        msg.arg1 = 0;
-                        msg.handleMessageToTarget();
                     }
 
                     @Override
@@ -938,6 +956,59 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
+
+    /**
+     * 根据项目id查找项目详细信息
+     * @param i
+     * @param msg
+     */
+    public void getTaskById(List<String> i,Message msg){
+        /**根据项目ID获取项目信息**/
+        List<String> id = new ArrayList<>(i);
+        mModel.getTaskById(id)
+                .compose(RxUtils.applySchedulers(ApiPresenter.this
+                        , msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Project>> projectBaseResponse) {
+                        if (!CheckUtil.isNull(projectBaseResponse)){
+                            List<Project> projects=projectBaseResponse.getData();
+
+                            for (Project p:projects){
+                                List<ProjectDetial> projectDetials = p.getProjectDetials();
+                                if (!CheckUtil.isEmpty(projectDetials)) {
+                                    DBHelper.get()
+                                            .getProjectDetialDao()
+                                            .updateInTx(projectDetials);
+                                }
+                                List<ProjectContent> projectContentList = p.getProjectContents();
+                                if (!CheckUtil.isEmpty(projectContentList)) {
+                                    for (ProjectContent content : projectContentList) {
+                                        ProjectContent dbContent = DBHelper.get().getProjectContentDao().
+                                                queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
+                                        if (dbContent != null) {
+                                            DBHelper.get()
+                                                    .getProjectContentDao()
+                                                    .update(content);
+                                        } else {
+                                            DBHelper.get()
+                                                    .getProjectContentDao()
+                                                    .insert(content);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int code) {
+//                        msg.getTarget().showMessage(message);
+//                        msg.what = Message.RESULT_FAILURE;
+//                        msg.handleMessageToTarget();
+                    }
+                }));
+    }
 
     /**
      * 获取采样规范

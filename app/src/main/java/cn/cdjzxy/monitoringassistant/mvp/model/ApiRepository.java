@@ -629,6 +629,21 @@ public class ApiRepository implements IModel {
                 });
     }
 
+    public Observable<BaseResponse<List<Project>>> getTaskById(List<String> id){
+        return Observable.just(mApiService.getTaskById(id))
+                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Project>>, BaseResponse<List<Project>>>() {
+                            @Override
+                            public BaseResponse<List<Project>> apply(BaseResponse<List<Project>> projectBaseResponse) throws Exception {
+                                return projectBaseResponse;
+                            }
+                        });
+                    }
+                });
+    }
+
     /**
      * 获取所有采样单信息(支持批量)
      *

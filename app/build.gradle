@@ -44,14 +44,14 @@ android {
         debug {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "true"
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
 
             //buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8091\""
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             //毛杨
-//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
-//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
             //新都正式环境
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
@@ -70,10 +70,10 @@ android {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "false"
             //测试环境
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
-//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
-//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
+//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             //成都百度服务id
@@ -175,10 +175,10 @@ dependencies {
     //没有使用特殊Header，可以不加这行
     implementation 'com.android.support:appcompat-v7:25.3.1'
     //版本 23以上（必须）
-    //    implementation (rootProject.ext.dependencies["rxcache-jolyglot-gson"])
-    //            {
-    //                exclude module: 'gson'
-    //            }
+    implementation(rootProject.ext.dependencies["rxcache-jolyglot-gson"])
+            {
+                exclude module: 'gson'
+            }
     implementation project(':whiteboardlib')
     implementation project(':EasyLibrary')
     implementation files('libs/galaxy_lite.jar')

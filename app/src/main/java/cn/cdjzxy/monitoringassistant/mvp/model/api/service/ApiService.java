@@ -165,6 +165,9 @@ public interface ApiService {
     @GET(Api.GET_SAMPLE_STORAGE)
     Observable<BaseResponse<ProjectSampleStorage>> getSampleStorageProject(@QueryMap Map<String, String> map);
 
+    @GET(Api.GET_TASK_BY_ID)
+    Observable<BaseResponse<List<Project>>> getTaskById(@Query("ProjectId") List<String> ProjectId);
+
     //*******************流转******************
     @GET(Api.GET_SAMPLE_STORAGE_LIST)
     Observable<BaseResponse<List<WanderSampleStorage>>> getSampleStorageList(@QueryMap Map<String, String> map);
