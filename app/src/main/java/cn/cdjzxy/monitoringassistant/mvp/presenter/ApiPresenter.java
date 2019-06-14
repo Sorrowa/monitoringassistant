@@ -879,6 +879,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 //                                                .getProjectContentDao()
 //                                                .insertInTx(projectContentList);
                                     newTaskId.add(project.getId());
+                                    dao.insert(project);
                                     if (newTaskId.size()>=9){
                                         getTaskById(newTaskId,msg);
                                         newTaskId.clear();
