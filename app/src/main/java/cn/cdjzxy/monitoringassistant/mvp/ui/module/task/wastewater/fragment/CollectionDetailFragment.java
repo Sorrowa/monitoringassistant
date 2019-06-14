@@ -848,7 +848,8 @@ public class CollectionDetailFragment extends BaseFragment {
             }
         }
 
-        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().queryBuilder().where(SamplingStantdDao.Properties.TagId.eq(mSample.getTagId())).list();
+        List<SamplingStantd> stantdsList = DBHelper.get().getSamplingStantdDao().
+                queryBuilder().where(SamplingStantdDao.Properties.TagId.eq(mSample.getTagId())).list();
         List<String> xcNameList = new ArrayList<>();
         List<String> nameList = new ArrayList<>();
 

@@ -171,7 +171,9 @@ public class HelpUtil {
      * @return
      */
     public static int generateNewSplitBottleIndex(Sampling mSample) {
-        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).orderAsc(SamplingFormStandDao.Properties.Index).list();
+        List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().
+                queryBuilder().where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
+                orderAsc(SamplingFormStandDao.Properties.Index).list();
         if (!CheckUtil.isEmpty(formStantdsList)) {
             return formStantdsList.get(formStantdsList.size() - 1).getIndex() + 1;
         }
