@@ -77,6 +77,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
@@ -850,9 +851,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             List<Project> projects = baseResponse.getData();//所有与我相关的任务
                             //
                             //更新任务列表
-                            List<String> updateTaskId=new ArrayList<>();
+                            List<String> updateTaskId = new ArrayList<>();
                             //新增任务列表
-                            List<String> newTaskId=new ArrayList<>();
+                            List<String> newTaskId = new ArrayList<>();
 
                             ProjectDao dao = DBHelper.get().getProjectDao();
                             //日期转化
@@ -867,26 +868,14 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                                 /**如果没有冲突，那么直接插入**/
                                 if (old == null) {
-//                                    List<ProjectDetial> projectDetials = project.getProjectDetials();
-//                                    if (!CheckUtil.isEmpty(projectDetials)) {
-//                                        DBHelper.get()
-//                                                .getProjectDetialDao()
-//                                                .insertInTx(projectDetials);
-//                                    }
-//                                    List<ProjectContent> projectContentList = project.getProjectContents();
-//                                    if (!CheckUtil.isEmpty(projectContentList)) {
-//                                        DBHelper.get()
-//                                                .getProjectContentDao()
-//                                                .insertInTx(projectContentList);
                                     newTaskId.add(project.getId());
                                     dao.insert(project);
-                                    if (newTaskId.size()>=9){
-                                        getTaskById(newTaskId,msg);
+                                    if (newTaskId.size() >= 9) {
+                                        getTaskById(newTaskId, msg);
                                         newTaskId.clear();
                                     }
                                     continue;
                                 }
-//                                    dao.insert(project);
 
                                 /**有冲突，比较时间先后，暂时默认相同时间使用服务器版本**/
                                 try {
@@ -900,32 +889,10 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                         /**根据项目ID获取项目信息**/
 
                                         updateTaskId.add(project.getId());
-                                        if (updateTaskId.size()>=9){
-                                            getTaskById(updateTaskId,msg);
+                                        if (updateTaskId.size() >= 9) {
+                                            getTaskById(updateTaskId, msg);
                                             updateTaskId.clear();
                                         }
-//                                        List<ProjectDetial> projectDetials = project.getProjectDetials();
-//                                        if (!CheckUtil.isEmpty(projectDetials)) {
-//                                            DBHelper.get()
-//                                                    .getProjectDetialDao()
-//                                                    .updateInTx(projectDetials);
-//                                        }
-//                                        List<ProjectContent> projectContentList = project.getProjectContents();
-//                                        if (!CheckUtil.isEmpty(projectContentList)) {
-//                                            for (ProjectContent content : projectContentList) {
-//                                                ProjectContent dbContent = DBHelper.get().getProjectContentDao().
-//                                                        queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
-//                                                if (dbContent != null) {
-//                                                    DBHelper.get()
-//                                                            .getProjectContentDao()
-//                                                            .update(content);
-//                                                } else {
-//                                                    DBHelper.get()
-//                                                            .getProjectContentDao()
-//                                                            .insert(content);
-//                                                }
-//                                            }
-//                                        }
 
                                     }
                                     //如果是客户端后更新,那么不用任何操作,因为存储的就是最新的
@@ -933,11 +900,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                                     e.printStackTrace();
                                 }
                             }
-                            if (0 != newTaskId.size()){
-                                getTaskById(newTaskId,msg);
+                            if (0 != newTaskId.size()) {
+                                getTaskById(newTaskId, msg);
                             }
-                            if (0!=updateTaskId.size()){
-                                getTaskById(updateTaskId,msg);
+                            if (0 != updateTaskId.size()) {
+                                getTaskById(updateTaskId, msg);
                             }
 
                             msg.str = "正在同步采样单";
@@ -960,10 +927,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
     /**
      * 根据项目id查找项目详细信息
+     *
      * @param i
      * @param msg
      */
-    public void getTaskById(List<String> i,Message msg){
+    public void getTaskById(List<String> i, Message msg) {
         /**根据项目ID获取项目信息**/
         List<String> id = new ArrayList<>(i);
         mModel.getTaskById(id)
@@ -972,30 +940,79 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
                     @Override
                     public void onSuccess(BaseResponse<List<Project>> projectBaseResponse) {
-                        if (!CheckUtil.isNull(projectBaseResponse)){
-                            List<Project> projects=projectBaseResponse.getData();
+                        if (!CheckUtil.isNull(projectBaseResponse)) {
+                            List<Project> projects = projectBaseResponse.getData();
 
-                            for (Project p:projects){
+                            for (Project p : projects) {
                                 List<ProjectDetial> projectDetials = p.getProjectDetials();
                                 if (!CheckUtil.isEmpty(projectDetials)) {
+
+//                                    ProjectDetial dbDetail = DBHelper.get().getProjectDetialDao().
+//                                            deleteByKey().where(ProjectDetialDao.Properties.ProjectId.eq(p.getId())).unique();
+
+
+                                    List<ProjectDetial> des = DBHelper.get().getProjectDetialDao()
+                                            .queryBuilder()
+                                            .where(ProjectDetialDao.Properties.ProjectId.eq(p.getId()))
+                                            .list();
+                                    if (des.size() != 0) {
+                                        DBHelper.get().getProjectDetialDao().deleteInTx(des);
+                                    }
+
                                     DBHelper.get()
                                             .getProjectDetialDao()
-                                            .updateInTx(projectDetials);
+                                            .insertInTx(projectDetials);
+
+//                                    for (ProjectDetial d : projectDetials){
+//                                        DBHelper.get().getProjectDetialDao()
+//                                                .queryBuilder()
+//                                                .where(ProjectDetialDao.Properties.ProjectId.eq(d.getProjectId()))
+//                                                .list();
+//                                    }
+
+//                                    if (dbDetail == null) {
+//                                        DBHelper.get()
+//                                                .getProjectDetialDao()
+//                                                .insertInTx(projectDetials);
+//                                    }else{
+//                                        DBHelper.get()
+//                                                .getProjectDetialDao()
+//                                                .updateInTx(projectDetials);
+//                                    }
+
                                 }
                                 List<ProjectContent> projectContentList = p.getProjectContents();
                                 if (!CheckUtil.isEmpty(projectContentList)) {
+
+                                    List<ProjectContent> contents=DBHelper.get().getProjectContentDao()
+                                            .queryBuilder()
+                                            .where(ProjectContentDao.Properties.ProjectId.eq(p.getId()))
+                                            .list();
+
+                                    if(contents.size()!=0){
+                                        DBHelper.get()
+                                                .getProjectContentDao()
+                                                .deleteInTx(contents);
+                                    }
+
+//                                    DBHelper.get().insert(projectContentList);
+
                                     for (ProjectContent content : projectContentList) {
-                                        ProjectContent dbContent = DBHelper.get().getProjectContentDao().
-                                                queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
-                                        if (dbContent != null) {
-                                            DBHelper.get()
-                                                    .getProjectContentDao()
-                                                    .update(content);
-                                        } else {
-                                            DBHelper.get()
-                                                    .getProjectContentDao()
-                                                    .insert(content);
-                                        }
+//                                        ProjectContent dbContent = DBHelper.get().getProjectContentDao().
+//                                                queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
+
+                                        DBHelper.get()
+                                                .getProjectContentDao()
+                                                .insert(content);
+//                                        if (dbContent != null) {
+//                                            DBHelper.get()
+//                                                    .getProjectContentDao()
+//                                                    .update(content);
+//                                        } else {
+//                                            DBHelper.get()
+//                                                    .getProjectContentDao()
+//                                                    .insert(content);
+//                                        }
                                     }
                                 }
                             }
@@ -1004,6 +1021,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                     @Override
                     public void onFailure(int Type, String message, int code) {
+                        Log.d("zzh", "错误");
 //                        msg.getTarget().showMessage(message);
 //                        msg.what = Message.RESULT_FAILURE;
 //                        msg.handleMessageToTarget();
