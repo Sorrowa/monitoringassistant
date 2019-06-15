@@ -30,6 +30,7 @@ import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebActivity;
@@ -115,6 +116,13 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
                 QrMoreInfo qrMoreInfo = (QrMoreInfo) message.obj;
 
                 if (!CheckUtil.isNull(qrMoreInfo)) {
+                    if (qrMoreInfo.getContent().indexOf("devInfo") != -1) {
+                        if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Instrument_Lend_Num)) {
+                            showNoPermissionDialog("才能进行表单查看。", UserInfoAppRight.APP_Permission_Instrument_Lend_Name);
+                            return;
+                        }
+                    }
+
                     Intent intent = new Intent(getContext(), WebActivity.class);
 
                     if (qrMoreInfo.getType() == 2) {
@@ -132,11 +140,12 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
                 break;
             case Message.RESULT_FAILURE:
                 //延时2秒后重新开始扫描，避免重复扫描成功
-                mQR.startSpotDelay(2*1000);
+                mQR.startSpotDelay(2 * 1000);
                 //显示扫描框
                 mQR.showScanRect();
                 break;
         }
+
     }
 
     @Nullable
@@ -166,7 +175,7 @@ public class ScanCodeFragment extends BaseFragment<ApiPresenter> implements IVie
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
 
         //开始扫描，跳转到web后跳转回来再次启动扫描

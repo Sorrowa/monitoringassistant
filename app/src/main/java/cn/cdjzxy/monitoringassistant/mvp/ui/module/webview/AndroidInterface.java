@@ -1,13 +1,8 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.webview;
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
-import android.widget.Toast;
 
-import com.fanneng.android.web.SuperWebX5;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 /**
  * describe：公共加载fragment类
@@ -18,6 +13,8 @@ import com.fanneng.android.web.SuperWebX5;
 public class AndroidInterface {
     public interface Back {
         void onBack();
+
+        void setTitle(String s);
     }
 
     public Back back;
@@ -30,6 +27,15 @@ public class AndroidInterface {
     public void onBack() {
         if (back != null)
             back.onBack();
+    }
+
+    @JavascriptInterface
+    public void setTitle(String s) {
+        if (CheckUtil.isEmpty(s)) {
+            s = "嘉泽云监测";
+        }
+        if (back != null)
+            back.setTitle(s);
     }
 
 }

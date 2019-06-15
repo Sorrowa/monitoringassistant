@@ -1,67 +1,79 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.upload;
 
 public class FileInfoData {
-    private String id;
-    private String fileName;
-    private String filePath;
-    private String updateTime;
-    private int fileType;
-    private int code;
-    private String codeMsg;
+
+
+    /**
+     * Id : 00000000-0000-0000-0000-000000000000
+     * FileName : string
+     * FilePath : string
+     * UpdateTime : 2019-06-15T01:43:45.073Z
+     * FileType : 0
+     * Code : 0
+     * CodeMsg : string
+     */
+
+    private String Id;
+    private String FileName;
+    private String FilePath;
+    private String UpdateTime;
+    private int FileType;
+    private int Code;
+    private String CodeMsg;
 
     public String getId() {
-        return id;
+        return Id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String Id) {
+        this.Id = Id;
     }
 
     public String getFileName() {
-        return fileName;
+        return FileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileName(String FileName) {
+        this.FileName = FileName;
     }
 
     public String getFilePath() {
-        return filePath;
+        return FilePath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setFilePath(String FilePath) {
+        this.FilePath = FilePath;
     }
 
     public String getUpdateTime() {
-        return updateTime;
+        return UpdateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
+    public void setUpdateTime(String UpdateTime) {
+        this.UpdateTime = UpdateTime;
     }
 
     public int getFileType() {
-        return fileType;
+        return FileType;
     }
 
-    public void setFileType(int fileType) {
-        this.fileType = fileType;
+    public void setFileType(int FileType) {
+        this.FileType = FileType;
     }
 
     public int getCode() {
-        return code;
+        return Code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setCode(int Code) {
+        this.Code = Code;
     }
 
     public String getCodeMsg() {
-        return codeMsg;
+        return CodeMsg;
     }
 
-    public void setCodeMsg(String codeMsg) {
-        this.codeMsg = codeMsg;
+    public void setCodeMsg(String CodeMsg) {
+        this.CodeMsg = CodeMsg;
     }
 }

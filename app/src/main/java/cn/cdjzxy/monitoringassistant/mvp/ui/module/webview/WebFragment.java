@@ -12,7 +12,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
 
 import com.fanneng.android.web.IWebLayout;
@@ -96,17 +95,23 @@ public class WebFragment extends Fragment implements FragmentKeyDown {
                 .ready()
                 .go(getUrl());
 
-        mSuperWebX5.getJsInterfaceHolder().addJavaObject("Android", new AndroidInterface(new AndroidInterface.Back() {
-            @Override
-            public void onBack() {
-                //传递按键到web层
-                boolean result = onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
-                //web层未处理返回操作，已返回到首页，则退出当前activity
-                if (!result) {
-                    getActivity().finish();
-                }
-            }
-        }));
+        mSuperWebX5.getJsInterfaceHolder().addJavaObject("Android",
+                new AndroidInterface(new AndroidInterface.Back() {
+                    @Override
+                    public void onBack() {
+                        //传递按键到web层
+                        boolean result = onFragmentKeyDown(KeyEvent.KEYCODE_BACK, null);
+                        //web层未处理返回操作，已返回到首页，则退出当前activity
+                        if (!result) {
+                            getActivity().finish();
+                        }
+                    }
+
+                    @Override
+                    public void setTitle(String s) {
+                        ((WebActivity) getActivity()).setTitle(s);
+                    }
+                }));
 
     }
 

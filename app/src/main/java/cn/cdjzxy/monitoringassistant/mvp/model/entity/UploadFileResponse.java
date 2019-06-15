@@ -10,34 +10,34 @@ import lombok.Data;
 @Data
 public class UploadFileResponse<T> implements Serializable {
 
-    private int code;
+    private int Code;
 
-    private String message;
+    private String Message;
 
-    private T data;
+    private T Data;
 
     public int getCode() {
-        return code;
+        return Code;
     }
 
     public void setCode(int code) {
-        this.code = code;
+        this.Code = code;
     }
 
     public String getMessage() {
-        return message;
+        return Message;
     }
 
     public void setMessage(String message) {
-        this.message = message;
+        this.Message = message;
     }
 
     public T getData() {
-        return data;
+        return Data;
     }
 
     public void setData(T data) {
-        this.data = data;
+        this.Data = data;
     }
 }
 

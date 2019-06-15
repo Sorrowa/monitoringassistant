@@ -3,29 +3,27 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.webview;
 
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 
+import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.mvp.IPresenter;
-import com.wonders.health.lib.base.utils.ArtUtils;
 
 import cn.cdjzxy.monitoringassistant.R;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 
 
 /**
  * 通用显示H5页面
  */
-public class WebActivity extends BaseActivity {
+public class WebActivity extends BaseTitileActivity {
 
     private WebFragment mWebFragment;
+    public static final String KEY_TITLE = "keyTitle";
 
-    @Nullable
-    @Override
-    public IPresenter obtainPresenter() {
-        return null;
-    }
+
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -36,6 +34,12 @@ public class WebActivity extends BaseActivity {
     public void initData(@Nullable Bundle savedInstanceState) {
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         openFragment();
+    }
+
+    @Nullable
+    @Override
+    public IPresenter obtainPresenter() {
+        return null;
     }
 
     private void openFragment() {
@@ -60,6 +64,22 @@ public class WebActivity extends BaseActivity {
     }
 
     public String getUrl() {
-        return getIntent().getStringExtra(WebFragment.URL_KEY);
+        if (getIntent() != null) {
+            return getIntent().getStringExtra(WebFragment.URL_KEY);
+        } else {
+            return "";
+        }
+
     }
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        if (getIntent() != null)
+            titleBar.setTitleMainText(getIntent().getStringExtra(KEY_TITLE));
+        else
+            titleBar.setTitleMainText("嘉泽云监测");
+    }
+
+
+
 }
