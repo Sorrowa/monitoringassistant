@@ -45,14 +45,13 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_num"
+                    android:id="@+id/tv_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="CD20181120-W00102"
                     android:textColor="@color/text_color_333333"
-                    android:textSize="@dimen/text_size_14" />
+                    android:textSize="@dimen/text_size_16" />
 
                 <TextView
                     android:id="@+id/tv_status"
@@ -74,12 +73,11 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_name"
+                    android:id="@+id/tv_num"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:text="水和废水采样和交接记录"
                     android:textColor="@color/text_color_333333"
                     android:textSize="@dimen/text_size_12" />
 
