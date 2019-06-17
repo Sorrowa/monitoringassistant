@@ -44,14 +44,14 @@ android {
         debug {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "true"
-//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
 
             //buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8091\""
             //buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8091\""
             //毛杨
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
+//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
             //新都正式环境
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
@@ -60,8 +60,8 @@ android {
 //            //新都百度服务id
             buildConfigField "long", "BAI_DU_TRAJECTORY_SERVER_ID", "212432"
             //郎朗
-//            buildConfigField "String", "SERVER_IP", "\"http://192.168.1.121:8081\""
-//            buildConfigField "String", "REPOSITORY_URL", "\"http://192.168.1.121:8081\""
+//            buildConfigField "String", "SERVER_IP", "\"http://192.168.1.121:8087\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://192.168.1.121:8087\""
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.release
@@ -70,10 +70,10 @@ android {
             buildConfigField "String", "BUILD_DATE", "\"" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\""
             buildConfigField "boolean", "LOG_DEBUG", "false"
             //测试环境
-//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
-//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
-            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8081\""
-            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8081\""
+            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:10000\""
+            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:10000\""
+//            buildConfigField "String", "SERVER_IP", "\"http://jzxy.f3322.net:8087\""
+//            buildConfigField "String", "REPOSITORY_URL", "\"http://jzxy.f3322.net:8087\""
 //            buildConfigField "String", "SERVER_IP", "\"http://xindu.empcloud.net:8000\""
 //            buildConfigField "String", "REPOSITORY_URL", "\"http://xindu.empcloud.net:8000\""
             //成都百度服务id

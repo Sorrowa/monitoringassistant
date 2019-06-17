@@ -6,122 +6,134 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/btn_back"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height_dp_52"
-        android:background="#F5F5F5">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:drawableRight="@mipmap/ic_has_next"
-            android:drawablePadding="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:text="分瓶信息"
-            android:textColor="#303030"
-            android:textSize="@dimen/text_size_14" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:text="分瓶信息详情"
-            android:textColor="#676767"
-            android:textSize="@dimen/text_size_14" />
+            <LinearLayout
+                android:id="@+id/btn_back"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_height_dp_52"
+                android:background="#F5F5F5">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:drawableRight="@mipmap/ic_has_next"
+                    android:drawablePadding="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:text="分瓶信息"
+                    android:textColor="#303030"
+                    android:textSize="@dimen/text_size_14" />
 
-    </LinearLayout>
-
-    <include layout="@layout/view_line" />
-
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_project"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="监测项目"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
-
-    <include layout="@layout/view_line_basic_info" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:text="分瓶信息详情"
+                    android:textColor="#676767"
+                    android:textSize="@dimen/text_size_14" />
 
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_quantity"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="false"
-        app:leftText="采样量"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            </LinearLayout>
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_vessel"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="false"
-        app:leftText="容器"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_project"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="监测项目"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
+
+            <include layout="@layout/view_line_basic_info" />
 
 
-    <include layout="@layout/view_line_basic_info" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_quantity"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="false"
+                app:leftText="采样量"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_number"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="false"
-        app:leftText="数量（瓶）"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择"
-        android:digits="1234567890"
-        />
+            <include layout="@layout/view_line_basic_info" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_vessel"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="false"
+                app:leftText="容器"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_method"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="false"
-        app:leftText="保存方法"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_date"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="false"
-        app:leftText="保存时间"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_number"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                android:digits="1234567890"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="false"
+                app:leftText="数量（瓶）"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_place"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="分析地点"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_method"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="false"
+                app:leftText="保存方法"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
+
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_date"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="false"
+                app:leftText="保存时间"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
+
+            <include layout="@layout/view_line_basic_info" />
+
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_place"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="分析地点"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
+
+            <include layout="@layout/view_line_basic_info" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        />
 
     <LinearLayout
         android:id="@+id/operate_layout"

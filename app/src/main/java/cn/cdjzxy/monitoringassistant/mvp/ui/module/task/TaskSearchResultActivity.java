@@ -37,9 +37,9 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
 
     private TaskAdapter mTaskAdapter;
 
-    private String            keyword;
-    private String            startDate;
-    private String            endDate;
+    private String keyword;
+    private String startDate;
+    private String endDate;
     private ArrayList<String> types;
 
     @Override
@@ -83,16 +83,19 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
 
         if (CheckUtil.isEmpty(startDate)) {
             if (CheckUtil.isEmpty(types)) {
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword));
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
             } else {
 
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Type.in(types));
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Type.in(types))
+                        .or(ProjectDao.Properties.Name.like(keyword), ProjectDao.Properties.Type.in(types));
             }
         } else {
             if (CheckUtil.isEmpty(types)) {
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate));
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate))
+                        .or(ProjectDao.Properties.Name.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate));
             } else {
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
+                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types))
+                        .or(ProjectDao.Properties.Name.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
             }
         }
 
