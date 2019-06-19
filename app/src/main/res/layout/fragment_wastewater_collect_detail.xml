@@ -1,241 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/btn_back"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height_dp_52"
-        android:background="#F5F5F5">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:drawableRight="@mipmap/ic_has_next"
-            android:drawablePadding="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:text="样品采集"
-            android:textColor="#303030"
-            android:textSize="@dimen/text_size_14" />
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:gravity="center_vertical"
-            android:text="样品详情"
-            android:textColor="#676767"
-            android:textSize="@dimen/text_size_14" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/btn_back"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_height_dp_52"
+                android:background="#F5F5F5">
 
-    <include layout="@layout/view_line" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:drawableRight="@mipmap/ic_has_next"
+                    android:drawablePadding="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:text="样品采集"
+                    android:textColor="#303030"
+                    android:textSize="@dimen/text_size_14" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_code"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="样品编码"
-        app:rightEditTextHint="系统带出"
-        app:rightTextHint="请选择" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:gravity="center_vertical"
+                    android:text="样品详情"
+                    android:textColor="#676767"
+                    android:textSize="@dimen/text_size_14" />
+            </LinearLayout>
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_time"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="采样时间"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_code"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="样品编码"
+                app:rightEditTextHint="系统带出"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_frequency"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="频次"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_time"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="采样时间"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_quality"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="质控"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_frequency"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="频次"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_monitor_items"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="监测项目（0）"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_quality"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="质控"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
-        android:id="@+id/my_layout_sample_monitor"
-        style="@style/MyDrawableLinearLayoutItemStyle"
-        app:drawableRight="@mipmap/ic_has_next"
-        app:isShowRightTextView="true"
-        app:leftText="现场监测（0）"
-        app:rightEditTextHint="请输入"
-        app:rightTextHint="请选择" />
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_monitor_items"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="监测项目（0）"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
+
+            <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+                android:id="@+id/my_layout_sample_monitor"
+                style="@style/MyDrawableLinearLayoutItemStyle"
+                app:drawableRight="@mipmap/ic_has_next"
+                app:isShowRightTextView="true"
+                app:leftText="现场监测（0）"
+                app:rightEditTextHint="请输入"
+                app:rightTextHint="请选择" />
+
+            <include layout="@layout/view_line_basic_info" />
 
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+            <RelativeLayout style="@style/BasicInfoItemStyle">
 
-        <TextView
-            android:id="@+id/text_view_sample_add_preserve"
-            style="@style/BasicInfoItemNameStyle"
-            android:text="是否添加保存剂" />
+                <TextView
+                    android:id="@+id/text_view_sample_add_preserve"
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="是否添加保存剂" />
 
-        <CheckedTextView
-            android:id="@+id/sample_add_preserve"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/icon_switch_button"
-            android:checked="false" />
+                <CheckedTextView
+                    android:id="@+id/sample_add_preserve"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/icon_switch_button"
+                    android:checked="false" />
 
-    </RelativeLayout>
+            </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+            <RelativeLayout style="@style/BasicInfoItemStyle">
 
-        <TextView
-            android:id="@+id/text_view_sample_compare_monitor"
-            style="@style/BasicInfoItemNameStyle"
-            android:text="是否对比监测" />
+                <TextView
+                    android:id="@+id/text_view_sample_compare_monitor"
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="是否对比监测" />
 
-        <CheckedTextView
-            android:id="@+id/sample_compare_monitor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/icon_switch_button"
-            android:checked="false" />
+                <CheckedTextView
+                    android:id="@+id/sample_compare_monitor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/icon_switch_button"
+                    android:checked="false" />
 
-    </RelativeLayout>
+            </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
+            <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+            <RelativeLayout style="@style/BasicInfoItemStyle">
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="备注" />
+                <TextView
+                    style="@style/BasicInfoItemNameStyle"
+                    android:text="备注" />
 
-        <EditText
-            android:id="@+id/sample_mark"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:maxLength="100" />
+                <EditText
+                    android:id="@+id/sample_mark"
+                    style="@style/BasicInfoItemEditTextStyle"
+                    android:maxLength="100" />
 
-    </RelativeLayout>
+            </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:id="@+id/operate_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height_dp_52"
-        android:layout_gravity="bottom"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:id="@+id/btn_delete"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawableLeft="@mipmap/ic_add_parallel"
-                android:drawablePadding="@dimen/dp_12"
-                android:text="删除"
-                android:textColor="@color/text_color_2b99ff"
-                android:textSize="@dimen/text_size_14" />
+            <include layout="@layout/view_line_basic_info" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/division_line"
-                android:layout_alignParentTop="true"
-                android:background="@color/dc1" />
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-
-            <View
-                android:layout_width="@dimen/division_line"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:background="@color/dc1" />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/btn_save"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawableLeft="@mipmap/ic_add_blank"
-                android:drawablePadding="@dimen/dp_12"
-                android:text="保存"
-                android:textColor="@color/text_color_2b99ff"
-                android:textSize="@dimen/text_size_14" />
-
-            <View
+            <LinearLayout
+                android:id="@+id/operate_layout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/division_line"
-                android:layout_alignParentTop="true"
-                android:background="@color/dc1" />
+                android:layout_height="@dimen/item_height_dp_52"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                android:orientation="horizontal">
 
-            <View
-                android:layout_width="@dimen/division_line"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:background="@color/dc1" />
+                <RelativeLayout
+                    android:id="@+id/btn_delete"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
 
-        </RelativeLayout>
+                    <TextView
+                        android:id="@+id/tv_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableLeft="@mipmap/ic_add_parallel"
+                        android:drawablePadding="@dimen/dp_12"
+                        android:text="删除"
+                        android:textColor="@color/text_color_2b99ff"
+                        android:textSize="@dimen/text_size_14" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/division_line"
+                        android:layout_alignParentTop="true"
+                        android:background="@color/dc1" />
 
 
-    </LinearLayout>
+                    <View
+                        android:layout_width="@dimen/division_line"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:background="@color/dc1" />
+
+                </RelativeLayout>
 
 
+                <RelativeLayout
+                    android:id="@+id/btn_save"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableLeft="@mipmap/ic_add_blank"
+                        android:drawablePadding="@dimen/dp_12"
+                        android:text="保存"
+                        android:textColor="@color/text_color_2b99ff"
+                        android:textSize="@dimen/text_size_14" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/division_line"
+                        android:layout_alignParentTop="true"
+                        android:background="@color/dc1" />
+
+                    <View
+                        android:layout_width="@dimen/division_line"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:background="@color/dc1" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>
