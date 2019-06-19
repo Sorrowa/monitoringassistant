@@ -85,9 +85,8 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".mvp.ui.module.task.precipitation.PrecipitationActivity"
-            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".mvp.ui.module.task.wastewater.WastewaterActivity"
             android:configChanges="orientation|keyboardHidden"

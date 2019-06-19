@@ -195,7 +195,7 @@ public class BasicFragment extends BaseFragment {
                 fsExtends = new FsExtends();
             }
             base_sample_no.setRightTextStr(mSample.getSamplingNo());
-            base_sample_md.setRightTextStr(mSample.getProjectName());
+            base_sample_md.setRightTextStr(mProject.getName());//监测目的
             //base_sample_xz.setText(WastewaterActivity.mSample.getMontype());
             base_sample_xz.setRightTextStr(mProject.getMonType());
 
@@ -248,7 +248,12 @@ public class BasicFragment extends BaseFragment {
                             || !CheckUtil.isEmpty(fsExtends == null ? "" : fsExtends.getReceiving())
                             || !CheckUtil.isEmpty(fsExtends == null ? "" : fsExtends.getBuildTime())
                     , text_view_more_arrow);
-            more_name.setEditTextStr(fsExtends == null ? "" : fsExtends.getClientName());
+//            more_name.setEditTextStr(fsExtends == null ? "" : fsExtends.getClientName());
+            //企业名称
+            more_name.getEditText().setClickable(false);
+            more_name.getEditText().setFocusable(false);
+            more_name.getEditText().setHint("");
+            more_name.getEditText().setText(mProject.getClientName());
             more_address.setEditTextStr(fsExtends == null ? "" : fsExtends.getClientAdd());
             more_device.setEditTextStr(fsExtends == null ? "" : fsExtends.getHandleDevice());
             more_waterbody.setEditTextStr(fsExtends == null ? "" : fsExtends.getReceiving());
@@ -262,7 +267,7 @@ public class BasicFragment extends BaseFragment {
                     text_view_tv_arrow);
             tv_flow_method.setEditTextStr(mSample.getTransfer());
             tv_flow_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
-            tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
+//            tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
             setViewStyle(false,tv_arrow);
             //图片信息
             if (mSample.getSamplingFiless() != null && mSample.getSamplingFiless().size() > 0) {
@@ -393,7 +398,7 @@ public class BasicFragment extends BaseFragment {
                 drawable = getContext().getResources().getDrawable(R.mipmap.ic_has_next);
             }
         }
-        view.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
+        view.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null);
     }
 
     @Nullable
@@ -780,7 +785,7 @@ public class BasicFragment extends BaseFragment {
         mSample.setWeather(weather_state.getRightTextViewStr());
         mSample.setTemprature(weather_temp.getEditTextStr());
         mSample.setPressure(weather_pressure.getEditTextStr());
-        mSample.setTransfer(tv_flow_method.getRightTextViewStr());
+        mSample.setTransfer(tv_flow_method.getEditTextStr());
         mSample.setSendSampTime(tv_flow_date.getRightTextViewStr());
         mSample.setComment(base_sample_comment.getText().toString());
         saveFsExtends();
