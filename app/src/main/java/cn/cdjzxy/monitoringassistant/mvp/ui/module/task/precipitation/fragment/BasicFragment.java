@@ -158,8 +158,8 @@ public class BasicFragment extends BaseFragment {
             tvSamplingUser.setRightTextStr(mSampling.getSamplingUserName());
             tvSamplingType.setRightTextStr(mSampling.getTagName());
             tvSamplingPoint.setRightTextStr(mSampling.getAddressName());
-            tvSamplingNo.setEditTextStr(mSampling.getAddressNo());
-            edMonitorName.setEditTextStr(mSampling.getMonitemName());
+            tvSamplingNo.setRightTextStr(mSampling.getAddressNo());
+            edMonitorName.setRightTextStr(mSampling.getMonitemName());
             if (!CheckUtil.isEmpty(mSampling.getPrivateData())) {
                 mPrivateData = JSONObject.parseObject(mSampling.getPrivateData(), PreciptationPrivateData.class);
                 if (!CheckUtil.isNull(mPrivateData)) {
@@ -169,7 +169,7 @@ public class BasicFragment extends BaseFragment {
             }
             tvSamplingMethod.setRightTextStr(mSampling.getMethodName());
             tvSamplingDevice.setRightTextStr(mSampling.getDeviceName());
-            tvFlowMethod.setRightTextStr(mSampling.getTransfer());
+            tvFlowMethod.setEditTextStr(mSampling.getTransfer());
             tvFlowDate.setRightTextStr(DateUtils.strGetTimeShort(mSampling.getSendSampTime()));
             tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSampling.getReciveTime()));
             tvComment.setText(mSampling.getComment());
