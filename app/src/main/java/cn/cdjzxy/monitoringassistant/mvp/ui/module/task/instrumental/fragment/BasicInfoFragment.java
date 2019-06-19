@@ -344,9 +344,11 @@ public class BasicInfoFragment extends BaseFragment {
                             String sourceWay = data.getStringExtra("SourceWay");
                             String expireDate = data.getStringExtra("ExpireDate");
                             String deviceText;
+                            //修改之后要显示到时分秒
                             if (expireDate != null && !expireDate.equals("")) {
                                 String[] s = expireDate.split(" ");
-                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, s[0]);
+//                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, s[0]);
+                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
                             } else {
                                 deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
                             }
