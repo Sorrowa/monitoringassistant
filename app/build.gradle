@@ -172,6 +172,8 @@ dependencies {
     //下拉刷新库
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-21'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-21'
+    //滚轮view
+    implementation 'com.weigan:loopView:0.1.2'
     //没有使用特殊Header，可以不加这行
     implementation 'com.android.support:appcompat-v7:25.3.1'
     //版本 23以上（必须）

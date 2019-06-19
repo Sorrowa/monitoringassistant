@@ -123,9 +123,9 @@
                 <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
                     android:id="@+id/my_layout_unit"
                     style="@style/MyDrawableLinearLayoutItemStyle"
-                    app:isShowRightTextView="false"
+                    app:isShowRightTextView="true"
                     app:leftText="结果单位"
-                    app:rightEditTextHint="请输入"
+                    app:rightEditTextHint=""
                     app:rightTextHint="请选择" />
 
                 <include layout="@layout/view_line_basic_info" />

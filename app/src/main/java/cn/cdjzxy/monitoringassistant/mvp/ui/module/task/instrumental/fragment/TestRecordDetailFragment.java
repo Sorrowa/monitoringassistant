@@ -135,7 +135,8 @@ public class TestRecordDetailFragment extends BaseFragment {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-
+        tvTestUnit.getEditText().setFocusable(false);
+        tvTestUnit.getEditText().setClickable(false);
     }
 
     @Nullable
