@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -84,6 +85,7 @@ import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.Constants;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
+import cn.cdjzxy.monitoringassistant.utils.MyTextUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
@@ -591,7 +593,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
             @Override
             public void onUpload(View view, int position) {
                 if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Upload_Num)) {
-                    showNoPermissionDialog("才能进行表单上传。",  UserInfoAppRight.APP_Permission_Sampling_Upload_Name);
+                    showNoPermissionDialog("才能进行表单上传。", UserInfoAppRight.APP_Permission_Sampling_Upload_Name);
                     return;
                 }
                 isBatchUpload = false;
@@ -618,7 +620,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
 
                 //上传数据
-                uploadSampFormData(sampling, false);
+//                uploadSampFormData(sampling, false);
+                MyTextUtils.uploadMySampleForData(mPresenter,mContext);
             }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
@@ -626,6 +629,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTagId = mTags.get(0).getId();
         getSampling(mTagId);
     }
+
+
 
 
     @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit, R.id.cb_all})
@@ -637,19 +642,19 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     intent.putExtra("projectId", mProject.getId());
                     startActivity(intent);
                 } else {
-                    showNoPermissionDialog("才能进行采样方案查看。",  UserInfoAppRight.APP_Permission_Plan_See_Name);
+                    showNoPermissionDialog("才能进行采样方案查看。", UserInfoAppRight.APP_Permission_Plan_See_Name);
                 }
                 break;
             case R.id.btn_add_sampling:
                 if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Add_Num)) {
                     showAddDialog();
                 } else {
-                    showNoPermissionDialog("才能进行表单新增。",  UserInfoAppRight.APP_Permission_Sampling_Add_Name);
+                    showNoPermissionDialog("才能进行表单新增。", UserInfoAppRight.APP_Permission_Sampling_Add_Name);
                 }
                 break;
             case R.id.btn_submit:
                 if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Submit_Num)) {
-                    showNoPermissionDialog("才能进行表单提交。",  UserInfoAppRight.APP_Permission_Sampling_Submit_Name);
+                    showNoPermissionDialog("才能进行表单提交。", UserInfoAppRight.APP_Permission_Sampling_Submit_Name);
                     return;
                 }
                 if (!hasSelectSample()) {
