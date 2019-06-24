@@ -30,6 +30,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.MsgData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
@@ -41,6 +42,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampFor
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
@@ -68,7 +70,7 @@ public class ApiRepository implements IModel {
     public ApiRepository(IRepositoryManager manager) {
         this.mManager = manager;
         this.mApiService = mManager.createRetrofitService(ApiService.class);
-        this.mApiCache = mManager.createCacheService(ApiCache.class);
+        //this.mApiCache = mManager.createCacheService(ApiCache.class);
     }
 
     @Override
@@ -525,7 +527,26 @@ public class ApiRepository implements IModel {
                     }
                 });
     }
+    /**
+     * 获取分页消息
+     *
+     * @return
+     */
+    public Observable<BaseResponse<MsgData>> getMsgData(Map<String,String> map) {
+        return Observable.just(mApiService.getMsgData(map))
+                .flatMap(new Function<Observable<BaseResponse<MsgData>>, ObservableSource<BaseResponse<MsgData>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<MsgData>> apply(Observable<BaseResponse<MsgData>> baseResponseObservable) {
+                        return baseResponseObservable.map(new Function<BaseResponse<MsgData>, BaseResponse<MsgData>>() {
+                            @Override
+                            public BaseResponse<MsgData> apply(BaseResponse<MsgData> baseResponse) {
+                                return baseResponse;
+                            }
+                        });
 
+                    }
+                });
+    }
     /**
      * 批量阅读消息
      *
@@ -629,20 +650,7 @@ public class ApiRepository implements IModel {
                 });
     }
 
-    public Observable<BaseResponse<List<Project>>> getTaskById(List<String> id){
-        return Observable.just(mApiService.getTaskById(id))
-                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
-                    @Override
-                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) throws Exception {
-                        return baseResponseObservable.map(new Function<BaseResponse<List<Project>>, BaseResponse<List<Project>>>() {
-                            @Override
-                            public BaseResponse<List<Project>> apply(BaseResponse<List<Project>> projectBaseResponse) throws Exception {
-                                return projectBaseResponse;
-                            }
-                        });
-                    }
-                });
-    }
+
 
     /**
      * 获取所有采样单信息(支持批量)
@@ -650,7 +658,7 @@ public class ApiRepository implements IModel {
      * @return
      */
     public Observable<BaseResponse<List<Sampling>>> getSamplings(List<String> projectIds) {
-        return Observable.just(mApiService.getSamplings(projectIds))
+        return Observable.just(mApiService.getSamplings(RxDataTool.listToArray(projectIds)))
                 .flatMap(new Function<Observable<BaseResponse<List<Sampling>>>, ObservableSource<BaseResponse<List<Sampling>>>>() {
                     @Override
                     public ObservableSource<BaseResponse<List<Sampling>>> apply(Observable<BaseResponse<List<Sampling>>> baseResponseObservable) {
@@ -851,6 +859,26 @@ public class ApiRepository implements IModel {
                                 return projectSampleStorageBaseResponse;
                             }
                         });
+                    }
+                });
+    }
+    /**
+     * 根据任务Id获取任务详情
+     *
+     * @return
+     */
+    public Observable<BaseResponse<List<Project>>> getProjectDetailById(List<String> projectIdList) {
+        return Observable.just(mApiService.getProjectDetailById(RxDataTool.listToArray(projectIdList)))
+                .flatMap(new Function<Observable<BaseResponse<List<Project>>>, ObservableSource<BaseResponse<List<Project>>>>() {
+                    @Override
+                    public ObservableSource<BaseResponse<List<Project>>> apply(Observable<BaseResponse<List<Project>>> baseResponseObservable) {
+                        return baseResponseObservable.map(new Function<BaseResponse<List<Project>>, BaseResponse<List<Project>>>() {
+                            @Override
+                            public BaseResponse<List<Project>> apply(BaseResponse<List<Project>> baseResponse) {
+                                return baseResponse;
+                            }
+                        });
+
                     }
                 });
     }

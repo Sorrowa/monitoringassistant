@@ -4,6 +4,8 @@ import com.baidu.navisdk.ui.routeguide.mapmode.subview.L;
 
 import java.util.List;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.PagerInfo.PagerInfoBean;
+
 public class ProjectSampleStorage {
 
     /**
@@ -30,61 +32,7 @@ public class ProjectSampleStorage {
         this.Data = Data;
     }
 
-    public static class PagerInfoBean {
-        /**
-         * PageIndex : 1
-         * PageSize : 10
-         * StartIndex : 0
-         * TotalPageCount : 2
-         * TotalRowCount : 11
-         */
 
-        private int PageIndex;
-        private int PageSize;
-        private int StartIndex;
-        private int TotalPageCount;
-        private int TotalRowCount;
-
-        public int getPageIndex() {
-            return PageIndex;
-        }
-
-        public void setPageIndex(int PageIndex) {
-            this.PageIndex = PageIndex;
-        }
-
-        public int getPageSize() {
-            return PageSize;
-        }
-
-        public void setPageSize(int PageSize) {
-            this.PageSize = PageSize;
-        }
-
-        public int getStartIndex() {
-            return StartIndex;
-        }
-
-        public void setStartIndex(int StartIndex) {
-            this.StartIndex = StartIndex;
-        }
-
-        public int getTotalPageCount() {
-            return TotalPageCount;
-        }
-
-        public void setTotalPageCount(int TotalPageCount) {
-            this.TotalPageCount = TotalPageCount;
-        }
-
-        public int getTotalRowCount() {
-            return TotalRowCount;
-        }
-
-        public void setTotalRowCount(int TotalRowCount) {
-            this.TotalRowCount = TotalRowCount;
-        }
-    }
 
     public static class DataBean {
         /**

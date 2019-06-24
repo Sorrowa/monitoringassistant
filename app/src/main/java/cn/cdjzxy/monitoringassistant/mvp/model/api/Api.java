@@ -47,8 +47,7 @@ public interface Api {
     String PUT_SAMPLING_FINISH = "api/Project/PutSamplingFinish";//采样任务完结操作 PUT
     String GET_SAMPLE_STORAGE = "api/Project/GetSampleStorageProject";//获取流转任务 GET
     String PUT_PROJECT_CONTENT = "api/Project/PutProjectContent";// 修改任务方案 PUT
-    String GET_TASK_BY_ID="api/Project/GetProjectDetialByProjectID";// 根据任务ID获取任务详情
-
+    String GET_PROJECT_DETAIL_BY_ID="/api/Project/GetProjectDetialByProjectID";//根据任务ID获取任务详情
     //*******************流转******************
     String GET_SAMPLE_STORAGE_LIST = "api/SampleStorage/GetSampleStorageList";//获取流转单清单
     String GET_SAMPLE_STORAGE_ALL_LIST = "api/SampleStorage/GetSampleStorageAllList";//获取全部流转
@@ -72,8 +71,10 @@ public interface Api {
 
     //*******************消息******************
     String GET_MSG = "api/Massage/GetMessage";//获取全部消息
+    String GET_MSG_PAGE="api/Massage/GetMessagePage";//分页获取消息
     String PUT_READ_MSG = "api/Massage/PutReadMessage";//批量阅读消息
 
+    //***********************************************************
     String TEMPORARY_SERVER_IP = "TEMPORARY_SERVER_IP";//临时IP
     String LOGIN_RESP_WEBURL = "LOGIN_RESP_WEBURL";//登录返回的webUrl
 

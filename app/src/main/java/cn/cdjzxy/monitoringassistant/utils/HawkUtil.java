@@ -10,7 +10,7 @@ import java.util.List;
  * 保存和获取应用设置文件
  */
 public class HawkUtil {
-
+    public static final String IS_FIRST_LOGIN = "isFirstLogin";
     public static String getString(String key) {
         return getString(key, "");
     }

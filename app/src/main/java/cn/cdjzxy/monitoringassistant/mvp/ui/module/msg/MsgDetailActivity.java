@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.utils.ArtUtils;
-import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;

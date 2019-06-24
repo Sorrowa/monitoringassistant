@@ -94,6 +94,7 @@ import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.HelpUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -111,13 +112,7 @@ import static cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity.TYPE_TASK
  */
 public class ApiPresenter extends BasePresenter<ApiRepository> {
 
-    public static final double PROGRESS = Math.round((100 / 21.0) * 10) / 10.0;
-    private double SAMPLING_PROGRESS = 0.0;
-
-    private void setSAMPLING_PROGRESS(int size) {
-        SAMPLING_PROGRESS = ((double) (Math.round((100 / size) * 1)));
-    }
-
+    
     private AppComponent appComponent;
 
     public ApiPresenter(AppComponent appComponent) {
@@ -313,7 +308,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getDevicesDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -341,7 +335,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMethodsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
+
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -369,7 +363,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMonItemsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -397,7 +390,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getTagsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -425,7 +417,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMonItemTagRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -453,7 +444,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMethodTagRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -481,7 +471,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMonItemMethodRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -509,7 +498,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMethodDevRelationDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -538,7 +526,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getRightsDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -567,7 +554,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getEnvirPointDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息：权限";
                         msg.handleMessageToTarget();
                     }
@@ -596,7 +582,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息：点位";
                         msg.handleMessageToTarget();
                     }
@@ -624,7 +609,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getEnterpriseDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息：企业";
                         msg.handleMessageToTarget();
                     }
@@ -652,7 +636,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getDicDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -683,7 +666,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -711,7 +693,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getUserDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -739,7 +720,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getUnitDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息";
                         msg.handleMessageToTarget();
                     }
@@ -768,7 +748,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getMsgDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步基础信息：消息";
                         msg.handleMessageToTarget();
                     }
@@ -831,13 +810,9 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
-
     /**
      * 获得与我相关的任务
      * 添加：判断时间先后保留信息
-     * 现修改为，获取与我相关的采样信息之后
-     * 根据projectID重新获取content和detail
-     * 然后插入内容到数据库中
      *
      * @param msg
      */
@@ -847,72 +822,21 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
                     @Override
                     public void onSuccess(BaseResponse<List<Project>> baseResponse) {
-                        if (!CheckUtil.isNull(baseResponse) && !CheckUtil.isEmpty(baseResponse.getData())) {
+                        List<String> projectIdList = new ArrayList<>();
+                        if (!RxDataTool.isNull(baseResponse) &&
+                                !RxDataTool.isEmpty(baseResponse.getData())
+                                ) {
                             List<Project> projects = baseResponse.getData();//所有与我相关的任务
-                            //
-                            //更新任务列表
-                            List<String> updateTaskId = new ArrayList<>();
-                            //新增任务列表
-                            List<String> newTaskId = new ArrayList<>();
-
-                            ProjectDao dao = DBHelper.get().getProjectDao();
-                            //日期转化
-                            setSAMPLING_PROGRESS(projects.size());
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             for (Project project : projects) {
-                                getSampling(Message.obtain(msg), project.getId(), projects.size());
-                                Project old = dao.queryBuilder()
-                                        .where(ProjectDao.Properties.Id.eq(project.getId()))
-                                        .build()
-                                        .unique();
-
-                                /**如果没有冲突，那么直接插入**/
-                                if (old == null) {
-                                    newTaskId.add(project.getId());
-                                    dao.insert(project);
-                                    if (newTaskId.size() >= 9) {
-                                        getTaskById(newTaskId, msg);
-                                        newTaskId.clear();
-                                    }
-                                    continue;
-                                }
-
-                                /**有冲突，比较时间先后，暂时默认相同时间使用服务器版本**/
-                                try {
-                                    Date remoteDate = sdf.parse(project.getUpdateTime());
-                                    Date localDate = sdf.parse(old.getUpdateTime());
-                                    if (remoteDate.compareTo(localDate) >= 0) {
-                                        //服务端后更新,以及相等情况
-                                        //更新本地的记录
-                                        dao.update(project);
-
-                                        /**根据项目ID获取项目信息**/
-
-                                        updateTaskId.add(project.getId());
-                                        if (updateTaskId.size() >= 9) {
-                                            getTaskById(updateTaskId, msg);
-                                            updateTaskId.clear();
-                                        }
-
-                                    }
-                                    //如果是客户端后更新,那么不用任何操作,因为存储的就是最新的
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
+//                                getSampling(Message.obtain(msg), project.getId());
+                                projectIdList.add(project.getId());
+                                SamplingUtil.saveProjectData(project);
                             }
-                            if (0 != newTaskId.size()) {
-                                getTaskById(newTaskId, msg);
-                            }
-                            if (0 != updateTaskId.size()) {
-                                getTaskById(updateTaskId, msg);
-                            }
-
-                            msg.str = "正在同步采样单";
-                            msg.what = Message.RESULT_OK;
-                            msg.obj = PROGRESS;
-                            msg.arg1 = 0;
-                            msg.handleMessageToTarget();
                         }
+                        msg.obj = projectIdList;
+                        msg.str = "正在同步采样单";
+                        msg.what = Message.RESULT_OK;
+                        msg.handleMessageToTarget();
                     }
 
                     @Override
@@ -924,99 +848,28 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 }));
     }
 
-
     /**
      * 根据项目id查找项目详细信息
      *
-     * @param i
+     * @param idList
      * @param msg
      */
-    public void getTaskById(List<String> i, Message msg) {
-        /**根据项目ID获取项目信息**/
-        List<String> id = new ArrayList<>(i);
-        mModel.getTaskById(id)
+    public void getProjectDetailById(List<String> idList, Message msg) {
+        mModel.getProjectDetailById(idList)
                 .compose(RxUtils.applySchedulers(ApiPresenter.this
                         , msg.getTarget()))
                 .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Project>>>() {
                     @Override
                     public void onSuccess(BaseResponse<List<Project>> projectBaseResponse) {
-                        if (!CheckUtil.isNull(projectBaseResponse)) {
-                            List<Project> projects = projectBaseResponse.getData();
-
-                            for (Project p : projects) {
-                                List<ProjectDetial> projectDetials = p.getProjectDetials();
-                                if (!CheckUtil.isEmpty(projectDetials)) {
-
-//                                    ProjectDetial dbDetail = DBHelper.get().getProjectDetialDao().
-//                                            deleteByKey().where(ProjectDetialDao.Properties.ProjectId.eq(p.getId())).unique();
-
-
-                                    List<ProjectDetial> des = DBHelper.get().getProjectDetialDao()
-                                            .queryBuilder()
-                                            .where(ProjectDetialDao.Properties.ProjectId.eq(p.getId()))
-                                            .list();
-                                    if (des.size() != 0) {
-                                        DBHelper.get().getProjectDetialDao().deleteInTx(des);
-                                    }
-
-                                    DBHelper.get()
-                                            .getProjectDetialDao()
-                                            .insertInTx(projectDetials);
-
-//                                    for (ProjectDetial d : projectDetials){
-//                                        DBHelper.get().getProjectDetialDao()
-//                                                .queryBuilder()
-//                                                .where(ProjectDetialDao.Properties.ProjectId.eq(d.getProjectId()))
-//                                                .list();
-//                                    }
-
-//                                    if (dbDetail == null) {
-//                                        DBHelper.get()
-//                                                .getProjectDetialDao()
-//                                                .insertInTx(projectDetials);
-//                                    }else{
-//                                        DBHelper.get()
-//                                                .getProjectDetialDao()
-//                                                .updateInTx(projectDetials);
-//                                    }
-
-                                }
-                                List<ProjectContent> projectContentList = p.getProjectContents();
-                                if (!CheckUtil.isEmpty(projectContentList)) {
-
-                                    List<ProjectContent> contents=DBHelper.get().getProjectContentDao()
-                                            .queryBuilder()
-                                            .where(ProjectContentDao.Properties.ProjectId.eq(p.getId()))
-                                            .list();
-
-                                    if(contents.size()!=0){
-                                        DBHelper.get()
-                                                .getProjectContentDao()
-                                                .deleteInTx(contents);
-                                    }
-
-//                                    DBHelper.get().insert(projectContentList);
-
-                                    for (ProjectContent content : projectContentList) {
-//                                        ProjectContent dbContent = DBHelper.get().getProjectContentDao().
-//                                                queryBuilder().where(ProjectContentDao.Properties.Id.eq(content.getId())).unique();
-
-                                        DBHelper.get()
-                                                .getProjectContentDao()
-                                                .insert(content);
-//                                        if (dbContent != null) {
-//                                            DBHelper.get()
-//                                                    .getProjectContentDao()
-//                                                    .update(content);
-//                                        } else {
-//                                            DBHelper.get()
-//                                                    .getProjectContentDao()
-//                                                    .insert(content);
-//                                        }
-                                    }
-                                }
-                            }
+                        if (!RxDataTool.isNull(projectBaseResponse) &&
+                                !RxDataTool.isEmpty(projectBaseResponse.getData())
+                                ) {
+                            List<Project> projects = projectBaseResponse.getData();//所有与我相关的任务
+                            SamplingUtil.saveProjectDetailList(projects);
                         }
+                        msg.str = "正在同步采样单";
+                        msg.what = Message.RESULT_OK;
+                        msg.handleMessageToTarget();
                     }
 
                     @Override
@@ -1027,6 +880,39 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
 //                        msg.handleMessageToTarget();
                     }
                 }));
+    }
+
+    /**
+     * 获取任务列表下的所有采样单信息(支持批量)
+     *
+     * @param msg
+     */
+    public void getSamples(List<String> projectIds, final Message msg) {
+        if (RxDataTool.isEmpty(projectIds)) return;
+        mModel.getSamplings(projectIds)
+                .compose(RxUtils.applySchedulers(this, msg.getTarget()))
+                .subscribe(new RxObserver<>(new RxObserver.RxCallBack<BaseResponse<List<Sampling>>>() {
+                    @Override
+                    public void onSuccess(BaseResponse<List<Sampling>> baseResponse) {
+                        if (!RxDataTool.isNull(baseResponse) && !RxDataTool.isEmpty(baseResponse.getData())) {
+                            List<Sampling> samplings = baseResponse.getData();
+                            if (!RxDataTool.isEmpty(samplings)) {
+                                saveSample(samplings);
+                            }
+                        }
+                        Message message = Message.obtain(msg);
+                        message.what = Message.RESULT_OK;
+                        message.handleMessageToTarget();
+                    }
+
+                    @Override
+                    public void onFailure(int Type, String message, int responseCode) {
+                        msg.getTarget().showMessage(message);
+                        msg.what = Message.RESULT_FAILURE;
+                        msg.handleMessageToTarget();
+                    }
+                }));
+
     }
 
     /**
@@ -1045,7 +931,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getSamplingStantdDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步采样单规范";
                         msg.handleMessageToTarget();
                     }
@@ -1088,7 +973,6 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             DBHelper.get().getFormDao().insertInTx(baseResponse.getData());
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
                         msg.str = "正在同步采样单分类";
                         msg.handleMessageToTarget();
                     }
@@ -1118,16 +1002,13 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
                                 //DBHelper.get().getSamplingFormStandDao().deleteAll();
-                                for (Sampling sampling : samplings) {
-                                    saveOneSampling(sampling);
-                                }
+                                saveSample(samplings);
                             }
                         }
 
                         Message message = Message.obtain(msg);
                         message.what = TYPE_TASK;
                         message.arg1 = size;
-                        message.obj = SAMPLING_PROGRESS;
                         message.handleMessageToTarget();
                     }
 
@@ -1156,13 +1037,11 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
                                 //DBHelper.get().getSamplingFormStandDao().deleteAll();
-                                for (Sampling sampling : samplings) {
-                                    saveOneSampling(sampling);
-                                }
+                                saveSample(samplings);
                             }
                         }
                         msg.what = Message.RESULT_OK;
-                        msg.obj = PROGRESS;
+
                         msg.handleMessageToTarget();
                     }
 
@@ -1190,9 +1069,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         if (!CheckUtil.isNull(baseResponse)) {
                             List<Sampling> samplings = baseResponse.getData();
                             if (!CheckUtil.isEmpty(samplings)) {
-                                for (Sampling sampling : samplings) {
-                                    saveOneSampling(sampling);
-                                }
+                                saveSample(samplings);
                             }
                         }
 
@@ -1208,6 +1085,24 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         msg.handleMessageToTarget();
                     }
                 }));
+    }
+
+    /**
+     * 批量保存采样单
+     *
+     * @param samplingList
+     */
+    public  void saveSample(List<Sampling> samplingList) {
+        new Thread() {
+            @Override
+            public void run() {
+                for (Sampling sampling : samplingList) {
+                    synchronized (sampling) {
+                        saveOneSampling(sampling);
+                    }
+                }
+            }
+        }.start();
     }
 
     /**

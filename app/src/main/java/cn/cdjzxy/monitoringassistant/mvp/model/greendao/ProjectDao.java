@@ -53,7 +53,7 @@ public class ProjectDao extends AbstractDao<Project, String> {
         public final static Property PlanBeginTime = new Property(23, String.class, "PlanBeginTime", false, "PLAN_BEGIN_TIME");
         public final static Property PlanEndTime = new Property(24, String.class, "PlanEndTime", false, "PLAN_END_TIME");
         public final static Property CanSamplingEidt = new Property(25, boolean.class, "CanSamplingEidt", false, "CAN_SAMPLING_EIDT");
-        public final static Property IsSamplingEidt = new Property(26, boolean.class, "isSamplingEidt", false, "IS_SAMPLING_EIDT");
+        public final static Property IsEditProjectContent = new Property(26, boolean.class, "isEditProjectContent", false, "IS_EDIT_PROJECT_CONTENT");
         public final static Property SamplingUser = new Property(27, String.class, "SamplingUser", false, "SAMPLING_USER");
     }
 
@@ -97,7 +97,7 @@ public class ProjectDao extends AbstractDao<Project, String> {
                 "\"PLAN_BEGIN_TIME\" TEXT," + // 23: PlanBeginTime
                 "\"PLAN_END_TIME\" TEXT," + // 24: PlanEndTime
                 "\"CAN_SAMPLING_EIDT\" INTEGER NOT NULL ," + // 25: CanSamplingEidt
-                "\"IS_SAMPLING_EIDT\" INTEGER NOT NULL ," + // 26: isSamplingEidt
+                "\"IS_EDIT_PROJECT_CONTENT\" INTEGER NOT NULL ," + // 26: isEditProjectContent
                 "\"SAMPLING_USER\" TEXT);"); // 27: SamplingUser
     }
 
@@ -228,7 +228,7 @@ public class ProjectDao extends AbstractDao<Project, String> {
             stmt.bindString(25, PlanEndTime);
         }
         stmt.bindLong(26, entity.getCanSamplingEidt() ? 1L: 0L);
-        stmt.bindLong(27, entity.getIsSamplingEidt() ? 1L: 0L);
+        stmt.bindLong(27, entity.getIsEditProjectContent() ? 1L: 0L);
  
         List SamplingUser = entity.getSamplingUser();
         if (SamplingUser != null) {
@@ -357,7 +357,7 @@ public class ProjectDao extends AbstractDao<Project, String> {
             stmt.bindString(25, PlanEndTime);
         }
         stmt.bindLong(26, entity.getCanSamplingEidt() ? 1L: 0L);
-        stmt.bindLong(27, entity.getIsSamplingEidt() ? 1L: 0L);
+        stmt.bindLong(27, entity.getIsEditProjectContent() ? 1L: 0L);
  
         List SamplingUser = entity.getSamplingUser();
         if (SamplingUser != null) {
@@ -399,7 +399,7 @@ public class ProjectDao extends AbstractDao<Project, String> {
             cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // PlanBeginTime
             cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // PlanEndTime
             cursor.getShort(offset + 25) != 0, // CanSamplingEidt
-            cursor.getShort(offset + 26) != 0, // isSamplingEidt
+            cursor.getShort(offset + 26) != 0, // isEditProjectContent
             cursor.isNull(offset + 27) ? null : SamplingUserConverter.convertToEntityProperty(cursor.getString(offset + 27)) // SamplingUser
         );
         return entity;
@@ -433,7 +433,7 @@ public class ProjectDao extends AbstractDao<Project, String> {
         entity.setPlanBeginTime(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
         entity.setPlanEndTime(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
         entity.setCanSamplingEidt(cursor.getShort(offset + 25) != 0);
-        entity.setIsSamplingEidt(cursor.getShort(offset + 26) != 0);
+        entity.setIsEditProjectContent(cursor.getShort(offset + 26) != 0);
         entity.setSamplingUser(cursor.isNull(offset + 27) ? null : SamplingUserConverter.convertToEntityProperty(cursor.getString(offset + 27)));
      }
     

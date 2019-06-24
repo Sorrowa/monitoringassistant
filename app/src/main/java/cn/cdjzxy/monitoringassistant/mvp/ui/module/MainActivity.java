@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,16 +23,13 @@ import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.micheal.print.thread.ThreadPool;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
-import com.wonders.health.lib.base.utils.PermissionUtil;
 import com.wonders.health.lib.base.widget.badgeview.BadgeView;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
 import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
-import com.wonders.health.lib.base.widget.dialogplus.OnDismissListener;
 import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.Subscriber;
@@ -40,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import cn.cdjzxy.monitoringassistant.BroadcastReceiver.NetworkChangeReceiver;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
@@ -58,15 +55,14 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.repository.RepositoryFragment
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.scanCode.ScanCodeFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.PwdModifyFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.setting.SettingFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.webview.WebFragment;
-import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
-import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
+import me.jessyan.autosize.utils.Preconditions;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 
@@ -85,6 +81,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private NumberProgressBar mNumberProgressBarSam;//采样单进度
     private TextView mTvHintSam;//采样单提示
     private TextView mTvHint;
+    private TextView mTvDialogTitle;//进度条title
     private ImageView mTvCancel;//取消按钮
     private DialogPlus mDialogPlus;
 
@@ -105,11 +102,16 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private RepositoryFragment mRepositoryFragment;
     private SettingFragment mSettingFragment;
     //private ManagementFragment mManagementFragment;
-    private double progress = 0.0;
-    private double progressSam = 0.0;
+
+
     private int proItem = 0;
     private boolean isEasy = false;//是否进入直播界面
+    private int SYNC_SIZE;//进入首页同步数据的总数
+    private int SYNC_SAMPLE_SIZE;//进入首页同步采样单数据的总数
+    private int SYNC_PROGRESS = 0;//任务进度
+    private int SYNC_SAMPLE = 0;//采样单进度
 
+    public static final int UPDATE_DATA_MAX_SIZE = 10;//批量同步数据时，每次最多同步10条
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -144,7 +146,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         initTabData();
         openFragment(0);
         mTitleBarView.setTitleMainText("嘉泽云监测");
-
+        updateData();
         // 双击退出
         mExitHelper = new ExitHelper.TwicePressHolder(new ExitHelper.IExitInterface() {
 
@@ -159,8 +161,7 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
                 ArtUtils.exitApp();
             }
         }, 3000);
-        showDialog();
-        ThreadPool.getInstantiation().addTask(this::updateDataFromNetwork);
+
         startTraceServer();
     }
 
@@ -221,71 +222,82 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
 
     @Override
     public void handleMessage(@NonNull Message message) {
+//        checkNotNull(message);
+//        switch (message.what) {
+//            case Message.RESULT_FAILURE:
+//                if (mDialogPlus != null) {
+//                    progress=100;
+//                    mDialogPlus.dismiss();
+//                }
+//                break;
+//            case Message.RESULT_OK:
+//                updateProgress((double) message.obj, message.str);
+//                break;
+//            case TYPE_TASK:
+//                updateProgressSam((double) message.obj, message.arg1);
+//                //mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);//获取所有采样单信息(支持批量)
+//                break;
         checkNotNull(message);
         switch (message.what) {
             case Message.RESULT_FAILURE:
-                if (mDialogPlus != null) {
-                    progress=100;
-                    mDialogPlus.dismiss();
-                }
+                dismissDialog();
                 break;
             case Message.RESULT_OK:
-                updateProgress((double) message.obj, message.str);
-                break;
-            case TYPE_TASK:
-                updateProgressSam((double) message.obj, message.arg1);
-                //mPresenter.getSampling(Message.obtain(this, new Object()), (List<String>) message.obj);//获取所有采样单信息(支持批量)
+                updateProgress(message.str);
+//                try {
+//                    updateProgress(message.str);
+//                    List<String> stringList = new ArrayList<>();
+//                    if (!RxDataTool.isEmpty(message.obj)) {
+//                        stringList = (List<String>) message.obj;
+//                        SYNC_SAMPLE_SIZE = stringList.size();
+//                        SYNC_SAMPLE = 0;
+//                        updateProgressSam();
+//                        mPresenter.getSampling(Message.obtain(this, new Object()), stringList.get(0));
+//                    }
+//                } catch (Exception e) {
+//                    Log.e(TAG, "handleMessage: " + e.toString());
+//                }
+
                 break;
         }
     }
 
     /**
-     * 更新进度
-     *
-     * @param addValue
+     * 显示dialog
      */
-    private void updateProgress(double addValue, String str) {
-        if (!mDialogPlus.isShowing()) {
-            return;
+    public void showUpdateDialog() {
+        if (mDialogPlus != null && !mDialogPlus.isShowing()) {
+            mDialogPlus.show();
         }
+    }
+
+    /**
+     * 隐藏同步数据的dialog
+     */
+    private void dismissDialog() {
+        if (mDialogPlus != null) {
+            mDialogPlus.dismiss();
+        }
+    }
+
+    /**
+     * 更新进度
+     */
+    private void updateProgress(String str) {
+        showUpdateDialog();
+        mNumberProgressBar.setMax(SYNC_SIZE);
+        SYNC_PROGRESS++;
         mTvHint.setText(str);
-        progress += addValue;
-        if (progress > 100) {
-            progress = 100;
+        if (SYNC_PROGRESS >= SYNC_SIZE) {
+            mNumberProgressBar.setProgress(SYNC_SIZE);
+        } else {
+            mNumberProgressBar.setProgress(SYNC_PROGRESS);
         }
-
-        mNumberProgressBar.setProgress((int) progress);
-
-        if (progress >= 100) {
-            mDialogPlus.dismiss();
+        if (SYNC_PROGRESS >= SYNC_SIZE && SYNC_SAMPLE >= SYNC_SAMPLE_SIZE) {
+            dismissDialog();
         }
     }
 
-    /**
-     * 更新进度
-     *
-     * @param addValue
-     */
-    private void updateProgressSam(double addValue, int size) {
-        if (!mDialogPlus.isShowing()) {
-            return;
-        }
-
-        mTvHintSam.setVisibility(View.VISIBLE);
-        mNumberProgressBarSam.setVisibility(View.VISIBLE);
-        mTvHintSam.setText(String.format("正在同步采样单：%d/%d", proItem, size));
-        progressSam += addValue;
-        proItem++;
-        if (addValue > 100) {
-            progressSam = 100;
-            mTvHintSam.setText("采样单同步完成");
-        }
-        if (proItem == size) {
-            mDialogPlus.dismiss();
-        }
-        mNumberProgressBarSam.setProgress((int) progressSam);
-
-    }
 
     /**
      * 获取标题右边View
@@ -320,11 +332,11 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
     private void initTabData() {
         ArtUtils.configRecyclerView(recyclerView,
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {//设置RecyclerView不可滑动
-                return false;
-            }
-        });
+                    @Override
+                    public boolean canScrollVertically() {//设置RecyclerView不可滑动
+                        return false;
+                    }
+                });
 
         mTabs = new ArrayList<>();
 
@@ -487,11 +499,212 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         return false;
     }
 
-    private void showDialog() {
+
+    /**
+     * 如果是第一次登陆 就任务数据
+     */
+    private void updateTaskData() {
+        mTvDialogTitle.setText("可能需要一点时间同步数据。请稍等片刻");
+        mPresenter.getMyTasks(Message.obtain(new IView() {//获取跟我相关待采样任务 GET
+            @Override
+            public void showMessage(@NonNull String message) {
+                ArtUtils.makeText(mContext, message);
+            }
+
+            @Override
+            public void handleMessage(@NonNull Message message) {
+                Preconditions.checkNotNull(message);
+                switch (message.what) {
+                    case Message.RESULT_OK:
+                        List<String> projectIdList = (List<String>) message.obj;
+                        if (CheckUtil.isEmpty(projectIdList)) {
+                            if (mDialogPlus != null) {
+                                mDialogPlus.dismiss();
+                            }
+                        } else {
+                            if (projectIdList.size() % UPDATE_DATA_MAX_SIZE > 0) {
+                                SYNC_SAMPLE_SIZE = projectIdList.size() / UPDATE_DATA_MAX_SIZE + 1;
+                            } else {
+                                SYNC_SAMPLE_SIZE = projectIdList.size() / UPDATE_DATA_MAX_SIZE;
+                            }
+                            SYNC_SAMPLE_SIZE *= 2;//这里*2的原因是请求两个不同的接口
+                            //批量同步，同意需要同步的次数
+                            updateProgressSample();
+                            detailProjectData(projectIdList);
+                            deleteDbOldProjectData(projectIdList);
+                        }
+
+                        break;
+                    case Message.RESULT_FAILURE:
+                        SYNC_PROGRESS--;
+                        dismissDialog();
+                        break;
+                }
+            }
+        }));
+    }
+
+    /**
+     * 删除数据库中 移除的任务数据
+     *
+     * @param projectIdList 服务器同步的任务数据
+     */
+    private void deleteDbOldProjectData(List<String> projectIdList) {
+        new Thread() {
+            @Override
+            public void run() {
+                DbHelpUtils.deleteOldDataForProject(projectIdList);
+            }
+        }.start();
+    }
+
+    /**
+     * 处理任务数据
+     */
+    private void detailProjectData(List<String> projectIdList) {
+        List<String> idList = new ArrayList<>();
+        for (String id : projectIdList) {
+            idList.add(id);
+            if (idList.size() == UPDATE_DATA_MAX_SIZE) {
+                updateSample(idList);
+                updateProjectData(idList);
+                idList.clear();
+            }
+        }
+        if (idList.size() > 0) {
+            updateSample(idList);
+            updateProjectData(idList);
+            idList.clear();
+        }
+    }
+
+    /**
+     * 批量同步采样单数据
+     *
+     * @param ids 任务id集合
+     */
+    private void updateSample(List<String> ids) {
+        mPresenter.getSamples(ids, Message.obtain(new IView() {
+            @Override
+            public void showMessage(@NonNull String message) {
+                ArtUtils.makeText(mContext, message);
+            }
+
+            @Override
+            public void handleMessage(@NonNull Message message) {
+                switch (message.what) {
+                    case Message.RESULT_OK:
+                        SYNC_SAMPLE++;
+                        updateProgressSample();
+                        break;
+                    case Message.RESULT_FAILURE:
+                        SYNC_SAMPLE_SIZE--;
+                        dismissDialog();
+                        break;
+                }
+            }
+        }));
+
+    }
+
+    /**
+     * 同步任务数据
+     */
+    private void updateProjectData(List<String> ids) {
+        mPresenter.getProjectDetailById(ids, Message.obtain(new IView() {
+            @Override
+            public void showMessage(@NonNull String message) {
+                ArtUtils.makeText(mContext, message);
+            }
+
+            @Override
+            public void handleMessage(@NonNull Message message) {
+                switch (message.what) {
+                    case Message.RESULT_OK:
+                        SYNC_SAMPLE++;
+                        updateProgressSample();
+                        break;
+                    case Message.RESULT_FAILURE:
+                        SYNC_SAMPLE_SIZE--;
+                        dismissDialog();
+                        break;
+                }
+            }
+        }));
+    }
+
+    /**
+     * 更新采样进度
+     */
+    private void updateProgressSample() {
+        showUpdateDialog();
+        mTvHintSam.setVisibility(View.VISIBLE);
+        mNumberProgressBarSam.setVisibility(View.VISIBLE);
+        mTvHintSam.setText("正在同步任务数据和采样单数据:");
+        mNumberProgressBarSam.setMax(SYNC_SAMPLE_SIZE);
+
+        if (SYNC_SAMPLE >= SYNC_SAMPLE_SIZE) {
+            mNumberProgressBarSam.setProgress(SYNC_SAMPLE_SIZE);
+            mTvHintSam.setText("采样单同步完成");
+            showMessage("采样单同步完成");
+            HawkUtil.putBoolean(HawkUtil.IS_FIRST_LOGIN, false);
+            dismissDialog();
+        } else {
+            mNumberProgressBarSam.setProgress(SYNC_SAMPLE);
+        }
+    }
+
+    /**
+     * 同步基础数据
+     */
+    private void updateBasicData() {
+        mTvDialogTitle.setText("正在同步基础数据");
+        SYNC_SIZE = 0;
+        mPresenter.getDevices(Message.obtain(this, new Object()));//获取设备信息 GET
+        mPresenter.getMethods(Message.obtain(this, new Object()));//获取方法信息 GET
+        mPresenter.getMonItems(Message.obtain(this, new Object()));//获取监测项目 GET
+        mPresenter.getTags(Message.obtain(this, new Object()));//获取要素分类 GET
+        mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));// 获取项目要素关系 GET
+        mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));//获取方法要素关系 GET
+        mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));//获取项目方法关系 GET
+        mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));//获取方法设备关系 GET
+        mPresenter.getRight(Message.obtain(this, new Object()));//获取权限 GET
+        mPresenter.getEnvirPoint(Message.obtain(this, new Object()));//获取环境质量点位 GET
+        mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));//获取企业点位 GET
+        mPresenter.getEnterprise(Message.obtain(this, new Object()));//获取企业 GET
+        mPresenter.getDic(Message.obtain(this, new Object()), 7);//获取字典  GET
+        mPresenter.getWeather(Message.obtain(this, new Object()));//获取天气  GET
+        mPresenter.getUser(Message.obtain(this, new Object()));//获取采样用户  GET
+        mPresenter.getUnit(Message.obtain(this, new Object()));//获取结果单位  GET
+        mPresenter.getMsgs(Message.obtain(this, new Object()));//获取全部消息
+        mPresenter.getFormSelect(Message.obtain(this, new Object()));//获取表单分类 GET
+        mPresenter.getSamplingStantd(Message.obtain(this, new Object()));//获取采样规范 GET
+        SYNC_SIZE = 19;
+    }
+
+    /**
+     * 从服务端更新数据
+     */
+    private void updateData() {
+        if (com.baidu.mapapi.NetworkUtil.isNetworkAvailable(this)) {
+            initUpdateDialog();
+            updateBasicData();
+            updateTaskData();
+//            if (HawkUtil.getBoolean(HawkUtil.IS_FIRST_LOGIN)) {
+//                SYNC_SIZE += 1;
+//                updateTaskData();
+//            }
+        }
+    }
+
+    /**
+     * 初始化更新数据的进度条
+     */
+    private void initUpdateDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_download, null);
-        view.setClickable(true);
         mNumberProgressBar = view.findViewById(R.id.progressbar);
         mNumberProgressBarSam = view.findViewById(R.id.progressbar_1);
+        mTvDialogTitle = view.findViewById(R.id.tv_dialog_title);
         mTvHint = view.findViewById(R.id.tv_hint);
         mTvHintSam = view.findViewById(R.id.tv_hint_1);
         DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
@@ -499,48 +712,15 @@ public class MainActivity extends BaseTitileActivity<ApiPresenter> implements IV
         dialogPlusBuilder.setGravity(Gravity.CENTER);
         dialogPlusBuilder.setCancelable(true);
         dialogPlusBuilder.setContentWidth(700);
-        dialogPlusBuilder.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(@NonNull DialogPlus dialog) {
-                if (progress<100){
-                    showMessage("后台将同步大量数据，可能会发生卡顿");
-                }
-            }
-        });
-
         mDialogPlus = dialogPlusBuilder.create();
         mDialogPlus.show();
     }
 
-    /**
-     * 从服务端更新数据
-     */
-    private void updateDataFromNetwork() {
-        if (NetworkUtil.isNetworkAvailable(this) && !HawkUtil.getBoolean("isUpdated")) {
-            progress = 5;
-//            showDialog();
-            mPresenter.getDevices(Message.obtain(this, new Object()));//获取设备信息 GET
-            mPresenter.getMethods(Message.obtain(this, new Object()));//获取方法信息 GET
-            mPresenter.getMonItems(Message.obtain(this, new Object()));//获取监测项目 GET
-            mPresenter.getTags(Message.obtain(this, new Object()));//获取要素分类 GET
-            mPresenter.getMonItemTagRelation(Message.obtain(this, new Object()));// 获取项目要素关系 GET
-            mPresenter.getMethodTagRelation(Message.obtain(this, new Object()));//获取方法要素关系 GET
-            mPresenter.getMonItemMethodRelation(Message.obtain(this, new Object()));//获取项目方法关系 GET
-            mPresenter.getMethodDevRelation(Message.obtain(this, new Object()));//获取方法设备关系 GET
-            mPresenter.getRight(Message.obtain(this, new Object()));//获取权限 GET
-            mPresenter.getEnvirPoint(Message.obtain(this, new Object()));//获取环境质量点位 GET
-            mPresenter.getEnterRelatePoint(Message.obtain(this, new Object()));//获取企业点位 GET
-            mPresenter.getEnterprise(Message.obtain(this, new Object()));//获取企业 GET
-            mPresenter.getDic(Message.obtain(this, new Object()), 7);//获取字典  GET
-            mPresenter.getWeather(Message.obtain(this, new Object()));//获取天气  GET
-            mPresenter.getUser(Message.obtain(this, new Object()));//获取采样用户  GET
-            mPresenter.getUnit(Message.obtain(this, new Object()));//获取结果单位  GET
-            mPresenter.getMsgs(Message.obtain(this, new Object()));//获取全部消息
-            mPresenter.getFormSelect(Message.obtain(this, new Object()));//获取表单分类 GET
-            mPresenter.getSamplingStantd(Message.obtain(this, new Object()));//获取采样规范 GET
-            mPresenter.getMyTasks(Message.obtain(this, new Object()));//获取跟我相关待采样任务 GET
-            //HawkUtil.putBoolean("isUpdated", true);
-            HawkUtil.putBoolean("isUpdated", false);
-        }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

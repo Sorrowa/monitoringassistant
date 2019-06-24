@@ -10,7 +10,6 @@ import com.wonders.health.lib.base.utils.ArtUtils;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 
 /**
  * 帮助索贝传的测试类

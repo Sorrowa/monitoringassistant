@@ -2,7 +2,6 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.setting;
 
 
 import android.os.Bundle;
-import android.os.UserHandle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;

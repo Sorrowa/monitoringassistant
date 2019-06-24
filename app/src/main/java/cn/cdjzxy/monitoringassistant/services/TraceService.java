@@ -1,6 +1,5 @@
 package cn.cdjzxy.monitoringassistant.services;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
@@ -31,14 +29,12 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NotificationUtils;
-import retrofit2.Retrofit;
 
 
 public class TraceService extends Service {

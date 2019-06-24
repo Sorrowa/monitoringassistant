@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
@@ -36,7 +35,6 @@ import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -598,7 +596,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
                 isBatchUpload = false;
                 isSubmit = false;
-                if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
+                if (mProject.getCanSamplingEidt() && mProject.getIsEditProjectContent()) {
                     uploadProjecteContentData(true);
                 }
 
@@ -1063,7 +1061,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
 
         showLoadingDialog("开始批量上传");
 
-        if (mProject.getCanSamplingEidt() && mProject.getIsSamplingEidt()) {
+        if (mProject.getCanSamplingEidt() && mProject.getIsEditProjectContent()) {
             uploadProjecteContentData(true);
         }
 

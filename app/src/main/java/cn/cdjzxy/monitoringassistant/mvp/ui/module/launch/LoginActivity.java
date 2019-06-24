@@ -24,24 +24,19 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.cdjzxy.monitoringassistant.BroadcastReceiver.NetworkChangeReceiver;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.Constant;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.DaoSession;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskActivity;
 import cn.cdjzxy.monitoringassistant.services.RepositoryService;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.ExitHelper;
 import cn.cdjzxy.monitoringassistant.utils.FileUtils;
 import cn.cdjzxy.monitoringassistant.widgets.ClearEditText;
-import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 
 import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 

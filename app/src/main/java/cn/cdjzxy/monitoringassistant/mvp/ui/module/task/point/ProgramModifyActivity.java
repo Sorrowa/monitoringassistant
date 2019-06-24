@@ -37,7 +37,6 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
@@ -214,7 +213,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                     return;
                 }
                 deleteProgramPoitRowData();
-                mProject.setIsSamplingEidt(true);
+                mProject.setIsEditProjectContent(true);
                 DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
                 ArtUtils.makeText(this, "删除采样点位数据成功");
@@ -246,7 +245,7 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                     //生成新的ProjectDetials
                 }
                 generateProjectDetials();
-                mProject.setIsSamplingEidt(true);
+                mProject.setIsEditProjectContent(true);
                 DBHelper.get().getProjectDao().update(mProject);
                 EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
                 ArtUtils.makeText(this, "保存采样点位数据成功");
@@ -328,7 +327,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void updateTags(String tagParentId) {
         mTags.clear();
-        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.ParentId.eq(tagParentId), TagsDao.Properties.Level.eq(1)).list();
+        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().
+                where(TagsDao.Properties.ParentId.eq(tagParentId), TagsDao.Properties.Level.eq(1)).list();
         if (!CheckUtil.isEmpty(tags1)) {
             mTags.addAll(tags1);
         }

@@ -15,6 +15,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.User;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.WanderSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.Msg;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.msg.MsgData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.qr.QrMoreInfo;
@@ -165,8 +166,9 @@ public interface ApiService {
     @GET(Api.GET_SAMPLE_STORAGE)
     Observable<BaseResponse<ProjectSampleStorage>> getSampleStorageProject(@QueryMap Map<String, String> map);
 
-    @GET(Api.GET_TASK_BY_ID)
-    Observable<BaseResponse<List<Project>>> getTaskById(@Query("ProjectId") List<String> ProjectId);
+
+    @GET(Api.GET_PROJECT_DETAIL_BY_ID)
+    Observable<BaseResponse<List<Project>>> getProjectDetailById(@Query("ProjectId[]") String[] projectIdList);
 
     //*******************流转******************
     @GET(Api.GET_SAMPLE_STORAGE_LIST)
@@ -205,7 +207,7 @@ public interface ApiService {
     Observable<BaseResponse> putSubmitSampling();
 
     @GET(Api.GET_SAMPLING)
-    Observable<BaseResponse<List<Sampling>>> getSamplings(@Query("ProjectId") List<String> projectIds);
+    Observable<BaseResponse<List<Sampling>>> getSamplings(@Query("ProjectId[]") String[] projectId);
 
     @GET(Api.GET_SAMPLING)
     Observable<BaseResponse<List<Sampling>>> getSampling(@Query("ProjectId") String projectId);
@@ -284,6 +286,8 @@ public interface ApiService {
     @GET(Api.GET_MSG)
     Observable<BaseResponse<List<Msg>>> getMsgs();
 
+    @GET(Api.GET_MSG_PAGE)
+    Observable<BaseResponse<MsgData>> getMsgData(@QueryMap Map<String, String> map);
     /**
      * 批量阅读消息
      *

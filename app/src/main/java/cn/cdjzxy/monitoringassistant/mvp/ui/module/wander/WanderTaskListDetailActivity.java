@@ -21,8 +21,6 @@ import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
-import org.simple.eventbus.EventBus;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;

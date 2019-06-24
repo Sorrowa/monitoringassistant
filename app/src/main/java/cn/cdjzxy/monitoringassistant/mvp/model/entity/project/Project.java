@@ -72,7 +72,7 @@ public class Project {
     private String PlanBeginTime;
     private String PlanEndTime;
     private boolean CanSamplingEidt;//是否允许修改方案
-    private boolean isSamplingEidt;//是否修改方案
+    private boolean isEditProjectContent;//是否修改方案
 
     @Convert(columnType = String.class, converter = StringConverter.class)
     private List<String> SamplingUser;
@@ -110,7 +110,7 @@ public class Project {
         this.PlanBeginTime = PlanBeginTime;
         this.PlanEndTime = PlanEndTime;
         this.CanSamplingEidt = CanSamplingEidt;
-        this.isSamplingEidt = isSamplingEidt;
+        this.isEditProjectContent = isSamplingEidt;
         this.SamplingUser = SamplingUser;
     }
 
@@ -343,13 +343,14 @@ public class Project {
         this.CanSamplingEidt = CanSamplingEidt;
     }
 
-    public boolean getIsSamplingEidt() {
-        return this.isSamplingEidt;
+    public boolean getIsEditProjectContent() {
+        return this.isEditProjectContent;
     }
 
-    public void setIsSamplingEidt(boolean isSamplingEidt) {
-        this.isSamplingEidt = isSamplingEidt;
+    public void setIsEditProjectContent(boolean isEditProjectContent) {
+        this.isEditProjectContent = isEditProjectContent;
     }
+
 
     public List<String> getSamplingUser() {
         return this.SamplingUser;

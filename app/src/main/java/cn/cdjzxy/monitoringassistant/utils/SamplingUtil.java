@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
@@ -639,7 +640,71 @@ public class SamplingUtil {
         return stringBuilderId.toString();
     }
 
+    /**
+     * 保存任务
+     *
+     * @param project 任务
+     */
+    public static void saveProjectData(Project project) {
+        if (RxDataTool.isEmpty(DbHelpUtils.getDbProject(project.getId()))) {
+            //数据库没有就直接插入
+            DBHelper.get().getProjectDao().insert(project);
+        } else {
+            //有得话就直接更新
+            DBHelper.get().getProjectDao().update(project);
+        }
 
+    }
+
+    /**
+     * 批量保存任务详情数据 ProjectDetial ProjectContent
+     *
+     * @param projects 任务集合
+     */
+    public static void saveProjectDetailList(List<Project> projects) {
+        new Thread() {
+            @Override
+            public void run() {
+                for (Project project : projects)
+                    synchronized (project) {
+                        saveProjectDetail(project);
+                    }
+            }
+        }.start();
+
+    }
+
+    /**
+     * 保存任务详情ProjectDetial ProjectContent
+     *
+     * @param project 任务
+     */
+    public static void saveProjectDetail(Project project) {
+        Project dbProject = DbHelpUtils.getDbProject(project.getId());
+        if (!RxDataTool.isNull(dbProject) &&
+                dbProject.getCanSamplingEidt() && //第一步判断是否有权限修改
+                dbProject.getIsEditProjectContent()) {//并且判断本地是否有采样数据没有提交
+            //如果是的话，就不用保存，以本地为准
+            return;
+        }
+        List<ProjectContent> contentList = project.getProjectContents();
+        List<ProjectDetial> detailList = project.getProjectDetials();
+        List<ProjectDetial> dbDetailList = DbHelpUtils.getProjectDetialList(project.getId());
+        List<ProjectContent> dbContentList = DbHelpUtils.getProjectContentList(project.getId());
+
+        if (!RxDataTool.isEmpty(dbContentList)) {
+            DBHelper.get().getProjectContentDao().deleteInTx(dbContentList);
+        }
+        if (!RxDataTool.isEmpty(contentList)) {
+            DBHelper.get().getProjectContentDao().insertInTx(contentList);
+        }
+        if (!RxDataTool.isEmpty(dbDetailList)) {
+            DBHelper.get().getProjectDetialDao().deleteInTx(detailList);
+        }
+        if (!RxDataTool.isEmpty(detailList)) {
+            DBHelper.get().getProjectDetialDao().insertInTx(detailList);
+        }
+    }
 /**********************************************************************************************/
     /**
      * 上传采样单

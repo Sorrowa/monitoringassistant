@@ -8,13 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
@@ -32,28 +29,15 @@ import com.wonders.health.lib.base.utils.StatusBarUtil;
 
 import org.simple.eventbus.Subscriber;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import cn.cdjzxy.monitoringassistant.BuildConfig;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.BaseResponse;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.Gps;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.gps.GpsBean;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.launch.LoginActivity;
 import cn.cdjzxy.monitoringassistant.services.TraceService;
-import cn.cdjzxy.monitoringassistant.trajectory.TrajectoryServer;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
-import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
-import retrofit2.Retrofit;
 
 /**
  * Activity 基类

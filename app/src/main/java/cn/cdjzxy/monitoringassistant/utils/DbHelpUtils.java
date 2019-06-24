@@ -1,6 +1,7 @@
 package cn.cdjzxy.monitoringassistant.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -221,5 +224,104 @@ public class DbHelpUtils {
         if (CheckUtil.isEmpty(id)) return new ArrayList<>();
         return DBHelper.get().getSamplingDetailDao().queryBuilder().
                 where(SamplingDetailDao.Properties.SamplingId.eq(id)).list();
+    }
+    /**
+     * 获取数据库中非ids列表中的数据
+     *
+     * @param ids id集合
+     * @return List<Project>
+     */
+    public static List<Project> getProjectListNoInIds(List<String> ids) {
+        return DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.notIn(ids)).list();
+    }
+
+    /**
+     * 通过{@SamplingDao.Properties.projectId}查找Sampling表
+     * Sampling 采样表
+     *
+     * @param projectId 任务id
+     * @return Sampling 采样表
+     */
+    public static List<Sampling> getDbSampleForProjectId(String projectId) {
+        if (CheckUtil.isEmpty(projectId)) {
+            Log.e(TAG, "getDbSampling:数据库查找采样单id为空");
+            return new ArrayList<>();
+        }
+        return DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.ProjectId.eq(projectId)).list();
+    }
+    /**
+     * 通过{@SamplingContentDao{SamplingId }}查找SamplingContent表
+     * SamplingContent 采样单数据表
+     *
+     * @param projectId 任务id
+     * @return SamplingContent 采样单数据表
+     */
+    public static List<SamplingContent> getSampleContentListForProjectId(String projectId) {
+        List<SamplingContent> contentList = DBHelper.get().
+                getSamplingContentDao().queryBuilder().
+                where(SamplingContentDao.Properties.ProjectId.eq(projectId)).list();
+        return contentList;
+    }
+    /**
+     * 通过{@SamplingContentDao{@ProjectId,SamplingId }}查找数据库所有的SamplingDetailDao表
+     * SamplingDetail 采样单数据表
+     *
+     * @param projectId 任务id
+     * @return SamplingDetail 采样单数据表
+     */
+    public static List<SamplingDetail> getSampleDetailListForProjectId(String projectId) {
+        if (CheckUtil.isEmpty(projectId)) return new ArrayList<>();
+        return DBHelper.get().getSamplingDetailDao().queryBuilder().
+                where(SamplingDetailDao.Properties.ProjectId.eq(projectId)).list();
+    }
+
+    /**
+     * 按照{@SamplingFormStandDao.Properties.SamplingId}查找数据库所有的SamplingFormStandDao表
+     * SamplingFormStand 分瓶信息表
+     *
+     * @param SamplingId 主键id
+     * @return List<SamplingFormStand>：查询所有的分瓶信息表
+     */
+    public static List<SamplingFormStand> getSamplingFormStandList(String SamplingId) {
+        if (CheckUtil.isEmpty(SamplingId)) return new ArrayList<>();
+        List<SamplingFormStand> list = DBHelper.get().getSamplingFormStandDao().queryBuilder().
+                where(SamplingFormStandDao.
+                        Properties.SamplingId.eq(SamplingId)).list();
+        if (list == null) return new ArrayList<>();
+        else return list;
+    }
+    /**
+     * 查找数据库中非projectIds的数据并删除
+     *
+     * @param projectIds 任务的id集合
+     */
+    public static void deleteOldDataForProject(List<String> projectIds) {
+        List<Project> dbOldProjectList = getProjectListNoInIds(projectIds);
+        if (CheckUtil.isEmpty(dbOldProjectList)) return;
+        for (Project project : dbOldProjectList) {
+            String projectId = project.getId();
+            List<ProjectContent> contentList = getProjectContentList(projectId);
+            List<ProjectDetial> detailList = getProjectDetialList(projectId);
+            List<Sampling> samplingList = getDbSampleForProjectId(projectId);
+            List<SamplingContent> samplingContentList = getSampleContentListForProjectId(projectId);
+            List<SamplingDetail> samplingDetailList = getSampleDetailListForProjectId(projectId);
+            if (!CheckUtil.isEmpty(contentList))
+                DBHelper.get().getProjectContentDao().deleteInTx(contentList);
+            if (!CheckUtil.isEmpty(detailList))
+                DBHelper.get().getProjectDetialDao().deleteInTx(detailList);
+            if (!CheckUtil.isEmpty(samplingList)) {
+                for (Sampling sampling : samplingList) {
+                    List<SamplingFormStand> stantdList = getSamplingFormStandList(sampling.getId());
+                    if (!CheckUtil.isEmpty(stantdList)) {
+                        DBHelper.get().getSamplingFormStandDao().deleteInTx(stantdList);
+                    }
+                }
+            }
+            if (!CheckUtil.isEmpty(samplingContentList))
+                DBHelper.get().getSamplingContentDao().deleteInTx(samplingContentList);
+            if (!CheckUtil.isEmpty(samplingDetailList))
+                DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
+        }
     }
 }
