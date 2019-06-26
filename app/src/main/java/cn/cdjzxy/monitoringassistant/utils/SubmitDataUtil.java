@@ -17,6 +17,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.PreciptationSampForm;
@@ -270,42 +271,27 @@ public class SubmitDataUtil {
     }
 
     private static List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> setYqfUpSamplingDetailDataList(Sampling sampling) {
-        List<SamplingDetail> samplingDetailsList = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(sampling.getId())).list();
+        List<SamplingDetailYQFs> samplingDetailsList =DbHelpUtils.getSamplingDetailYQFsList(sampling.getId());
         if (!CheckUtil.isEmpty(samplingDetailsList)) {
             int count = 1;
             Collections.sort(samplingDetailsList, new TestRecordFragment.DetailComparator());
             List<PreciptationSampForm.SampFormBean.SamplingDetailsBean> samplingDetailsBeansList = new ArrayList<>();
-            for (SamplingDetail samplingDetail : samplingDetailsList) {
+            for (SamplingDetailYQFs samplingDetail : samplingDetailsList) {
                 if (CheckUtil.isEmpty(samplingDetail.getMonitemId())) {
                     continue;
                 }
-                PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean = new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
-                samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
-                samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
+                PreciptationSampForm.SampFormBean.SamplingDetailsBean samplingDetailsBean =
+                        new PreciptationSampForm.SampFormBean.SamplingDetailsBean();
                 samplingDetailsBean.setProjectId(sampling.getProjectId());
-                samplingDetailsBean.setIsSenceAnalysis(samplingDetail.getIsSenceAnalysis());
-                samplingDetailsBean.setMonitemId(samplingDetail.getMonitemId());
-                samplingDetailsBean.setMonitemName(samplingDetail.getMonitemName());
-                samplingDetailsBean.setAddresssId(sampling.getAddressId());
-                samplingDetailsBean.setAddressName(sampling.getAddressName());
-                samplingDetailsBean.setOrderIndex(count + "");
+                samplingDetailsBean.setSampingCode(samplingDetail.getSampingCode());
                 samplingDetailsBean.setFrequecyNo(samplingDetail.getFrequecyNo() + "");
-                samplingDetailsBean.setSamplingTime(samplingDetail.getSamplingTime());
+                samplingDetailsBean.setOrderIndex(count + "");
+                samplingDetailsBean.setMonitemId(samplingDetail.getMonitemId());
+                samplingDetailsBean.setSamplingId(samplingDetail.getSamplingId());
                 samplingDetailsBean.setSamplingType(samplingDetail.getSamplingType() + "");
-                samplingDetailsBean.setSamplingCount(samplingDetail.getSamplingCount() + "");
-                samplingDetailsBean.setPreservative(samplingDetail.getPreservative());
-                samplingDetailsBean.setIsCompare(samplingDetail.getIsCompare());
-                samplingDetailsBean.setSampleCollection(samplingDetail.getSampleCollection());
-                samplingDetailsBean.setSampleAcceptance(samplingDetail.getSampleAcceptance());
-                samplingDetailsBean.setDescription(samplingDetail.getDescription());
-                samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
                 samplingDetailsBean.setSamplingOnTime(samplingDetail.getSamplingOnTime());
                 samplingDetailsBean.setValue(samplingDetail.getValue());
-                //降水
-                //samplingDetailsBean.setSampStandId("00000000-0000-0000-0000-000000000000");
-                //samplingDetailsBean.setMonitemId("7253950a-9daa-9d4f-bd9a-a84789279c2a");
-                //samplingDetailsBean.setMonitemName("降水量");
-                samplingDetailsBean.setValue1(samplingDetail.getValue1());
+                samplingDetailsBean.setPrivateData(samplingDetail.getPrivateData());
                 samplingDetailsBeansList.add(samplingDetailsBean);
                 count++;
             }

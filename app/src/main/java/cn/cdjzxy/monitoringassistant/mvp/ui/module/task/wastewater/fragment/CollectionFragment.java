@@ -298,7 +298,7 @@ public class CollectionFragment extends BaseFragment {
             } else {
                 LabelInfo info = new LabelInfo();
                 info.setTaskName(sampling.getProjectName());
-                info.setNumber(sampling.getAddressName());
+                info.setNumber("采样地点：" + sampling.getAddressName());
                 info.setFrequecyNo("频次：" + item.getFrequecyNo());
                 info.setType(mSample.getTagName());//项目类型取样品性质
                 info.setMonitemName("");//监测项目
@@ -306,18 +306,14 @@ public class CollectionFragment extends BaseFragment {
                 info.setCb1("交接");
                 info.setCb2("分析");
                 info.setQrCode(item.getSampingCode());//二维码为样品编码
-                //根据样品的监测项目获取对应的分瓶信息
-                SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
-                if (samplingFormStand != null) {
-                    //保存方法
-                    info.setRemark(samplingFormStand.getPreservative());
-                }
+                //保存方法
+                info.setRemark("");
                 result.add(info);
             }
             for (String s : stringList) {
                 LabelInfo info = new LabelInfo();
                 info.setTaskName(sampling.getProjectName());
-                info.setNumber(sampling.getAddressName());
+                info.setNumber("采样地点：" + sampling.getAddressName());
                 if (item.getSamplingType() == 2) {//毛阳说这个字段代表全程序空白
                     info.setFrequecyNo("频次：" + " ");
                 } else
@@ -329,7 +325,7 @@ public class CollectionFragment extends BaseFragment {
                 info.setCb2("分析");
                 info.setQrCode(item.getSampingCode());//二维码为样品编码
                 //根据样品的监测项目获取对应的分瓶信息
-                SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, item.getMonitemName());
+                SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, s);
                 if (samplingFormStand != null) {
                     //保存方法
                     info.setRemark(samplingFormStand.getPreservative());
@@ -357,7 +353,7 @@ public class CollectionFragment extends BaseFragment {
             return null;
         }
         for (SamplingFormStand item : sampling.getSamplingFormStandResults()) {
-            if (monitemName.equals(item.getMonitemName())) {
+            if (monitemName.contains(item.getMonitemName())) {
                 return item;
             }
         }

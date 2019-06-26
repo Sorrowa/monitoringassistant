@@ -43,8 +43,11 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
+import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity.mSampling;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
@@ -124,8 +127,8 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
     private void setViewData() {
         tvSampleNo.setRightTextStr(mSample.getSamplingNo());
         tvSampleName.setRightTextStr(mSample.getProjectName());
-        tvNature.setRightTextStr(mProject.getMonType());
-        tvDate.setRightTextStr(mSample.getSamplingTimeBegin());
+        tvNature.setRightTextStr(mProject.getType());
+        tvDate.setRightTextStr(DateUtils.strGetDate(mSample.getSamplingTimeBegin()));
         tvWeatherState.setRightTextStr(mSample.getWeather());
         edWingSpeed.setEditTextStr(mSample.getWindSpeed());
         tvMonitorForm.setRightTextStr(mSample.getMethodName());
@@ -205,19 +208,28 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
                     String deviceCode = data.getStringExtra("DeviceCode");
                     String sourceWay = data.getStringExtra("SourceWay");
                     String expireDate = data.getStringExtra("ExpireDate");
-                    String deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+                    String specification = data.getStringExtra("Specification");
+                    //修改之后要显示到时分秒
+                    String deviceText;
+                    //修改之后要显示到时分秒
+                    if (expireDate != null && !expireDate.equals("")) {
+                        String[] s = expireDate.split(" ");
+                        deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
+                    } else {
+                        deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
+                    }
                     switch (type) {
                         case 1:
-                            mSample.setPrivateDataStringValue("WindDevName", deviceName);
+                            mSample.setPrivateDataStringValue("WindDevName", deviceText);
                             break;
                         case 2:
                             mSample.setDeviceId(deviceId);
-                            mSample.setDeviceName(deviceName);
+                            mSample.setDeviceName(deviceText);
                             mSample.setPrivateDataStringValue("SourceWay", sourceWay);
                             mSample.setPrivateDataStringValue("SourceDate", expireDate);
                             break;
                         case 3:
-                            mSample.setPrivateDataStringValue("CalibrationDeviceName", deviceName);
+                            mSample.setPrivateDataStringValue("CalibrationDeviceName", deviceText);
                             mSample.setPrivateDataStringValue("CalibrationDeviceId", deviceId);
                             break;
                     }
@@ -255,9 +267,11 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
         TimePickerView pvTime = new TimePickerBuilder(getContext(), new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                mSample.setSamplingTimeBegin(DateUtils.getDate(date));
-                dateTextView.setText(DateUtils.getDate(date));
-
+                String strDate = DateUtils.getDate(date);
+                mSample.setSamplingTimeBegin(strDate);
+                dateTextView.setText(strDate);
+                mSampling.setSamplingNo(SamplingUtil.createSamplingNo(strDate));
+                tvSampleNo.setRightTextStr(mSampling.getSamplingNo());
             }
         }).build();
         pvTime.setDate(Calendar.getInstance());
@@ -314,7 +328,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
 
     private void saveData() {
         mSample.setWindSpeed(edWingSpeed.getEditTextStr());
-        mProject.setClientName(edFactoryName.getEditTextStr());
+        mSample.setComment(edeRemarks.getText().toString());
         mPrivateData.setClientName(edFactoryName.getEditTextStr());
         mPrivateData.setClientAddr(edFactoryAddress.getEditTextStr());
         mPrivateData.setProductionCondition(edFactoryInfo.getEditTextStr());

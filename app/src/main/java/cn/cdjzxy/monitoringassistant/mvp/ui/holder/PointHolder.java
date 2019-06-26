@@ -28,17 +28,22 @@ import java.util.List;
 
 import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
+import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.EnterRelatePointSelectAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointItemAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.NavigationActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
 
 /**
  * 主页tab
@@ -89,7 +94,7 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
         mTvName.setText(data.getTagName());
         mTvTime.setText(data.getDays() + "天" + data.getPeriod() + "次");
         mTvMember.setText(data.getMonItemName());
-        initPointItemData(data.getAddressId());
+        initPointItemData(data.getAddressId(), data.getProjectId());
 
 
     }
@@ -106,7 +111,62 @@ public class PointHolder extends BaseHolder<ProjectDetial> {
     /**
      * 初始化Tab数据
      */
-    private void initPointItemData(String pointId) {
+    private void initPointItemData(String pointId, String projectId) {
+        ArtUtils.configRecyclerView(mRecyclerViewItem, new LinearLayoutManager(mContext,
+                LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {//设置RecyclerView不可滑动
+                return false;
+            }
+        });
+        if (RxDataTool.isEmpty(pointId)) return;
+        Project project = DbHelpUtils.getDbProject(projectId);
+        if (RxDataTool.isNull(project) || RxDataTool.isNull(project.getTypeCode())) return;
+        if (project.getTypeCode() == 3) {//环境质量
+            setEnvirPointData(pointId);
+        } else {//污染源
+            setEnterRelatePointData(pointId);
+        }
+    }
+
+    /**
+     * 设置污染源的点位
+     *
+     * @param pointId
+     */
+    private void setEnterRelatePointData(String pointId) {
+        List<EnterRelatePoint> pointList = new ArrayList<>();
+        if (pointId.contains(",")) {
+            pointList = DbHelpUtils.getEnterRelatePointList(RxDataTool.strToList(pointId));
+        }
+        if (!RxDataTool.isNull(pointList)) {
+            EnterRelatePointSelectAdapter adapter = new EnterRelatePointSelectAdapter(pointList);
+            mRecyclerViewItem.setAdapter(adapter);
+            adapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onItemClick(View view, int viewType, Object data, int position) {
+                    EnterRelatePoint point = (EnterRelatePoint) data;
+                    if (listener != null) {
+                        EnvirPoint envirPoint = new EnvirPoint();
+                        envirPoint.setId(point.getId());
+                        envirPoint.setCode(point.getCode());
+                        envirPoint.setLatitude(point.getLatitude());
+                        envirPoint.setLongtitude(point.getLongtitude());
+                        envirPoint.setName(point.getName());
+                        envirPoint.setTagId(point.getTagId());
+                        envirPoint.setTagName(point.getTagName());
+                        envirPoint.setUpdateTime(point.getUpdateTime());
+                        listener.onItemOnClick(envirPoint);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 初始化Tab数据
+     */
+    private void setEnvirPointData(String pointId) {
         List<EnvirPoint> envirPoints = new ArrayList<>();
 
         if (pointId.contains(",")) {

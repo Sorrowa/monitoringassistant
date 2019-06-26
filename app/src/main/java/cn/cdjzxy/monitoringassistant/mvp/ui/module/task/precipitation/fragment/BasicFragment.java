@@ -461,11 +461,11 @@ public class BasicFragment extends BaseFragment {
             case R.id.layout_flow_information:
                 if (tvArrow.getRotation() == 90f) {
                     tvArrow.setRotation(0f);
-                    setViewStyle(false,tvArrow);
+                    setViewStyle(false, tvArrow);
                     layoutFlowInformationContainer.setVisibility(View.GONE);
                 } else {
                     tvArrow.setRotation(90f);
-                    setViewStyle(true,tvArrow);
+                    setViewStyle(true, tvArrow);
                     layoutFlowInformationContainer.setVisibility(View.VISIBLE);
                 }
                 break;
@@ -558,12 +558,14 @@ public class BasicFragment extends BaseFragment {
                             String deviceCode = data.getStringExtra("DeviceCode");
                             String sourceWay = data.getStringExtra("SourceWay");
                             String expireDate = data.getStringExtra("ExpireDate");
+                            String specification = data.getStringExtra("Specification");
                             String deviceText;
+                            //修改之后要显示到时分秒
                             if (expireDate != null && !expireDate.equals("")) {
                                 String[] s = expireDate.split(" ");
-                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, s[0]);
+                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
                             } else {
-                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
                             }
                             tvSamplingDevice.setRightTextStr(deviceText);
                             mSampling.setDeviceId(deviceId);
@@ -574,6 +576,7 @@ public class BasicFragment extends BaseFragment {
                 break;
         }
     }
+
     /**
      * 给view设置选中样式
      *
@@ -598,6 +601,7 @@ public class BasicFragment extends BaseFragment {
         }
         view.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
     }
+
     /**
      * 设置监测项目
      */

@@ -12,14 +12,13 @@ android:orientation="vertical">
 <LinearLayout
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
         android:background="@color/white"
         android:fitsSystemWindows="true"
         android:orientation="horizontal">
@@ -27,8 +26,7 @@ android:orientation="vertical">
         <cn.cdjzxy.monitoringassistant.widgets.CustomTab
             android:id="@+id/tabview"
             android:layout_width="258dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dp_4" />
+            android:layout_height="match_parent" />
 
         <View
             android:layout_width="@dimen/division_line"

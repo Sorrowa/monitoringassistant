@@ -164,7 +164,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
                     intent.putExtra("isAdd", true);
                     ArtUtils.startActivity(intent);
                 } else {
-                    showNoPermissionDialog("才能进行采样方案添加。",  UserInfoAppRight.APP_Permission_Plan_See_Name);
+                    showNoPermissionDialog("才能进行采样方案添加。", UserInfoAppRight.APP_Permission_Plan_See_Name);
                 }
                 break;
         }
@@ -364,7 +364,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
 
 
     public void showLoading(String msg) {
-        showLoadingDialog(msg);
+        showLoadingDialog(msg, true);
     }
 
     @Override
@@ -387,8 +387,6 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
-            double latitude = location.getLatitude();    //获取纬度信息
-            double longitude = location.getLongitude();    //获取经度信息
             PointActivity.this.bdLocation = location;
         }
     }
@@ -399,12 +397,17 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
      * @param pointSelect
      */
     private void routePlanToNavi(EnvirPoint pointSelect) {
+        if (CheckUtil.isNull(pointSelect)
+                || CheckUtil.isNull(pointSelect.getLatitude())
+                || CheckUtil.isNull(pointSelect.getLongtitude())) {
+            showMessage("点位数据异常，请联系管理员后台查看");
+            return;
+        }
         if (bdLocation == null) {
 //            ArtUtils.makeText(mContext, "未定位到当前位置，请重试");
             showMessage("未定位到当前位置，请重试");
             return;
         }
-
         showLoading("正在初始化导航，请稍后...");
 //        ArtUtils.makeText(mContext, "正在计算前往"+bdLocation.getLongitude() + "，" + bdLocation.getLatitude()+"线路");
         Log.i(TAG, "routeplanToNavi: +导航定位：\n经度" + bdLocation.getLongitude() + "\n纬度" + bdLocation.getLatitude());

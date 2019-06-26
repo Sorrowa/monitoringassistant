@@ -197,7 +197,7 @@ public class BasicFragment extends BaseFragment {
             base_sample_no.setRightTextStr(mSample.getSamplingNo());
             base_sample_md.setRightTextStr(mProject.getName());//监测目的
             //base_sample_xz.setText(WastewaterActivity.mSample.getMontype());
-            base_sample_xz.setRightTextStr(mProject.getMonType());
+            base_sample_xz.setRightTextStr(mProject.getType());
 
             base_sample_date.setRightTextStr(DateUtils.strGetDate(mSample.getSamplingTimeBegin()));
             base_sample_user.setRightTextStr(mSample.getSamplingUserName());
@@ -230,7 +230,7 @@ public class BasicFragment extends BaseFragment {
             weather_state.setRightTextStr(mSample.getWeather());
             weather_temp.setEditTextStr(mSample.getTemprature());
             weather_pressure.setEditTextStr(mSample.getPressure());
-            setViewStyle(false,weather_arrow);
+            setViewStyle(false, weather_arrow);
             //更多信息
             boolean gw = false;
             if (fsExtends != null && !TextUtils.isEmpty(fsExtends.getAccessPipeNetwork()) && fsExtends.getAccessPipeNetwork().equals("是")) {
@@ -258,7 +258,7 @@ public class BasicFragment extends BaseFragment {
             more_device.setEditTextStr(fsExtends == null ? "" : fsExtends.getHandleDevice());
             more_waterbody.setEditTextStr(fsExtends == null ? "" : fsExtends.getReceiving());
             more_build_date.setRightTextStr(fsExtends == null ? "" : fsExtends.getBuildTime());
-            setViewStyle(false,more_arrow);
+            setViewStyle(false, more_arrow);
 
             //流转信息
             setViewStyleDrawable(!CheckUtil.isEmpty(mSample.getTransfer())
@@ -267,8 +267,8 @@ public class BasicFragment extends BaseFragment {
                     text_view_tv_arrow);
             tv_flow_method.setEditTextStr(mSample.getTransfer());
             tv_flow_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
-//            tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
-            setViewStyle(false,tv_arrow);
+            tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
+            setViewStyle(false, tv_arrow);
             //图片信息
             if (mSample.getSamplingFiless() != null && mSample.getSamplingFiless().size() > 0) {
                 sampleFiles.addAll(mSample.getSamplingFiless());
@@ -376,6 +376,7 @@ public class BasicFragment extends BaseFragment {
         }
         view.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
     }
+
     /**
      * 给view设置选中样式
      *
@@ -745,11 +746,11 @@ public class BasicFragment extends BaseFragment {
     private void setArrowAnimate(TextView arrow, View container) {
         if (arrow.getRotation() == 90f) {
             arrow.animate().rotation(0f);
-            setViewStyle(false,arrow);
+            setViewStyle(false, arrow);
             container.setVisibility(View.GONE);
         } else {
             arrow.animate().rotation(90f);
-            setViewStyle(true,arrow);
+            setViewStyle(true, arrow);
             container.setVisibility(View.VISIBLE);
         }
     }

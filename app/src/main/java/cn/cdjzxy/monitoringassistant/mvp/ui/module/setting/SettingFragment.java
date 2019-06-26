@@ -200,5 +200,6 @@ public class SettingFragment extends BaseFragment<ApiPresenter> implements IView
         UserInfoHelper.get().saveUserLoginStatee(false);
         ArtUtils.startActivity(LoginActivity.class);
         getActivity().stopService(new Intent(getContext(), TrajectoryServer.class));
+        getActivity().finish();
     }
 }

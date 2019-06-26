@@ -1,5 +1,7 @@
 package cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.greenrobot.greendao.annotation.Convert;
@@ -18,7 +20,7 @@ import org.json.JSONObject;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.converter.StringConverter;
 
 @Entity
-public class Sampling {
+public class Sampling implements Parcelable {
 
     /**
      * SamplingHeight : null
@@ -171,7 +173,7 @@ public class Sampling {
     @Transient
     private boolean isSelected;
     @Transient
-    private List<SamplingDetail> SamplingDetailYQFs;
+    private List<SamplingDetailYQFs> SamplingDetailYQFs;
     @Transient
     private List<SamplingContent> SamplingContentResults;
     @Transient
@@ -295,11 +297,11 @@ public class Sampling {
         SamplingDetailResults = samplingDetailResults;
     }
 
-    public List<SamplingDetail> getSamplingDetailYQFs() {
+    public List<SamplingDetailYQFs> getSamplingDetailYQFs() {
         return SamplingDetailYQFs;
     }
 
-    public void setSamplingDetailYQFs(List<SamplingDetail> samplingDetailYQFs) {
+    public void setSamplingDetailYQFs(List<SamplingDetailYQFs> samplingDetailYQFs) {
         SamplingDetailYQFs = samplingDetailYQFs;
     }
 
@@ -1033,5 +1035,181 @@ public class Sampling {
         this.isUploadSave = isUploadSave;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.Id);
+        dest.writeString(this.ProjectId);
+        dest.writeString(this.SamplingNo);
+        dest.writeString(this.FormPath);
+        dest.writeString(this.FormName);
+        dest.writeString(this.ProjectName);
+        dest.writeInt(this.Montype);
+        dest.writeString(this.SamplingTimeBegin);
+        dest.writeString(this.SamplingTimeEnd);
+        dest.writeString(this.ParentTagId);
+        dest.writeString(this.TagId);
+        dest.writeString(this.TagName);
+        dest.writeString(this.AddressId);
+        dest.writeString(this.AddressName);
+        dest.writeString(this.AddressNo);
+        dest.writeString(this.SamplingHeight);
+        dest.writeString(this.PollutionType);
+        dest.writeString(this.RainType);
+        dest.writeString(this.SampProperty);
+        dest.writeString(this.FormType);
+        dest.writeString(this.FormTypeName);
+        dest.writeString(this.DeviceId);
+        dest.writeString(this.DeviceName);
+        dest.writeString(this.MethodId);
+        dest.writeString(this.MethodName);
+        dest.writeString(this.Weather);
+        dest.writeString(this.WindSpeed);
+        dest.writeString(this.Temprature);
+        dest.writeString(this.Pressure);
+        dest.writeString(this.CalibrationFactor);
+        dest.writeString(this.Transfer);
+        dest.writeString(this.SendSampTime);
+        dest.writeString(this.ReciveTime);
+        dest.writeString(this.PrivateData);
+        dest.writeString(this.SamplingUserId);
+        dest.writeString(this.SamplingUserName);
+        dest.writeString(this.SubmitId);
+        dest.writeString(this.SubmitName);
+        dest.writeString(this.SubmitDate);
+        dest.writeString(this.MonitorPerson);
+        dest.writeString(this.MonitorTime);
+        dest.writeInt(this.Status);
+        dest.writeString(this.StatusName);
+        dest.writeInt(this.TransStatus);
+        dest.writeString(this.TransStatusName);
+        dest.writeString(this.CurUserId);
+        dest.writeString(this.CurUserName);
+        dest.writeString(this.FormFlows);
+        dest.writeString(this.Comment);
+        dest.writeString(this.AddTime);
+        dest.writeString(this.UpdateTime);
+        dest.writeInt(this.Version);
+        dest.writeString(this.MonitemId);
+        dest.writeString(this.MonitemName);
+        dest.writeString(this.AuditDate);
+        dest.writeString(this.Recoding);
+        dest.writeString(this.ProjectNo);
+        dest.writeString(this.file);
+        dest.writeByte(this.isUpload ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isLocal ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isCanEdit ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isFinish ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isUploadSave ? (byte) 1 : (byte) 0);
+        dest.writeString(this.layTableCheckbox);
+        dest.writeString(this.DeleteFiles);
+        dest.writeStringList(this.SamplingUserResults);
+        dest.writeList(this.SamplingFormStandResults);
+        dest.writeList(this.SamplingDetailResults);
+        dest.writeTypedList(this.SamplingFiless);
+        dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
+        dest.writeList(this.SamplingDetailYQFs);
+        dest.writeList(this.SamplingContentResults);
+        dest.writeTypedList(this.HasFile);
+        dest.writeTypedList(this.autographList);
+    }
+
+    protected Sampling(Parcel in) {
+        this.Id = in.readString();
+        this.ProjectId = in.readString();
+        this.SamplingNo = in.readString();
+        this.FormPath = in.readString();
+        this.FormName = in.readString();
+        this.ProjectName = in.readString();
+        this.Montype = in.readInt();
+        this.SamplingTimeBegin = in.readString();
+        this.SamplingTimeEnd = in.readString();
+        this.ParentTagId = in.readString();
+        this.TagId = in.readString();
+        this.TagName = in.readString();
+        this.AddressId = in.readString();
+        this.AddressName = in.readString();
+        this.AddressNo = in.readString();
+        this.SamplingHeight = in.readString();
+        this.PollutionType = in.readString();
+        this.RainType = in.readString();
+        this.SampProperty = in.readString();
+        this.FormType = in.readString();
+        this.FormTypeName = in.readString();
+        this.DeviceId = in.readString();
+        this.DeviceName = in.readString();
+        this.MethodId = in.readString();
+        this.MethodName = in.readString();
+        this.Weather = in.readString();
+        this.WindSpeed = in.readString();
+        this.Temprature = in.readString();
+        this.Pressure = in.readString();
+        this.CalibrationFactor = in.readString();
+        this.Transfer = in.readString();
+        this.SendSampTime = in.readString();
+        this.ReciveTime = in.readString();
+        this.PrivateData = in.readString();
+        this.SamplingUserId = in.readString();
+        this.SamplingUserName = in.readString();
+        this.SubmitId = in.readString();
+        this.SubmitName = in.readString();
+        this.SubmitDate = in.readString();
+        this.MonitorPerson = in.readString();
+        this.MonitorTime = in.readString();
+        this.Status = in.readInt();
+        this.StatusName = in.readString();
+        this.TransStatus = in.readInt();
+        this.TransStatusName = in.readString();
+        this.CurUserId = in.readString();
+        this.CurUserName = in.readString();
+        this.FormFlows = in.readString();
+        this.Comment = in.readString();
+        this.AddTime = in.readString();
+        this.UpdateTime = in.readString();
+        this.Version = in.readInt();
+        this.MonitemId = in.readString();
+        this.MonitemName = in.readString();
+        this.AuditDate = in.readString();
+        this.Recoding = in.readString();
+        this.ProjectNo = in.readString();
+        this.file = in.readString();
+        this.isUpload = in.readByte() != 0;
+        this.isLocal = in.readByte() != 0;
+        this.isCanEdit = in.readByte() != 0;
+        this.isFinish = in.readByte() != 0;
+        this.isUploadSave = in.readByte() != 0;
+        this.layTableCheckbox = in.readString();
+        this.DeleteFiles = in.readString();
+        this.SamplingUserResults = in.createStringArrayList();
+        this.SamplingFormStandResults = new ArrayList<SamplingFormStand>();
+        in.readList(this.SamplingFormStandResults, SamplingFormStand.class.getClassLoader());
+        this.SamplingDetailResults = new ArrayList<SamplingDetail>();
+        in.readList(this.SamplingDetailResults, SamplingDetail.class.getClassLoader());
+        this.SamplingFiless = in.createTypedArrayList(SamplingFile.CREATOR);
+        this.isSelected = in.readByte() != 0;
+        this.SamplingDetailYQFs = new ArrayList<SamplingDetailYQFs>();
+        in.readList(this.SamplingDetailYQFs, SamplingDetailYQFs.class.getClassLoader());
+        this.SamplingContentResults = new ArrayList<SamplingContent>();
+        in.readList(this.SamplingContentResults, SamplingContent.class.getClassLoader());
+        this.HasFile = in.createTypedArrayList(SamplingFile.CREATOR);
+        this.autographList = in.createTypedArrayList(SamplingFile.CREATOR);
+    }
+
+    public static final Parcelable.Creator<Sampling> CREATOR = new Parcelable.Creator<Sampling>() {
+        @Override
+        public Sampling createFromParcel(Parcel source) {
+            return new Sampling(source);
+        }
+
+        @Override
+        public Sampling[] newArray(int size) {
+            return new Sampling[size];
+        }
+    };
 
 }

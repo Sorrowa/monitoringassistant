@@ -146,6 +146,7 @@ public class BasicInfoFragment extends BaseFragment {
         });
     }
 
+
     @Nullable
     @Override
     public IPresenter obtainPresenter() {
@@ -216,14 +217,16 @@ public class BasicInfoFragment extends BaseFragment {
                             return;
                         }
 
-                        if (CheckUtil.isEmpty(data.getStringExtra("MonitemId")) || CheckUtil.isEmpty(data.getStringExtra("MonitemName"))) {
+                        String monitemId = data.getStringExtra("MonitemId");
+                        String monitemName = data.getStringExtra("MonitemName");
+                        if (CheckUtil.isEmpty(monitemName) ||
+                                CheckUtil.isEmpty(monitemId)) {
                             return;
                         }
 
-                        String monitemId = data.getStringExtra("MonitemId");
-                        String monitemName = data.getStringExtra("MonitemName");
                         tvChooseProject.setRightTextStr(monitemName);
-                        if (monitemId.equals(mSampling.getMonitemId()) && monitemName.equals(mSampling.getMonitemName())) {
+                        if (monitemId.equals(mSampling.getMonitemId()) &&
+                                monitemName.equals(mSampling.getMonitemName())) {
                             return;//跟之前选择的一样
                         }
 
@@ -258,19 +261,20 @@ public class BasicInfoFragment extends BaseFragment {
                         mSampling.setDeviceName("");
                         mSampling.setDeviceId("");
                         tvTestDevice.setRightTextStr(mSampling.getDeviceName());
-
-                        //重置检测结果,先清理数据库中的数据
-                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSampling.getId())).list();
-
-                        //遍历数据删除
-                        for (SamplingDetail detail : samplingDetails) {
-                            if (CheckUtil.isNull(detail)) {
-                                continue;
-                            }
-
-                            //从数据库中删除
-                            DBHelper.get().getSamplingDetailDao().delete(detail);
-                        }
+//                        这里等用户点击保存后在删除
+//                        //重置检测结果,先清理数据库中的数据
+//                        List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().
+//                                queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(mSampling.getId())).list();
+//
+//                        //遍历数据删除
+//                        for (SamplingDetail detail : samplingDetails) {
+//                            if (CheckUtil.isNull(detail)) {
+//                                continue;
+//                            }
+//
+//                            //从数据库中删除
+//                            DBHelper.get().getSamplingDetailDao().delete(detail);
+//                        }
 
                         //清理内存中的数据
                         mSampling.getSamplingDetailYQFs().clear();
@@ -343,17 +347,15 @@ public class BasicInfoFragment extends BaseFragment {
                             String deviceCode = data.getStringExtra("DeviceCode");
                             String sourceWay = data.getStringExtra("SourceWay");
                             String expireDate = data.getStringExtra("ExpireDate");
+                            String specification = data.getStringExtra("Specification");
                             String deviceText;
                             //修改之后要显示到时分秒
                             if (expireDate != null && !expireDate.equals("")) {
                                 String[] s = expireDate.split(" ");
-//                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, s[0]);
-                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
                             } else {
-                                deviceText = String.format("%s(%s)(%s %s)", deviceName, deviceCode, sourceWay, expireDate);
+                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
                             }
-
-
                             mSampling.setDeviceId(deviceId);
                             mSampling.setDeviceName(deviceText);
                             mSampling.setPrivateDataStringValue("SourceWay", sourceWay);

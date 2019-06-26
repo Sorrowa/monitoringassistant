@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,6 +138,7 @@ public class BottleSplitDetailFragment extends BaseFragment {
             sample_number.setEditTextStr("");
             sample_method.setEditTextStr("");
             sample_place.setRightTextStr("");
+            sample_number.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
             setBottleSplitDetail();
         }
     }

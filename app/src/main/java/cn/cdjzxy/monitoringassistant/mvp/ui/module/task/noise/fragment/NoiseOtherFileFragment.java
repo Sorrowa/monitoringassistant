@@ -182,14 +182,14 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
         hideSoftInput();
         switch (v.getId()) {
             case R.id.linear_delete:
-                if (!mSample.getIsCanEdit()){
+                if (!mSample.getIsCanEdit()) {
                     showMessage("提示：当前采样单，不支持编辑");
                     return;
                 }
                 deleteData();
                 break;
             case R.id.linear_add:
-                if (!mSample.getIsCanEdit()){
+                if (!mSample.getIsCanEdit()) {
                     showMessage("提示：当前采样单，不支持编辑");
                     return;
                 }
@@ -213,29 +213,20 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
             return;
         }
         showLoading("正在删除");
-        ThreadPool.getInstantiation().addTask(new Runnable() {
-            @Override
-            public void run() {
-                List<SamplingFile> files = new ArrayList<>();
-                for (String id : selectList) {
-                    for (int i = 0; i < sampleFiles.size(); i++) {
-                        if (sampleFiles.get(i).getId().equals(id)) {
-                            sampleFiles.remove(i);
-                        }
-                    }
+        List<SamplingFile> files = new ArrayList<>();
+        for (String id : selectList) {
+            for (int i = 0; i < sampleFiles.size(); i++) {
+                if (sampleFiles.get(i).getLocalId().equals(id)) {
+                    sampleFiles.remove(i);
                 }
-                files.addAll(sampleFiles);
-                selectList.clear();
-                mSample.setSamplingFiless(files);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sampleFileAdapter.notifyDataSetChanged();
-                        hideLoading();
-                    }
-                });
             }
-        });
+        }
+        files.addAll(sampleFiles);
+        selectList.clear();
+        mSample.setSamplingFiless(files);
+        sampleFileAdapter.refreshInfos(sampleFiles);
+        hideLoading();
+
     }
 
     private void choosePhoto(int requestCode) {

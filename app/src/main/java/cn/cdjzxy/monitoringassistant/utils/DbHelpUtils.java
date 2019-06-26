@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
@@ -14,7 +15,9 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnterRelatePointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
@@ -23,6 +26,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailYQFsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -209,6 +213,7 @@ public class DbHelpUtils {
                 where(SamplingContentDao.Properties.SamplingId.eq(samplingId),
                         SamplingContentDao.Properties.ProjectId.eq(projectId)).list();
     }
+
     /**
      * 获取样品采集列表
      *
@@ -225,6 +230,7 @@ public class DbHelpUtils {
         return DBHelper.get().getSamplingDetailDao().queryBuilder().
                 where(SamplingDetailDao.Properties.SamplingId.eq(id)).list();
     }
+
     /**
      * 获取数据库中非ids列表中的数据
      *
@@ -250,6 +256,7 @@ public class DbHelpUtils {
         return DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.ProjectId.eq(projectId)).list();
     }
+
     /**
      * 通过{@SamplingContentDao{SamplingId }}查找SamplingContent表
      * SamplingContent 采样单数据表
@@ -263,6 +270,7 @@ public class DbHelpUtils {
                 where(SamplingContentDao.Properties.ProjectId.eq(projectId)).list();
         return contentList;
     }
+
     /**
      * 通过{@SamplingContentDao{@ProjectId,SamplingId }}查找数据库所有的SamplingDetailDao表
      * SamplingDetail 采样单数据表
@@ -291,6 +299,7 @@ public class DbHelpUtils {
         if (list == null) return new ArrayList<>();
         else return list;
     }
+
     /**
      * 查找数据库中非projectIds的数据并删除
      *
@@ -323,5 +332,41 @@ public class DbHelpUtils {
             if (!CheckUtil.isEmpty(samplingDetailList))
                 DBHelper.get().getSamplingDetailDao().deleteInTx(samplingDetailList);
         }
+    }
+
+    /**
+     * 获取环境点位
+     *
+     * @param idList 点位ID
+     * @return 环境质量点位信息
+     */
+    public static List<EnterRelatePoint> getEnterRelatePointList(List<String> idList) {
+        return DBHelper.get().getEnterRelatePointDao().queryBuilder().where(
+                EnterRelatePointDao.Properties.Id.in(idList))
+                .list();
+    }
+
+    /**
+     * 根据采样单id获取SamplingDetailYQFs数据
+     *
+     * @param sampleId 采样单id
+     * @return List<SamplingDetailYQFs>
+     */
+    public static List<SamplingDetailYQFs> getSamplingDetailYQFsList(String sampleId) {
+        if (RxDataTool.isNull(sampleId)) return new ArrayList<>();
+        else return DBHelper.get().getSamplingDetailYQFsDao().queryBuilder().
+                where(SamplingDetailYQFsDao.Properties.SamplingId.eq(sampleId)).list();
+    }
+
+    /**
+     * 根据采样单id获取SamplingDetailYQFs数据
+     *
+     * @param id 采样单id
+     * @return List<SamplingDetailYQFs>
+     */
+    public static SamplingDetailYQFs getSamplingDetailYQFs(String id) {
+        if (RxDataTool.isNull(id)) return null;
+        else return DBHelper.get().getSamplingDetailYQFsDao().queryBuilder().
+                where(SamplingDetailYQFsDao.Properties.Id.eq(id)).unique();
     }
 }

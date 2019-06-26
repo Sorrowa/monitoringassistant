@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.DefaultAdapter;
 import com.wonders.health.lib.base.base.fragment.BaseFragment;
 import com.wonders.health.lib.base.mvp.IPresenter;
@@ -38,6 +39,7 @@ import butterknife.Unbinder;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
@@ -74,7 +76,7 @@ public class TestRecordFragment extends BaseFragment {
 //    private SharedPreferences collectListSettings;
 //    private SharedPreferences.Editor editor;
 
-    SamplingDetail currSelectDetails = null;
+    SamplingDetailYQFs currSelectDetails = null;//记录当前选中的
 
     public TestRecordFragment() {
     }
@@ -191,7 +193,7 @@ public class TestRecordFragment extends BaseFragment {
         }
 
         if (mSampling.getSamplingDetailYQFs() == null) {
-            mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetail>());
+            mSampling.setSamplingDetailYQFs(new ArrayList<SamplingDetailYQFs>());
         }
 
         ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
@@ -216,18 +218,19 @@ public class TestRecordFragment extends BaseFragment {
                     return;
                 }
 
-                SamplingDetail item = mSampling.getSamplingDetailYQFs().get(position);
+                SamplingDetailYQFs item = mSampling.getSamplingDetailYQFs().get(position);
                 if (item == null) {
                     return;
                 }
+
                 if (currSelectDetails == item) {
                     currSelectDetails.setSelected(false);
                     currSelectDetails = null;
                 } else if (item.isCanSelect()) {
+                    //记录选中项
                     if (currSelectDetails != null) {
                         currSelectDetails.setSelected(false);
                     }
-                    //记录选中项
                     currSelectDetails = item;
                     currSelectDetails.setSelected(true);
                 }
@@ -241,29 +244,28 @@ public class TestRecordFragment extends BaseFragment {
     /**
      * 验证平行数据
      */
-    private void checkPxData(List<SamplingDetail> details) {
-        for (SamplingDetail item : details) {
+    private void checkPxData(List<SamplingDetailYQFs> details) {
+        for (SamplingDetailYQFs item : details) {
             if (item.getSamplingType() == 1) {
                 //平行数据，不能被选中
                 item.setCanSelect(false);
                 continue;
             } else {
                 //样品数据，已添加平行数据时不能被选中
-                SamplingDetail pxItem = findPXItem(details, item);
+                SamplingDetailYQFs pxItem = findPXItem(details, item);
                 if (pxItem != null) {
                     item.setCanSelect(false);
+                } else {
+                    item.setCanSelect(true);
                     continue;
                 }
             }
 
-            item.setCanSelect(true);
-
             //记录选中项
-            if (item.isSelected()) {
+            if (item.isCanSelect()) {
                 if (currSelectDetails != null) {
-                    currSelectDetails.setSelected(false);
+                    currSelectDetails.setSelected(true);
                 }
-                currSelectDetails = item;
             }
         }
     }
@@ -278,29 +280,29 @@ public class TestRecordFragment extends BaseFragment {
         }
 
         //复制数据
-        SamplingDetail samplingDetail = new SamplingDetail();
-        samplingDetail.setId("LC-" + UUID.randomUUID().toString());
+        SamplingDetailYQFs samplingDetail = new SamplingDetailYQFs();
+        samplingDetail.setId(UUID.randomUUID().toString());
         samplingDetail.setProjectId(currSelectDetails.getProjectId());
         samplingDetail.setMonitemId(currSelectDetails.getMonitemId());
-        samplingDetail.setMonitemName(currSelectDetails.getMonitemName());
         samplingDetail.setSamplingId(currSelectDetails.getSamplingId());
         samplingDetail.setSampingCode(currSelectDetails.getSampingCode());
         samplingDetail.setSamplingType(1);//样品0  平行1
         samplingDetail.setSamplingOnTime(currSelectDetails.getSamplingOnTime());
-        samplingDetail.setAddresssId(currSelectDetails.getAddresssId());
         samplingDetail.setAddressName(currSelectDetails.getAddressName());
         samplingDetail.setFrequecyNo(currSelectDetails.getFrequecyNo());
         samplingDetail.setOrderIndex(currSelectDetails.getOrderIndex() + 1);
-        samplingDetail.setPrivateDataBooleanValue("HasPX", false);
-        samplingDetail.setPrivateDataStringValue("SamplingOnTime", "");
-        samplingDetail.setPrivateDataStringValue("CaleValue", "");
-        samplingDetail.setPrivateDataStringValue("RPDValue", "");
-        samplingDetail.setPrivateDataStringValue("ValueUnit", "");
-        samplingDetail.setPrivateDataStringValue("ValueUnitName", "");
+        SamplingDetailYQFs.PrivateJsonData data = new SamplingDetailYQFs.PrivateJsonData();
+        data.setHasPX(false);
+        data.setSamplingOnTime("");
+        data.setCaleValue("");
+        data.setRPDValue("");
+        data.setValueUnit("");
+        data.setValueUnitName("");
+        samplingDetail.setPrivateData(new Gson().toJson(data));
         samplingDetail.setValue("");//均值
 
         //保存到数据库
-        DBHelper.get().getSamplingDetailDao().insert(samplingDetail);
+//        DBHelper.get().getSamplingDetailYQFsDao().insert(samplingDetail);
 
         //添加到样品记录的下一行
         mSampling.getSamplingDetailYQFs().add(samplingDetail);
@@ -323,27 +325,24 @@ public class TestRecordFragment extends BaseFragment {
      * @param sourceItem
      * @return
      */
-    public static SamplingDetail findPXItem(List<SamplingDetail> details, SamplingDetail sourceItem) {
-        for (SamplingDetail item : details) {
+    public static SamplingDetailYQFs findPXItem(List<SamplingDetailYQFs> details, SamplingDetailYQFs sourceItem) {
+        for (SamplingDetailYQFs item : details) {
             if (item == sourceItem) {
                 continue;//过滤原数据
             }
-
-            //平行数据，样品类型（样品、平行）不一样，样品编码相等
-            if (item.getSamplingType() == sourceItem.getSamplingType() || !item.getSampingCode().equals(sourceItem.getSampingCode())) {
-                continue;
+            if (item.getSampingCode().equals(sourceItem.getSampingCode())
+                    && item.getSamplingType() != sourceItem.getSamplingType()) {
+                return item;
             }
-
-            return item;
         }
 
         return null;
     }
 
-    public static class DetailComparator implements Comparator<SamplingDetail> {
+    public static class DetailComparator implements Comparator<SamplingDetailYQFs> {
 
         @Override
-        public int compare(SamplingDetail o1, SamplingDetail o2) {
+        public int compare(SamplingDetailYQFs o1, SamplingDetailYQFs o2) {
             if (!o1.getSampingCode().equals(o2.getSampingCode())) {
                 return o1.getSampingCode().compareTo(o2.getSampingCode());
             }

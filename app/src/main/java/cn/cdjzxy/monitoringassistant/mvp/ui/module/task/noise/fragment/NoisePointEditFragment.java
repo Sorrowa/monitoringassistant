@@ -228,7 +228,7 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
             mSample.setPrivateData(new Gson().toJson(mPrivateData));
         }
         NoiseFactoryActivity.saveMySample();
-        EventBus.getDefault().post("", NOISE_FRAGMENT_POINT_SHARE);
+        EventBus.getDefault().post("0", NOISE_FRAGMENT_POINT_SHARE);
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
     }
 
@@ -244,13 +244,10 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
                     public void onClick(DialogInterface dialog, int which) {
                         showLoading("正在删除");
                         isNeedSave = true;
-                        for (int i = 0; i < mPrivateData.getMianNioseAddr().size(); i++) {
-                            if (addrBean.getGuid().equals(mPrivateData.getMianNioseAddr().get(i).getGuid())) {
-                                mPrivateData.getMianNioseAddr().remove(i);
-                            }
-                        }
+                        mPrivateData.getMianNioseAddr().remove(position);
                         hideLoading();
                         EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
+                        EventBus.getDefault().post("0", NOISE_FRAGMENT_POINT_SHARE);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
 

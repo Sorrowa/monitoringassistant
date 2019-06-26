@@ -35,6 +35,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
@@ -69,6 +70,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailYQFsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFileDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingStantdDao;
@@ -112,6 +114,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig samplingDaoConfig;
     private final DaoConfig samplingContentDaoConfig;
     private final DaoConfig samplingDetailDaoConfig;
+    private final DaoConfig samplingDetailYQFsDaoConfig;
     private final DaoConfig samplingFileDaoConfig;
     private final DaoConfig samplingFormStandDaoConfig;
     private final DaoConfig samplingStantdDaoConfig;
@@ -146,6 +149,7 @@ public class DaoSession extends AbstractDaoSession {
     private final SamplingDao samplingDao;
     private final SamplingContentDao samplingContentDao;
     private final SamplingDetailDao samplingDetailDao;
+    private final SamplingDetailYQFsDao samplingDetailYQFsDao;
     private final SamplingFileDao samplingFileDao;
     private final SamplingFormStandDao samplingFormStandDao;
     private final SamplingStantdDao samplingStantdDao;
@@ -238,6 +242,9 @@ public class DaoSession extends AbstractDaoSession {
         samplingDetailDaoConfig = daoConfigMap.get(SamplingDetailDao.class).clone();
         samplingDetailDaoConfig.initIdentityScope(type);
 
+        samplingDetailYQFsDaoConfig = daoConfigMap.get(SamplingDetailYQFsDao.class).clone();
+        samplingDetailYQFsDaoConfig.initIdentityScope(type);
+
         samplingFileDaoConfig = daoConfigMap.get(SamplingFileDao.class).clone();
         samplingFileDaoConfig.initIdentityScope(type);
 
@@ -283,6 +290,7 @@ public class DaoSession extends AbstractDaoSession {
         samplingDao = new SamplingDao(samplingDaoConfig, this);
         samplingContentDao = new SamplingContentDao(samplingContentDaoConfig, this);
         samplingDetailDao = new SamplingDetailDao(samplingDetailDaoConfig, this);
+        samplingDetailYQFsDao = new SamplingDetailYQFsDao(samplingDetailYQFsDaoConfig, this);
         samplingFileDao = new SamplingFileDao(samplingFileDaoConfig, this);
         samplingFormStandDao = new SamplingFormStandDao(samplingFormStandDaoConfig, this);
         samplingStantdDao = new SamplingStantdDao(samplingStantdDaoConfig, this);
@@ -317,6 +325,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Sampling.class, samplingDao);
         registerDao(SamplingContent.class, samplingContentDao);
         registerDao(SamplingDetail.class, samplingDetailDao);
+        registerDao(SamplingDetailYQFs.class, samplingDetailYQFsDao);
         registerDao(SamplingFile.class, samplingFileDao);
         registerDao(SamplingFormStand.class, samplingFormStandDao);
         registerDao(SamplingStantd.class, samplingStantdDao);
@@ -353,6 +362,7 @@ public class DaoSession extends AbstractDaoSession {
         samplingDaoConfig.clearIdentityScope();
         samplingContentDaoConfig.clearIdentityScope();
         samplingDetailDaoConfig.clearIdentityScope();
+        samplingDetailYQFsDaoConfig.clearIdentityScope();
         samplingFileDaoConfig.clearIdentityScope();
         samplingFormStandDaoConfig.clearIdentityScope();
         samplingStantdDaoConfig.clearIdentityScope();
@@ -467,6 +477,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public SamplingDetailDao getSamplingDetailDao() {
         return samplingDetailDao;
+    }
+
+    public SamplingDetailYQFsDao getSamplingDetailYQFsDao() {
+        return samplingDetailYQFsDao;
     }
 
     public SamplingFileDao getSamplingFileDao() {

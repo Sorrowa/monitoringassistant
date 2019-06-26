@@ -20,6 +20,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfo;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
@@ -272,8 +273,8 @@ public class SamplingUtil {
         sampling.setTagId(formSelect.getTagId());
         sampling.setParentTagId(formSelect.getTagParentId());
         sampling.setMonitemName("工业企业厂界噪声");
-        MonItems  monItems=DbHelpUtils.getMonItems("工业企业厂界噪声");
-        sampling.setMonitemId(CheckUtil.isNull(monItems)?"":monItems.getId());//为了检测方法
+        MonItems monItems = DbHelpUtils.getMonItems("工业企业厂界噪声");
+        sampling.setMonitemId(CheckUtil.isNull(monItems) ? "" : monItems.getId());//为了检测方法
 //        sampling.setMontype(project.getMonType() + "");
         sampling.setMontype(project.getTypeCode());
         sampling.setTagName(DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(formSelect.getTagId())).unique().getName());
@@ -556,14 +557,15 @@ public class SamplingUtil {
             return "请添加监测结果";
         }
 
-        for (SamplingDetail detail : sampling.getSamplingDetailYQFs()) {
-            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("SamplingOnTime"))) {
+        for (SamplingDetailYQFs detail : sampling.getSamplingDetailYQFs()) {
+            SamplingDetailYQFs.PrivateJsonData privateData =detail.getJsonPrivateData();
+            if (CheckUtil.isEmpty(privateData.getSamplingOnTime())) {
                 return String.format("监测结果[%s]需选择分析时间", detail.getSampingCode());//没有填写分析时间
             }
-            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("CaleValue"))) {
+            if (CheckUtil.isEmpty(privateData.getCaleValue())) {
                 return String.format("监测结果[%s]需填写分析结果", detail.getSampingCode());//没有填写分析结果
             }
-            if (CheckUtil.isEmpty(detail.getPrivateDataStringValue("ValueUnit"))) {
+            if (CheckUtil.isEmpty(privateData.getValueUnit())) {
                 return String.format("监测结果[%s]需填写结果单位", detail.getSampingCode());//没有填写结果单位
             }
         }

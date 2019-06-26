@@ -149,22 +149,22 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
     @OnClick({R.id.btn_back, R.id.linear_delete, R.id.linear_save})
     public void onClick(View v) {
         hideSoftInput();
-        if (v.getId()==R.id.btn_back){
+        if (v.getId() == R.id.btn_back) {
             EventBus.getDefault().post(NOISE_FRAGMENT_INT_SOURCE, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
             return;
         }
-        if (!mSample.getIsCanEdit()){
+        if (!mSample.getIsCanEdit()) {
             showMessage("提示：当前采样单，不支持编辑");
             return;
-        }else
-        switch (v.getId()) {
-            case R.id.linear_delete:
-                deleteData();
-                break;
-            case R.id.linear_save:
-                saveData();
-                break;
-        }
+        } else
+            switch (v.getId()) {
+                case R.id.linear_delete:
+                    deleteData();
+                    break;
+                case R.id.linear_save:
+                    saveData();
+                    break;
+            }
     }
 
     private void saveData() {
@@ -210,12 +210,10 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
                     public void onClick(DialogInterface dialog, int which) {
                         showLoading("正在删除");
                         isNeedSave = true;
-                        for (int i = 0; i < mPrivateData.getMianNioseSource().size(); i++) {
-                            if (sourceBean.getGuid().equals(mPrivateData.getMianNioseSource().get(i).getGuid())) {
-                                mPrivateData.getMianNioseSource().remove(i);
-                            }
-                        }
+                        mPrivateData.getMianNioseSource().remove(position);
+                        mSample.setPrivateData(new Gson().toJson(mPrivateData));
                         hideLoading();
+                        EventBus.getDefault().post("0", NOISE_FRAGMENT_SOURCE_SHARE);
                         EventBus.getDefault().post(NOISE_FRAGMENT_INT_SOURCE, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极

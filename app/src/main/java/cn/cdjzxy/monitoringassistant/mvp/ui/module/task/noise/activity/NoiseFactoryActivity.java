@@ -56,6 +56,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoisePoin
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceEditFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment.NoiseSourceListFragment;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -80,6 +81,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     public static Sampling mSample;
     public static Project mProject;
     public static NoisePrivateData mPrivateData;
+
 
     private List<Fragment> mFragments;
     private FragmentAdapter mFragmentAdapter;
@@ -156,9 +158,9 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         titleBar.addRightAction(titleBar.new ImageAction(R.mipmap.ic_save, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSample.getIsCanEdit()){
+                if (mSample.getIsCanEdit()) {
                     saveMySample(false);
-                }else {
+                } else {
                     showMessage("提示：当前采样单，不支持编辑");
                 }
             }
@@ -167,9 +169,8 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     }
 
 
-
     private void showSaveDataDialog() {
-        if (!mSample.getIsCanEdit())return;
+        if (!mSample.getIsCanEdit()) return;
         final Dialog dialog = new AlertDialog.Builder(this)
                 .setMessage("有数据更改，是否本地保存？")
                 .setPositiveButton("保存", new DialogInterface.OnClickListener() {// 积极
@@ -230,29 +231,35 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
         } else {
             mSample = DBHelper.get().getSamplingDao().queryBuilder().
                     where(SamplingDao.Properties.Id.eq(samplingId)).unique();
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().
-                    where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
-            mSample.setSamplingFiless(samplingFiles);
-            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().
-                    where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
-            mSample.setSamplingDetailResults(samplingDetails);
-            List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().
-                    where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
-                    orderAsc(SamplingFormStandDao.Properties.Index).list();
-            if (!CheckUtil.isEmpty(formStantdsList)) {
-                mSample.setSamplingFormStandResults(formStantdsList);
-            }
-            List<SamplingContent> samplingContentList = DBHelper.get().getSamplingContentDao().
-                    queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(mSample.getId())).
-                    orderAsc(SamplingContentDao.Properties.OrderIndex).list();
-            if (!CheckUtil.isEmpty(samplingContentList)) {
-                mSample.setSamplingContentResults(samplingContentList);
-            }
-            Gson gson = new Gson();
-            mPrivateData = gson.fromJson(mSample.getPrivateData(), NoisePrivateData.class);
-            if (mPrivateData == null) {
+            if (mSample == null) {
+                mSample = SamplingUtil.createNoiseSample(projectId, formSelectId);
                 mPrivateData = new NoisePrivateData();
+            } else {
+                List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().queryBuilder().
+                        where(SamplingFileDao.Properties.SamplingId.eq(samplingId)).list();
+                mSample.setSamplingFiless(samplingFiles);
+                List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().
+                        where(SamplingDetailDao.Properties.SamplingId.eq(mSample.getId())).list();
+                mSample.setSamplingDetailResults(samplingDetails);
+                List<SamplingFormStand> formStantdsList = DBHelper.get().getSamplingFormStandDao().queryBuilder().
+                        where(SamplingFormStandDao.Properties.SamplingId.eq(mSample.getId())).
+                        orderAsc(SamplingFormStandDao.Properties.Index).list();
+                if (!CheckUtil.isEmpty(formStantdsList)) {
+                    mSample.setSamplingFormStandResults(formStantdsList);
+                }
+                List<SamplingContent> samplingContentList = DBHelper.get().getSamplingContentDao().
+                        queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(mSample.getId())).
+                        orderAsc(SamplingContentDao.Properties.OrderIndex).list();
+                if (!CheckUtil.isEmpty(samplingContentList)) {
+                    mSample.setSamplingContentResults(samplingContentList);
+                }
+                Gson gson = new Gson();
+                mPrivateData = gson.fromJson(mSample.getPrivateData(), NoisePrivateData.class);
+                if (mPrivateData == null) {
+                    mPrivateData = new NoisePrivateData();
+                }
             }
+
         }
         initTabData();
 
@@ -285,7 +292,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
                 tab.setSelected(false);
                 tab.setResId(R.mipmap.icon_source);
             } else if (i == 2) {
-                tab.setTabName("监听点位");
+                tab.setTabName("监测点位");
                 tab.setSelected(false);
                 tab.setResId(R.mipmap.icon_point);
             } else if (i == 3) {
@@ -431,7 +438,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     protected void onResume() {
         super.onResume();
         openFragment(NOISE_FRAGMENT_INT);
-        if (!mSample.getIsCanEdit()){
+        if (!mSample.getIsCanEdit()) {
             showMessage("提示：当前采样单，不支持编辑");
         }
     }
@@ -486,19 +493,26 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
 
         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
-
+        mSample.setPrivateData(new Gson().toJson(mPrivateData));
         if (sampling != null) {
             DBHelper.get().getSamplingDao().update(mSample);
         } else {
             DBHelper.get().getSamplingDao().insertOrReplace(mSample);
         }
+        List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().
+                queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
+        if (!CheckUtil.isEmpty(samplingFiles)) {
+            DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
+        }
         if (!CheckUtil.isEmpty(mSample.getSamplingFiless())) {
-            List<SamplingFile> samplingFiles = DBHelper.get().getSamplingFileDao().
-                    queryBuilder().where(SamplingFileDao.Properties.SamplingId.eq(mSample.getId())).list();
-            if (!CheckUtil.isEmpty(samplingFiles)) {
-                DBHelper.get().getSamplingFileDao().deleteInTx(samplingFiles);
-            }
             DBHelper.get().getSamplingFileDao().insertInTx(mSample.getSamplingFiless());
+        }
+        List<SamplingDetail> detailList = DbHelpUtils.getSamplingDetaiList(mSample.getId());
+        if (!CheckUtil.isEmpty(detailList)) {
+            DBHelper.get().getSamplingDetailDao().deleteInTx(detailList);
+        }
+        if (!CheckUtil.isEmpty(mSample.getSamplingDetailResults())) {
+            DBHelper.get().getSamplingDetailDao().insertInTx(mSample.getSamplingDetailResults());
         }
         updateData();
     }

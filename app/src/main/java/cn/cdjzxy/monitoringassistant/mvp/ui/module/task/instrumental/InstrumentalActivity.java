@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.title.TitleBarView;
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
 import org.simple.eventbus.EventBus;
@@ -22,6 +23,7 @@ import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
@@ -35,6 +37,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.Te
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.fragment.TestRecordFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.print.FormPrintActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.NoScrollViewPager;
@@ -110,10 +113,12 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
             mSampling = SamplingUtil.createInstrumentalSampling(projectId, formSelectId);
         } else {
             //从数据库加载
-            mSampling = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
-
+            Sampling dbSample = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.Id.eq(samplingId)).unique();
+            Gson gson = new Gson();
+            String clone = gson.toJson(dbSample);
+            mSampling = gson.fromJson(clone, Sampling.class);
             //加载详细信息
-            List<SamplingDetail> samplingDetails = DBHelper.get().getSamplingDetailDao().queryBuilder().where(SamplingDetailDao.Properties.SamplingId.eq(InstrumentalActivity.mSampling.getId())).list();
+            List<SamplingDetailYQFs> samplingDetails = DbHelpUtils.getSamplingDetailYQFsList(mSampling.getId());
             mSampling.setSamplingDetailYQFs(samplingDetails);
         }
 
@@ -136,11 +141,12 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
 //                    mSampling.setProjectNo(project.getProjectNo());
 //                    mSampling.setAddressNo("");
                     if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Sampling_Modify_Num)) {
-                        showNoPermissionDialog("才能进行表单保存。",  UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
+                        showNoPermissionDialog("才能进行表单保存。", UserInfoAppRight.APP_Permission_Sampling_Modify_Name);
                         return;
                     }
                     mSampling.setIsFinish((SamplingUtil.isSamplingFinsh(mSampling)));
                     mSampling.setStatusName(mSampling.getIsFinish() ? "已完成" : "进行中");
+
                     if (isNewCreate) {
                         Sampling sampling = DBHelper.get().getSamplingDao().queryBuilder().
                                 where(SamplingDao.Properties.Id.eq(mSampling.getId())).unique();
@@ -153,7 +159,22 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
                     } else {
                         DBHelper.get().getSamplingDao().update(mSampling);
                     }
+                    List<SamplingDetailYQFs> dbYQList = DbHelpUtils.getSamplingDetailYQFsList(mSampling.getId());
+                    if (CheckUtil.isEmpty(dbYQList)) {
+                        DBHelper.get().getSamplingDetailYQFsDao().deleteInTx(dbYQList);
+                    }
 
+                    if (!CheckUtil.isEmpty(mSampling.getSamplingDetailYQFs())) {
+                        for (SamplingDetailYQFs yqFs : mSampling.getSamplingDetailYQFs()) {
+                            SamplingDetailYQFs dbYqfs = DbHelpUtils.getSamplingDetailYQFs(yqFs.getId());
+                            if (dbYqfs != null) {
+                                DBHelper.get().getSamplingDetailYQFsDao().update(yqFs);
+                            } else {
+                                DBHelper.get().getSamplingDetailYQFsDao().insert(yqFs);
+                            }
+                        }
+
+                    }
                     EventBus.getDefault().post(true, EventBusTags.TAG_SAMPLING_UPDATE);
                     ArtUtils.makeText(getApplicationContext(), "数据保存成功");
                 }
@@ -168,7 +189,21 @@ public class InstrumentalActivity extends BaseTitileActivity<ApiPresenter> {
      * 初始化Tab数据
      */
     private void initTabData() {
-        tabview.setTabs("基本信息", "监测结果");
+        List<Tab> tabs = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            Tab tab = new Tab();
+            if (i == 0) {
+                tab.setTabName("基本信息");
+                tab.setSelected(true);
+                tab.setResId(R.mipmap.icon_basic);
+            } else if (i == 1) {
+                tab.setTabName("监测结果");
+                tab.setSelected(false);
+                tab.setResId(R.mipmap.icon_monitor_result);
+            }
+            tabs.add(tab);
+        }
+        tabview.setTabs(tabs);
         tabview.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
             @Override
             public void onTabSelected(Tab tab, int position) {

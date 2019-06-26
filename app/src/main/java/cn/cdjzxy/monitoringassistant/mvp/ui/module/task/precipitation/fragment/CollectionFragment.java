@@ -250,7 +250,7 @@ public class CollectionFragment extends BaseFragment {
                 if (item.getMonitemName().equals("降水量")) {
                     LabelInfo info = new LabelInfo();
                     info.setTaskName(sampling.getProjectName());
-                    info.setNumber(sampling.getSamplingNo());
+                    info.setNumber("采样地点："+sampling.getAddressName());
                     info.setFrequecyNo("频次：" + item.getFrequecyNo());
                     info.setType("降水");//项目类型固定“降水”
                     info.setMonitemName(sampling.getMonitemName());//监测项目固定“降水量”

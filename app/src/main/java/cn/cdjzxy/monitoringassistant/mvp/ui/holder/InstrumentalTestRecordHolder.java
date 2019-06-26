@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.wonders.health.lib.base.base.BaseHolder;
 
 import org.json.JSONException;
@@ -16,12 +17,13 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 
 /**
  * 仪器法监测结果
  */
 
-public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
+public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetailYQFs> {
 
     @BindView(R.id.ivChoose)
     ImageView ivChoose;
@@ -62,7 +64,7 @@ public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
     }
 
     @Override
-    public void setData(SamplingDetail data, int position) {
+    public void setData(SamplingDetailYQFs data, int position) {
         this.position = position;
 
         if (data.isCanSelect()) {
@@ -74,21 +76,21 @@ public class InstrumentalTestRecordHolder extends BaseHolder<SamplingDetail> {
                 ivChoose.setImageResource(R.mipmap.ic_cb_nor);
             }
         } else {
-            ivChoose.setVisibility(View.INVISIBLE);
+            ivChoose.setVisibility(View.GONE);
         }
-
+        SamplingDetailYQFs.PrivateJsonData privateData = data.getJsonPrivateData();
         tvFrequency.setText("频次：" + data.getFrequecyNo());
-        tvTime.setText(data.getSamplingTime());
+        tvTime.setText(privateData.getSamplingOnTime());
         tvPoint.setText(data.getAddressName());
-        tvHasPX.setText(data.getSamplingType()==1 ? "平行" : "");
+        tvHasPX.setText(data.getSamplingType() == 1 ? "平行" : "");
 
 
-        String unitName = " " + data.getPrivateDataStringValue("ValueUnitName");
+        String unitName = " " + privateData.getValueUnitName();
 
-        tvAnalyseTime.setText("分析时间：" + data.getPrivateDataStringValue("SamplingOnTime"));
-        tvAnalyseResult.setText("分析结果：" + data.getPrivateDataStringValue("CaleValue") + unitName);
+        tvAnalyseTime.setText("分析时间：" + privateData.getSamplingOnTime());
+        tvAnalyseResult.setText("分析结果：" + privateData.getCaleValue() + unitName);
         tvAveValue.setText("均值：" + (TextUtils.isEmpty(data.getValue()) ? data.getValue() : data.getValue() + unitName));//均值
-        String rpdValue = data.getPrivateDataStringValue("RPDValue");
+        String rpdValue = privateData.getRPDValue();
         tvRelaOffset.setText("相对偏差：" + (TextUtils.isEmpty(rpdValue) ? "" : rpdValue + "%"));//相对偏差
     }
 

@@ -242,7 +242,7 @@ public class NoiseSourceListFragment extends BaseFragment implements IView {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.notifyDataSetChanged();
+                        adapter.refreshInfos(list);
                         hideLoading();
                     }
                 });

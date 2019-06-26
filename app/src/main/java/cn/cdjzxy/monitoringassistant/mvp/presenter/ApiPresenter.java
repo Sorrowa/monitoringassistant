@@ -68,6 +68,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingStantd;
@@ -112,7 +113,7 @@ import static cn.cdjzxy.monitoringassistant.mvp.ui.module.MainActivity.TYPE_TASK
  */
 public class ApiPresenter extends BasePresenter<ApiRepository> {
 
-    
+
     private AppComponent appComponent;
 
     public ApiPresenter(AppComponent appComponent) {
@@ -1092,7 +1093,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
      *
      * @param samplingList
      */
-    public  void saveSample(List<Sampling> samplingList) {
+    public void saveSample(List<Sampling> samplingList) {
         new Thread() {
             @Override
             public void run() {
@@ -1192,20 +1193,13 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                 break;
             case TaskDetailActivity.PATH_INSTRUMENTAL:
                 //同步仪器法监测结果
-                List<SamplingDetail> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
+                List<SamplingDetailYQFs> samplingDetailYQFs = sampling.getSamplingDetailYQFs();
+                List<SamplingDetailYQFs> dbSamplingDetailYQFs = DbHelpUtils.getSamplingDetailYQFsList(sampling.getId());
+                if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
+                    DBHelper.get().getSamplingDetailYQFsDao().deleteInTx(dbSamplingDetailYQFs);
+                }
                 if (!CheckUtil.isEmpty(samplingDetailYQFs)) {
-                    for (SamplingDetail samplingDetail : samplingDetailYQFs) {
-                        QueryBuilder qb = DBHelper.get().getSamplingDetailDao().queryBuilder();
-                        List<SamplingDetail> dbSamplingDetailYQFs = qb.where(qb.or(SamplingDetailDao.Properties.Id.like("YQF%"),
-                                SamplingDetailDao.Properties.Id.eq(samplingDetail.getId())),
-                                SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
-                        //匹配采样单编号一样的数据或Id一样，覆盖。
-//                List<SamplingDetail> dbSamplingDetailYQFs = DBHelper.get().getSamplingDetailDao().queryBuilder().whereOr(SamplingDetailDao.Properties.Id.eq(samplingDetail.getId()), SamplingDetailDao.Properties.SampingCode.eq(samplingDetail.getSampingCode())).list();
-                        if (!CheckUtil.isEmpty(dbSamplingDetailYQFs)) {
-                            DBHelper.get().getSamplingDetailDao().deleteInTx(dbSamplingDetailYQFs);
-                        }
-                    }
-                    DBHelper.get().getSamplingDetailDao().insertOrReplaceInTx(samplingDetailYQFs);
+                    DBHelper.get().getSamplingDetailYQFsDao().insertInTx(samplingDetailYQFs);
                 }
                 break;
             case TaskDetailActivity.PATH_WASTEWATER://水和废水

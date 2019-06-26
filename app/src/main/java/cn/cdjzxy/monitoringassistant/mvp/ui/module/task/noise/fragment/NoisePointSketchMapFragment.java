@@ -138,7 +138,7 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
 
     @OnClick({R.id.linear_add, R.id.linear_map, R.id.linear_clean})
     public void onClick(View v) {
-        if (!mSample.getIsCanEdit()){
+        if (!mSample.getIsCanEdit()) {
             showMessage("提示：当前采样单，不支持编辑");
             return;
         }
@@ -172,6 +172,7 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
                         if (isDelete) {
                             saveSample("");
                         }
+                        imageView.setVisibility(View.GONE);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极
 

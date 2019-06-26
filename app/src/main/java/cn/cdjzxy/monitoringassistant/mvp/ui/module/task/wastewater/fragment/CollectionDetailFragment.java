@@ -253,6 +253,8 @@ public class CollectionDetailFragment extends BaseFragment {
                 sample_monitor_items.setLeftTextViewStr("监测项目（"
                         + samplingDetail.getMonitemId().split(",").length
                         + "）");
+            } else {
+                sample_monitor_items.setLeftTextViewStr("监测项目（0）");
             }
 
             if (!CheckUtil.isEmpty(samplingDetail.getSenceMonitemId())) {
@@ -260,6 +262,8 @@ public class CollectionDetailFragment extends BaseFragment {
                 int resone = getThelenth(samplingDetail.getSenceMonitemId().split(",")
                         , samplingDetail.getMonitemId().split(","));
                 sample_monitor.setLeftTextViewStr("现场监测（" + resone + "）");
+            } else {
+                sample_monitor.setLeftTextViewStr("现场监测（0）");
             }
 
             if (samplingDetail.getSamplingType() == 0) {

@@ -2,6 +2,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
@@ -42,8 +44,10 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.rv_history)
     RecyclerView rvHistory;
 
-    private EditText  mEtSearch;
-    private ImageView mBtnSearch;
+    @BindView(R.id.et_search)
+    EditText etSearch;
+    @BindView(R.id.img_search)
+    ImageView imgSearch;
 
     private List<Tab>    mLastTimes = new ArrayList<>();
     private List<Tab>    mTaskTypes = new ArrayList<>();
@@ -55,7 +59,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.addCenterAction(titleBar.new ViewAction(getSearchView()));
+       titleBar.setTitleMainText("任务搜索");
     }
 
     @Nullable
@@ -76,27 +80,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         initHistoryView();
     }
 
-    /**
-     * 获取标题右边View
-     *
-     * @return
-     */
-    private View getSearchView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.view_search, null);
-        mEtSearch = view.findViewById(R.id.et_search);
-        mBtnSearch = view.findViewById(R.id.btn_search);
-        mBtnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!CheckUtil.isEmpty(mEtSearch.getText().toString())) {
-                    search(mEtSearch.getText().toString());
-                } else {
-                    ArtUtils.makeText(TaskSearchActivity.this, "请输入任务名称或编号");
-                }
-            }
-        });
-        return view;
-    }
+
 
 
     private void initTimeView() {
@@ -131,7 +115,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         mSearchTimeAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                upateLastTimeState(position);
+                updateLastTimeState(position);
             }
         });
         rvTime.setAdapter(mSearchTimeAdapter);
@@ -197,14 +181,14 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         mSearchHistoryAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                mEtSearch.setText((String) data);
+                etSearch.setText((String) data);
             }
         });
         rvHistory.setAdapter(mSearchHistoryAdapter);
     }
 
 
-    private void upateLastTimeState(int position) {
+    private void updateLastTimeState(int position) {
         for (int i = 0; i < mLastTimes.size(); i++) {
             if (i == position) {
                 mLastTimes.get(i).setSelected(true);
@@ -225,7 +209,29 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         mSearchTypeAdapter.notifyDataSetChanged();
     }
 
+    @OnClick({R.id.img_search})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.img_search:
+                hideSoftInput();
+                search();
+                break;
+        }
+    }
+    /**
+     * 搜索
+     */
+    public void search() {
+        if (!CheckUtil.isEmpty(etSearch.getText().toString())) {
+            search(etSearch.getText().toString());
+        } else {
+            showMessage("请输入任务名称或编号");
+        }
+    }
 
+    public void showMessage(@NonNull String message) {
+        ArtUtils.makeText(this, message);
+    }
     /**
      * 搜素
      *
@@ -262,7 +268,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
                 types.add(taskType.getTabName());
             }
         }
-        mEtSearch.setText("");
+        etSearch.setText("");
 
         Intent intent = new Intent(this, TaskSearchResultActivity.class);
         intent.putExtra("keyword", "%" + keyword + "%");

@@ -58,6 +58,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoiseSamplingFile
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFile;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.FileInfoData;
@@ -354,6 +355,14 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
                 DBHelper.get().getSamplingContentDao().updateInTx(samplingContentList);
             }
+            List<SamplingDetailYQFs> yqFsList=DbHelpUtils.getSamplingDetailYQFsList(sampling.getId());
+            if (!CheckUtil.isEmpty(yqFsList)){
+                for (SamplingDetailYQFs yqFs:yqFsList){
+                    yqFs.setSamplingId(id);
+                    DBHelper.get().getSamplingDetailYQFsDao().update(yqFs);
+                }
+
+            }
             if (DbHelpUtils.getDbSampling(sampling.getId()) != null) {
                 DBHelper.get().getSamplingDao().delete(sampling);
             }
@@ -619,9 +628,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     return;
                 }
 
-                //上传数据
-//                uploadSampFormData(sampling, false);
-                MyTextUtils.uploadMySampleForData(mPresenter,mContext);
+               // 上传数据
+                uploadSampFormData(sampling, false);
+//                MyTextUtils.uploadMySampleForData(mPresenter,mContext);
             }
         });
         recyclerview.setAdapter(mTaskDetailAdapter);
@@ -1336,7 +1345,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param handler
      * @param files
      */
-    private void uploadFiles(Sampling sampling, FileUploadHandler handler, List<File> files, HashMap<String, SamplingFile> fileSet) {
+    private void uploadFiles(Sampling sampling, FileUploadHandler handler, List<File> files,
+                             HashMap<String, SamplingFile> fileSet) {
         List<MultipartBody.Part> parts = new ArrayList<>();
 
         for (File file : files) {

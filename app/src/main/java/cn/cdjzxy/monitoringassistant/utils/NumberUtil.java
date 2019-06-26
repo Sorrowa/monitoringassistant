@@ -84,4 +84,32 @@ public class NumberUtil {
         //若前一位数字为偶数则将尾数舍去
         return powValue / (double) pow;
     }
+
+    /**
+     * 计算小数位数
+     *
+     * @param value
+     * @return
+     */
+    public static int calcNumberNumOfBits(String value) {
+        //转换成字符串
+
+        //获取小数点的位置
+        int bitPos = value.indexOf(".");
+        if (bitPos == -1) {
+            return 0;//没有小数点
+        }
+
+        //往后移一位
+        bitPos += 1;
+
+        //小数点后面的数值转换成整数
+        int bitNum = Integer.parseInt(value.substring(bitPos));
+//        if (bitNum == 0) {
+//            return 0;//小红点后面是填充的0
+//        }
+
+        //字符串总长度减去小数点位置就是小数位数
+        return value.length() - bitPos;
+    }
 }

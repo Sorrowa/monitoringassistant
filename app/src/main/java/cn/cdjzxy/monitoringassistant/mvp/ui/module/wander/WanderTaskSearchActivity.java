@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectSampleStorage;
@@ -33,6 +34,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SearchAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.SearchHistoryAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WanderTaskAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskSearchActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.HawkUtil;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
@@ -46,13 +48,16 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
 public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
     private EditText mEtSearch;
-    private ImageView mBtnSearch;
     @BindView(R.id.rv_type)
     RecyclerView rvType;
     @BindView(R.id.rv_history)
     RecyclerView rvHistory;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.et_search)
+    EditText etSearch;
+    @BindView(R.id.img_search)
+    ImageView imgSearch;
     private List<Tab> mTaskTypes;
     private List<String> mHistoryList;
     private List<ProjectSampleStorage.DataBean> wanderList;
@@ -94,36 +99,40 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.addCenterAction(titleBar.new ViewAction(getSearchView()));
+        titleBar.setTitleMainText("任务搜索");
+        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    @OnClick({R.id.img_search})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.img_search:
+                hideSoftInput();
+                search();
+                break;
+        }
     }
 
     /**
-     * 获取标题右边View
-     *
-     * @return
+     * 搜索
      */
-    private View getSearchView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.view_search, null);
-        mEtSearch = view.findViewById(R.id.et_search);
-        mBtnSearch = view.findViewById(R.id.btn_search);
-        mBtnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!CheckUtil.isEmpty(mEtSearch.getText().toString())) {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("sampleStorageProjectParam.keyWord", mEtSearch.getText().toString());
-                    map.put("sampleStorageProjectParam.status", 20 + "");
-                    search(map);
-                    saveHistory(mEtSearch.getText().toString());
-                    //search(mEtSearch.getText().toString());
-                } else {
-                    ArtUtils.makeText(WanderTaskSearchActivity.this, "请输入任务名称或编号");
-                }
-            }
-        });
-        return view;
+    public void search() {
+        if (!CheckUtil.isEmpty(etSearch.getText().toString())) {
+            Map<String, String> map = new HashMap<>();
+            map.put("sampleStorageProjectParam.keyWord", etSearch.getText().toString());
+            map.put("sampleStorageProjectParam.status", 20 + "");
+            search(map);
+            saveHistory(etSearch.getText().toString());
+            //search(mEtSearch.getText().toString());
+        } else {
+            showMessage("请输入任务名称或编号");
+        }
     }
-
     private void initTypeView() {
 
         ArtUtils.configRecyclerView(rvType, new GridLayoutManager(this, 2) {

@@ -83,37 +83,41 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
 
         if (CheckUtil.isEmpty(startDate)) {
             if (CheckUtil.isEmpty(types)) {
-                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Name.like(keyword));
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword),
+                        ProjectDao.Properties.Name.like(keyword));
             } else {
-
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.Type.in(types))
-                        .or(ProjectDao.Properties.Name.like(keyword), ProjectDao.Properties.Type.in(types));
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword),
+                        ProjectDao.Properties.Type.in(types)
+                        , ProjectDao.Properties.Name.like(keyword));
             }
         } else {
             if (CheckUtil.isEmpty(types)) {
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate))
-                        .or(ProjectDao.Properties.Name.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate));
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword),
+                        ProjectDao.Properties.PlanEndTime.between(startDate, endDate),
+                        ProjectDao.Properties.Name.like(keyword));
+
             } else {
-                queryBuilder.where(ProjectDao.Properties.ProjectNo.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types))
-                        .or(ProjectDao.Properties.Name.like(keyword), ProjectDao.Properties.PlanEndTime.between(startDate, endDate), ProjectDao.Properties.Type.in(types));
+                queryBuilder.whereOr(ProjectDao.Properties.ProjectNo.like(keyword),
+                        ProjectDao.Properties.PlanEndTime.between(startDate, endDate),
+                        ProjectDao.Properties.Type.in(types),
+                        ProjectDao.Properties.Name.like(keyword));
             }
         }
 
         final List<Project> projects = queryBuilder.list();
-        if (!CheckUtil.isEmpty(projects)) {
-            mTaskAdapter = new TaskAdapter(projects);
-            mTaskAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
-                @Override
-                public void onItemClick(View view, int viewType, Object data, int position) {
-                    Intent intent = new Intent(TaskSearchResultActivity.this, TaskDetailActivity.class);
-                    intent.putExtra("taskId", projects.get(position).getId());
-                    ArtUtils.startActivity(intent);
-                }
-            });
-            recyclerview.setAdapter(mTaskAdapter);
-        } else {
+        if (CheckUtil.isNull(projects)) {
             ArtUtils.makeText(this, "未搜索到结果");
         }
+        mTaskAdapter = new TaskAdapter(projects);
+        mTaskAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onItemClick(View view, int viewType, Object data, int position) {
+                Intent intent = new Intent(TaskSearchResultActivity.this, TaskDetailActivity.class);
+                intent.putExtra("taskId", projects.get(position).getId());
+                ArtUtils.startActivity(intent);
+            }
+        });
+        recyclerview.setAdapter(mTaskAdapter);
     }
 
 }

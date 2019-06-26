@@ -91,7 +91,12 @@ public class HelpUtil {
      */
     public static String createSamplingCode(Sampling sampling) {
         String samplingNo;
-        String snDate = DateUtils.getDate().replace("-", "").substring(2);
+        String snDate;
+        if (CheckUtil.isEmpty(sampling.getSamplingTimeBegin()))
+            snDate = DateUtils.getDate().replace("-", "").substring(2);
+        else {
+            snDate = sampling.getSamplingTimeBegin().replace("-", "").substring(2);
+        }
         String snSampling = "";
         if (!CheckUtil.isEmpty(sampling.getSamplingNo())) {
             snSampling = sampling.getSamplingNo().substring(sampling.getSamplingNo().length() - 2);

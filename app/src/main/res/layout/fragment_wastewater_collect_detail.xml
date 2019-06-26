@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
@@ -165,86 +168,82 @@
             </RelativeLayout>
 
             <include layout="@layout/view_line_basic_info" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:id="@+id/operate_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_height_dp_52"
-                android:layout_gravity="bottom"
-                android:background="@color/white"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:id="@+id/btn_delete"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/tv_delete"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:drawableLeft="@mipmap/ic_add_parallel"
-                        android:drawablePadding="@dimen/dp_12"
-                        android:text="删除"
-                        android:textColor="@color/text_color_2b99ff"
-                        android:textSize="@dimen/text_size_14" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/division_line"
-                        android:layout_alignParentTop="true"
-                        android:background="@color/dc1" />
-
-
-                    <View
-                        android:layout_width="@dimen/division_line"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:background="@color/dc1" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/btn_save"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/tv_save"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:drawableLeft="@mipmap/ic_add_blank"
-                        android:drawablePadding="@dimen/dp_12"
-                        android:text="保存"
-                        android:textColor="@color/text_color_2b99ff"
-                        android:textSize="@dimen/text_size_14" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/division_line"
-                        android:layout_alignParentTop="true"
-                        android:background="@color/dc1" />
-
-                    <View
-                        android:layout_width="@dimen/division_line"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:background="@color/dc1" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
         </LinearLayout>
 
-    </ScrollView>
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/operate_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_height_dp_52"
+            android:layout_gravity="bottom"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:drawableLeft="@mipmap/ic_add_parallel"
+                    android:drawablePadding="@dimen/dp_12"
+                    android:text="删除"
+                    android:textColor="@color/text_color_2b99ff"
+                    android:textSize="@dimen/text_size_14" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/division_line"
+                    android:layout_alignParentTop="true"
+                    android:background="@color/dc1" />
+
+
+                <View
+                    android:layout_width="@dimen/division_line"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/dc1" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:drawableLeft="@mipmap/ic_add_blank"
+                    android:drawablePadding="@dimen/dp_12"
+                    android:text="保存"
+                    android:textColor="@color/text_color_2b99ff"
+                    android:textSize="@dimen/text_size_14" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/division_line"
+                    android:layout_alignParentTop="true"
+                    android:background="@color/dc1" />
+
+                <View
+                    android:layout_width="@dimen/division_line"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/dc1" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
+

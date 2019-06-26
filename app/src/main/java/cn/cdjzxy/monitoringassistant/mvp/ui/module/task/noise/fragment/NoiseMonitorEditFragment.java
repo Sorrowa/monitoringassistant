@@ -3,6 +3,7 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,6 +54,8 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity;
+import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoisePointSelectActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
@@ -146,7 +149,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
         tvAddress.setRightTextStr(privateData.getAddressName());
         edMonitorDate.setEditTextStr(privateData.getTimeInterval());
         tvMonitorTimeFirstStart.setRightTextStr(privateData.getZTestTime());
-        tvMonitorTimeFirstEnd.setRightTextStr(privateData.getZTestTime());
+        tvMonitorTimeFirstEnd.setEditTextStr(privateData.getZTestTime());
         edMonitorData.setEditTextStr(privateData.getValue());
         tvMonitorTimeStart.setRightTextStr(privateData.getYTestTime());
         tvMonitorTimeEnd.setRightTextStr(privateData.getYEndTestTime());
@@ -220,9 +223,9 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
                 case R.id.my_layout_monitor_time_first_start:
                     showDateSelectDialog(tvMonitorTimeFirstStart);
                     break;
-                case R.id.my_layout_monitor_time_first_end:
-                    showDateSelectDialog(tvMonitorTimeFirstEnd);
-                    break;
+//                case R.id.my_layout_monitor_time_first_end:
+//                    showDateSelectDialog(tvMonitorTimeFirstEnd);
+//                    break;
                 case R.id.my_layout_monitor_time_start:
                     showDateSelectDialog(tvMonitorTimeStart);
                     break;
@@ -237,9 +240,22 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
      */
     private void choiceAddress() {
         List<String> stringList = new ArrayList<>();
+        List<SamplingDetail> list = mSample.getSamplingDetailResults();
         if (mPrivateData != null && mPrivateData.getMianNioseAddr() != null) {
             for (NoisePrivateData.MianNioseAddrBean bean : mPrivateData.getMianNioseAddr()) {
-                stringList.add(bean.getAddrCode());
+                boolean isHave = false;
+                if (!CheckUtil.isEmpty(list)) {
+                    for (SamplingDetail detail : list) {
+                        if (detail.getAddressName().equals(bean.getAddressName())) {
+                            isHave=true;
+                            break;
+                        }
+                    }
+                }
+                if (!isHave){
+                    stringList.add(bean.getAddrCode());
+                }
+
             }
         }
         if (stringList.size() == 0) stringList.add("测试数据");
@@ -284,7 +300,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
         showLoading("正在保存");
         privateData.setTimeInterval(edMonitorDate.getEditTextStr());
         privateData.setZTestTime(tvMonitorTimeFirstStart.getRightTextViewStr());
-        privateData.setZEndTestTime(tvMonitorTimeFirstEnd.getRightTextViewStr());
+        privateData.setZEndTestTime(tvMonitorTimeFirstEnd.getEditTextStr());
         privateData.setYTestTime(tvMonitorTimeStart.getRightTextViewStr());
         privateData.setYEndTestTime(tvMonitorTimeEnd.getRightTextViewStr());
         privateData.setYBackgroundValue(edMonitorBgData.getEditTextStr());
@@ -312,7 +328,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
         saveMySample();
         hideLoading();
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
-        EventBus.getDefault().post("", NOISE_FRAGMENT_MONITOR_SHARE);
+        EventBus.getDefault().post("0", NOISE_FRAGMENT_MONITOR_SHARE);
     }
 
     public void setBtnIsOpenImg() {
@@ -337,12 +353,9 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
                     public void onClick(DialogInterface dialog, int which) {
                         showLoading("正在删除");
                         isNeedSave = true;
-                        for (int i = 0; i < mSample.getSamplingDetailResults().size(); i++) {
-                            if (privateData.getId().equals(mSample.getSamplingDetailResults().get(i).getId())) {
-                                mSample.getSamplingDetailResults().remove(i);
-                            }
-                        }
+                        mSample.getSamplingDetailResults().remove(position);
                         hideLoading();
+                        EventBus.getDefault().post("0", NOISE_FRAGMENT_MONITOR_SHARE);
                         EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {// 消极

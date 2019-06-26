@@ -67,7 +67,7 @@
             style="@style/MyDrawableLinearLayoutItemStyle"
             app:drawableRight="@mipmap/ic_has_next"
             app:isShowRightTextView="false"
-            app:leftText="数量"
+            app:leftText="数量（台）"
             app:rightEditTextHint="请输入"
             app:rightTextHint="请选择" />
 
