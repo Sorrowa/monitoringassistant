@@ -1,14 +1,13 @@
 package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.fragment;
 
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,22 +35,20 @@ import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.NoisePrivateData;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
-import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MethodActivity;
+
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.MonItemMethodActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.WeatherActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.device.DeviceActivity;
-import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
-import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
-import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
+
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
-import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.instrumental.InstrumentalActivity.mSampling;
+
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mPrivateData;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mProject;
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.mSample;
-import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.saveMySample;
 
 public class NoiseBasicFragment extends BaseFragment implements IView {
 
@@ -270,8 +267,8 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
                 String strDate = DateUtils.getDate(date);
                 mSample.setSamplingTimeBegin(strDate);
                 dateTextView.setText(strDate);
-                mSampling.setSamplingNo(SamplingUtil.createSamplingNo(strDate));
-                tvSampleNo.setRightTextStr(mSampling.getSamplingNo());
+                mSample.setSamplingNo(SamplingUtil.createSamplingNo(strDate));
+                tvSampleNo.setRightTextStr(mSample.getSamplingNo());
             }
         }).build();
         pvTime.setDate(Calendar.getInstance());
