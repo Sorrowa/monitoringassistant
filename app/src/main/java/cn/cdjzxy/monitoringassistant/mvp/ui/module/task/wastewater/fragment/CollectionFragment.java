@@ -326,9 +326,11 @@ public class CollectionFragment extends BaseFragment {
                 info.setQrCode(item.getSampingCode());//二维码为样品编码
                 //根据样品的监测项目获取对应的分瓶信息
                 SamplingFormStand samplingFormStand = getSamplingFormStand(sampling, s);
-                if (samplingFormStand != null) {
+                if (samplingFormStand != null && samplingFormStand.getSaveMehtod() != null) {
                     //保存方法
-                    info.setRemark(samplingFormStand.getPreservative());
+                    info.setRemark(samplingFormStand.getSaveMehtod());
+                }else {
+                    info.setRemark("");
                 }
                 result.add(info);
             }

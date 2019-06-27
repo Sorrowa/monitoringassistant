@@ -18,7 +18,7 @@ public class SamplingFile implements Parcelable {
     private String FileName;
     private String FilePath;
     private String UpdateTime;
-    private boolean IsUploaded;
+    private boolean IsUploaded;//是否上传
 
     @Keep()
     public SamplingFile(String LocalId, String Id, String SamplingId,

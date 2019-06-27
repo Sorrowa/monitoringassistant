@@ -120,7 +120,7 @@ public class AutographFragment extends BaseFragment {
                        // String pngName = data.getStringExtra(AutographActivity.INTENT_AUTOGRAPH_NAME);
                         SamplingFile samplingFile = new SamplingFile();
                         File file = new File(pngPath);
-                        samplingFile.setLocalId("FS-" + UUID.randomUUID().toString());
+                        samplingFile.setLocalId(UUID.randomUUID().toString());
                         samplingFile.setId("");
                         samplingFile.setFilePath(pngPath);
                         samplingFile.setFileName(file.getName());

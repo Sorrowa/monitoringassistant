@@ -106,11 +106,11 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
                     public void selectLister(int p, View v) {
                         if (sampleFiles.get(p).getIsSelect()) {
                             sampleFiles.get(p).setIsSelect(false);
-                            selectList.remove(sampleFiles.get(p).getLocalId());
+                            selectList.remove(sampleFiles.get(p).getId());
                         } else {
                             sampleFiles.get(p).setIsSelect(true);
-                            if (!selectList.contains(sampleFiles.get(p).getLocalId())) {
-                                selectList.add(sampleFiles.get(p).getLocalId());
+                            if (!selectList.contains(sampleFiles.get(p).getId())) {
+                                selectList.add(sampleFiles.get(p).getId());
                             }
                         }
                         sampleFileAdapter.notifyDataSetChanged();
@@ -138,7 +138,6 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
             noiseSamplingFile.setFileName(file.getFileName());
             noiseSamplingFile.setFilePath(file.getFilePath());
             noiseSamplingFile.setId(file.getId());
-            noiseSamplingFile.setLocalId(file.getLocalId());
             noiseSamplingFile.setUpdateTime(file.getUpdateTime());
             noiseSamplingFile.setIsUploaded(file.getIsUploaded());
             noiseSamplingFile.setSamplingId(file.getSamplingId());
@@ -216,7 +215,7 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
         List<SamplingFile> files = new ArrayList<>();
         for (String id : selectList) {
             for (int i = 0; i < sampleFiles.size(); i++) {
-                if (sampleFiles.get(i).getLocalId().equals(id)) {
+                if (sampleFiles.get(i).getId().equals(id)) {
                     sampleFiles.remove(i);
                 }
             }
@@ -256,8 +255,7 @@ public class NoiseOtherFileFragment extends BaseFragment implements IView {
             for (String path : paths) {
                 NoiseSamplingFile samplingFile = new NoiseSamplingFile();
                 File file = new File(path);
-                samplingFile.setLocalId("FS-" + UUID.randomUUID().toString());
-                samplingFile.setId("");
+                samplingFile.setId(UUID.randomUUID().toString());
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(mSample.getId());

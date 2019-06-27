@@ -270,7 +270,7 @@ public class WastewaterActivity extends BaseTitileActivity<ApiPresenter> {
         Log.e(TAG, "addFile: " + path);
         SamplingFile sampling = new SamplingFile();
         File file = new File(path);
-        sampling.setLocalId("LC-" + UUID.randomUUID().toString());
+        sampling.setLocalId(UUID.randomUUID().toString());
         sampling.setId("");
         sampling.setFilePath(path);
         sampling.setFileName(file.getName());

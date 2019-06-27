@@ -438,7 +438,7 @@ public class BasicFragment extends BaseFragment {
             for (String path : paths) {
                 SamplingFile samplingFile = new SamplingFile();
                 File file = new File(path);
-                samplingFile.setLocalId("FS-" + UUID.randomUUID().toString());
+                samplingFile.setLocalId(UUID.randomUUID().toString());
                 samplingFile.setId("");
                 samplingFile.setFilePath(path);
                 samplingFile.setFileName(file.getName());

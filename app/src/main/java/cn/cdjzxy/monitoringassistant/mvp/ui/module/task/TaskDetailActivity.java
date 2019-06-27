@@ -1210,8 +1210,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     && !privateData.getImageSYT().startsWith("/Upload")) {
                 NoiseSamplingFile samplingFile = new NoiseSamplingFile();
                 File file = new File(privateData.getImageSYT());
-                samplingFile.setLocalId("FS-" + UUID.randomUUID().toString());
-                samplingFile.setId("");
+                samplingFile.setId(UUID.randomUUID().toString());
                 samplingFile.setFilePath(privateData.getImageSYT());
                 samplingFile.setFileName(file.getName());
                 samplingFile.setSamplingId(sampling.getId());
