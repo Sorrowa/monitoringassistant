@@ -17,7 +17,7 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:background="@drawable/shape_search_condition_selected"
-        android:hint="请输入监测项目名称"
+        android:hint="请输入监测项目名称或任务编号"
         android:paddingLeft="@dimen/dp_12" />
 
     <ImageView

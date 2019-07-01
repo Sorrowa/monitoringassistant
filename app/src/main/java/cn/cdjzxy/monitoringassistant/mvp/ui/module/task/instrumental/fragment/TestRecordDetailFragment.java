@@ -406,7 +406,7 @@ public class TestRecordDetailFragment extends BaseFragment {
             //四舍六入，奇进偶退
             //(样品含量-平行含量)/(样品含量+平行含量)
             double rpdValue = NumberUtil.roundingNumber((value - targetValue) / (value + targetValue) * 100);
-            return rpdValue + "";
+           return rpdValue+"";
         } catch (Exception e) {
             return "";
         }

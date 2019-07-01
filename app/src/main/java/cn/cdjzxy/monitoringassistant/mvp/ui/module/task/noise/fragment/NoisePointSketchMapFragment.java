@@ -150,7 +150,7 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
                 startMapAct();
                 break;
             case R.id.linear_clean:
-                if (mPrivateData.getImageSYT() == null && mPrivateData.getImageSYT().equals("")) {
+                if (mPrivateData.getImageSYT() == null || mPrivateData.getImageSYT().equals("")) {
                     showDeleteHintPicDialog("请您先选择一张图片或者地图编辑后，在进行删除", false);
                 } else {
                     showDeleteHintPicDialog("请问您是否确定删除这张图片？", true);
@@ -233,7 +233,6 @@ public class NoisePointSketchMapFragment extends BaseFragment implements IView {
         privateData.setImageSYT(path);
         String jsonStr = new Gson().toJson(privateData);
         mSample.setPrivateData(jsonStr);
-        updateData();
     }
 
     @Override

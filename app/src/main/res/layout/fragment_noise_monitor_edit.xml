@@ -116,7 +116,7 @@
                     style="@style/MyDrawableLinearLayoutItemStyle"
                     app:drawableRight="@mipmap/ic_has_next"
                     app:isShowRightTextView="false"
-                    app:leftText="测量时间"
+                    app:leftText="测量时间(min)"
                     app:rightEditTextHint="请输入"
                     app:rightTextHint="请选择" />
 
@@ -138,7 +138,7 @@
                     style="@style/MyDrawableLinearLayoutItemStyle"
                     app:drawableRight="@mipmap/ic_has_next"
                     app:isShowRightTextView="true"
-                    app:leftText="监测开始时间"
+                    app:leftText="开始时间"
                     app:rightEditTextHint="请输入"
                     app:rightTextHint="请选择" />
 
@@ -148,8 +148,8 @@
                     android:id="@+id/my_layout_monitor_time_end"
                     style="@style/MyDrawableLinearLayoutItemStyle"
                     app:drawableRight="@mipmap/ic_has_next"
-                    app:isShowRightTextView="true"
-                    app:leftText="监测结束时间"
+                    app:isShowRightTextView="false"
+                    app:leftText="测量时间(min)"
                     app:rightEditTextHint="请输入"
                     app:rightTextHint="请选择" />
 

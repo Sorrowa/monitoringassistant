@@ -54,7 +54,7 @@ public class GlobalConfiguration implements ConfigModule {
                 .okhttpConfiguration(new ClientModule.OkhttpConfiguration() {//配置Okhttp
                     @Override
                     public void configOkhttp(Context context, OkHttpClient.Builder okHttpBuilder) {
-                        okHttpBuilder.connectTimeout(60, TimeUnit.SECONDS);
+                        okHttpBuilder.connectTimeout(30, TimeUnit.SECONDS);
                         RetrofitUrlManager.getInstance().with(okHttpBuilder);
                     }
                 })

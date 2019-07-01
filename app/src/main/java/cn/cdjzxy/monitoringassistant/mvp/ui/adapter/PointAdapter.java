@@ -8,10 +8,10 @@ import com.wonders.health.lib.base.base.DefaultAdapter;
 
 import java.util.List;
 
+
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PointHolder;
 
 
@@ -19,17 +19,16 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.holder.PointHolder;
  * 主页tab
  */
 
-public class PointAdapter extends DefaultAdapter<ProjectDetial> {
+public class PointAdapter extends DefaultAdapter<ProjectContent> {
 
     private Context mContext;
-    private boolean isCanEdit;
     private ItemAdapterOnClickListener listener;
 
-    public PointAdapter(Context context, List<ProjectDetial> infos, boolean isCanEdit,
+    public PointAdapter(Context context, List<ProjectContent> infos,
                         ItemAdapterOnClickListener listener) {
         super(infos);
         this.mContext = context;
-        this.isCanEdit = isCanEdit;
+
         this.listener = listener;
     }
 
@@ -39,8 +38,8 @@ public class PointAdapter extends DefaultAdapter<ProjectDetial> {
     }
 
     @Override
-    public BaseHolder<ProjectDetial> getHolder(View v, int viewType) {
-        return new PointHolder(mContext, v, isCanEdit,listener);
+    public BaseHolder<ProjectContent> getHolder(View v, int viewType) {
+        return new PointHolder(mContext,v,listener);
     }
 
     public interface ItemAdapterOnClickListener {

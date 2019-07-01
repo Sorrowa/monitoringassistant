@@ -124,7 +124,7 @@ public class NoisePointPicActivity extends BaseTitileActivity implements IView {
                 if (sketchView.getRecordCount() == 0) {
                     if (isNeedSave) {
                         showSaveDialog("是否直接保存图片？",
-                                "您是想直接保存这张图片？不在上面添加任何噪声点嘛？"
+                                "您是想直接保存这张图片？不在上面添加任何噪声点吗？"
                                 , false);
                     } else {
                         showMessage("请您至少选择一张图片在进行保存");
@@ -261,6 +261,7 @@ public class NoisePointPicActivity extends BaseTitileActivity implements IView {
     }
 
     public void onBack() {
+        closeLoadingDialog();
         Intent intent = new Intent();
         intent.putExtra("filePngPath", FILE_PNG_PATH);
         setResult(Activity.RESULT_OK, intent);

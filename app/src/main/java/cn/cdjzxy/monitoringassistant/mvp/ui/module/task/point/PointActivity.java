@@ -26,6 +26,7 @@ import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
 import com.baidu.navisdk.adapter.IBNRoutePlanManager;
 import com.baidu.navisdk.adapter.IBaiduNaviManager;
 import com.wonders.health.lib.base.base.DefaultAdapter;
+import com.wonders.health.lib.base.mvp.IPresenter;
 import com.wonders.health.lib.base.mvp.IView;
 import com.wonders.health.lib.base.utils.ArtUtils;
 
@@ -33,7 +34,6 @@ import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,26 +43,28 @@ import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
-import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.PointAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.NavigationActivity;
-import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
+import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
+import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
+
 
 /**
  * 采样点位
  */
 
-public class PointActivity extends BaseTitileActivity<ApiPresenter> implements IView {
+public class PointActivity extends BaseTitileActivity implements IView {
 
     @BindView(R.id.recyclerview)
-    RecyclerView recyclerview;
+    RecyclerView recyclerView;
+
     @BindView(R.id.linear_add)
     LinearLayout linearAdd;
     private String projectId;
@@ -70,7 +72,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     private PointAdapter mPointAdapter;
 
     private Project mProject;
-    private List<ProjectDetial> mProjectDetials;
+    private List<ProjectContent> projectContentList;
     private Map<String, ProjectDetial> mStringProjectDetialMap;
 
 
@@ -91,11 +93,6 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
         titleBar.setTitleMainText("采样点位");
     }
 
-    @Nullable
-    @Override
-    public ApiPresenter obtainPresenter() {
-        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
-    }
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -105,9 +102,8 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
-        mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(projectId)).unique();
-        if (mProject.getCanSamplingEidt() &&
-                UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Add_Num)) {
+        mProject = DbHelpUtils.getDbProject(projectId);
+        if (mProject.getCanSamplingEidt()) {
             linearAdd.setVisibility(View.VISIBLE);
         } else {
             linearAdd.setVisibility(View.GONE);
@@ -115,7 +111,6 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
 
         getData();
         initPointData();
-
 
         //初始化导航
         if (initDirs()) {
@@ -125,48 +120,72 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
         initLocation();
     }
 
+    @Nullable
+    @Override
+    public IPresenter obtainPresenter() {
+        return null;
+    }
+
+
     /**
      * 初始化Tab数据
      */
     private void initPointData() {
-        ArtUtils.configRecyclerView(recyclerview, new LinearLayoutManager(this));
-        mPointAdapter = new PointAdapter(this, mProjectDetials, mProject.getCanSamplingEidt(),
+        ArtUtils.configRecyclerView(recyclerView, new LinearLayoutManager(this));
+        mPointAdapter = new PointAdapter(this, projectContentList,
                 new PointAdapter.ItemAdapterOnClickListener() {
                     @Override
                     public void onItemOnClick(EnvirPoint point) {
-                        routePlanToNavi(point);
+                        if (point == null ||
+                                point.getLatitude() == 0 ||
+                                point.getLongtitude() == 0) {
+                            showMessage("当前点位不支持导航");
+                        } else {
+                            routePlanToNavi(point);
+                        }
                     }
                 });
         mPointAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                if (mProject.getCanSamplingEidt()) {
+                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_See_Num)) {
                     Intent intent = new Intent(PointActivity.this, ProgramModifyActivity.class);
                     intent.putExtra("isAdd", false);
                     intent.putExtra("projectId", projectId);
-                    intent.putExtra("projectDetail", mProjectDetials.get(position));
+                    intent.putExtra("projectContentId", projectContentList.get(position).getId());
                     ArtUtils.startActivity(intent);
+                } else {
+                    showNoPermissionDialog("才能进行采样方案查看。", UserInfoAppRight.APP_Permission_Plan_See_Name);
                 }
-
             }
         });
-        recyclerview.setAdapter(mPointAdapter);
+        recyclerView.setAdapter(mPointAdapter);
     }
 
     @OnClick({R.id.linear_add})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.linear_add:
-                if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Add_Num)) {
-                    Intent intent = new Intent();
-                    intent.setClass(PointActivity.this, ProgramModifyActivity.class);
-                    intent.putExtra("projectId", projectId);
-                    intent.putExtra("isAdd", true);
-                    ArtUtils.startActivity(intent);
-                } else {
-                    showNoPermissionDialog("才能进行采样方案添加。", UserInfoAppRight.APP_Permission_Plan_See_Name);
-                }
+                addPoint();
                 break;
+        }
+    }
+
+    /**
+     * 添加点位
+     */
+    private void addPoint() {
+        if (!mProject.getCanSamplingEidt()) {
+            showMessage("该方案不可变更");
+        }
+        if (UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Add_Num)) {
+            Intent intent = new Intent();
+            intent.setClass(PointActivity.this, ProgramModifyActivity.class);
+            intent.putExtra("projectId", projectId);
+            intent.putExtra("isAdd", true);
+            ArtUtils.startActivity(intent);
+        } else {
+            showNoPermissionDialog("才能进行采样方案添加。", UserInfoAppRight.APP_Permission_Plan_Add_Name);
         }
     }
 
@@ -176,44 +195,49 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     }
 
     private void getData() {
-        if (mProjectDetials == null) mProjectDetials = new ArrayList<>();
-        else mProjectDetials.clear();
-        if (mStringProjectDetialMap == null) mStringProjectDetialMap = new HashMap<>();
-        else mStringProjectDetialMap.clear();
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(projectId)).list();
-        if (!CheckUtil.isEmpty(projectDetials)) {
-            for (ProjectDetial projectDetial : projectDetials) {
-                if (CheckUtil.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
-                    //mStringProjectDetialMap.put(projectDetial.getProjectContentId(), projectDetial);
-                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), newAsameProjectDetial(projectDetial));
-                } else {
-                    ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
-
-                    if (!projectDetial1.getAddressId().contains(projectDetial.getAddressId())) {
-                        projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
-                        projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
-                    }
-
-                    if (!projectDetial1.getMonItemId().contains(projectDetial.getMonItemId())) {
-                        projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
-                        projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
-                    }
-
-                    mStringProjectDetialMap.put(projectDetial1.getProjectContentId(), projectDetial1);
-                }
-            }
-
-            for (String key : mStringProjectDetialMap.keySet()) {
-                mProjectDetials.add(mStringProjectDetialMap.get(key));
-            }
-
-        }
+        projectContentList = DbHelpUtils.getProjectContentList(projectId);
+        if (RxDataTool.isEmpty(projectContentList)) projectContentList = new ArrayList<>();
         if (mPointAdapter != null) {
-            mPointAdapter.refreshInfos(mProjectDetials);
+            mPointAdapter.refreshInfos(projectContentList);
         }
-
-        //mPointAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * 组装数据
+     */
+//    private void getData() {
+//        if (mProjectDetials == null) mProjectDetials = new ArrayList<>();
+//        else mProjectDetials.clear();
+//        if (mStringProjectDetialMap == null) mStringProjectDetialMap = new HashMap<>();
+//        else mStringProjectDetialMap.clear();
+//        List<ProjectDetial> projectDetials = DbHelpUtils.getProjectDetialList(projectId);
+//        if (!RxDataTool.isEmpty(projectDetials)) {
+//            for (ProjectDetial projectDetial : projectDetials) {
+//                if (RxDataTool.isNull(mStringProjectDetialMap.get(projectDetial.getProjectContentId()))) {
+//                    mStringProjectDetialMap.put(projectDetial.getProjectContentId(), newAsameProjectDetial(projectDetial));
+//                } else {
+//                    ProjectDetial projectDetial1 = mStringProjectDetialMap.get(projectDetial.getProjectContentId());
+//                    if (!projectDetial1.getAddressId().contains(projectDetial.getAddressId())) {
+//                        projectDetial1.setAddressId(projectDetial1.getAddressId() + "," + projectDetial.getAddressId());
+//                        projectDetial1.setAddress(projectDetial1.getAddress() + "," + projectDetial.getAddress());
+//                    }
+//                    if (!projectDetial1.getMonItemId().contains(projectDetial.getMonItemId())) {
+//                        projectDetial1.setMonItemId(projectDetial1.getMonItemId() + "," + projectDetial.getMonItemId());
+//                        projectDetial1.setMonItemName(projectDetial1.getMonItemName() + "," + projectDetial.getMonItemName());
+//                    }
+//                    mStringProjectDetialMap.put(projectDetial1.getProjectContentId(), projectDetial1);
+//                }
+//            }
+//
+//            for (String key : mStringProjectDetialMap.keySet()) {
+//                mProjectDetials.add(mStringProjectDetialMap.get(key));
+//            }
+//
+//        }
+//        if (mPointAdapter != null) {
+//            mPointAdapter.refreshInfos(mProjectDetials);
+//        }
+//    }
 
     /**
      * copy a new ProjectDetial
@@ -364,7 +388,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
 
 
     public void showLoading(String msg) {
-        showLoadingDialog(msg, true);
+        showLoadingDialog(msg);
     }
 
     @Override
@@ -374,8 +398,7 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
 
     @Override
     public void showMessage(@NonNull String message) {
-        hideLoading();
-        ArtUtils.makeText(this, message);
+
     }
 
     @Override
@@ -387,6 +410,8 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
+            double latitude = location.getLatitude();    //获取纬度信息
+            double longitude = location.getLongitude();    //获取经度信息
             PointActivity.this.bdLocation = location;
         }
     }
@@ -397,17 +422,12 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
      * @param pointSelect
      */
     private void routePlanToNavi(EnvirPoint pointSelect) {
-        if (CheckUtil.isNull(pointSelect)
-                || CheckUtil.isNull(pointSelect.getLatitude())
-                || CheckUtil.isNull(pointSelect.getLongtitude())) {
-            showMessage("点位数据异常，请联系管理员后台查看");
-            return;
-        }
         if (bdLocation == null) {
 //            ArtUtils.makeText(mContext, "未定位到当前位置，请重试");
             showMessage("未定位到当前位置，请重试");
             return;
         }
+
         showLoading("正在初始化导航，请稍后...");
 //        ArtUtils.makeText(mContext, "正在计算前往"+bdLocation.getLongitude() + "，" + bdLocation.getLatitude()+"线路");
         Log.i(TAG, "routeplanToNavi: +导航定位：\n经度" + bdLocation.getLongitude() + "\n纬度" + bdLocation.getLatitude());
@@ -446,10 +466,12 @@ public class PointActivity extends BaseTitileActivity<ApiPresenter> implements I
 //                                Toast.makeText(mContext, "算路失败", Toast.LENGTH_SHORT)
 //                                        .show();
                                 showMessage("算路失败");
+                                hideLoading();
                                 break;
                             case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_TO_NAVI:
 //                                Toast.makeText(mContext, "算路成功准备进入导航", Toast.LENGTH_SHORT)
 //                                        .show();
+                                hideLoading();
                                 showMessage("算路成功准备进入导航");
                                 Intent intent = new Intent(mContext,
                                         NavigationActivity.class);

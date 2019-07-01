@@ -11,6 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
+
 /**
  * 日期处理工具
  */
@@ -291,6 +295,17 @@ public class DateUtil {
         int minute = time.get(Calendar.MINUTE);
         int second = time.get(Calendar.SECOND);
         return hour + ":" + minute + ":" + second;
+    }
+    /**
+     * 根据id查找MonItems
+     *
+     * @param id 主键id
+     * @return MonItems
+     */
+    public static MonItems getMonItemForId(String id) {
+        if (RxDataTool.isEmpty(id)) return null;
+        return DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties
+                .Id.eq(id)).unique();
     }
 
 }

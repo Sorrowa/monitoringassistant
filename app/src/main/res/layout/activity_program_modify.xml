@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg_color_ffffff"
     android:focusable="true"
     android:focusableInTouchMode="true"
@@ -9,85 +10,67 @@
 
     <include layout="@layout/layout_title_bar" />
 
-    <RelativeLayout
-        style="@style/BasicInfoItemStyle"
-        android:layout_marginTop="@dimen/dp_4">
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_tag"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="true"
+        app:leftText="要素"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择"/>
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="要素" />
+    <include layout="@layout/view_line" />
 
-        <TextView
-            android:id="@+id/tv_tag"
-            style="@style/BasicInfoItemTextViewStyle" />
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_point"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="true"
+        app:leftText="采样点位"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择"/>
 
-    </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <include layout="@layout/view_line" />
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="采样点位" />
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_monItem"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="true"
+        app:leftText="监测项目"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择"/>
 
-        <TextView
-            android:id="@+id/tv_point"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:layout_marginLeft="100dp"
-            android:ellipsize="end"
-            android:maxLines="2" />
 
-    </RelativeLayout>
+    <include layout="@layout/view_line" />
 
-    <include layout="@layout/view_line_basic_info" />
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_days"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="监测天数"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择"/>
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="监测项目" />
+    <include layout="@layout/view_line" />
 
-        <TextView
-            android:id="@+id/tv_monitem"
-            style="@style/BasicInfoItemTextViewStyle"
-            android:layout_marginLeft="100dp"
-            android:ellipsize="end"
-            android:maxLines="2" />
+    <cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout
+        android:id="@+id/my_layout_period"
+        style="@style/MyDrawableLinearLayoutItemStyle"
+        app:drawableRight="@mipmap/ic_has_next"
+        app:isShowRightTextView="false"
+        app:leftText="监测频次"
+        app:rightEditTextHint="请输入"
+        app:rightTextHint="请选择"/>
 
-    </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
 
-    <RelativeLayout style="@style/BasicInfoItemStyle">
+    <include layout="@layout/view_line" />
 
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="监测天数" />
-
-        <EditText
-            android:id="@+id/et_days"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:inputType="number" />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
-
-    <RelativeLayout style="@style/BasicInfoItemStyle">
-
-        <TextView
-            style="@style/BasicInfoItemNameStyle"
-            android:text="监测频次" />
-
-        <EditText
-            android:id="@+id/et_period"
-            style="@style/BasicInfoItemEditTextStyle"
-            android:inputType="number" />
-
-    </RelativeLayout>
-
-    <include layout="@layout/view_line_basic_info" />
 
     <RelativeLayout style="@style/BasicInfoItemStyle">
 
@@ -101,7 +84,7 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/view_line_basic_info" />
+    <include layout="@layout/view_line" />
 
     <View
         android:layout_width="match_parent"

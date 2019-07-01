@@ -9,6 +9,7 @@ import butterknife.BindView;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Devices;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DateUtils;
 
 /**
  * 主页tab
@@ -47,7 +48,7 @@ public class DeviceHolder extends BaseHolder<Devices> {
             mTvValidityPeriod.setVisibility(View.INVISIBLE);
         } else {
             mTvValidityPeriod.setVisibility(View.VISIBLE);
-            mTvValidityPeriod.setText("有效期：" + data.getExpireDate());
+            mTvValidityPeriod.setText("有效期：" +DateUtils.strGetDate(data.getExpireDate()) );
         }
     }
 

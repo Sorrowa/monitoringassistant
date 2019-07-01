@@ -192,7 +192,6 @@ public class NoiseSourceEditFragment extends BaseFragment implements IView {
 
             mSample.setPrivateData(new Gson().toJson(mPrivateData));
         }
-        saveMySample();
         EventBus.getDefault().post("1", NOISE_FRAGMENT_SOURCE_SHARE);
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_SOURCE, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
 

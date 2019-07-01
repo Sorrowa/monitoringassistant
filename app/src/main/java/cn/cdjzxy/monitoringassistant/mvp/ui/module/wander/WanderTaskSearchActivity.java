@@ -47,7 +47,7 @@ import static com.wonders.health.lib.base.utils.Preconditions.checkNotNull;
  */
 public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> implements IView {
 
-    private EditText mEtSearch;
+
     @BindView(R.id.rv_type)
     RecyclerView rvType;
     @BindView(R.id.rv_history)
@@ -197,7 +197,7 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
         mSearchHistoryAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int viewType, Object data, int position) {
-                mEtSearch.setText((String) data);
+                etSearch.setText((String) data);
             }
         });
         rvHistory.setAdapter(mSearchHistoryAdapter);
@@ -230,7 +230,6 @@ public class WanderTaskSearchActivity extends BaseTitileActivity<ApiPresenter> i
      * @param map
      */
     private void search(Map<String, String> map) {
-        showLoading();
         if (NetworkUtil.isNetworkAvailable(this)) {
             showLoading();
             mPresenter.getSampleStorageProject(map, Message.obtain(this, new Object()), true);

@@ -7,10 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnterRelatePoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Methods;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItemMethodRelation;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.FormSelect;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
@@ -18,7 +23,10 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetail;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingFormStand;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnterRelatePointDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.FormSelectDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MethodsDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemMethodRelationDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.MonItemsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
@@ -28,6 +36,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDetailYQFsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingFormStandDao;
+import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 
@@ -47,6 +56,19 @@ public class DbHelpUtils {
     public static Project getDbProject(String id) {
         if (CheckUtil.isEmpty(id)) return new Project();
         return DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.Id.eq(id)).unique();
+    }
+
+    /**
+     * 通过主键id 查找ProjectContent
+     *
+     * @param id 主键id
+     * @return ProjectContent
+     */
+    public static ProjectContent getProjectContent(String id) {
+        if (RxDataTool.isEmpty(id)) return null;
+        return DBHelper.get().getProjectContentDao().
+                queryBuilder().where(ProjectContentDao.Properties.Id.eq(id)).unique();
+
     }
 
     public static FormSelect getDbFormSelect(String id) {
@@ -369,4 +391,235 @@ public class DbHelpUtils {
         else return DBHelper.get().getSamplingDetailYQFsDao().queryBuilder().
                 where(SamplingDetailYQFsDao.Properties.Id.eq(id)).unique();
     }
+
+
+    /**
+     * 根据所有项目获方法
+     *
+     * @return 监测方法list
+     */
+    public static List<MonItemMethodRelation> getMonItemMethodRelationAll() {
+        return DBHelper.get().getMonItemMethodRelationDao().queryBuilder().list();
+    }
+
+    /**
+     * 根据id查找MonItems
+     *
+     * @param id 主键id
+     * @return MonItems
+     */
+    public static MonItems getMonItemForId(String id) {
+        if (RxDataTool.isEmpty(id)) return null;
+        return DBHelper.get().getMonItemsDao().queryBuilder().where(MonItemsDao.Properties
+                .Id.eq(id)).unique();
+    }
+
+
+    /**
+     * 获取环境点位
+     *
+     * @param id 点位ID
+     * @return 环境质量点位信息
+     */
+    public static EnvirPoint getEnvirPoint(String id) {
+        if (RxDataTool.isEmpty(id)) return null;
+        return DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.Properties.
+                Id.eq(id)).unique();
+    }
+
+
+    /**
+     * 获取环境点位
+     *
+     * @param tagIds tagId
+     * @return 环境质量点位信息
+     */
+    public static List<EnvirPoint> getEnvirPointListForTagId(List<String> tagIds) {
+        return DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.
+                Properties.TagId.in(tagIds)).list();
+    }
+    public static List<EnvirPoint> getEnvirPointListForTagId(String tagId) {
+        return DBHelper.get().getEnvirPointDao().queryBuilder().where(EnvirPointDao.
+                Properties.TagId.in(tagId)).list();
+    }
+    /**
+     * 获取污染源点位
+     *
+     * @param mRcvId 监测单位ID
+     * @param ids    点位集合
+     * @return List<EnterRelatePoint>
+     */
+    public static List<EnterRelatePoint> getEnterRelatePointList(String mRcvId, List<String> ids) {
+        return DBHelper
+                .get()
+                .getEnterRelatePointDao()
+                .queryBuilder()
+                .where(EnterRelatePointDao.Properties.EnterPriseId.eq(mRcvId), EnterRelatePointDao.
+                        Properties.Id.in(ids))
+                //.where(EnterRelatePointDao.Properties.Id.in(pointIds))
+                .list();
+    }
+
+    /**
+     * 获取污染源点位
+     *
+     * @param id 主键ID
+     * @return List<EnterRelatePoint>
+     */
+    public static EnterRelatePoint getEnterRelatePoint(String id) {
+        return DBHelper
+                .get()
+                .getEnterRelatePointDao()
+                .queryBuilder()
+                .where(EnterRelatePointDao.Properties.Id.eq(id))
+                //.where(EnterRelatePointDao.Properties.Id.in(pointIds))
+                .unique();
+    }
+    /**
+     * 通过项目id  查找项目监测方法
+     *
+     * @param monItemId
+     * @return
+     */
+    public static List<MonItemMethodRelation> getMonItemMethodRelationListForMonItemId(String monItemId) {
+        return DBHelper.get().getMonItemMethodRelationDao().queryBuilder().where(
+                MonItemMethodRelationDao.Properties.MonItemId.eq(monItemId)
+        ).list();
+    }
+    /**
+     * 根据方法id获取方法详情
+     *
+     * @param methodId 方法id集合
+     * @return 方法详情集合
+     */
+    public static Methods getMethod(String methodId) {
+        if (RxDataTool.isEmpty(methodId)) return new Methods();
+        return DBHelper.get().getMethodsDao().
+                queryBuilder().where(MethodsDao.Properties.Id.
+                eq(methodId)).unique();
+    }
+
+    /**
+     * 查找 ProjectDetial 数据
+     *
+     * @param projectId        任务id
+     * @param projectContentId projectContentId
+     * @return List<ProjectDetial>
+     */
+    public static List<ProjectDetial> getProjectDetailList(String projectId, String projectContentId) {
+        if (projectId == null || projectId.equals("")) return new ArrayList<>();
+        return DBHelper.get().getProjectDetialDao().queryBuilder()
+                .where(ProjectDetialDao.Properties.ProjectId.eq(projectId),
+                        ProjectDetialDao.Properties.ProjectContentId.eq(projectContentId)).list();
+
+    }
+
+    /**
+     * 获取环境点位
+     *
+     * @param tagId 点位ID
+     * @return 环境质量点位信息
+     */
+    public static List<EnvirPoint> getEnvirPointList(String tagId, List<String> pointIds) {
+        return DBHelper
+                .get()
+                .getEnvirPointDao()
+                .queryBuilder()
+                .where(EnvirPointDao.Properties.TagId.eq(tagId), EnvirPointDao.Properties.Id.in(pointIds))
+                //.where(EnvirPointDao.Properties.Id.in(pointIds))
+                .list();
+    }
+    /**
+     * 获取环境点位
+     *
+     * @param idList 点位ID
+     * @return 环境质量点位信息
+     */
+    public static List<EnvirPoint> getEnvirPointList(List<String> idList) {
+        return DBHelper.get().getEnvirPointDao().queryBuilder().where(
+                EnvirPointDao.Properties.Id.in(idList))
+                .list();
+    }
+    /**
+     * 通过{TagsDao.Properties.Id}查找数据库所有的TagsDao表
+     * TagsDao 要素分类表
+     *
+     * @param tagId 要素分类表
+     * @return Tags 要素
+     */
+    public static Tags getTags(String tagId) {
+        return DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(tagId)).unique();
+    }
+    /**
+     * 通过{TagsDao.Properties.Id}查找数据库所有的TagsDao表
+     * TagsDao 要素分类表
+     *
+     * @param stringList 要素分类表
+     * @return Tags 要素
+     */
+    public static List<Tags> getTags(List<String> stringList) {
+        return DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.in(stringList)).list();
+    }
+
+    /**
+     * 查找数据库表单分类
+     *
+     * @return 表单分类集合
+     */
+    public static List<Form> getFormList() {
+        return DBHelper.get().getFormDao().loadAll();
+    }
+
+
+    public static List<Tags> getTagListForParentId(String parentId, int level) {
+        return DBHelper.get().getTagsDao().queryBuilder().
+                where(TagsDao.Properties.ParentId.eq(parentId), TagsDao.Properties.Level.eq(level)).list();
+    }
+    /**
+     * 通过{@FormSelectDao.Properties.tagParentId}查找FormSelect表
+     * FormSelect 表单分类表（采样单分类）
+     *
+     * @param tagParentId tagParentId
+     * @return List<FormSelect>
+     */
+    public static List<FormSelect> getDbFormSelectForTagParentId(String tagParentId) {
+        if (RxDataTool.isEmpty(tagParentId)) return new ArrayList<>();
+        return DBHelper.get().getFormSelectDao().queryBuilder().where(FormSelectDao.Properties.
+                TagParentId.eq(tagParentId)).list();
+    }
+
+    /**
+     * 获取环境点位
+     *
+     * @param tagId 点位ID
+     * @return 环境质量点位信息
+     */
+    public static List<EnvirPoint> getEnvirPointListNotInIds(String tagId, List<String> ids) {
+        return DBHelper
+                .get()
+                .getEnvirPointDao()
+                .queryBuilder()
+                .where(EnvirPointDao.Properties.TagId.eq(tagId), EnvirPointDao.Properties.Id.notIn(ids))
+                //.where(EnvirPointDao.Properties.Id.in(pointIds))
+                .list();
+    }
+
+    /**
+     * 获取污染源点位
+     *
+     * @param mRcvId 监测单位ID
+     * @param ids    点位集合
+     * @return List<EnterRelatePoint>
+     */
+    public static List<EnterRelatePoint> getEnterRelatePointListNotIds(String mRcvId, List<String> ids) {
+        return DBHelper
+                .get()
+                .getEnterRelatePointDao()
+                .queryBuilder()
+                .where(EnterRelatePointDao.Properties.EnterPriseId.eq(mRcvId), EnterRelatePointDao.
+                        Properties.Id.notIn(ids))
+                //.where(EnterRelatePointDao.Properties.Id.in(pointIds))
+                .list();
+    }
+
 }

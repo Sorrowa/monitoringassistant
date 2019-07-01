@@ -197,7 +197,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
 
     @OnClick({R.id.btn_back, R.id.linear_delete, R.id.linear_save, R.id.relate_layout,
             R.id.my_layout_monitor_address, R.id.my_layout_monitor_time_first_start, R.id.my_layout_monitor_time_first_end,
-            R.id.my_layout_monitor_time_start, R.id.my_layout_monitor_time_end})
+            R.id.my_layout_monitor_time_start})
     public void onClick(View v) {
         hideSoftInput();
         if (v.getId() == R.id.btn_back) {
@@ -229,9 +229,9 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
                 case R.id.my_layout_monitor_time_start:
                     showDateSelectDialog(tvMonitorTimeStart);
                     break;
-                case R.id.my_layout_monitor_time_end:
-                    showDateSelectDialog(tvMonitorTimeEnd);
-                    break;
+//                case R.id.my_layout_monitor_time_end:
+//                    showDateSelectDialog(tvMonitorTimeEnd);
+//                    break;
             }
     }
 
@@ -239,23 +239,14 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
      * 选择点位
      */
     private void choiceAddress() {
+        if (pickerView.isShowing()) {
+            return;
+        }
         List<String> stringList = new ArrayList<>();
         List<SamplingDetail> list = mSample.getSamplingDetailResults();
         if (mPrivateData != null && mPrivateData.getMianNioseAddr() != null) {
             for (NoisePrivateData.MianNioseAddrBean bean : mPrivateData.getMianNioseAddr()) {
-                boolean isHave = false;
-                if (!CheckUtil.isEmpty(list)) {
-                    for (SamplingDetail detail : list) {
-                        if (detail.getAddressName().equals(bean.getAddressName())) {
-                            isHave=true;
-                            break;
-                        }
-                    }
-                }
-                if (!isHave){
-                    stringList.add(bean.getAddrCode());
-                }
-
+                stringList.add(bean.getAddrCode());
             }
         }
         if (stringList.size() == 0) stringList.add("测试数据");
@@ -302,7 +293,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
         privateData.setZTestTime(tvMonitorTimeFirstStart.getRightTextViewStr());
         privateData.setZEndTestTime(tvMonitorTimeFirstEnd.getEditTextStr());
         privateData.setYTestTime(tvMonitorTimeStart.getRightTextViewStr());
-        privateData.setYEndTestTime(tvMonitorTimeEnd.getRightTextViewStr());
+        privateData.setYEndTestTime(tvMonitorTimeEnd.getEditTextStr());
         privateData.setYBackgroundValue(edMonitorBgData.getEditTextStr());
         privateData.setYCorrectedValue(edMonitorEditData.getEditTextStr());
         if (mSample != null) {
@@ -325,7 +316,6 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
                 mSample.getSamplingDetailResults().set(position, detail);
             }
         }
-        saveMySample();
         hideLoading();
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_MONITOR, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
         EventBus.getDefault().post("0", NOISE_FRAGMENT_MONITOR_SHARE);

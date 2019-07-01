@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding3.view.RxView;
 import com.wonders.health.lib.base.base.BaseHolder;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -19,6 +20,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TaskDetailAdapter;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
 import io.reactivex.functions.Consumer;
 import kotlin.Unit;
 
@@ -29,25 +31,25 @@ import kotlin.Unit;
 public class TaskDetailHolder extends BaseHolder<Sampling> {
 
     @BindView(R.id.ivChoose)
-    ImageView    mIvCb;
+    ImageView mIvCb;
     @BindView(R.id.iv_type)
-    ImageView    mIvType;
+    ImageView mIvType;
     @BindView(R.id.iv_upload)
-    ImageView    mIvUpload;
+    ImageView mIvUpload;
     @BindView(R.id.layout_container)
     LinearLayout mLayoutContainer;
     @BindView(R.id.tv_num)
-    TextView     mTvNum;
+    TextView mTvNum;
     @BindView(R.id.tv_status)
-    TextView     mTvStatus;
+    TextView mTvStatus;
     @BindView(R.id.tv_name)
-    TextView     mTvName;
+    TextView mTvName;
     @BindView(R.id.tv_submit_time)
-    TextView     mSubmitTime;
+    TextView mSubmitTime;
     @BindView(R.id.tv_review_time)
-    TextView     mTvReviewTime;
+    TextView mTvReviewTime;
     @BindView(R.id.tv_point)
-    TextView     mPoint;
+    TextView mPoint;
 
     private TaskDetailAdapter.OnSamplingListener onSamplingListener;
 
@@ -130,7 +132,27 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
         mTvNum.setText(data.getSamplingNo());
         mTvStatus.setText(data.getStatusName());
         mTvName.setText(data.getFormName());
-        mPoint.setText(data.getAddressName());
+        if (CheckUtil.isEmpty(data.getAddressName())) {
+            mPoint.setText("");
+        } else {
+            String address;
+            List<String> addressList = RxDataTool.strToList(data.getAddressName());
+            StringBuffer stringBuffer = new StringBuffer();
+            for (int i = 0; i < addressList.size(); i++) {
+                stringBuffer.append(addressList.get(i));
+                if (stringBuffer.length() < 15) {
+                    stringBuffer.append(",");
+                } else {
+                    stringBuffer.append("。。。");
+                    break;
+                }
+            }
+            if (stringBuffer.lastIndexOf(",") > 0) {
+                stringBuffer.deleteCharAt(stringBuffer.lastIndexOf(","));
+            }
+            address = stringBuffer.toString();
+            mPoint.setText(address);
+        }
 
         if (data.getSamplingUserId().contains(UserInfoHelper.get().getUserInfo().getId())) {
             mIvType.setBackgroundResource(R.drawable.shape_task_detail_blue);

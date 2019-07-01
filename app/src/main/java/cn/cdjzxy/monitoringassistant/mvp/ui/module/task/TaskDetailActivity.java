@@ -90,6 +90,7 @@ import cn.cdjzxy.monitoringassistant.utils.MyTextUtils;
 import cn.cdjzxy.monitoringassistant.utils.NetworkUtil;
 import cn.cdjzxy.monitoringassistant.utils.SamplingUtil;
 import cn.cdjzxy.monitoringassistant.utils.SubmitDataUtil;
+import cn.cdjzxy.monitoringassistant.utils.UploadDataUtil;
 import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 import cn.cdjzxy.monitoringassistant.widgets.IosDialog;
 import cn.cdjzxy.monitoringassistant.widgets.OperateTipsDialog;
@@ -355,9 +356,9 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                 }
                 DBHelper.get().getSamplingContentDao().updateInTx(samplingContentList);
             }
-            List<SamplingDetailYQFs> yqFsList=DbHelpUtils.getSamplingDetailYQFsList(sampling.getId());
-            if (!CheckUtil.isEmpty(yqFsList)){
-                for (SamplingDetailYQFs yqFs:yqFsList){
+            List<SamplingDetailYQFs> yqFsList = DbHelpUtils.getSamplingDetailYQFsList(sampling.getId());
+            if (!CheckUtil.isEmpty(yqFsList)) {
+                for (SamplingDetailYQFs yqFs : yqFsList) {
                     yqFs.setSamplingId(id);
                     DBHelper.get().getSamplingDetailYQFsDao().update(yqFs);
                 }
@@ -628,7 +629,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                     return;
                 }
 
-               // 上传数据
+                // 上传数据
                 uploadSampFormData(sampling, false);
 //                MyTextUtils.uploadMySampleForData(mPresenter,mContext);
             }
@@ -638,8 +639,6 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
         mTagId = mTags.get(0).getId();
         getSampling(mTagId);
     }
-
-
 
 
     @OnClick({R.id.btn_sampling_point, R.id.btn_add_sampling, R.id.btn_submit, R.id.cb_all})
@@ -894,7 +893,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param isCompelSubmit:标志是否强制提交
      */
     private void uploadProjecteContentData(boolean isCompelSubmit) {
-        ProjectPlan projectPlan = SubmitDataUtil.setUpProjectPlan(mProject);
+        ProjectPlan projectPlan =UploadDataUtil.setUploadProjectContextData(mProject.getId());
         projectPlan.setIsCompelSubmit(isCompelSubmit);
         mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
@@ -1289,11 +1288,11 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         public void accept(Throwable throwable) {
 //                            throwable.printStackTrace();
                             //当压缩过程出现问题时调用
-                            if (handler != null) {
-                                handler.onFailed("图片压缩失败：" + throwable.getMessage());
-                            }
+                            setUploadAltInfo("图片压缩失败，正在准备上传原图");
+                            uploadFiles(sampling, handler, sourceFiles, fileSet);
                         }
                     });
+           // uploadFiles(sampling, handler, sourceFiles, fileSet);
         }
 
 //        //鲁班异步压缩，压缩结果图片还是太大

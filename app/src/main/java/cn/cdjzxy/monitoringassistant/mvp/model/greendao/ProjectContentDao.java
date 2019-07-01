@@ -35,6 +35,7 @@ public class ProjectContentDao extends AbstractDao<ProjectContent, String> {
         public final static Property TagParentName = new Property(8, String.class, "TagParentName", false, "TAG_PARENT_NAME");
         public final static Property Days = new Property(9, int.class, "Days", false, "DAYS");
         public final static Property Period = new Property(10, int.class, "Period", false, "PERIOD");
+        public final static Property MonItemIds = new Property(11, String.class, "MonItemIds", false, "MON_ITEM_IDS");
     }
 
 
@@ -60,7 +61,8 @@ public class ProjectContentDao extends AbstractDao<ProjectContent, String> {
                 "\"TAG_PARENT_ID\" TEXT," + // 7: TagParentId
                 "\"TAG_PARENT_NAME\" TEXT," + // 8: TagParentName
                 "\"DAYS\" INTEGER NOT NULL ," + // 9: Days
-                "\"PERIOD\" INTEGER NOT NULL );"); // 10: Period
+                "\"PERIOD\" INTEGER NOT NULL ," + // 10: Period
+                "\"MON_ITEM_IDS\" TEXT);"); // 11: MonItemIds
     }
 
     /** Drops the underlying database table. */
@@ -119,6 +121,11 @@ public class ProjectContentDao extends AbstractDao<ProjectContent, String> {
         }
         stmt.bindLong(10, entity.getDays());
         stmt.bindLong(11, entity.getPeriod());
+ 
+        String MonItemIds = entity.getMonItemIds();
+        if (MonItemIds != null) {
+            stmt.bindString(12, MonItemIds);
+        }
     }
 
     @Override
@@ -171,6 +178,11 @@ public class ProjectContentDao extends AbstractDao<ProjectContent, String> {
         }
         stmt.bindLong(10, entity.getDays());
         stmt.bindLong(11, entity.getPeriod());
+ 
+        String MonItemIds = entity.getMonItemIds();
+        if (MonItemIds != null) {
+            stmt.bindString(12, MonItemIds);
+        }
     }
 
     @Override
@@ -191,7 +203,8 @@ public class ProjectContentDao extends AbstractDao<ProjectContent, String> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // TagParentId
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // TagParentName
             cursor.getInt(offset + 9), // Days
-            cursor.getInt(offset + 10) // Period
+            cursor.getInt(offset + 10), // Period
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11) // MonItemIds
         );
         return entity;
     }
@@ -209,6 +222,7 @@ public class ProjectContentDao extends AbstractDao<ProjectContent, String> {
         entity.setTagParentName(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setDays(cursor.getInt(offset + 9));
         entity.setPeriod(cursor.getInt(offset + 10));
+        entity.setMonItemIds(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
      }
     
     @Override

@@ -1373,7 +1373,7 @@ public class ApiPresenter extends BasePresenter<ApiRepository> {
                         msg.what = Message.RESULT_OK;
                         msg.obj = baseResponse.getMessage();
                         //提交采样方案成功后不提示
-                        //msg.handleMessageToTarget();
+                        msg.handleMessageToTarget();
                     }
 
                     @Override

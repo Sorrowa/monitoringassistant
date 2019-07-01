@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CheckBox;
 
 import com.aries.ui.view.title.TitleBarView;
 import com.wonders.health.lib.base.base.DefaultAdapter;
@@ -34,7 +35,8 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
-
+    @BindView(R.id.check_box)
+    CheckBox checkBox;
     private TaskAdapter mTaskAdapter;
 
     private String keyword;
@@ -67,6 +69,7 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+        checkBox.setVisibility(View.GONE);
         keyword = getIntent().getStringExtra("keyword");
         startDate = getIntent().getStringExtra("startDate");
         endDate = getIntent().getStringExtra("endDate");

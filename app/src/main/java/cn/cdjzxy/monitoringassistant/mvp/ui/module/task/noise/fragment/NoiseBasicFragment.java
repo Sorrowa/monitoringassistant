@@ -129,7 +129,19 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
         tvWeatherState.setRightTextStr(mSample.getWeather());
         edWingSpeed.setEditTextStr(mSample.getWindSpeed());
         tvMonitorForm.setRightTextStr(mSample.getMethodName());
-        tvMonitorDeviceName.setRightTextStr(mSample.getDeviceName());
+        StringBuffer deviceName = new StringBuffer();
+        if (mSample.getDeviceName() != null) {
+            if (mPrivateData == null) {
+                deviceName.append(mSample.getDeviceName());
+            } else if (mPrivateData.getSourceWay() != null) {
+                deviceName.append(mSample.getDeviceName()).append("(").append(mPrivateData.getSourceWay());
+                if (mPrivateData.getSourceDate() != null) {
+                    deviceName.append(mPrivateData.getSourceDate());
+                }
+                deviceName.append(")");
+            }
+        }
+        tvMonitorDeviceName.setRightTextStr(deviceName.toString());
         edeRemarks.setText(mSample.getComment());
         if (mPrivateData != null && mPrivateData.getClientName() != null) {
             edFactoryName.setEditTextStr(mPrivateData.getClientName());

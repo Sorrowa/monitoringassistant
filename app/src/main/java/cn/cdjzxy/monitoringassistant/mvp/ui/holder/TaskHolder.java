@@ -87,7 +87,8 @@ public class TaskHolder extends BaseHolder<Project> {
         StringBuilder monItems = new StringBuilder();
         StringBuilder points = new StringBuilder();
 
-        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
+        List<ProjectDetial> projectDetials = DBHelper.get().getProjectDetialDao().queryBuilder().
+                where(ProjectDetialDao.Properties.ProjectId.eq(data.getId())).list();
         if (!CheckUtil.isEmpty(projectDetials)) {
             for (ProjectDetial projectDetial : projectDetials) {
                 if (!monItems.toString().contains(projectDetial.getMonItemName())) {

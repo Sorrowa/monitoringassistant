@@ -8,7 +8,7 @@ import lombok.Data;
 public class ProjectPlan {
     private String               Id;
     private boolean              IsCompelSubmit;
-    private List<ProjectContent> ProjectContents;
+    private List<ProjectContents> ProjectContents;
 
     public String getId() {
         return Id;
@@ -30,11 +30,11 @@ public class ProjectPlan {
         IsCompelSubmit = compelSubmit;
     }
 
-    public List<ProjectContent> getProjectContents() {
+    public List<ProjectContents> getProjectContents() {
         return ProjectContents;
     }
 
-    public void setProjectContents(List<ProjectContent> projectContents) {
+    public void setProjectContents(List<ProjectContents> projectContents) {
         ProjectContents = projectContents;
     }
 }

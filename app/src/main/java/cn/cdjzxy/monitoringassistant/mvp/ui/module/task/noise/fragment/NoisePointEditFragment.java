@@ -38,6 +38,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseFragment;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.EnterRelatePointSelectActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point.PointSelectActivity;
+import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
 
 import static cn.cdjzxy.monitoringassistant.mvp.ui.module.task.noise.activity.NoiseFactoryActivity.NOISE_FRAGMENT_INT_POINT;
@@ -194,10 +195,24 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
             @Override
             public void onActivityResult(int resultCode, Intent data) {
                 if (resultCode == Activity.RESULT_OK) {
-                    mSample.setAddressName(data.getStringExtra("Address"));
-                    mSample.setAddressId(data.getStringExtra("AddressId"));
-                    mSample.setAddressNo(data.getStringExtra("AddressNo"));
-                    tvPointAddress.setRightTextStr(mSample.getAddressName());
+                    if (addrBean == null) {
+                        addrBean = new NoisePrivateData.MianNioseAddrBean();
+                    }
+                    String addressId = data.getStringExtra("AddressId");
+                    if (!CheckUtil.isEmpty(mPrivateData.getMianNioseAddr())) {
+                        for (NoisePrivateData.MianNioseAddrBean bean : mPrivateData.getMianNioseAddr()) {
+                            if (bean.getAddresssId().equals(addressId) || bean.getAddresssId().contains(addressId)) {
+                                showMessage("该点位已被选择");
+                                return;
+                            }
+                        }
+                    }
+                    String addressName = data.getStringExtra("Address");
+                    String code = data.getStringExtra("AddressNo");
+                    addrBean.setAddressName(CheckUtil.isEmpty(addressName) ? "" : addressName);
+                    addrBean.setAddresssId(CheckUtil.isNull(addressId) ? "" : addressId);
+                    addrBean.setAddrCode(CheckUtil.isNull(code) ? "" : code);
+                    tvPointAddress.setRightTextStr(addressName);
                 }
             }
         });
@@ -227,7 +242,6 @@ public class NoisePointEditFragment extends BaseFragment implements IView {
 
             mSample.setPrivateData(new Gson().toJson(mPrivateData));
         }
-        NoiseFactoryActivity.saveMySample();
         EventBus.getDefault().post("0", NOISE_FRAGMENT_POINT_SHARE);
         EventBus.getDefault().post(NOISE_FRAGMENT_INT_POINT, EventBusTags.TAG_NOISE_FRAGMENT_TYPE);
     }

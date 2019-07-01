@@ -170,7 +170,11 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
 
 
     private void showSaveDataDialog() {
-        if (!mSample.getIsCanEdit()) return;
+        if (!mSample.getIsCanEdit()) {
+            isNeedSave = false;
+            finish();
+        }
+
         final Dialog dialog = new AlertDialog.Builder(this)
                 .setMessage("有数据更改，是否本地保存？")
                 .setPositiveButton("保存", new DialogInterface.OnClickListener() {// 积极
@@ -523,6 +527,7 @@ public class NoiseFactoryActivity extends BaseTitileActivity<ApiPresenter> imple
     public static void updateData() {
         mSample = DBHelper.get().getSamplingDao().queryBuilder().
                 where(SamplingDao.Properties.Id.eq(mSample.getId())).unique();
+        if (mSample == null) return;
         Gson gson = new Gson();
         mPrivateData = gson.fromJson(mSample.getPrivateData(), NoisePrivateData.class);
         if (mPrivateData == null) {

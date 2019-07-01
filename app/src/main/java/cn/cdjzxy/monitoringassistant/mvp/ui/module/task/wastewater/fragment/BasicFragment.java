@@ -267,7 +267,8 @@ public class BasicFragment extends BaseFragment {
                     text_view_tv_arrow);
             tv_flow_method.setEditTextStr(mSample.getTransfer());
             tv_flow_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
-            tv_receive_date.setRightTextStr(DateUtils.strGetTimeShort(mSample.getSendSampTime()));
+            tv_receive_date.setRightTextStr(CheckUtil.isEmpty(mSample.getReciveTime()) ? ""
+                    : mSample.getReciveTime());
             setViewStyle(false, tv_arrow);
             //图片信息
             if (mSample.getSamplingFiless() != null && mSample.getSamplingFiless().size() > 0) {
@@ -342,7 +343,8 @@ public class BasicFragment extends BaseFragment {
                 List<SamplingFile> list = new ArrayList<>();
                 list = sampleFiles;
                 list.remove(0);
-                bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS, (ArrayList<SamplingFile>) list);
+                bundle.putParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS,
+                        (ArrayList<SamplingFile>) list);
                 intent.putExtra(PreviewActivity.PREVIEW_PHOTOS, bundle);
                 intent.putExtra(PreviewActivity.POSITION, position);
                 getActivity().startActivityForResult(intent, PirView_request_Code);
@@ -434,7 +436,7 @@ public class BasicFragment extends BaseFragment {
         }
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {//添加图片
             List<String> paths = Matisse.obtainPathResult(data);
-            ArtUtils.makeText(getContext(), paths.toString());
+            // ArtUtils.makeText(getContext(), paths.toString());
             for (String path : paths) {
                 SamplingFile samplingFile = new SamplingFile();
                 File file = new File(path);
@@ -450,13 +452,15 @@ public class BasicFragment extends BaseFragment {
             sampleFileAdapter.notifyDataSetChanged();
         } else if (requestCode == PirView_request_Code
                 && resultCode == PreviewActivity.BACK_RESULT_CODE) {//预览图片
-            Bundle bundle = data.getBundleExtra(PreviewActivity.PREVIEW_PHOTOS);
-            List<SamplingFile> list = bundle.getParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS);
-            mSample.setSamplingFiless(list);
             SamplingFile file = sampleFiles.get(0);
             sampleFiles.clear();
             sampleFiles.add(file);
-            sampleFiles.addAll(list);
+            Bundle bundle = data.getBundleExtra(PreviewActivity.PREVIEW_PHOTOS);
+            List<SamplingFile> list = bundle.getParcelableArrayList(PreviewActivity.PREVIEW_PHOTOS);
+            if (!CheckUtil.isEmpty(list)) {
+                mSample.setSamplingFiless(list);
+                sampleFiles.addAll(list);
+            }
             sampleFileAdapter.notifyDataSetChanged();
         }
     }

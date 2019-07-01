@@ -4,6 +4,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Transient;
 
 
 @Entity
@@ -35,6 +36,10 @@ public class ProjectContent {
     private String TagParentName;
     private int Days;
     private int Period;
+
+    @Transient
+    private String MonItemNames;
+    private String MonItemIds;
     @Keep()
     public ProjectContent(String id, String projectId, String updateTime, String tagId, String tagName, String addressIds, String address, String tagParentId, String tagParentName, int days, int period) {
         Id = id;
@@ -51,6 +56,22 @@ public class ProjectContent {
     }
     @Keep()
     public ProjectContent() {
+    }
+    @Generated(hash = 1983004678)
+    public ProjectContent(String Id, String ProjectId, String UpdateTime, String TagId, String TagName, String AddressIds, String Address, String TagParentId, String TagParentName, int Days, int Period,
+            String MonItemIds) {
+        this.Id = Id;
+        this.ProjectId = ProjectId;
+        this.UpdateTime = UpdateTime;
+        this.TagId = TagId;
+        this.TagName = TagName;
+        this.AddressIds = AddressIds;
+        this.Address = Address;
+        this.TagParentId = TagParentId;
+        this.TagParentName = TagParentName;
+        this.Days = Days;
+        this.Period = Period;
+        this.MonItemIds = MonItemIds;
     }
 
     public String getId() {
@@ -139,5 +160,20 @@ public class ProjectContent {
 
     public void setPeriod(int Period) {
         this.Period = Period;
+    }
+
+    public String getMonItemIds() {
+        return this.MonItemIds;
+    }
+    public void setMonItemIds(String MonItemIds) {
+        this.MonItemIds = MonItemIds;
+    }
+
+    public String getMonItemNames() {
+        return MonItemNames;
+    }
+
+    public void setMonItemNames(String monItemNames) {
+        MonItemNames = monItemNames;
     }
 }

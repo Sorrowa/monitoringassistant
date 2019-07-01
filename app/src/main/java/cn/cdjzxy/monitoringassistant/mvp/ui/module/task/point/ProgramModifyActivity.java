@@ -3,27 +3,23 @@ package cn.cdjzxy.monitoringassistant.mvp.ui.module.task.point;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aries.ui.view.title.TitleBarView;
-import com.wonders.health.lib.base.base.DefaultAdapter;
+import com.baidu.mapapi.NetworkUtil;
+import com.wonders.health.lib.base.mvp.IPresenter;
+import com.wonders.health.lib.base.mvp.IView;
+import com.wonders.health.lib.base.mvp.Message;
 import com.wonders.health.lib.base.utils.ArtUtils;
 import com.wonders.health.lib.base.utils.onactivityresult.AvoidOnResult;
-import com.wonders.health.lib.base.widget.dialogplus.DialogPlus;
-import com.wonders.health.lib.base.widget.dialogplus.DialogPlusBuilder;
-import com.wonders.health.lib.base.widget.dialogplus.ViewHolder;
 
 import org.simple.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,25 +27,25 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.cdjzxy.monitoringassistant.R;
 import cn.cdjzxy.monitoringassistant.app.EventBusTags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.EnvirPoint;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
-import cn.cdjzxy.monitoringassistant.mvp.model.entity.other.Tab;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.Project;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectContent;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.project.ProjectDetial;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Form;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.upload.ProjectPlan;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.user.UserInfoAppRight;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.EnvirPointDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.ProjectDetialDao;
-import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.DBHelper;
 import cn.cdjzxy.monitoringassistant.mvp.model.logic.UserInfoHelper;
 import cn.cdjzxy.monitoringassistant.mvp.presenter.ApiPresenter;
-import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.TagAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
-import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
 import cn.cdjzxy.monitoringassistant.utils.DateUtils;
-import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
+import cn.cdjzxy.monitoringassistant.utils.ProjectUtils;
+import cn.cdjzxy.monitoringassistant.utils.RxDataTool;
+import cn.cdjzxy.monitoringassistant.utils.TagsUtils;
+import cn.cdjzxy.monitoringassistant.utils.UploadDataUtil;
+import cn.cdjzxy.monitoringassistant.widgets.MyDrawableLinearLayout;
+
 
 /**
  * 修改方案
@@ -57,16 +53,16 @@ import cn.cdjzxy.monitoringassistant.widgets.CustomTab;
 
 public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
 
-    @BindView(R.id.tv_tag)
-    TextView tvTag;
-    @BindView(R.id.tv_point)
-    TextView tvPoint;
-    @BindView(R.id.tv_monitem)
-    TextView tvMonitem;
-    @BindView(R.id.et_days)
-    EditText etDays;
-    @BindView(R.id.et_period)
-    EditText etPeriod;
+    @BindView(R.id.my_layout_tag)
+    MyDrawableLinearLayout tvTag;
+    @BindView(R.id.my_layout_point)
+    MyDrawableLinearLayout tvPoint;
+    @BindView(R.id.my_layout_monItem)
+    MyDrawableLinearLayout tvMonitem;
+    @BindView(R.id.my_layout_days)
+    MyDrawableLinearLayout etDays;
+    @BindView(R.id.my_layout_period)
+    MyDrawableLinearLayout etPeriod;
     @BindView(R.id.et_comment)
     EditText etComment;
     @BindView(R.id.tv_add_parallel)
@@ -85,17 +81,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
     RelativeLayout btnPrintLabel;
 
     private Project mProject;
-    private ProjectDetial mProjectDetial;
+    private ProjectContent mProjectContent;
 
-    private DialogPlus mDialogPlus;
-
-    private List<Tags> mFirstTags = new ArrayList<>();
-    private List<Tab> mTagNames = new ArrayList<>();
-    private List<Tags> mTags = new ArrayList<>();
-
-    private CustomTab mCustomTab;
-    private RecyclerView mRecyclerView;
-    private TagAdapter mTagAdapter;
     private boolean isAdd;
 
     @Override
@@ -103,11 +90,6 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         titleBar.setTitleMainText("修改方案");
     }
 
-    @Nullable
-    @Override
-    public ApiPresenter obtainPresenter() {
-        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
-    }
 
     @Override
     public int initView(@Nullable Bundle savedInstanceState) {
@@ -122,312 +104,285 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         tvAddBlank.setText("保存");
         if (getIntent() != null) {
             isAdd = getIntent().getBooleanExtra("isAdd", false);
-            mProject = DBHelper.get().getProjectDao().queryBuilder().where(ProjectDao.Properties.
-                    Id.eq(getIntent().getStringExtra("projectId"))).unique();
+            String projectId = getIntent().getStringExtra("projectId");
+            mProject = DbHelpUtils.getDbProject(projectId);
         }
         if (isAdd) {
-            mProjectDetial = new ProjectDetial();
+            mProjectContent = new ProjectContent();
         } else {
-            mProjectDetial = getIntent().getParcelableExtra("projectDetail");
+            String projectDetailId = getIntent().getStringExtra("projectContentId");
+            mProjectContent = DbHelpUtils.getProjectContent(projectDetailId);
         }
-//        mProjectDetial = DBHelper.get().getProjectDetialDao().queryBuilder().
-//                where(ProjectDetialDao.Properties.Id.eq(getIntent().getStringExtra("projectDetailId"))).unique();
+        bindView(mProjectContent);
+    }
 
-        bindView(mProjectDetial);
+    @Nullable
+    @Override
+    public ApiPresenter obtainPresenter() {
+        return new ApiPresenter(ArtUtils.obtainAppComponentFromContext(this));
     }
 
 
-    private void bindView(ProjectDetial projectDetial) {
-        if (!CheckUtil.isNull(projectDetial)) {
-            tvTag.setText(CheckUtil.isEmpty(projectDetial.getTagName()) ? "" : projectDetial.getTagName());
-            tvPoint.setText(CheckUtil.isEmpty(projectDetial.getAddress()) ? "" : projectDetial.getAddress());
-            tvMonitem.setText(CheckUtil.isEmpty(projectDetial.getMonItemName()) ? "" : projectDetial.getMonItemName());
-            etDays.setText(projectDetial.getDays() + "");
-            etPeriod.setText(projectDetial.getPeriod() + "");
-            etComment.setText(CheckUtil.isEmpty(projectDetial.getComment()) ? "" : projectDetial.getComment());
+    private void bindView(ProjectContent projectContent) {
+        if (!RxDataTool.isNull(projectContent)) {
+            tvTag.setRightTextStr(RxDataTool.isEmpty(projectContent.getTagName()) ? "" :
+                    projectContent.getTagName());
+
+            setTvMonItem(projectContent);
+//            etComment.setText(RxDataTool.isEmpty(projectContent.getComment()) ? "" :
+//                    projectContent.getComment());
+            etDays.setEditTextStr(projectContent.getDays() + "");
+            etPeriod.setEditTextStr(projectContent.getPeriod() + "");
+            tvPoint.setRightTextStr(RxDataTool.isEmpty(projectContent.getAddress()) ? "" :
+                    projectContent.getAddress());
         }
+        boolean isCanClick = UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Modify_Num)
+                && mProject.getCanSamplingEidt();
+
+        etDays.setClickable(isCanClick);
+        etPeriod.setClickable(isCanClick);
+        etComment.setClickable(isCanClick);
+    }
+
+    /**
+     * 设置监测项目
+     *
+     * @param data ProjectContent
+     */
+    private void setTvMonItem(ProjectContent data) {
+        data = ProjectUtils.setProjectContentMonItemsData(data);
+        tvMonitem.setRightTextStr(RxDataTool.isEmpty(data.getMonItemNames()) ? "" : data.getMonItemNames());
     }
 
 
-    @OnClick({R.id.tv_tag, R.id.tv_point, R.id.tv_monitem, R.id.btn_add_parallel, R.id.btn_add_blank})
+    @OnClick({R.id.my_layout_tag, R.id.my_layout_point, R.id.my_layout_monItem, R.id.btn_add_parallel,
+            R.id.btn_add_blank})
     public void onClick(View view) {
-        if (!isAdd && !UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Modify_Num)) {
+        if (!mProject.getCanSamplingEidt()) {
+            showMessage("该方案不可编辑");
+            return;
+        }
+        if (!UserInfoHelper.get().isHavePermission(UserInfoAppRight.APP_Permission_Plan_Modify_Num)) {
             showNoPermissionDialog("才能进行采样方案编辑。", UserInfoAppRight.APP_Permission_Plan_Modify_Name);
             return;
         }
         switch (view.getId()) {
-            case R.id.tv_tag:
+            case R.id.my_layout_tag:
                 showTagDialog();
                 break;
-            case R.id.tv_point:
-                //Intent intent = new Intent(this, PointSelectActivity.class);
-                if (mProjectDetial == null || mProjectDetial.getTagId() == null) {
-                    ArtUtils.makeText(this, "请先选择采样点位");
-                    return;
-                }
-                Intent intent = new Intent(this, ProgramPointSelectActivity.class);
-                if (mProject.getTypeCode() != 3) {//污染源
-                    intent.putExtra("isRcv", true);
-                    intent.putExtra("rcvId", mProject.getRcvId());
-                }
-                intent.putExtra("tagId", mProjectDetial.getTagId());
-                intent.putExtra("projectId", mProject.getId());
-                intent.putExtra("addressId", mProjectDetial.getAddressId());
-                intent.putExtra("addressName", mProjectDetial.getAddress());
-                new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {
-                    @Override
-                    public void onActivityResult(int resultCode, Intent data) {
-                        if (resultCode == Activity.RESULT_OK) {
-                            if (!CheckUtil.isEmpty(data.getStringExtra("AddressId")) && !CheckUtil.isEmpty(data.getStringExtra("Address"))) {
-                                mProjectDetial.setAddress(data.getStringExtra("Address"));
-                                mProjectDetial.setAddressId(data.getStringExtra("AddressId"));
-                                bindView(mProjectDetial);
-                            }
-                        }
-                    }
-                });
+            case R.id.my_layout_point:
+                selectPoint();
                 break;
-            case R.id.tv_monitem:
-                Intent intent1 = new Intent(this, MonItemActivity.class);
-                intent1.putExtra("tagId", mProjectDetial.getTagParentId());
-                intent1.putExtra("monItemId", mProjectDetial.getMonItemId());
-                intent1.putExtra("selectItems", mProjectDetial.getMonItemId());
-
-                new AvoidOnResult(this).startForResult(intent1, new AvoidOnResult.Callback() {
-                    @Override
-                    public void onActivityResult(int resultCode, Intent data) {
-                        if (resultCode == Activity.RESULT_OK) {
-                            if (!CheckUtil.isEmpty(data.getStringExtra("MonItemId")) && !CheckUtil.isEmpty(data.getStringExtra("MonItemName"))) {
-                                mProjectDetial.setMonItemName(data.getStringExtra("MonItemName"));
-                                mProjectDetial.setMonItemId(data.getStringExtra("MonItemId"));
-                                bindView(mProjectDetial);
-                            }
-                        }
-                    }
-                });
+            case R.id.my_layout_monItem:
+                selectMonItem();
                 break;
             case R.id.btn_add_parallel:
-                //根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
-                if (isAdd) {
-                    finish();
-                    return;
-                }
-                deleteProgramPoitRowData();
-                mProject.setIsEditProjectContent(true);
-                DBHelper.get().getProjectDao().update(mProject);
-                EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
-                ArtUtils.makeText(this, "删除采样点位数据成功");
-                finish();
+                delete();
                 break;
             case R.id.btn_add_blank:
-                if (CheckUtil.isEmpty(mProjectDetial.getAddressId())) {
-                    ArtUtils.makeText(this, "采样点位不能为空");
-                    return;
-                }
-
-                if (CheckUtil.isEmpty(mProjectDetial.getMonItemId())) {
-                    ArtUtils.makeText(this, "监测项目不能为空");
-                    return;
-                }
-
-                mProjectDetial.setDays(Integer.parseInt(etDays.getText().toString()));
-                mProjectDetial.setPeriod(Integer.parseInt(etPeriod.getText().toString()));
-                mProjectDetial.setComment(etComment.getText().toString());
-                mProjectDetial.setUpdateTime(DateUtils.getWholeDate());
-                if (isAdd) {
-                    mProjectDetial.setProjectId(mProject.getId());
-                    mProjectDetial.setId(UUID.randomUUID().toString());
-                    DBHelper.get().getProjectDetialDao().insert(mProjectDetial);
-                } else {
-                    DBHelper.get().getProjectDetialDao().update(mProjectDetial);
-                    //删除之前旧的ProjectDetials
-                    deleteProgramPoitRowData();
-                    //生成新的ProjectDetials
-                }
-                generateProjectDetials();
-                mProject.setIsEditProjectContent(true);
-                DBHelper.get().getProjectDao().update(mProject);
-                EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
-                ArtUtils.makeText(this, "保存采样点位数据成功");
-                finish();
+                edit();
                 break;
+        }
+    }
+
+    private void showMessage(String 该方案不可编辑) {
+    }
+
+    /**
+     * 选择tag
+     */
+    private void showTagDialog() {
+
+        TagsUtils.showTagDialog(mContext, new TagsUtils.TagSelectAdapterOnItemClick() {
+            @Override
+            public void onItemClick(Tags tags, Form form) {
+                tvTag.setRightTextStr(tags.getName());
+                mProjectContent.setTagParentName(form.getTagName());
+                mProjectContent.setTagParentId(form.getTagId());
+                mProjectContent.setId(tags.getId());
+                mProjectContent.setTagName(tags.getName());
+            }
+        });
+    }
+
+    /**
+     * 更改采样方案  保存或者新增操作
+     */
+    private void edit() {
+        if (RxDataTool.isEmpty(mProjectContent.getAddressIds())) {
+            ArtUtils.makeText(this, "采样点位不能为空");
+            return;
+        }
+
+        if (RxDataTool.isEmpty(tvMonitem.getRightTextViewStr())) {
+            ArtUtils.makeText(this, "监测项目不能为空");
+            return;
+        }
+        showLoadingDialog("正在保存数据，请稍后");
+        mProjectContent.setDays(Integer.parseInt(etDays.getEditText().getText().toString()));
+        mProjectContent.setPeriod(Integer.parseInt(etPeriod.getEditText().getText().toString()));
+        //  mProjectContent.setComment(etComment.getText().toString());
+        mProjectContent.setUpdateTime(DateUtils.getDate());
+        if (isAdd) {
+            mProjectContent.setProjectId(mProject.getId());
+            mProjectContent.setId(UUID.randomUUID().toString());
+            DBHelper.get().getProjectContentDao().insert(mProjectContent);
+        } else {
+            DBHelper.get().getProjectContentDao().update(mProjectContent);
+            //删除之前旧的ProjectDetials
+            deleteProjectDetail();
+        }
+        //生成新的ProjectDetials
+        ProjectUtils.generateProjectDetails(mProject, mProjectContent);
+        uploadData(false);
+    }
+
+    /**
+     * 上传数据到服务器
+     */
+    private void uploadData(boolean isDelete) {
+        mProject.setIsEditProjectContent(true);
+        if (NetworkUtil.isNetworkAvailable(mContext)) {
+            showLoadingDialog("正在提交数据。。。请稍后", true);
+            updateProjectDetailData(true);
+        } else if (isDelete) {
+            showMessage("删除成功");
+            onBack();
+        } else {
+            showMessage("保存成功");
+            onBack();
         }
     }
 
     /**
-     * 显示要素选择框
+     * 退出当前页面
      */
-    private void showTagDialog() {
-        DialogPlusBuilder dialogPlusBuilder = DialogPlus.newDialog(this);
-        dialogPlusBuilder.setContentHolder(new ViewHolder(createDialogContentView()));
-        dialogPlusBuilder.setGravity(Gravity.CENTER);
-        dialogPlusBuilder.setContentWidth(700);
-        dialogPlusBuilder.setContentHeight(800);
-        mDialogPlus = dialogPlusBuilder.create();
-        mDialogPlus.show();
+    private void onBack() {
+        closeLoadingDialog();
+        DBHelper.get().getProjectDao().update(mProject);
+        EventBus.getDefault().post(true, EventBusTags.TAG_PROGRAM_MODIFY);
+        finish();
     }
 
 
-    private View createDialogContentView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.view_dialog_tag, null);
+    /**
+     * 删除之前的projectDetail  数据
+     */
+    private void deleteProjectDetail() {
+        List<ProjectDetial> detailList = DbHelpUtils.getProjectDetailList(mProjectContent.getProjectId(),
+                mProjectContent.getId());
+        if (!RxDataTool.isEmpty(detailList))
+            DBHelper.get().getProjectDetialDao().deleteInTx(detailList);
+    }
 
-        mCustomTab = view.findViewById(R.id.tabview);
-        mRecyclerView = view.findViewById(R.id.recyclerView);
-        view.findViewById(R.id.iv_close).setOnClickListener(new View.OnClickListener() {
+    /**
+     * 删除
+     */
+    private void delete() {
+        //根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
+        if (isAdd) {
+            showMessage("您正在新增，无法删除");
+            return;
+        }
+        deleteProjectDetail();
+        DBHelper.get().getProjectContentDao().delete(mProjectContent);
+        uploadData(true);
+
+    }
+
+    /**
+     * 选择监测项目
+     */
+    private void selectMonItem() {
+        Intent intent1 = new Intent(this, MonItemActivity.class);
+        intent1.putExtra("tagId", mProjectContent.getTagParentId());
+        intent1.putExtra("selectItems", mProjectContent.getMonItemIds());
+
+        new AvoidOnResult(this).startForResult(intent1, new AvoidOnResult.Callback() {
             @Override
-            public void onClick(View v) {
-                mDialogPlus.dismiss();
-            }
-        });
-
-        //清空数据
-        mFirstTags.clear();
-        mTagNames.clear();
-        mTags.clear();
-
-        List<Tags> tags = DBHelper.get().getTagsDao().loadAll();
-        if (!CheckUtil.isEmpty(tags)) {
-            for (Tags tag : tags) {
-                if (tag.getLevel() == 0) {
-                    mFirstTags.add(tag);
-                    Tab tab = new Tab();
-                    tab.setTabName(tag.getName());
-                    mTagNames.add(tab);
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    String monItemName = data.getStringExtra("MonItemName");
+                    String monItemId = data.getStringExtra("MonItemId");
+                    tvMonitem.setRightTextStr(monItemName);
+                    mProjectContent.setMonItemIds(monItemId);
+                    mProjectContent.setMonItemNames(monItemName);
                 }
             }
-        }
-
-        mTagNames.get(0).setSelected(true);
-        mCustomTab.setTabs(mTagNames);
-        mCustomTab.setOnTabSelectListener(new CustomTab.OnTabSelectListener() {
-            @Override
-            public void onTabSelected(Tab tab, int position) {
-                updateTags(mFirstTags.get(position).getId());
-            }
         });
-
-        ArtUtils.configRecyclerView(mRecyclerView, new LinearLayoutManager(this));
-        mTagAdapter = new TagAdapter(mTags);
-        mTagAdapter.setOnItemClickListener(new DefaultAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int viewType, Object data, int position) {
-                Tags tags = mTags.get(position);
-                mProjectDetial.setTagParentId(tags.getParentId());
-                mProjectDetial.setTagId(tags.getId());
-                mProjectDetial.setTagName(tags.getName());
-                bindView(mProjectDetial);
-
-                mDialogPlus.dismiss();
-            }
-        });
-        mRecyclerView.setAdapter(mTagAdapter);
-        updateTags(mFirstTags.get(0).getId());
-        return view;
     }
 
-    private void updateTags(String tagParentId) {
-        mTags.clear();
-        List<Tags> tags1 = DBHelper.get().getTagsDao().queryBuilder().
-                where(TagsDao.Properties.ParentId.eq(tagParentId), TagsDao.Properties.Level.eq(1)).list();
-        if (!CheckUtil.isEmpty(tags1)) {
-            mTags.addAll(tags1);
+    /**
+     * 选择点位
+     */
+    private void selectPoint() {
+        if (mProjectContent == null || mProjectContent.getTagId() == null) {
+            ArtUtils.makeText(this, "请先选择采样要素");
+            return;
         }
-        mTagAdapter.notifyDataSetChanged();
-    }
-
-
-    private void generateProjectDetials() {
-        String monitorIds = mProjectDetial.getMonItemId();
-        String addressIds = mProjectDetial.getAddressId();
-        if (!CheckUtil.isEmpty(monitorIds) && !CheckUtil.isEmpty(addressIds)) {
-            String[] montorIdArray = monitorIds.split(",");
-            String[] addressIdArray = addressIds.split(",");
-            String monItemId = "";
-            ProjectDetial projectDetial = null;
-            for (String montorId : montorIdArray) {
-                monItemId = montorId;
-                for (String addressId : addressIdArray) {
-                    projectDetial = generateProjectDetial(monItemId, addressId);
-                    if (!CheckUtil.isNull(projectDetial)) {
-                        DBHelper.get().getProjectDetialDao().insertOrReplace(projectDetial);
+        Intent intent = new Intent(this, ProgramPointSelectActivity.class);
+        if (mProject.getTypeCode() != 3) {//污染源
+            intent.putExtra("isRcv", true);
+            intent.putExtra("rcvId", mProject.getRcvId());
+        }
+        intent.putExtra("tagId", mProjectContent.getTagId());
+        intent.putExtra("projectId", mProject.getId());
+        intent.putExtra("addressId", mProjectContent.getAddressIds());
+        intent.putExtra("addressName", mProjectContent.getAddress());
+        new AvoidOnResult(this).startForResult(intent, new AvoidOnResult.Callback() {
+            @Override
+            public void onActivityResult(int resultCode, Intent data) {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (!RxDataTool.isEmpty(data.getStringExtra("AddressId")) &&
+                            !RxDataTool.isEmpty(data.getStringExtra("Address"))) {
+                        mProjectContent.setAddress(data.getStringExtra("Address"));
+                        mProjectContent.setAddressIds(data.getStringExtra("AddressId"));
+                        tvPoint.setRightTextStr(RxDataTool.isEmpty(mProjectContent.getAddress()) ? "" :
+                                mProjectContent.getAddress());
                     }
                 }
             }
-        }
-
+        });
     }
+
 
     /**
-     * 生成ProjectDetial
+     * 上传采样方案数据
      *
-     * @param monItemId
-     * @param addressId
-     * @return
+     * @param isSubmit 是否强制提交
      */
-    private ProjectDetial generateProjectDetial(String monItemId, String addressId) {
-        if (!CheckUtil.isNull(mProjectDetial)) {
-            ProjectDetial projectDetial = new ProjectDetial();
-            projectDetial.setId(UUID.randomUUID().toString());
-            projectDetial.setAddress(getEnvirPointAddressById(addressId));
-            projectDetial.setAddressId(addressId);
-            projectDetial.setComment(mProjectDetial.getComment());
-            projectDetial.setDays(mProjectDetial.getDays());
-            projectDetial.setMethodId(mProjectDetial.getMethodId());
-            projectDetial.setMethodName(mProjectDetial.getMethodName());
-            projectDetial.setMonItemId(monItemId);
-            projectDetial.setMonItemName(getMonItemNameById(monItemId));
-            projectDetial.setPeriod(mProjectDetial.getPeriod());
-            projectDetial.setProjectContentId(mProjectDetial.getProjectContentId());
-            projectDetial.setProjectId(mProjectDetial.getProjectId());
-            projectDetial.setTagId(mProjectDetial.getTagId());
-            projectDetial.setTagName(mProjectDetial.getTagName());
-            projectDetial.setTagParentId(mProjectDetial.getTagParentId());
-            projectDetial.setTagParentName(mProjectDetial.getTagParentName());
-            projectDetial.setUpdateTime(mProjectDetial.getUpdateTime());
-            return projectDetial;
+    private void updateProjectDetailData(boolean isSubmit) {
+        ProjectPlan projectPlan = UploadDataUtil.setUploadProjectContextData(mProject.getId());
+        projectPlan.setIsCompelSubmit(isSubmit);
+        if (RxDataTool.isNull(projectPlan) || RxDataTool.isEmpty(projectPlan.getProjectContents())) {
+            closeLoadingDialog();
+            showMessage("数据异常");
+            return;
         }
-        return null;
-    }
 
-    private String getMonItemNameById(String itemId) {
-        Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(mProjectDetial.getTagParentId())).unique();
-        List<MonItems> monItems = tags.getMMonItems();
-        if (!CheckUtil.isEmpty(monItems)) {
-            for (MonItems monItem : monItems) {
-                if (!CheckUtil.isEmpty(monItem.getId()) && !CheckUtil.isEmpty(itemId) && monItem.getId().equals(itemId)) {
-                    return monItem.getName();
+        mPresenter.putProjectContent(Message.obtain(new IView() {
+            @Override
+            public void showMessage(@NonNull String message) {
+                closeLoadingDialog();
+                showNetMessage(message);
+            }
+
+            @Override
+            public void handleMessage(@NonNull Message message) {
+                switch (message.what) {
+                    case Message.RESULT_OK:
+                        mProject.setIsEditProjectContent(false);
+                        onBack();
+                        break;
+                    case Message.RESULT_FAILURE:
+                        showMessage(message.str);
+                        break;
                 }
             }
-        }
-        return "";
+        }), projectPlan);
     }
 
-    /**
-     * 通过addressId获取name
-     *
-     * @param addressId
-     * @return
-     */
-    private String getEnvirPointAddressById(String addressId) {
-        List<EnvirPoint> envirPointList = DBHelper
-                .get()
-                .getEnvirPointDao()
-                .queryBuilder()
-                .where(EnvirPointDao.Properties.Id.eq(addressId))
-                .list();
-        if (!CheckUtil.isEmpty(envirPointList)) {
-            return envirPointList.get(0).getName();
-        }
-        return "";
+    private void showNetMessage(String message) {
+        showMessage(message);
     }
-
-    /**
-     * 删除采样点位对应的一行数据
-     * 根据ProjectContentId来删除数据，每一个ProjectContentId代表采样点位的一大行数据
-     */
-    private void deleteProgramPoitRowData() {
-        List<ProjectDetial> deleteProjectDetialsList = DBHelper.get().getProjectDetialDao().queryBuilder().where(ProjectDetialDao.Properties.ProjectId.eq(mProject.getId()), ProjectDetialDao.Properties.ProjectContentId.eq(mProjectDetial.getProjectContentId())).list();
-        DBHelper.get().getProjectDetialDao().deleteInTx(deleteProjectDetialsList);
-    }
-
 }
