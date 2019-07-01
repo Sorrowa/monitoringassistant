@@ -621,11 +621,8 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                         finishAlt = SamplingUtil.isInstrumentSamplingFinish(sampling);
                     }
 
-                    if (sampling.getStatus() == 4) {
-                        showMessage("请先完善采样单信息后在进行保存！" + finishAlt);
-                    } else {
-                        showMessage("请先完善采样单信息后在进行保存！" + finishAlt);
-                    }
+                    showMessage("请先完善采样单信息后在进行保存！" + finishAlt);
+
                     return;
                 }
 
@@ -893,7 +890,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
      * @param isCompelSubmit:标志是否强制提交
      */
     private void uploadProjecteContentData(boolean isCompelSubmit) {
-        ProjectPlan projectPlan =UploadDataUtil.setUploadProjectContextData(mProject.getId());
+        ProjectPlan projectPlan = UploadDataUtil.setUploadProjectContextData(mProject.getId());
         projectPlan.setIsCompelSubmit(isCompelSubmit);
         mPresenter.putProjectContent(Message.obtain(this, new Object()), projectPlan);
     }
@@ -1292,7 +1289,7 @@ public class TaskDetailActivity extends BaseTitileActivity<ApiPresenter> impleme
                             uploadFiles(sampling, handler, sourceFiles, fileSet);
                         }
                     });
-           // uploadFiles(sampling, handler, sourceFiles, fileSet);
+            // uploadFiles(sampling, handler, sourceFiles, fileSet);
         }
 
 //        //鲁班异步压缩，压缩结果图片还是太大

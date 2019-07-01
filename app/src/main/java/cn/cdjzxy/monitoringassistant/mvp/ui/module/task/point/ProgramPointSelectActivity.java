@@ -52,14 +52,14 @@ public class ProgramPointSelectActivity extends BaseTitileActivity {
     private String selectedAddress = "";
     private String rcvId;
 
-    private List<EnvirPoint> programPointList ;
-    private List<EnvirPoint> otherPointList ;
+    private List<EnvirPoint> programPointList;
+    private List<EnvirPoint> otherPointList;
     private boolean isRcv;//true污染源 false环境质量
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        programPointList=new ArrayList<>();
-        otherPointList=new ArrayList<>();
+        programPointList = new ArrayList<>();
+        otherPointList = new ArrayList<>();
         titleBar.setTitleMainText("点位选择");
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +67,8 @@ public class ProgramPointSelectActivity extends BaseTitileActivity {
                 finish();
             }
         });
-        titleBar.setActionTextColor(R.color.white);
-        titleBar.addRightAction(titleBar.new TextAction("确定", new View.OnClickListener() {
+        titleBar.setRightTextBackgroundColor(R.color.white);
+        titleBar.addRightAction(titleBar.new TextAction("确定选择", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sureSelect();

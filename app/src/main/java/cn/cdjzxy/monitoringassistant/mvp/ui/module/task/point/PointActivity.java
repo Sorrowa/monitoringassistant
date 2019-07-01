@@ -398,7 +398,7 @@ public class PointActivity extends BaseTitileActivity implements IView {
 
     @Override
     public void showMessage(@NonNull String message) {
-
+        ArtUtils.makeText(this, message);
     }
 
     @Override
@@ -410,9 +410,7 @@ public class PointActivity extends BaseTitileActivity implements IView {
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
-            double latitude = location.getLatitude();    //获取纬度信息
-            double longitude = location.getLongitude();    //获取经度信息
-            PointActivity.this.bdLocation = location;
+          bdLocation = location;
         }
     }
 
@@ -428,7 +426,7 @@ public class PointActivity extends BaseTitileActivity implements IView {
             return;
         }
 
-        showLoading("正在初始化导航，请稍后...");
+        showLoadingDialog("正在初始化导航，请稍后...",true);
 //        ArtUtils.makeText(mContext, "正在计算前往"+bdLocation.getLongitude() + "，" + bdLocation.getLatitude()+"线路");
         Log.i(TAG, "routeplanToNavi: +导航定位：\n经度" + bdLocation.getLongitude() + "\n纬度" + bdLocation.getLatitude());
 
@@ -458,6 +456,7 @@ public class PointActivity extends BaseTitileActivity implements IView {
                                 showMessage("算路开始");
                                 break;
                             case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_SUCCESS:
+                                hideLoading();
                                 showMessage("算路成功");
 //                                Toast.makeText(mContext, "算路成功", Toast.LENGTH_SHORT)
 //                                        .show();
@@ -465,8 +464,9 @@ public class PointActivity extends BaseTitileActivity implements IView {
                             case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_FAILED:
 //                                Toast.makeText(mContext, "算路失败", Toast.LENGTH_SHORT)
 //                                        .show();
-                                showMessage("算路失败");
                                 hideLoading();
+                                showMessage("算路失败");
+
                                 break;
                             case IBNRoutePlanManager.MSG_NAVI_ROUTE_PLAN_TO_NAVI:
 //                                Toast.makeText(mContext, "算路成功准备进入导航", Toast.LENGTH_SHORT)
