@@ -84,7 +84,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
 
 
     private void initTimeView() {
-        ArtUtils.configRecyclerView(rvTime, new GridLayoutManager(this, 4) {
+        ArtUtils.configRecyclerView(rvTime, new GridLayoutManager(this, 2) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
                 return true;
@@ -124,7 +124,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
 
     private void initTypeView() {
 
-        ArtUtils.configRecyclerView(rvType, new GridLayoutManager(this, 4) {
+        ArtUtils.configRecyclerView(rvType, new GridLayoutManager(this, 2) {
             @Override
             public boolean canScrollVertically() {//设置RecyclerView不可滑动
                 return true;
@@ -276,7 +276,7 @@ public class TaskSearchActivity extends BaseTitileActivity<ApiPresenter> {
         intent.putExtra("endDate", endDate);
         intent.putStringArrayListExtra("types", types);
         ArtUtils.startActivity(intent);
-
+        hideSoftInput();
     }
 
 

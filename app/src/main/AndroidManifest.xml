@@ -125,7 +125,15 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".mvp.ui.module.msg.MsgSearchActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
             android:name=".mvp.ui.module.msg.MsgDetailActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".mvp.ui.module.msg.MsgSearchResultActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape" />
         <activity
@@ -254,8 +262,7 @@
             android:enabled="true"
             android:exported="true"
             android:process=":remote" />
-        <service
-            android:name=".services.TraceService"/>
+        <service android:name=".services.TraceService" />
 
         <activity
             android:name=".mvp.ui.module.easy.EasyPusherActivity"

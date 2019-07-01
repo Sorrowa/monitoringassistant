@@ -185,7 +185,8 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
         }
     }
 
-    private void showMessage(String 该方案不可编辑) {
+    private void showMessage(String s) {
+        ArtUtils.makeText(this, s);
     }
 
     /**
@@ -199,8 +200,11 @@ public class ProgramModifyActivity extends BaseTitileActivity<ApiPresenter> {
                 tvTag.setRightTextStr(tags.getName());
                 mProjectContent.setTagParentName(form.getTagName());
                 mProjectContent.setTagParentId(form.getTagId());
-                mProjectContent.setId(tags.getId());
+                mProjectContent.setTagId(tags.getId());
                 mProjectContent.setTagName(tags.getName());
+                mProjectContent.setAddress("");
+                mProjectContent.setAddressIds("");
+                tvPoint.setRightTextStr("");
             }
         });
     }

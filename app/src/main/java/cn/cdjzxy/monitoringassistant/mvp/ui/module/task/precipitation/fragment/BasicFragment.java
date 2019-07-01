@@ -563,9 +563,9 @@ public class BasicFragment extends BaseFragment {
                             //修改之后要显示到时分秒
                             if (expireDate != null && !expireDate.equals("")) {
                                 String[] s = expireDate.split(" ");
-                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
+                                deviceText = String.format("%s%s(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
                             } else {
-                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
+                                deviceText = String.format("%s%s(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
                             }
                             tvSamplingDevice.setRightTextStr(deviceText);
                             mSampling.setDeviceId(deviceId);

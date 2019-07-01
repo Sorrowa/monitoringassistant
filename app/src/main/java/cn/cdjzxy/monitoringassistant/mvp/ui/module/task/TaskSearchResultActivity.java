@@ -47,13 +47,6 @@ public class TaskSearchResultActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         titleBar.setTitleMainText("搜索结果");
-        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArtUtils.startActivity(TaskSearchActivity.class);
-            }
-        });
     }
 
     @Nullable

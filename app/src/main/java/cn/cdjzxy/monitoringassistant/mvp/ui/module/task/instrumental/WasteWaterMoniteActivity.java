@@ -23,6 +23,7 @@ import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.MonItems;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.base.Tags;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.Sampling;
 import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingContent;
+import cn.cdjzxy.monitoringassistant.mvp.model.entity.sampling.SamplingDetailYQFs;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingContentDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.SamplingDao;
 import cn.cdjzxy.monitoringassistant.mvp.model.greendao.TagsDao;
@@ -32,6 +33,7 @@ import cn.cdjzxy.monitoringassistant.mvp.ui.adapter.WasteWaterMoniteAdapter;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.base.BaseTitileActivity;
 import cn.cdjzxy.monitoringassistant.mvp.ui.module.task.TaskDetailActivity;
 import cn.cdjzxy.monitoringassistant.utils.CheckUtil;
+import cn.cdjzxy.monitoringassistant.utils.DbHelpUtils;
 
 public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
@@ -39,10 +41,11 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
     @BindView(R.id.recyclerView_monite)
     RecyclerView recyclerViewMonite;
 
-    private String projectId;
+    private String projectId, sampleId;
     private WasteWaterMoniteAdapter mWasteWaterMoniteAdapter;
 
-    private List<MonItems> mMontes = new ArrayList<>();
+    private List<MonItems> mMontes;
+    private String inStrList;
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -63,7 +66,11 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         projectId = getIntent().getStringExtra("projectId");
+        sampleId = getIntent().getStringExtra("sampleId");
 
+        mMontes = new ArrayList<>();
+        inStrList = "";
+        getInstruSamplings(TaskDetailActivity.PATH_INSTRUMENTAL);
         //获取水和废水采样单
         getSamplings(TaskDetailActivity.PATH_WASTEWATER);
 
@@ -72,12 +79,42 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
     }
 
     /**
+     * 获取仪器法的数据
+     *
+     * @param path
+     */
+    private void getInstruSamplings(String path) {
+        List<Sampling> samplingList = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.ProjectId.eq(projectId),
+                        SamplingDao.Properties.FormPath.eq(path)).
+                orderDesc(SamplingDao.Properties.SamplingNo).list();
+        if (CheckUtil.isEmpty(samplingList))
+            return;
+        List<SamplingDetailYQFs> yqFsList = new ArrayList<>();
+        for (Sampling sampling : samplingList) {
+            yqFsList.addAll(DbHelpUtils.getSamplingDetailYQFsList(sampling.getId()));
+        }
+        if (CheckUtil.isEmpty(yqFsList)) return;
+        StringBuilder builder = new StringBuilder();
+        for (SamplingDetailYQFs yqFs : yqFsList) {
+            builder.append(yqFs.getSampingCode()).append(",");
+        }
+        if (builder.lastIndexOf(",") > 0) {
+            builder.deleteCharAt(builder.lastIndexOf(","));
+        }
+        inStrList = builder.toString();
+    }
+
+    /**
      * 获取水和废水采样单的所有样品检测项目
      *
      * @param path
      */
     private void getSamplings(String path) {
-        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().where(SamplingDao.Properties.ProjectId.eq(projectId), SamplingDao.Properties.FormPath.eq(path)).orderDesc(SamplingDao.Properties.SamplingNo).list();
+        List<Sampling> samplings = DBHelper.get().getSamplingDao().queryBuilder().
+                where(SamplingDao.Properties.ProjectId.eq(projectId),
+                        SamplingDao.Properties.FormPath.eq(path)).
+                orderDesc(SamplingDao.Properties.SamplingNo).list();
         if (CheckUtil.isEmpty(samplings)) {
             return;
         }
@@ -96,7 +133,8 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
                 monItemMap = new HashMap<String, MonItems>();
                 monItemsMap.put(item.getParentTagId(), monItemMap);
 
-                Tags tags = DBHelper.get().getTagsDao().queryBuilder().where(TagsDao.Properties.Id.eq(item.getParentTagId())).unique();
+                Tags tags = DBHelper.get().getTagsDao().queryBuilder().
+                        where(TagsDao.Properties.Id.eq(item.getParentTagId())).unique();
                 List<MonItems> monItems = tags.getMMonItems();
                 if (!CheckUtil.isEmpty(monItems)) {
                     for (MonItems monItem : monItems) {
@@ -112,12 +150,19 @@ public class WasteWaterMoniteActivity extends BaseTitileActivity<ApiPresenter> {
 
             //如果为空则尝试从数据库获取
             if (CheckUtil.isEmpty(contentList)) {
-                contentList = DBHelper.get().getSamplingContentDao().queryBuilder().where(SamplingContentDao.Properties.SamplingId.eq(item.getId())).list();
+                contentList = DBHelper.get().getSamplingContentDao().queryBuilder().
+                        where(SamplingContentDao.Properties.SamplingId.eq(item.getId())).list();
             }
 
             for (SamplingContent content : contentList) {
                 //水和废水中，现场监测项目
                 if (TextUtils.isEmpty(content.getSenceMonitemId())) {
+                    continue;
+                }
+                //当前样品已在仪器法中进行处理
+                if (!CheckUtil.isEmpty(inStrList)
+                        && inStrList.contains(content.getSampingCode())
+                        && !sampleId.equals(item.getId())) {
                     continue;
                 }
 

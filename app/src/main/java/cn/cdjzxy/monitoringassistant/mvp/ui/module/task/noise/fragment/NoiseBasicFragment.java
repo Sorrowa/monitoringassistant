@@ -116,7 +116,6 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
                 mPrivateData = new NoisePrivateData();
             }
             setViewData();
-
         }
 
     }
@@ -223,19 +222,24 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
                     //修改之后要显示到时分秒
                     if (expireDate != null && !expireDate.equals("")) {
                         String[] s = expireDate.split(" ");
-                        deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
+                        deviceText = String.format("%s%s(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
+                        if (type==2){
+                            mSample.setPrivateDataStringValue("SourceDate", s[0]);
+                        }
                     } else {
-                        deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
+                        deviceText = String.format("%s%s(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
+                        if (type==2){
+                            mSample.setPrivateDataStringValue("SourceDate", expireDate);
+                        }
                     }
                     switch (type) {
                         case 1:
-                            mSample.setPrivateDataStringValue("WindDevName", deviceText);
+                            mSample.setPrivateDataStringValue("WindDevName", String.format("%s%s", deviceName, specification));
                             break;
                         case 2:
                             mSample.setDeviceId(deviceId);
-                            mSample.setDeviceName(deviceText);
+                            mSample.setDeviceName(String.format("%s%s(%s)", deviceName, specification, deviceCode));
                             mSample.setPrivateDataStringValue("SourceWay", sourceWay);
-                            mSample.setPrivateDataStringValue("SourceDate", expireDate);
                             break;
                         case 3:
                             mSample.setPrivateDataStringValue("CalibrationDeviceName", deviceText);
@@ -243,7 +247,7 @@ public class NoiseBasicFragment extends BaseFragment implements IView {
                             break;
                     }
 
-                    myDrawableLinearLayout.setRightTextStr(deviceText);
+
                 }
             }
         });

@@ -143,13 +143,16 @@ public class TaskDetailHolder extends BaseHolder<Sampling> {
                 if (stringBuffer.length() < 15) {
                     stringBuffer.append(",");
                 } else {
-                    stringBuffer.append("。。。");
+                    stringBuffer.append("...");
                     break;
                 }
             }
-            if (stringBuffer.lastIndexOf(",") > 0) {
-                stringBuffer.deleteCharAt(stringBuffer.lastIndexOf(","));
+            if (stringBuffer.length()<15){
+                if (stringBuffer.lastIndexOf(",") > 0) {
+                    stringBuffer.deleteCharAt(stringBuffer.lastIndexOf(","));
+                }
             }
+
             address = stringBuffer.toString();
             mPoint.setText(address);
         }

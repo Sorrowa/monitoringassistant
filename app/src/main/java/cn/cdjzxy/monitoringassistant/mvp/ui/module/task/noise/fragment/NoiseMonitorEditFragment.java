@@ -239,7 +239,7 @@ public class NoiseMonitorEditFragment extends BaseFragment implements IView {
      * 选择点位
      */
     private void choiceAddress() {
-        if (pickerView.isShowing()) {
+        if (pickerView != null && pickerView.isShowing()) {
             return;
         }
         List<String> stringList = new ArrayList<>();

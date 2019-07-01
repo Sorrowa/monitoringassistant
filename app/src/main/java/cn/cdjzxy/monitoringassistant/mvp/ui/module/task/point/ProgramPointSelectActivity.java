@@ -67,13 +67,14 @@ public class ProgramPointSelectActivity extends BaseTitileActivity {
                 finish();
             }
         });
-        titleBar.setRightTextBackgroundColor(R.color.white);
-        titleBar.addRightAction(titleBar.new TextAction("确定选择", new View.OnClickListener() {
+        titleBar.setRightText("确定");
+        titleBar.setRightTextColor(R.color.white);
+        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sureSelect();
             }
-        }));
+        });
     }
 
     /**

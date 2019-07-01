@@ -210,6 +210,7 @@ public class BasicInfoFragment extends BaseFragment {
             case R.id.my_layout_project:
                 intent1 = new Intent(getContext(), WasteWaterMoniteActivity.class);
                 intent1.putExtra("projectId", mSampling.getProjectId());
+                intent1.putExtra("sampleId", mSampling.getId());
                 new AvoidOnResult(getActivity()).startForResult(intent1, new AvoidOnResult.Callback() {
                     @Override
                     public void onActivityResult(int resultCode, Intent data) {
@@ -352,9 +353,9 @@ public class BasicInfoFragment extends BaseFragment {
                             //修改之后要显示到时分秒
                             if (expireDate != null && !expireDate.equals("")) {
                                 String[] s = expireDate.split(" ");
-                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
+                                deviceText = String.format("%s%s(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, s[0]);
                             } else {
-                                deviceText = String.format("%s(%s)(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
+                                deviceText = String.format("%s%s(%s)(%s %s)", deviceName, specification, deviceCode, sourceWay, expireDate == null ? "" : expireDate);
                             }
                             mSampling.setDeviceId(deviceId);
                             mSampling.setDeviceName(deviceText);

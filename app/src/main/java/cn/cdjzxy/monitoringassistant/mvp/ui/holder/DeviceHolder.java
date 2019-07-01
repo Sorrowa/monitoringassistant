@@ -35,14 +35,14 @@ public class DeviceHolder extends BaseHolder<Devices> {
 
     @Override
     public void setData(Devices data, int position) {
-        mTvName.setText(data.getName().trim());
-        mTvState.setText(data.getSourceWay().trim());
-        mTvModel.setText(data.getSpecification().trim());
+        mTvName.setText(data.getName());
+        mTvState.setText(data.getSourceWay());
+        mTvModel.setText(data.getSpecification());
         if (CheckUtil.isEmpty(data.getDevCode())) {
             mTvNumbering.setVisibility(View.INVISIBLE);
         } else {
             mTvNumbering.setVisibility(View.VISIBLE);
-            mTvNumbering.setText(data.getDevCode().trim());
+            mTvNumbering.setText(data.getDevCode());
         }
         if (CheckUtil.isEmpty(data.getExpireDate())) {
             mTvValidityPeriod.setVisibility(View.INVISIBLE);

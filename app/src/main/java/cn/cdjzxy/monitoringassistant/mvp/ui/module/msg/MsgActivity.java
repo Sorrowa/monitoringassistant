@@ -58,6 +58,13 @@ public class MsgActivity extends BaseTitileActivity<ApiPresenter> implements IVi
         //                ArtUtils.makeText(getApplicationContext(), "搜索");
         //            }
         //        });
+        titleBar.setRightTextDrawable(R.mipmap.ic_search_white);
+        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArtUtils.startActivity(MsgSearchActivity.class);
+            }
+        });
     }
 
     @Nullable
